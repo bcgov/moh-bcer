@@ -8,7 +8,7 @@ The BCER application includes 4 packages.
 
 There is documentation in each package for how to build, run, and deploy them. This README includes more generalized documentation.
 
-## API - vaping-regulation-api
+## API - bcer-api
 The API uses NestJS and TypeORM, which locally you can run where it uses a synchronize setting to keep your local database or containerized database in sync with entity changes.
 
 ## Retailer Application - bcer-retailer-app
