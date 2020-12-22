@@ -1,0 +1,22 @@
+section {
+  :not(:first-child) {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+  &.spread label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    input {
+      width: 40%;
+      height: 24px;
+    }
+  }
+  &.buttons {
+    margin-top: 4rem;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+  }
+}

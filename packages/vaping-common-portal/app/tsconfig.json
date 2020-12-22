@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "allowJs": true,
+    "jsx": "react",
+    "sourceMap": true,
+    "outDir": "./build/",
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "assets/*": ["./src/assets/*"]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./typings"
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+  },
+  "include": [
+    "./src/**/*",
+    "./typings/*.d.ts"
+  ],
+  "exclude": [
+    "./node_modules",
+    "./build",
+    "./scripts",
+    "./docker",
+    "./public",
+    "./coverage"
+  ]
+}

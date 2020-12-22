@@ -1,0 +1,264 @@
+{
+    "id": "vaping-test",
+    "realm": "vaping-test",
+    "refreshTokenMaxReuse": 0,
+    "accessTokenLifespan": 300,
+    "accessTokenLifespanForImplicitFlow": 900,
+    "ssoSessionIdleTimeout": 1800,
+    "ssoSessionMaxLifespan": 36000,
+    "ssoSessionIdleTimeoutRememberMe": 0,
+    "ssoSessionMaxLifespanRememberMe": 0,
+    "offlineSessionIdleTimeout": 2592000,
+    "offlineSessionMaxLifespanEnabled": false,
+    "offlineSessionMaxLifespan": 5184000,
+    "clientSessionIdleTimeout": 0,
+    "clientSessionMaxLifespan": 0,
+    "clientOfflineSessionIdleTimeout": 0,
+    "clientOfflineSessionMaxLifespan": 0,
+    "accessCodeLifespan": 60,
+    "accessCodeLifespanUserAction": 300,
+    "accessCodeLifespanLogin": 1800,
+    "actionTokenGeneratedByAdminLifespan": 43200,
+    "actionTokenGeneratedByUserLifespan": 300,
+    "enabled": true,
+    "sslRequired": "external",
+    "registrationAllowed": false,
+    "registrationEmailAsUsername": false,
+    "rememberMe": false,
+    "verifyEmail": false,
+    "loginWithEmailAllowed": true,
+    "duplicateEmailsAllowed": false,
+    "resetPasswordAllowed": false,
+    "editUsernameAllowed": false,
+    "bruteForceProtected": false,
+    "permanentLockout": false,
+    "maxFailureWaitSeconds": 900,
+    "minimumQuickLoginWaitSeconds": 60,
+    "waitIncrementSeconds": 60,
+    "quickLoginCheckMilliSeconds": 1000,
+    "maxDeltaTimeSeconds": 43200,
+    "failureFactor": 30,
+    "roles": {
+      "realm": [
+        {
+          "id": "c657e397-5c0d-467c-b51d-f6b38ca58270",
+          "name": "user",
+          "composite": true,
+          "composites": {
+            "client": {
+              "vaping-node": [
+                "user"
+              ]
+            }
+          },
+          "clientRole": false,
+          "containerId": "vaping-test",
+          "attributes": {}
+        }
+      ],
+      "client": {
+        "vaping-node": [
+          {
+            "id": "69d88bc0-8e16-40cd-87a1-c2caf3071e66",
+            "name": "user",
+            "composite": false,
+            "clientRole": true,
+            "containerId": "64375301-1c02-48ce-8462-0a0be5fd48b8",
+            "attributes": {}
+          },
+          {
+            "id": "76ee0150-8cc0-4a1e-b42b-224d79ff973b",
+            "name": "uma_protection",
+            "composite": false,
+            "clientRole": true,
+            "containerId": "64375301-1c02-48ce-8462-0a0be5fd48b8",
+            "attributes": {}
+          },
+          {
+            "id": "a84ab691-0885-40b1-ac87-f6c258ae54ca",
+            "name": "admin",
+            "composite": false,
+            "clientRole": true,
+            "containerId": "64375301-1c02-48ce-8462-0a0be5fd48b8",
+            "attributes": {}
+          }
+        ]
+      }
+    },
+    "users": [
+      {
+        "id": "0af79a01-3fe0-4936-bbbb-bfae5fecac76",
+        "createdTimestamp": 1597377155281,
+        "username": "service-account-vaping-node",
+        "enabled": true,
+        "totp": false,
+        "emailVerified": false,
+        "serviceAccountClientId": "vaping-node",
+        "disableableCredentialTypes": [],
+        "requiredActions": [],
+        "realmRoles": [
+          "uma_authorization",
+          "offline_access"
+        ],
+        "clientRoles": {
+          "vaping-node": [
+            "uma_protection"
+          ],
+          "account": [
+            "manage-account",
+            "view-profile"
+          ]
+        },
+        "notBefore": 0,
+        "groups": []
+      }
+    ],
+    "clients": [
+      {
+        "id": "64375301-1c02-48ce-8462-0a0be5fd48b8",
+        "clientId": "vaping-node",
+        "rootUrl": "http://localhost:4000",
+        "baseUrl": "http://localhost:4000",
+        "surrogateAuthRequired": false,
+        "enabled": true,
+        "alwaysDisplayInConsole": false,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "779dc8e9-c88b-4e93-8350-bf0968e52ab3        ",
+        "redirectUris": [
+          "http://localhost:4000/*"
+        ],
+        "webOrigins": [
+          "*"
+        ],
+        "notBefore": 0,
+        "bearerOnly": false,
+        "consentRequired": false,
+        "standardFlowEnabled": true,
+        "implicitFlowEnabled": false,
+        "directAccessGrantsEnabled": true,
+        "serviceAccountsEnabled": true,
+        "authorizationServicesEnabled": true,
+        "publicClient": false,
+        "frontchannelLogout": false,
+        "protocol": "openid-connect",
+        "attributes": {
+          "saml.assertion.signature": "false",
+          "saml.force.post.binding": "false",
+          "saml.multivalued.roles": "false",
+          "saml.encrypt": "false",
+          "saml.server.signature": "false",
+          "saml.server.signature.keyinfo.ext": "false",
+          "exclude.session.state.from.auth.response": "false",
+          "saml_force_name_id_format": "false",
+          "saml.client.signature": "false",
+          "tls.client.certificate.bound.access.tokens": "false",
+          "saml.authnstatement": "false",
+          "display.on.consent.screen": "false",
+          "saml.onetimeuse.condition": "false"
+        },
+        "authenticationFlowBindingOverrides": {},
+        "fullScopeAllowed": true,
+        "nodeReRegistrationTimeout": -1,
+        "protocolMappers": [
+          {
+            "id": "0595342d-f16e-4e1a-ac97-b433ef27f077",
+            "name": "Client Host",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usersessionmodel-note-mapper",
+            "consentRequired": false,
+            "config": {
+              "user.session.note": "clientHost",
+              "id.token.claim": "true",
+              "access.token.claim": "true",
+              "claim.name": "clientHost",
+              "jsonType.label": "String"
+            }
+          },
+          {
+            "id": "76352239-b14f-4eb0-9515-49aa9dfee08d",
+            "name": "Client IP Address",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usersessionmodel-note-mapper",
+            "consentRequired": false,
+            "config": {
+              "user.session.note": "clientAddress",
+              "id.token.claim": "true",
+              "access.token.claim": "true",
+              "claim.name": "clientAddress",
+              "jsonType.label": "String"
+            }
+          },
+          {
+            "id": "fd5eb4ae-507d-4ba9-ab7b-436637274bcf",
+            "name": "Client ID",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usersessionmodel-note-mapper",
+            "consentRequired": false,
+            "config": {
+              "user.session.note": "clientId",
+              "id.token.claim": "true",
+              "access.token.claim": "true",
+              "claim.name": "clientId",
+              "jsonType.label": "String"
+            }
+          }
+        ],
+        "defaultClientScopes": [
+          "web-origins",
+          "role_list",
+          "profile",
+          "roles",
+          "email"
+        ],
+        "optionalClientScopes": [
+          "address",
+          "phone",
+          "offline_access",
+          "microprofile-jwt"
+        ],
+        "authorizationSettings": {
+          "allowRemoteResourceManagement": true,
+          "policyEnforcementMode": "ENFORCING",
+          "resources": [
+            {
+              "name": "Default Resource",
+              "type": "urn:vaping-node:resources:default",
+              "ownerManagedAccess": false,
+              "attributes": {},
+              "_id": "e8f073b1-8cab-45ad-a596-6b82615940e2",
+              "uris": [
+                "/*"
+              ]
+            }
+          ],
+          "policies": [
+            {
+              "id": "9104ad58-9af2-4484-8e95-236f498e1f3d",
+              "name": "Default Policy",
+              "description": "A policy that grants access only for users within this realm",
+              "type": "js",
+              "logic": "POSITIVE",
+              "decisionStrategy": "AFFIRMATIVE",
+              "config": {
+                "code": "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
+              }
+            },
+            {
+              "id": "10be8569-8278-4851-b4af-e942e717a6a2",
+              "name": "Default Permission",
+              "description": "A permission that applies to the default resource type",
+              "type": "resource",
+              "logic": "POSITIVE",
+              "decisionStrategy": "UNANIMOUS",
+              "config": {
+                "defaultResourceType": "urn:vaping-node:resources:default",
+                "applyPolicies": "[\"Default Policy\"]"
+              }
+            }
+          ],
+          "scopes": [],
+          "decisionStrategy": "UNANIMOUS"
+        }
+      }
+    ]
+  }

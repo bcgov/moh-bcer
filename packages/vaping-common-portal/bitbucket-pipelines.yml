@@ -1,0 +1,142 @@
+image: freshworksstudio/bitbucket-pipelines
+
+options:
+  docker: true
+
+pipelines:
+  pull-requests:
+    '**': # All branches
+      - step:
+          caches:
+            - docker
+          name: Build and Test
+          script:
+            - echo "Printing status..."
+            - make print-status
+            - echo "Setting test env..."
+            - make setup-development-env
+            - echo "Building..."
+            - make pipeline-build
+            - echo "Testing..."
+            - make pipeline-tests
+          after-script:
+            - echo "Reporting..."
+            - make pipeline-report
+
+  branches:
+    'dev':
+      - step:
+          caches:
+            - docker
+          name: Build, Test, and Deploy
+          deployment: test
+          script:
+              - echo "Printing Previous status..."
+              - make print-status
+              - echo "Setting AWS profile..."
+              - make setup-aws-profile
+              - echo "Setting test env..."
+              - make setup-development-env
+              - echo "Building..."
+              - make pipeline-build
+              - echo "Testing..."
+              - make pipeline-tests
+              - echo "Preparing for deployment..."
+              - make setup-development-env
+              - echo "Printing new development status..."
+              - make print-status
+              - echo "Deploying to dev..."
+              - make pipeline-deploy
+              - echo "Healthcheck..."
+              - make pipeline-healthcheck
+          after-script:
+            - echo "Reporting..."
+            - make pipeline-report
+    'testing':
+      - step:
+          caches:
+            - docker
+          name: Build, Test, and Deploy
+          deployment: testing
+          script:
+            - echo "Printing Previous status..."
+            - make print-status
+            - echo "Setting AWS profile..."
+            - make setup-aws-profile
+            - echo "Setting test env..."
+            - make setup-development-env
+            - echo "Building..."
+            - make pipeline-build
+            - echo "Testing..."
+            - make pipeline-tests
+            - echo "Preparing for deployment..."
+            - make setup-testing-env
+            - echo "Printing new staging status..."
+            - make print-status
+            - echo "Deploying to staging..."
+            - make pipeline-deploy
+            - echo "Healthcheck..."
+            - make pipeline-healthcheck
+          after-script:
+            - echo "Reporting..."
+            - make pipeline-report
+    'staging':
+      - step:
+          caches:
+            - docker
+          name: Build, Test, and Deploy
+          deployment: staging
+          script:
+            - echo "Printing Previous status..."
+            - make print-status
+            - echo "Setting AWS profile..."
+            - make setup-aws-profile
+            - echo "Setting test env..."
+            - make setup-development-env
+            - echo "Building..."
+            - make pipeline-build
+            - echo "Testing..."
+            - make pipeline-tests
+            - echo "Preparing for deployment..."
+            - make setup-staging-env
+            - echo "Printing new staging status..."
+            - make print-status
+            - echo "Deploying to staging..."
+            - make pipeline-deploy
+            - echo "Healthcheck..."
+            - make pipeline-healthcheck
+          after-script:
+            - echo "Reporting..."
+            - make pipeline-report
+  # custom:
+  #   deploy-to-production:
+  #     - step:
+  #         name: Build, Test, and Deploy
+  #         deployment: production
+  #         script:
+  #           - echo "Printing Previous status..."
+  #           - make print-status
+  #           - echo "Setting AWS profile..."
+  #           - make setup-aws-profile
+  #           - echo "Setting test env..."
+  #           - make setup-development-env
+  #           - echo "Building..."
+  #           - make pipeline-build
+  #           - echo "Testing..."
+  #           - make pipeline-tests
+  #           - echo "Preparing for deployment..."
+  #           - make setup-production-env
+  #           - echo "Printing new production status..."
+  #           - make print-status
+  #           - echo "Deploying to production..."
+  #           - make pipeline-deploy
+  #           - echo "Healthcheck..."
+  #           - make pipeline-healthcheck
+  #         after-script:
+  #           - echo "Reporting..."
+  #           - make pipeline-report
+
+definitions:
+  services:
+    docker:
+      memory: 2048

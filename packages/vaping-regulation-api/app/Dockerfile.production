@@ -1,0 +1,26 @@
+FROM node:12.18.3-slim
+
+MAINTAINER FreshWorks <web@freshworks.io>
+
+ENV PATH $PATH:/usr/src/app/node_modules/.bin
+
+WORKDIR /usr/src/app
+
+# Install pm2
+RUN npm config set unsafe-perm tru
+RUN npm install pm2@4.2.0 -g
+
+# Install dependencies
+COPY ./package.json ./
+RUN npm install
+
+# Copy source files
+COPY . .
+COPY ./.env.aws ./.env
+
+# Build application
+RUN npm run build:aws
+
+EXPOSE 4000
+
+CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]

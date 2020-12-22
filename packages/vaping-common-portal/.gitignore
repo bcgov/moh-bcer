@@ -1,0 +1,13 @@
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+# misc
+Dockerrun.aws.json
+audit-report.*
+.DS_Store
+.idea/*
+.ebextensions/*
+!.ebextensions/.keep
+app/test-results

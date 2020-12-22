@@ -1,0 +1,12 @@
+{
+  "presets": [
+    ["@babel/preset-env", { "loose": false, "modules": "umd" }],
+    "@babel/preset-react",
+    "@babel/preset-typescript"
+  ],
+  "plugins": [
+    ["@babel/plugin-transform-runtime", { "regenerator": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }],
+    "babel-plugin-dynamic-import-node"
+  ]
+}

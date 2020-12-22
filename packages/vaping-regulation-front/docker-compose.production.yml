@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+
+  application:
+    image: ${PROJECT}:${GIT_LOCAL_BRANCH}
+    container_name: ${PROJECT}
+    build:
+      context: ./app/
+      dockerfile: ./docker/Dockerfile.production
+      args:
+        GIT_ACCESS_TOKEN: ${GIT_ACCESS_TOKEN}
+        GIT_USER: ${GIT_USER}
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
+      timeout: 5s
+      interval: 10s
+      start_period: 5s
+    networks:
+      - frontend
+
+  test:
+    image: ${PROJECT}-test:${GIT_LOCAL_BRANCH}
+    container_name: ${PROJECT}-test
+    build:
+      context: ./app/
+      dockerfile: ./docker/Dockerfile.test
+      args:
+        GIT_ACCESS_TOKEN: ${GIT_ACCESS_TOKEN}
+        GIT_USER: ${GIT_USER}
+    depends_on:
+      - application
+    links:
+      - application
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    driver: "bridge"

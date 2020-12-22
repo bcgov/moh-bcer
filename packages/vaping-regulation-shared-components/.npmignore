@@ -1,0 +1,13 @@
+.gitignore
+.prettierignore
+jest.config.js
+junit.xml
+tsconfig.json
+webpack.config.js
+/src
+**/*/stories
+**/*/__tests__
+.storybook
+src/stories
+Makefile
+bitbucket-pipelines.yml

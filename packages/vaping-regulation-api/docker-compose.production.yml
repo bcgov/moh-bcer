@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+
+  application:
+    image: ${PROJECT}:${GIT_LOCAL_BRANCH}
+    container_name: ${PROJECT}
+    build:
+      context: ./app
+      dockerfile: Dockerfile.production
+    environment:
+      - JWT_SECRET=123_JWT_SECRET!
+      - NODE_ENV=internal
+      - DB_CONNECTION=pgsql
+      - DB_HOST=vaping-regulation-rds.czxwqiofllry.ca-central-1.rds.amazonaws.com
+      - DB_PORT=5432
+      - DB_DATABASE=vaping_regulation_dev
+      - DB_USERNAME=vapingregulation
+      - DB_PASSWORD=FF52887E21AAA8E87B28B13C155FBCCF6FA10C4C835C94BFA70A54F6000F8128
+      - DB_TEST_DATABASE=nest_api_test
+      - DEPLOY_ENV=node-api-dev
+      - LOGS_PATH=./../logs
+      - MERGE_BRANCH=dev
+      - KEYCLOAK_PORT=8080
+      - KEYCLOAK_REALM=bcerd
+      - KEYCLOAK_CLIENT=BCERD-API
+      - KEYCLOAK_AUTH_URL=https://common-logon-dev.hlth.gov.bc.ca/auth/
+      - KEYCLOAK_SECRET=88565FDC9E26E533258A75505C86409B92C371565E7801440219610B8450BB35FB253D7A2EA9456FDB52A3075AB18142
+      - KEYCLOAK_DATA_REALM=moh_applications
+      - KEYCLOAK_DATA_CLIENT=BCER-CP
+      - KEYCLOAK_DATA_AUTH_URL=https://common-logon-dev.hlth.gov.bc.ca/auth/
+    ports:
+      - "4000:4000"
+    expose:
+      - "4000"
+    volumes:
+      - /usr/src/app/dist
+      - /usr/src/app/node_modules
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  postgres:
+    image: ${PROJECT}-postgres:${GIT_LOCAL_BRANCH}
+    container_name: ${PROJECT}-postgres
+    build:
+      context: ./.docker/postgres
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES="nest_api_dev","nest_api_test"
+      - POSTGRES_USER=vape_nestapi
+      - POSTGRES_PASSWORD=vape_nest123
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./.docker/postgres:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+
+  schemaspy:
+    image: schemaspy/schemaspy:latest
+    user: ${UID}:${GID}
+    depends_on:
+      - postgres
+    command: -t pgsql -db nest_api_dev -host postgres -u vape_nestapi -p vape_nest123 -s public -debug
+    volumes:
+      - ./app/documentation/schema:/output
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"
+
+volumes:
+  postgres:

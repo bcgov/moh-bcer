@@ -1,0 +1,33 @@
+# Create production build
+
+FROM node:12.18.3
+
+MAINTAINER FreshWorks <web@freshworks.io>
+
+ENV PATH $PATH:/app/node_modules/.bin
+
+RUN mkdir /app
+
+WORKDIR /app
+
+# Install git
+RUN apt-get update && apt-get install -y git curl
+ARG GIT_USER
+ARG GIT_ACCESS_TOKEN
+
+# Use provided access token instead to access token instead of ssh when accessing bitbucket repos
+RUN git config --global url."https://$GIT_USER:$GIT_ACCESS_TOKEN@bitbucket.org/freshworks".insteadOf "ssh://git@bitbucket.org/freshworks"
+
+COPY ./package*.json ./
+
+RUN npm install --no-optional
+
+COPY . .
+
+RUN npm run build
+
+RUN npm prune --production
+
+EXPOSE 3000
+
+CMD [ "npm", "run", "serve" ]

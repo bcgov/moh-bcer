@@ -1,0 +1,14 @@
+image: node:12.18.3
+
+pipelines:
+  pull-requests:
+    '**': # All branches
+      - step:
+          caches:
+            - node
+          name: Build and Test
+          script:
+            - echo "Installing dependencies..."
+            - npm install
+            - echo "Testing..."
+            - npm run test

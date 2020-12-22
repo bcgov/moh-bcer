@@ -1,0 +1,75 @@
+{
+  "name": "vaping-regulation-shared-components",
+  "version": "1.0.0",
+  "description": "Shared components package for BC government reporting projects, currently vaping-regulation",
+  "main": "dist/bundle.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "lint": "standard",
+    "format": "prettier-standard --format",
+    "test": "jest --coverage --passWithNoTests",
+    "storybook": "start-storybook"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vaping-regulation-shared-typedefs": "https://DavidSabadash_FW:jkRT4fYe35u57ndV4uLc@bitbucket.org/freshworks/vaping-regulation-shared-typedefs.git"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "@material-ui/core": "4.11.0",
+    "@material-ui/icons": "4.9.1",
+    "@material-ui/lab": "4.0.0-alpha.56",
+    "@storybook/react": "^6.0.13",
+    "@testing-library/jest-dom": "^5.11.3",
+    "@testing-library/react": "^10.4.8",
+    "@types/jest": "^24.0.24",
+    "@types/react": "^16.9.46",
+    "@types/react-dom": "^16.9.8",
+    "@types/yup": "0.29.6",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.1.0",
+    "formik": "^2.1.5",
+    "jest": "^26.4.0",
+    "jest-junit": "^11.1.0",
+    "material-table": "1.68.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-dropzone": "11.1.0",
+    "standard": "^14.3.4",
+    "standard-prettier": "^1.0.1",
+    "ts-jest": "^26.2.0",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-merge": "^5.1.2",
+    "yup": "0.29.3"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "formik": "^2.1.5",
+    "@material-ui/core": "4.11.0",
+    "@material-ui/icons": "4.9.1",
+    "@material-ui/lab": "4.0.0-alpha.56",
+    "material-table": "1.68.0"
+  },
+  "standard": {
+    "ignore": [
+      "node_modules/",
+      "dist/"
+    ],
+    "globals": [
+      "describe",
+      "it",
+      "test",
+      "expect",
+      "afterAll",
+      "jest"
+    ]
+  }
+}

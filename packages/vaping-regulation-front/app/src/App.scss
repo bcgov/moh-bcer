@@ -1,0 +1,138 @@
+@import './css/normalize.css';
+@import './css/bcgov.css';
+
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  font-family: 'BCSans', 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-x: hidden;
+}
+
+.login-container,
+.signup-container {
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.login-form,
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+.input,
+.button {
+  height: 40px;
+  width: 100%;
+  font-size: 14px;
+  margin-bottom: 30px;
+  border: none;
+  padding: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.button-register {
+  color: #5373e9;
+  padding-bottom: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+@media (min-width: 600px) {
+  .login-container,
+  .signup-container {
+    width: 60%;
+    margin: 0 auto;
+  }
+}
+
+.row {
+  margin-bottom: 1rem;
+}
+
+span.pointer {
+  text-decoration: underline;
+}
+
+.pointer:hover {
+  cursor: pointer;
+}
+
+/* Stepper  */
+
+.step {
+  display: inline-flex;
+  flex-direction: column;
+  font-size: 1rem;
+  margin-right: 2rem;
+  max-width: 15%;
+  padding: 1rem;
+  border-radius: 5px;
+  i {
+    height: 20px;
+    width: 20px;
+    margin-bottom: 1rem;
+    background-color: #036;
+    border-radius: 50%;
+  }
+  &.active {
+    background-color: #f3cccc;
+  }
+}
+
+.navButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1rem;
+  &.first {
+    justify-content: flex-end;
+    .prev {
+      display: none;
+    }
+  }
+}
+
+// Form
+button.primary {
+  height: 42px;
+  min-width: 150px;
+  border-radius: 5px;
+  background-color: #002C71;
+  font-weight: bold;
+  color: white;
+}
+
+button.secondary {
+  box-sizing: border-box;
+  height: 42px;
+  min-width: 150px;
+  border: 1px solid #234075;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+}
+
+.formButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

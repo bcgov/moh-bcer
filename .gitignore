@@ -1,0 +1,28 @@
+**/node_modules
+
+# API
+**/.config/*
+**/dist
+**/test-results
+**/.env
+**/.scannerwork
+
+**/jest
+**/typedocs
+**/schema
+**/sonar
+
+.env.local
+.vscode
+.DS_STORE
+options.config
+
+# Common Portal
+Dockerrun.aws.json
+audit-report.*
+.DS_Store
+test-results
+
+# Shared Components
+**/coverage/
+junit.xml
