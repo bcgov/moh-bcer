@@ -11,7 +11,7 @@ There is documentation in each package for how to build, run, and deploy them. T
 ## API - vaping-regulation-api
 The API uses NestJS and TypeORM, which locally you can run where it uses a synchronize setting to keep your local database or containerized database in sync with entity changes.
 
-## Retailer Application - vaping-regulation-front
+## Retailer Application - bcer-retailer-app
 The retailer application uses BCeID Keycloak for authentication. 
 
 ## Data Portal - bcer-data-portal
