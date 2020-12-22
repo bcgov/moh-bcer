@@ -14,7 +14,7 @@ The API uses NestJS and TypeORM, which locally you can run where it uses a synch
 ## Retailer Application - vaping-regulation-front
 The retailer application uses BCeID Keycloak for authentication. 
 
-## Data Portal - vaping-common-portal
+## Data Portal - bcer-data-portal
 The data portal application uses IDIR Keycloak for authentication.
 
 ## Shared Components
