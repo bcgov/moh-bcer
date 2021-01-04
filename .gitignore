@@ -1,7 +1,6 @@
 **/node_modules
 
 # API
-**/.config/*
 **/dist
 **/test-results
 **/.env
