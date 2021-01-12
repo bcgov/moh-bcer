@@ -24,8 +24,9 @@ const axiosPost = axios.create({
 
 const axiosPostForm = axios.create({
   method: 'POST',
+  responseType: 'arraybuffer',
   headers: {
-    'Content-Type': 'multipart/form-data',
+    'Content-Type': 'application/json',
   }
 })
 

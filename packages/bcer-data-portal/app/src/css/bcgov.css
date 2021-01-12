@@ -331,3 +331,7 @@ form {
 .date_field {
   margin-right: 20px;
 }
+
+.tableDiv div::-webkit-scrollbar {
+  height: 14px !important;
+}

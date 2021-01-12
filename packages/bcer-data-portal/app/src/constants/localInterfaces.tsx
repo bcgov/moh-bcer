@@ -53,9 +53,17 @@ export interface BusinessLocation {
   manufacturing: string;
   manufactures: Array<ManufacturingReport>
   noi?: {
-    created_at: Date
+    created_at: Date;
   },
-  products?: Array<Products>
+  business?: {
+    businessName: string;
+    legalName: string;
+  }
+  tableData?: {
+    id: number;
+    checked: boolean;
+  }
+  products?: Array<Products>;
   created_at?: Date;
 }
 

@@ -34,6 +34,8 @@ export enum HealthAuthorities {
 }
 
 export enum BusinessLocationHeaders {
+  'Business Name' = 'Business Name',
+  'Business Legal Name' = 'Business Legal Name',
   'Address' = 'Business Address',
   'Address 2' = 'Business Address 2',
   'Postal Code' = 'Postal Code',

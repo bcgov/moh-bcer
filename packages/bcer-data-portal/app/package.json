@@ -36,6 +36,7 @@
     "serve": "node ./server.js",
     "lint": "tslint -p ./tsconfig.json",
     "lint:fix": "tslint --fix -p ./tsconfig.json",
+    "tar": "tar -zcvf ../build.tar.gz -C build .",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

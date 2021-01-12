@@ -94,7 +94,7 @@ const Login = () => {
 
       <div className={classes.splashContainer}>
         <div className={classes.splashWrapper}>
-          <Typography variant='h5'>Health Authority Common Portal</Typography>
+          <Typography variant='h5'>BC E-Substances Regulation Data Portal</Typography>
           <Typography variant='body1' className={classes.splashVerbiage}>
             The new <b className={classes.splashVerbiageBold}>E-Substances Regulation</b> introduced requirements for all businesses who currently
             sell E-substances or intend to sell E-substances in British Columbia. This application provides access to all reports submitted through the
@@ -110,7 +110,7 @@ const Login = () => {
                 <Typography variant='body1'>
                   This application utilizes IDIR or HA ID for authentication.<br />
                 </Typography>
-                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'idir', redirectUri: location.origin + '/#/keycloak' })}>
+                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'idir', redirectUri: location.origin + '/portal/#/keycloak' })}>
                   <div className={classes.authButtonIcon}>
                     <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
                   </div>
@@ -120,7 +120,7 @@ const Login = () => {
                   </div>
                 </div>
               </div>
-              <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'phsa', redirectUri: location.origin + '/#/keycloak' })}>
+              <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'phsa', redirectUri: location.origin + '/portal/#/keycloak' })}>
                 <div className={classes.authButtonIcon}>
                   <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
                 </div>

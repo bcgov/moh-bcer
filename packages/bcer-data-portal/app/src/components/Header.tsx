@@ -86,7 +86,7 @@ export default function Header() {
           E-Substances Regulation
         </div>
         <div className={classes.bottomTitle} >
-          Health Authority Common Portal
+          BC E-Substances Regulation Data Portal
         </div>
       </div>
       {
