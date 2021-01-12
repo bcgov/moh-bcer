@@ -9,6 +9,9 @@ import { Keycloak } from 'keycloak-connect';
 import { KeycloakConnectOptions } from '../interface/keycloakConnectOptions.interface';
 import { META_UNPROTECTED } from '../decorators/unprotected.decorator';
 import { Reflector } from '@nestjs/core';
+import jwt from 'jsonwebtoken';
+import jwksRsa from 'jwks-rsa';
+
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -32,22 +35,32 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const jwt =
+    const token =
       this.extractJwtFromCookie(request.cookies) ??
       this.extractJwt(request.headers);
 
     try {
-      const result = await this.keycloak.grantManager.validateAccessToken(jwt);
-      if (typeof result === 'string') {
-        // Attach user info object
-        request.user = await this.keycloak.grantManager.userInfo(jwt);
-        // Attach raw access token JWT extracted from bearer/cookie
-        request.accessTokenJWT = jwt;
-        return true;
+      const jwksClient = jwksRsa({ jwksUri: `${process.env.KEYCLOAK_AUTH_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/certs` });
+      const decoded = jwt.decode(token, { complete: true });
+      const kid = decoded['header']?.kid;
+      const jwks = await jwksClient.getSigningKeyAsync(kid);
+      const signingKey = jwks.getPublicKey();
+      const verified = jwt.verify(token, signingKey);
+      if (verified['azp'] !== process.env.KEYCLOAK_CLIENT) {
+        throw new UnauthorizedException('Token has invalid authorized party');
       }
+      request.user = {
+        bceidGuid: verified['bceid_user_guid'],
+        email: verified['email'],
+        firstName: verified['given_name'],
+        lastName: verified['family_name'],
+      }
+      request.accessTokenJWT = token;
+      return true;
     } catch (ex) {
       console.error(`validateAccessToken Error: `, ex);
     }
+
     throw new UnauthorizedException('Invalid token');
   }
 
