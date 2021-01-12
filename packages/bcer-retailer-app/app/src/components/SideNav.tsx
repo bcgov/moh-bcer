@@ -175,7 +175,7 @@ export default function SideNav() {
         showWarningIcon = false;
     }
     return (
-      <ListItemLink href={href} >
+      <ListItemLink href={appGlobal?.myBusinessComplete ? href : '#'} disabled={!appGlobal?.myBusinessComplete}>
         <ListItemIcon>
           {completedStep ?
             <CheckCircleOutlineOutlined
