@@ -9,7 +9,7 @@ export class LoggerMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: RequestWithUser, res: Response, next: Function) {
-    this.logger.log(`${new Date}: ${req.ctx?.bceidGuid || 'unknown'} sent a ${req.method} request to ${req.url}`);
+    this.logger.log(`${new Date}: ${req.ctx?.bceidGuid || 'unknown'} sent a ${req.method} request to ${req.originalUrl}`);
     next();
   }
 }
