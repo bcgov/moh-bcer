@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core'
 
 import clockIcon from '@/assets/images/clock.png';
-import phoneIcon from '@/assets/images/phone.png';
+import sendIcon from '@assets/images/send.png';
 
 const useStyles = makeStyles({
   parent: {
@@ -62,12 +62,8 @@ export default function GetHelp() {
           8:00 am and 4:30 pm Mondays through Fridays
         </div>
         <div className={classes.contactMethodContainer}>
-          <img src={phoneIcon} className={classes.icon} />
-          Toll-Free: <a href="tel:1-844-915-5005" className={classes.phoneNumber}>1-844-915-5005</a>
-        </div>
-        <div className={classes.contactMethodContainer}>
-          <img src={phoneIcon} className={classes.icon} />
-          Local-Victoria: <a href="tel:236-478-0351" className={classes.phoneNumber}>236-478-0351</a>
+          <img src={sendIcon} className={classes.icon} />
+          Support Email: <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
         </div>
       </Typography>
     </div>

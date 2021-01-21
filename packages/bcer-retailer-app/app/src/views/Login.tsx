@@ -107,11 +107,11 @@ const Login = () => {
             <br />
             <br />
             <Typography variant='body1'>
-              For technical support, please send an email to <a href="mailto:HLTH.Helpdesk@gov.bc.ca?subject=BCER">HLTH.Helpdesk@gov.bc.ca</a>
+              For technical support, please send an email to <a href="mailto:vaping.info@gov.bc.ca?subject=BCER">vaping.info@gov.bc.ca</a>
             </Typography>
             <br />
             <Typography variant='body1'>
-            For questions related to submitting your business details, NOI and product or manufacturing reports, please send an email to <a href="mailto:vaping.info@gov.bc.ca">HLTH.Helpdesk@gov.bc.ca</a>
+            For questions related to submitting your business details, NOI and product or manufacturing reports, please send an email to <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
             </Typography>
             <br />
             <br />

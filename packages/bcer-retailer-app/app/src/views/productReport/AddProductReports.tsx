@@ -232,10 +232,10 @@ export default function AddProductReports() {
         <div className={classes.helpTextWrapper}>
             <ChatBubbleOutlineIcon className={classes.helperIcon} />
           <Typography variant='body1' className={classes.description}>
-          You are required to submit a Product Report for all locations that you have added. 
-          You must only submit 1 product report per location. If your location sells products from 
-          multiple manufacturers, please combine the reports into one reporting using the CSV 
-          template provided. You may choose to submit the same product report for multiple locations, if applicable.
+          You are required to submit a Product Report for all locations that you have added.
+          If your location sells products from multiple manufacturers, please combine the
+          reports into one reporting using the CSV template provided. You may choose to
+          submit the same product report for multiple locations, if applicable.
           </Typography>
         </div>
         <Formik enableReinitialize initialValues={{'mode select': entry}} onSubmit={(value) => handleModeSwitch(value)}>
