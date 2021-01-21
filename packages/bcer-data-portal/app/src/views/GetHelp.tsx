@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core'
 
 import clockIcon from '@/assets/images/clock.png';
-import sendIcon from '@assets/images/send.png';
+import sendIcon from '@/assets/images/send.png';
 
 const useStyles = makeStyles({
   parent: {
