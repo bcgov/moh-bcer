@@ -141,7 +141,7 @@ export default function Locations() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const { location: { pathname } } = history;
-  const [{ data: locations, loading, error }, get] = useAxiosGet(`/data/location?includes=noi` , { manual: true });
+  const [{ data: locations, loading, error }, get] = useAxiosGet(`/data/location?includes=noi`, { manual: true });
   const [{ data: zipFile, loading: zipLoading, error: zipError }, post] = useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
@@ -152,23 +152,23 @@ export default function Locations() {
   };
 
   const getReportsFile = (requestFilter: string = 'selected') => {
-    let postConfig: {url: string; data: Array<string>} = {url: '', data: []};
+    let postConfig: { url: string; data: Array<string> } = { url: '', data: [] };
     switch (requestFilter) {
 
-      case 'all' : 
+      case 'all':
         postConfig.url = '/data/location/reportsFile?getAll=true'
         break
 
-      case 'selected' :
+      case 'selected':
         postConfig.url = '/data/location/reportsFile'
         postConfig.data = selectedRows.map(row => row.id)
         break
 
-      case 'NOI' :
+      case 'NOI':
         postConfig.url = '/data/location/reportsFile?getAll=true&getNOI=true'
         break
 
-      default :
+      default:
         return
     }
 
@@ -177,22 +177,41 @@ export default function Locations() {
   }
 
   useEffect(() => {
-    if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: error.response.data.message})
+    if (locations && !error) {
+    } else {
+      if (error) {
+        setAppGlobal({ ...appGlobal, networkErrorMessage: error?.response?.data?.message })
+      }
     }
   }, [error]);
 
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
-        <div className={classes.actionsWrapper}>
-        {!error && <Typography className={classes.title} variant='h5'>Submitted Locations</Typography>}
+        {!error && <div className={classes.actionsWrapper}>
+          <Typography className={classes.title} variant='h5'>Submitted Locations</Typography>
           <div className={classes.buttonWrapper}>
             <StyledButton variant='outlined' onClick={logout}>
               Log Out
-            </StyledButton> 
+            </StyledButton>
           </div>
         </div>
+        }
+        {error &&
+          <>
+            <div className={classes.helpTextWrapper}>
+              <GetAppIcon className={classes.helperIcon} />
+              <Typography variant='body1'>
+                You do not have the correct role to view this page.
+              </Typography>
+            </div>
+            <div className={classes.buttonWrapper}>
+              <StyledButton variant='outlined' onClick={logout}>
+                Log Out
+              </StyledButton>
+            </div>
+          </>
+        }
         {!error &&
           <>
             <div className={classes.helpTextWrapper}>
@@ -211,7 +230,7 @@ export default function Locations() {
               <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
               <div className={classes.actionsWrapper}>
                 <Typography className={classes.tableRowCount} variant='body2'>{totalRowCount} retail locations have submitted a Notice of Intent</Typography>
-                <StyledButton 
+                <StyledButton
                   variant='outlined'
                   onClick={() => getReportsFile('NOI')}
                   disabled={zipLoading}
@@ -219,16 +238,16 @@ export default function Locations() {
                   <SaveAltIcon className={classes.buttonIcon} />
                   Download All NOIs
                 </StyledButton >
-                <StyledButton 
-                variant='outlined' 
-                onClick={() => getReportsFile()}
-                disabled={!selectedRows.length || zipLoading}
+                <StyledButton
+                  variant='outlined'
+                  onClick={() => getReportsFile()}
+                  disabled={!selectedRows.length || zipLoading}
                 >
                   <SaveAltIcon className={classes.buttonIcon} />
                   Download Selected
                 </StyledButton>
-                <StyledButton 
-                  variant='contained' 
+                <StyledButton
+                  variant='contained'
                   onClick={() => getReportsFile('all')}
                   disabled={zipLoading}
                 >
@@ -272,7 +291,7 @@ export default function Locations() {
                       field: 'health_authority'
                     }
                   ]}
-                  options={{ 
+                  options={{
                     selection: true,
                     pageSize: 20,
                     pageSizeOptions: [20, 30, 50],
@@ -281,7 +300,7 @@ export default function Locations() {
                   onSelectionChange={(rows: any) => {
                     const displayedIds = locations.rows.map((result: BusinessLocation) => result.id)
                     const selectedRowsNotDisplayed = selectedRows.filter(selectedRow => {
-                        return !displayedIds.includes(selectedRow.id)
+                      return !displayedIds.includes(selectedRow.id)
                     })
                     setSelectedRows([...selectedRowsNotDisplayed, ...rows])
                   }}
@@ -290,12 +309,12 @@ export default function Locations() {
                       let URL = `/data/location?page=${query.page + 1}&numPerPage=${query.pageSize}&includes=business,noi`
                       query?.orderBy?.title ? URL += `&orderBy=${query.orderBy.title}` : null
                       query?.orderDirection ? URL += `&order=${query.orderDirection.toUpperCase()}` : null
-                      get({url: URL})
+                      get({ url: URL })
                         .then(res => {
                           setTotalRowCount(res?.data?.totalRows)
                           resolve({
                             data: res?.data ? res.data.rows?.map((row: BusinessLocation) => selectedRows.find(selected => selected.id === row.id) ? { ...row, tableData: { checked: true } } : row) : [],
-                            page: res?.data ? res.data.pageNum -1 : 0,
+                            page: res?.data ? res.data.pageNum - 1 : 0,
                             totalCount: res?.data ? res.data.totalRows : 0,
                           })
                         })
@@ -310,32 +329,32 @@ export default function Locations() {
       <Snackbar
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <SnackbarContent
           className={classes.downloadSnackbar}
           message={
             <div>
-              <FileCopyIcon className={zipLoading ? classes.fileLoading : classes.fileComplete}/>
+              <FileCopyIcon className={zipLoading ? classes.fileLoading : classes.fileComplete} />
               <span className={classes.messageTextContent}>
                 {`locations-${moment().format('MMM-DD-hh-mm')}.zip`}
               </span>
             </div>
           }
           action={[
-            zipLoading 
-              ? 
-                <CircularProgress/> 
-              : 
-                <IconButton 
-                  href={window.URL.createObjectURL(new Blob([zipFile]))} 
-                  download={`locations-${moment().format('MMM-DD-hh-mm')}.zip`} 
-                  onClick={() => {
-                    setSnackbarOpen(false)
-                  }}
-                >
-                  <SaveAltIcon className={classes.downloadButtonIcon}/>
-                </IconButton>,
+            zipLoading
+              ?
+              <CircularProgress />
+              :
+              <IconButton
+                href={window.URL.createObjectURL(new Blob([zipFile]))}
+                download={`locations-${moment().format('MMM-DD-hh-mm')}.zip`}
+                onClick={() => {
+                  setSnackbarOpen(false)
+                }}
+              >
+                <SaveAltIcon className={classes.downloadButtonIcon} />
+              </IconButton>,
           ]}
         />
       </Snackbar>

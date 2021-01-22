@@ -101,8 +101,8 @@ const Login = () => {
             of Health of their intent to sell restricted E-substances 6 weeks prior to their first sale. Product Reports
             (and Manufacturing Reports as applicable) must also be submitted at least 6 weeks before the product can be sold.
             The Notice of Intent to Sell E-Substances is required for each location of your business and only for non-therapeutic nicotine E-substances.
-            If you completed your Notice of Intent and submitted your product and manufacturing reports prior to October 5th, 2020, there is no action required 
-            until you renew your Notice of Intent before January 15, 2021. However, if you are updating your product reports before 
+            If you completed your Notice of Intent and submitted your product and manufacturing reports prior to October 5th, 2020, there is no action required
+            until you renew your Notice of Intent before January 15, 2021. However, if you are updating your product reports before
             this time, you will have to use the B.C. E-Substances Reporting Application.
             <br />
             <br />
@@ -111,7 +111,7 @@ const Login = () => {
             </Typography>
             <br />
             <Typography variant='body1'>
-            For questions related to submitting your business details, NOI and product or manufacturing reports, please send an email to <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
+              For questions related to submitting your business details, NOI and product or manufacturing reports, please send an email to <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
             </Typography>
             <br />
             <br />
@@ -124,7 +124,7 @@ const Login = () => {
                 <Typography variant='body1'>
                   This application utilizes BCeID for authentication.<br />
                 </Typography>
-                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid', redirectUri: location.origin + '/#/keycloak' })}>
+                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid', redirectUri: location.origin + '/retailer/#/keycloak' })}>
                   <div className={classes.authButtonIcon}>
                     <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
                   </div>
