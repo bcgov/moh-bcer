@@ -188,15 +188,6 @@ export default function Locations() {
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
-        {!error && <div className={classes.actionsWrapper}>
-          <Typography className={classes.title} variant='h5'>Submitted Locations</Typography>
-          <div className={classes.buttonWrapper}>
-            <StyledButton variant='outlined' onClick={logout}>
-              Log Out
-            </StyledButton>
-          </div>
-        </div>
-        }
         {error &&
           <>
             <div className={classes.helpTextWrapper}>
@@ -214,6 +205,14 @@ export default function Locations() {
         }
         {!error &&
           <>
+            <div className={classes.actionsWrapper}>
+              <Typography className={classes.title} variant='h5'>Submitted Locations</Typography>
+              <div className={classes.buttonWrapper}>
+                <StyledButton variant='outlined' onClick={logout}>
+                  Log Out
+                </StyledButton>
+              </div>
+            </div>
             <div className={classes.helpTextWrapper}>
               <GetAppIcon className={classes.helperIcon} />
               <Typography variant='body1'>
