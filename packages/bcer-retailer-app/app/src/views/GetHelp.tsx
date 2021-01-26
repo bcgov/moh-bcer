@@ -56,11 +56,7 @@ export default function GetHelp() {
       </div>
       <Typography variant="h5">Technical support</Typography>
       <Typography variant="body1">
-        For technical support in submitting your product and manufacturing reports, please call between<br /><br />
-        <div className={classes.contactMethodContainer}>
-          <img src={clockIcon} className={classes.icon}/>
-          8:00 am and 4:30 pm Mondays through Fridays
-        </div>
+        For technical support in submitting your information please contact our support team:<br /><br />
         <div className={classes.contactMethodContainer}>
           <img src={sendIcon} className={classes.icon} />
           Support Email: <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
