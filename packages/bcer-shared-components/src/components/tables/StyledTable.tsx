@@ -1,8 +1,8 @@
 
-import React, { ReactElement, CSSProperties } from 'react';
+import React, { ReactElement, CSSProperties, forwardRef } from 'react';
 import { makeStyles, Paper, IconButton } from '@material-ui/core';
 import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
-import MaterialTable from 'material-table';
+import MaterialTable, { MTableToolbar } from 'material-table';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
 import { StyledButton } from '@/index';
@@ -84,10 +84,15 @@ const rowStyle = (rowData: any): CSSProperties => {
 /**
  * Override for MTable Toolbar component
  */
-const CustomToolbar = () => (
+const CustomToolbar = (props: any) => {
+  return (
+    <MTableToolbar { ...props } />
+  );
+}
+
+const Empty = () => (
   null
 )
-
 
 const CustomActions = (props: any) => {
   const classes = useStyles()
@@ -130,11 +135,14 @@ export function StyledTable ({
   deleteHandler,
   options,
   localization,
+  editable,
   ...props
 }: StyledTableProps):ReactElement {
 
+  const toolbar = editable?.onBulkUpdate ? CustomToolbar : Empty;
+
   const customComponents = {
-    Toolbar: CustomToolbar,
+    Toolbar: toolbar,
     Container: CustomContainer,
     // Pagination: CustomPagination,
   }
@@ -168,9 +176,12 @@ export function StyledTable ({
         paginationType: 'stepped',
         pageSizeOptions: [5, 6, 7, 8, 9, 10, 20],
         actionsColumnIndex: -1,
+        showTitle: false,
+        search: false,
         ...options,
       }}
       actions={actions}
+      editable={editable}
       localization={{
         header: {
           actions: ' '

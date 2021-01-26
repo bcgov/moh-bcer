@@ -159,6 +159,10 @@ export default function MyBusinessNav () {
               details: profile.business,
               locations: submission?.data?.locations?.length ? submission.data.locations : profile?.business?.locations?.length ? profile.business.locations : [],
               submissionId: submission.id,
+            });
+            setAppGlobal({
+              ...appGlobal,
+              myBusinessComplete: true,
             })
           } else {
             setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})

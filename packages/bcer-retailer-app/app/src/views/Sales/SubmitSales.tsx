@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { StyledButton, StyledTable, StyledTextField } from 'vaping-regulation-shared-components';
-import { makeStyles, Paper, Typography, TextField } from '@material-ui/core';
+import React, { forwardRef, useEffect, useState, useContext } from 'react'
+import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
+import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
@@ -49,6 +49,7 @@ export default function SubmitSalesReport() {
   const [{ data: locationData, loading: productsLoading, error }, get] = useAxiosGet(`/location/${salesReport.locationId}?includes=sales,sales.product,products`, { manual: true });
   const [, patch] = useAxiosPatch(`/sales`, { manual: true });
   const [displayEmpty, setDisplayEmpty] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (!salesReport.year || !salesReport.locationId
@@ -84,7 +85,9 @@ export default function SubmitSalesReport() {
           productName: product.productName,
           type: product.type,
           flavour: product.flavour,
-          volume: product.concentration,
+          concentration: product.concentration,
+          cartridgeCapacity: product.cartridgeCapacity,
+          containerCapacity: product.containerCapacity,
           saleId: salesDictionary[product.id]?.id || undefined,
           containers: salesDictionary[product.id]?.containers || undefined,
           cartridges: salesDictionary[product.id]?.cartridges || undefined,
@@ -98,13 +101,6 @@ export default function SubmitSalesReport() {
   }, [locationData]);
 
   const submitSales = async () => {
-    if (products.some(product => !product.containers || !product.cartridges)) {
-      setAppGlobal({
-        ...appGlobal,
-        networkErrorMessage: 'Please ensure you submit container and cartridge sales for all of your products.',
-      });
-      return;
-    }
     const sales = products.map(product => {
       if (product.containers && product.cartridges) {
         return {
@@ -148,9 +144,11 @@ export default function SubmitSalesReport() {
                 { title: 'Product Name', field: 'productName', editable: 'never' },
                 { title: 'Type', field: 'type', editable: 'never' },
                 { title: 'Flavour', field: 'flavour', editable: 'never' },
-                { title: 'Volume', field: 'volume', editable: 'never' },
                 { title: 'Number of Containers Sold', field: 'containers' },
                 { title: 'Number of Cartridges Sold', field: 'cartridges' },
+                { title: 'Concentration', field: 'concentration', editable: 'never' },
+                { title: 'Cartridge Capacity', field: 'cartridgeCapacity', editable: 'never' },
+                { title: 'Container Capacity', field: 'containerCapacity', editable: 'never' },
               ]}
               data={products}
               options={{ 
@@ -158,19 +156,40 @@ export default function SubmitSalesReport() {
                 pageSizeOptions: [5, 10, 20],
                 sorting: true
               }}
+              localization={{
+                body: {
+                  bulkEditTooltip: 'The data will not be saved until you submit your changes',
+                  bulkEditApprove: 'The data will not be saved until you submit your changes',
+                }
+              }}
+              icons={{
+                Check: forwardRef((props, ref) => (
+                  <StyledButton variant='contained' onClick={(event: any) => setEditing(false)} >
+                    Done Editing
+                  </StyledButton>
+                )),
+                Clear: forwardRef((props, ref) => (
+                  <StyledButton variant='outlined' onClick={(event: any) => setEditing(false)} >
+                    Cancel
+                  </StyledButton>
+                )),
+                Edit: forwardRef((props, ref) => (
+                  <StyledButton variant='outlined' onClick={(event: any) => setEditing(true)} >
+                    Edit All
+                  </StyledButton>
+                )),
+              }}
               editable={{
-                onRowUpdate: (newData: any) =>
+                onBulkUpdate: (changes: { [key: number]: any }) =>
                   new Promise((resolve, reject) => {
-                    if (!newData.cartridges && !newData.containers) {
-                      resolve();
-                    }
-                    const prods = [...products];
-                    const productIndex = prods.findIndex(product => product.id === newData.id);
-                    if (!newData.cartridges) newData.cartridges = 0;
-                    if (!newData.containers) newData.containers = 0;
-                    prods.splice(productIndex, 1, newData);
-                    setProducts(prods);
-                    resolve();
+                    const newProducts = [...products];
+                    Object.keys(changes).forEach(index => {
+                      const idx = parseInt(index, 10);
+                      newProducts[idx] = changes[idx].newData;
+                    });
+                    setProducts(newProducts);
+                    setEditing(false);
+                    resolve(true);
                   }),
               }}
             />
@@ -178,6 +197,7 @@ export default function SubmitSalesReport() {
               <StyledButton
                 variant='contained'
                 onClick={submitSales}
+                disabled={editing}
               >
                 Submit
               </StyledButton>

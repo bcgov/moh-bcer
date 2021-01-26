@@ -106,30 +106,30 @@ const Login = () => {
             initialized
               ?
               <>
-              <div className={classes.authContainer}>
-                <Typography variant='body1'>
-                  This application utilizes IDIR or HA ID for authentication.<br />
-                </Typography>
-                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'idir', redirectUri: location.origin + '/portal/#/keycloak' })}>
+                <div className={classes.authContainer}>
+                  <Typography variant='body1'>
+                    This application utilizes IDIR or HA ID for authentication.<br />
+                  </Typography>
+                  <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'idir', redirectUri: location.origin + '/portal/#/keycloak' })}>
+                    <div className={classes.authButtonIcon}>
+                      <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
+                    </div>
+                    <div className={classes.buttonText}>Continue with IDIR</div>
+                    <div className={classes.authArrow}>
+                      <img className={classes.arrowRight} src={arrowRight} alt="Login" />
+                    </div>
+                  </div>
+                </div>
+                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'phsa', redirectUri: location.origin + '/portal/#/keycloak' })}>
                   <div className={classes.authButtonIcon}>
                     <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
                   </div>
-                  <div className={classes.buttonText}>Continue with IDIR</div>
+                  <div className={classes.buttonText}>Continue with HA ID</div>
                   <div className={classes.authArrow}>
                     <img className={classes.arrowRight} src={arrowRight} alt="Login" />
                   </div>
                 </div>
-              </div>
-              <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'phsa', redirectUri: location.origin + '/portal/#/keycloak' })}>
-                <div className={classes.authButtonIcon}>
-                  <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
-                </div>
-                <div className={classes.buttonText}>Continue with HA ID</div>
-                <div className={classes.authArrow}>
-                  <img className={classes.arrowRight} src={arrowRight} alt="Login" />
-                </div>
-              </div>
-            </>
+              </>
               :
               <span>Connecting to KeyCloak</span>
           }

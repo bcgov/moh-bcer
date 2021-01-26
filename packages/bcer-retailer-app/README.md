@@ -72,3 +72,8 @@ There are a couple of steps involved with deploying to each environment.
 There are a couple of possibilities to check for debugging if there are issues.
 - Check that the extracted directory from the `.tar.gz` file points ot the right API and Authentication Provider (Keycloak) values by doing a search and cross-referencing the `.env.development` or `.env.test` or `.env.prod` values.
 - You might also try running `serve -s -l 3000` on the produced directory to see that it runs. You will likely run into issues from the API or Keycloak if you're pointed to anything but local, but you can ensure it runs.
+
+Checklist
+- Check that API points to the right place: `bcer-<env>.api`
+- Check that keycloak points to the right place: `common-logon-<env>`
+- Check that redirect uri is right: `/portal/#/keycloak`

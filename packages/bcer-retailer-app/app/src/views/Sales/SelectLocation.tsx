@@ -162,7 +162,7 @@ export default function SelectSalesLocation() {
                           variant='contained'
                           value={location.id}
                         >
-                          {location.addressLine1}
+                          {location.addressLine1}{location.doingBusinessAs ? ` (${location.doingBusinessAs})` : ''}
                         </StyledButton>
                       </Box>
                     </Grid>
@@ -183,11 +183,11 @@ export default function SelectSalesLocation() {
                       <Box paddingY={1} textAlign='center'>
                         <StyledButton
                           key={location.id}
+                          onClick={selectLocation}
                           variant='contained'
-                          disabled
                           value={location.id}
                         >
-                          {location.addressLine1}
+                          {location.addressLine1}{location.doingBusinessAs ? ` (${location.doingBusinessAs})` : ''}
                         </StyledButton>
                       </Box>
                     </Grid>
