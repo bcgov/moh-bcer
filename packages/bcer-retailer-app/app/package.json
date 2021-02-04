@@ -33,6 +33,9 @@
   "scripts": {
     "start": "cross-env webpack-dev-server --env=development --host=0.0.0.0 --port=3000",
     "build": "webpack --env=production",
+    "build:dev": "cp ../.config/.env.dev .env && webpack --env=production",
+    "build:uat": "cp ../.config/.env.staging .env && webpack --env=production",
+    "build:prod": "cp ../.config/.env.production .env && webpack --env=production",
     "serve": "node ./server.js",
     "lint": "tslint -p ./tsconfig.json",
     "lint:fix": "tslint --fix -p ./tsconfig.json",
