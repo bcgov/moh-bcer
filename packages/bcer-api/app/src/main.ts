@@ -41,8 +41,8 @@ import 'winston-daily-rotate-file';
     })
   });
   app.enableCors();
-  documentation(app);
   if (process.env.NODE_ENV !== 'production') {
+    documentation(app);
     global['nestAppServer'] = app.getHttpServer();
   }
   Logger.log(`Running Vape API in ${process.env.NODE_ENV} mode`)
