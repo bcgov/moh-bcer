@@ -297,24 +297,25 @@ export default function Locations() {
                     sorting: true
                   }}
                   onSelectionChange={(rows: any) => {
-                    const displayedIds = locations.rows.map((result: BusinessLocation) => result.id)
+                    const displayedIds = rows.map((result: BusinessLocation) => result.id)
                     const selectedRowsNotDisplayed = selectedRows.filter(selectedRow => {
                       return !displayedIds.includes(selectedRow.id)
                     })
                     setSelectedRows([...selectedRowsNotDisplayed, ...rows])
                   }}
-                  data={(query: any) =>
+                  data={
+                    (query: any) =>
                     new Promise((resolve, reject) => {
-                      let URL = `/data/location?page=${query.page + 1}&numPerPage=${query.pageSize}&includes=business,noi`
+                      let URL = `${process.env.BASE_URL}/data/location?page=${query.page + 1}&numPerPage=${query.pageSize}&includes=business,noi`
                       query?.orderBy?.title ? URL += `&orderBy=${query.orderBy.title}` : null
                       query?.orderDirection ? URL += `&order=${query.orderDirection.toUpperCase()}` : null
-                      get({ url: URL })
+                      fetch(URL).then(res => res.json())
                         .then(res => {
-                          setTotalRowCount(res?.data?.totalRows)
+                          setTotalRowCount(res?.totalRows)
                           resolve({
-                            data: res?.data ? res.data.rows?.map((row: BusinessLocation) => selectedRows.find(selected => selected.id === row.id) ? { ...row, tableData: { checked: true } } : row) : [],
-                            page: res?.data ? res.data.pageNum - 1 : 0,
-                            totalCount: res?.data ? res.data.totalRows : 0,
+                            data: res?.rows ? res.rows?.map((row: BusinessLocation) => selectedRows.find(selected => selected.id === row.id) ? { ...row, tableData: { checked: true } } : row) : [],
+                            page: res?.pageNum ? res.pageNum - 1 : 0,
+                            totalCount: res?.totalRows ? res.totalRows : 0,
                           })
                         })
                     })
