@@ -27,7 +27,7 @@
     "react-test-renderer": "16.13.1",
     "store": "^2.0.12",
     "typescript": "~3.7.2",
-    "vaping-regulation-shared-components": "git+ssh://git@bitbucket.org/freshworks/vaping-regulation-shared-components.git",
+    "vaping-regulation-shared-components": "../../bcer-shared-components",
     "yup": "^0.29.3"
   },
   "scripts": {

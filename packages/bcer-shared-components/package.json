@@ -16,9 +16,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "vaping-regulation-shared-typedefs": "https://DavidSabadash_FW:jkRT4fYe35u57ndV4uLc@bitbucket.org/freshworks/vaping-regulation-shared-typedefs.git"
-  },
   "devDependencies": {
     "@babel/core": "^7.11.1",
     "@material-ui/core": "4.11.0",
