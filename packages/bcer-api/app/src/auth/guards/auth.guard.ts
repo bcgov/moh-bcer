@@ -51,6 +51,7 @@ export class AuthGuard implements CanActivate {
       }
       request.user = {
         bceidGuid: verified['bceid_user_guid'],
+        bceidUser: verified['preferred_username'],
         email: verified['email'],
         firstName: verified['given_name'],
         lastName: verified['family_name'],
