@@ -34,6 +34,26 @@ export class SalesReportService {
     });
     return sales;
   }
+
+  async getLocationsWithSalesReports(locationIds: string[]): Promise<Record<string, SalesReportEntity[]>> {
+    if (locationIds.length === 0) return {};
+    const sales = await this.salesReportRepository.find({
+      where: {
+        locationId: In(locationIds),
+      }
+    });
+
+    const locationWithSales = sales.reduce((dict, sale) => {
+      if (!!dict[sale.locationId]) {
+        dict[sale.locationId].push(sale);
+      } else {
+        dict[sale.locationId] = [sale];
+      }
+      return dict;
+    }, {});
+
+    return locationWithSales;
+  }
   
   async getSalesReports() {
     const sales = await this.salesReportRepository.find();

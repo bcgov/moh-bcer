@@ -21,8 +21,12 @@ export class BusinessService {
     return await this.businessRepository.save(business);
   }
 
-  async getBusinesses() {
-    const businesses = await this.businessRepository.find({ relations: ['users', 'locations', 'submissions'] });
+  async getBusinesses(payload?: { relations?: string[] }) {
+    let relations = ['users', 'locations', 'submissions'];
+    if (payload?.relations?.length) {
+      relations = payload.relations;
+    }
+    const businesses = await this.businessRepository.find({ relations });
     return businesses;
   }
 

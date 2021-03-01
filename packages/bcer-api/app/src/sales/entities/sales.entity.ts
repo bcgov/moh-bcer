@@ -21,9 +21,15 @@ export class SalesReportEntity {
   @JoinColumn()
   product: ProductEntity;
 
+  @Column('varchar')
+  productId?: string;
+
   @ManyToOne(() => LocationEntity, (location: LocationEntity) => location.sales)
   @JoinColumn()
   location: ProductEntity;
+
+  @Column('varchar')
+  locationId?: string;
 
   @Column('varchar')
   containers: string;
