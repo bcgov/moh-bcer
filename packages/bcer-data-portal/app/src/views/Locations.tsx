@@ -163,7 +163,7 @@ export default function Locations() {
     { value: 'northern', label: 'Northern' },
   ];
 
-  const [tableColumns, setTableColumns] = useState<any[]>([
+  const tableColumns = [
     {
       title: 'Business Name',
       field: 'business.businessName',
@@ -196,7 +196,7 @@ export default function Locations() {
       title: 'Health Authority',
       field: 'health_authority',
     }
-  ]);
+  ];
 
   const logout = () => {
     store.clearAll();
@@ -397,7 +397,6 @@ export default function Locations() {
                       orderBy: orderColumn,
                       orderDirection,
                     });
-                    // console.log(tableRef.current);
                   }}
                   totalCount={totalRowCount}
                   page={searchTerms.page}
