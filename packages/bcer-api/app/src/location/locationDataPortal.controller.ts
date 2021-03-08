@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiParam,
+  ApiQuery,
   ApiTags,
   ApiOperation,
   ApiResponse,
@@ -45,6 +46,16 @@ export class LocationDataPortalController {
   ){}
   @ApiOperation({ summary: 'Get all locations as MoH' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationSearchRO })
+  @ApiQuery({
+    name: 'search',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'authority',
+    type: String,
+    required: false,
+  })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get()

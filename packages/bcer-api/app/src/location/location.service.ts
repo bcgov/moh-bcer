@@ -62,6 +62,7 @@ export class LocationService {
     } else if (!relations.includes('business') && query.orderBy === 'Business Legal Name') {
       qb.leftJoinAndSelect('location.business', 'business');
     }
+
     // TypeORM wonkiness: https://github.com/typeorm/typeorm/issues/3501
     if (query.orderBy === 'Submitted Date') {
       qb.orderBy(`"noi"."created_at"`, query.order);
@@ -70,7 +71,21 @@ export class LocationService {
     } else if (query.orderBy === 'Health Authority') {
       qb.orderBy(`"location"."health_authority"`, query.order);
     }
-    qb.where('noi IS NOT NULL')
+    qb.where('location.noi IS NOT NULL');
+
+    if (query.search) {
+      qb.andWhere(`
+      location.addressLine1 || ' ' || 
+      location.doingBusinessAs || ' ' || 
+      business.legalName || ' ' || 
+      business.businessName
+      ILIKE :search`,
+      { search: `%${query.search}%` });
+    }
+    if (query.authority) {
+      qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
+    }
+
     // TYPEORM wonkiness: Skip and Take broken here, but offset and limit may not be ideal?
     qb.offset((query.page-1) * query.numPerPage);
     qb.limit(query.numPerPage);
@@ -148,14 +163,14 @@ export class LocationService {
       const noiRow = `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`;
       let productRows = '';
     
-      zip.folder(`Locations/${location.addressLine1}`)
+      zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}`)
       .file('Noi.csv', noiHeaders + noiRow);
       
       if (location.products?.length) {
         location.products.map(product => {
           productRows += `"${product.type}","${product.brandName}","${product.productName}","${product.manufacturerName}","${product.manufacturerContact}","${product.manufacturerAddress}","${product.manufacturerPhone}","${product.manufacturerEmail}","${product.concentration}","${product.containerCapacity}","${product.cartridgeCapacity}","${product.ingredients}","${product.flavour}"\n` 
         });
-        zip.folder(`Locations/${location.addressLine1}/Product Report`)
+        zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Product Report`)
           .file(`ProductReport.csv`, productHeaders + productRows );
       }
 
@@ -165,7 +180,7 @@ export class LocationService {
           report.ingredients.map((ingredient) => {
             reportRows += `"${ingredient.name}","${ingredient.scientificName}","${ingredient.manufacturerName}","${ingredient.manufacturerAddress}","${ingredient.manufacturerPhone}","${ingredient.manufacturerEmail}"\n`;
           });
-          zip.folder(`Locations/${location.addressLine1}/Manufacturing Reports`)
+          zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Manufacturing Reports`)
             .file(`${report.productName}.csv`, manufacturesHeaders + reportRows);
         });
       }
@@ -188,7 +203,7 @@ export class LocationService {
           });
           const startDate = moment(`10-01-${year}`, 'MM-DD-YYYY').format('LL');
           const endDate = moment(`09-30-${year}`, 'MM-DD-YYYY').add(1, 'year').format('LL');
-          zip.folder(`Locations/${location.addressLine1}/Sales Reports`)
+          zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Sales Reports`)
             .file(`${startDate} - ${endDate}.csv`, salesHeaders + salesRows);
         });
       }
