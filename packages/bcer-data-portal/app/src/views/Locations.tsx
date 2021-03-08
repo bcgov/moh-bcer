@@ -311,10 +311,10 @@ export default function Locations() {
               >
                 <Form>
                   <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <StyledTextField name='search' label='Search' />
+                    <Grid item xs={7}>
+                      <StyledTextField name='search' label='Search (Address, Business Name, Legal Name, Doing Business As)' />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                       <StyledSelectField name='authority' options={healthAuthorityOptions} label='Health Authority' />
                     </Grid>
                     <Grid item xs={3}>
