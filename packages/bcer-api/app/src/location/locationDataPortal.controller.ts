@@ -17,9 +17,11 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
+import { LocationEntity } from './entities/location.entity';
 import { BusinessService } from 'src/business/business.service';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { LocationService } from 'src/location/location.service';
@@ -61,24 +63,24 @@ export class LocationDataPortalController {
   @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
   @HttpCode(HttpStatus.OK)
   @Post('reportsFile')
-  @ApiParam({
+  @ApiQuery({
     name: 'getAll',
     description: 'OPTIONAL Boolean to denote if the response should contain all locations. If present, will supercede any values present in the request body.',
     required: false
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'getNOI',
     description: 'OPTIONAL Boolean to denote if the response should contain only NOIs. Used in conjunction with the getAll flag - will only ever be set to true if getAll is also true.',
     required: false
   })
   async getLocationZip(
     @Res() res: Response,
-    @Query('getAll') getAll?: boolean,
-    @Query('getNOI') getNOI?: boolean,
+    @Query('getAll') getAll?: string,
+    @Query('getNOI') getNOI?: string,
     @Body() payload?: Array<string>
   ) {
-    let locations;
-    if(getAll) {
+    let locations: LocationEntity[];
+    if(getAll === 'true') {
       locations = await this.service.getLocationWithIds();
     } else {
       locations = await this.service.getLocationWithIds(payload);
@@ -87,52 +89,52 @@ export class LocationDataPortalController {
     let locationZip;
 
     // Optimizations!
-    const { productIds, manufactureIds, businessIds, salesIds } = locations.reduce((ids, location) => {
+    const businessIds = locations.reduce((ids, location) => {
       // At this point, products is just ids
-      ids.productIds.push(...location.products);
-      ids.manufactureIds.push(...location.manufactures);
-      ids.businessIds.push(location.businessId);
-      ids.salesIds.push(...location.sales);
+      ids.add(location.businessId);
       return ids;
-    }, { productIds: [], manufactureIds: [], businessIds: [], salesIds: [] });
+    }, new Set([]));
     
-    const businesses = await this.businessService.getBusinessesWithIds(Array.from(new Set(businessIds)));
+    const businesses = await this.businessService.getBusinessesWithIds(Array.from(businessIds));
     const businessesDictionary = businesses.reduce((bDict, business) => {
       bDict[business.id] = business;
       return bDict;
     }, {});
 
     locations.forEach((location) => {
-      const bId = location.business as any;
-      location.business = businessesDictionary[bId];
+      location.business = businessesDictionary[location.businessId];
     });
 
-    if (!getNOI) {
-      const products = await this.productsService.getProductsWithIds(Array.from(new Set(productIds)));
-      const productDictionary = products.reduce((pDict, product) => {
+    if (getNOI !== 'true') {
+      const locationIds = locations.map(l => l.id);
+      // Get locations with products dictionary
+      const locationsWithProducts = await this.productsService.getLocationsWithProducts(locationIds);
+      const allProducts = Object.values(locationsWithProducts).reduce((products, pArray) => {
+        products = [...products, ...pArray];
+        return products;
+      }, []).reduce((pDict, product) => {
         pDict[product.id] = product;
         return pDict;
       }, {});
 
-      const manufactures = await this.manufacturingService.getManufacturesWithIds(Array.from(new Set(manufactureIds)));
-      const manufacturesDictionary = manufactures.reduce((mDict, manufacture) => {
-        mDict[manufacture.id] = manufacture;
-        return mDict;
-      }, {});
+      // Get locations with manufactures dictionary
+      const locationsWithManufactures = await this.manufacturingService.getLocationsWithManufactures(locationIds);
 
-      const sales = await this.salesReportService.getSalesReportsWithIds(Array.from(new Set(salesIds)));
-      const salesDictionary = sales.reduce((sDict, sale) => {
-        sDict[sale.id] = sale;
-        return sDict;
-      }, {});
+      // Get sales dictionary
+      const locationsWithSales = await this.salesReportService.getLocationsWithSalesReports(locationIds);
 
       locations.forEach((location) => {
-        const pIds = location.products as any;
-        const mIds = location.manufactures as any;
-        const sIds = location.sales as any;
-        location.products = pIds.map((pId) => productDictionary[pId]);
-        location.manufactures = mIds.map((mId) => manufacturesDictionary[mId]);
-        location.sales = sIds.map((sId) => salesDictionary[sId]);
+        location.products = locationsWithProducts[location.id];
+        location.manufactures = locationsWithManufactures[location.id];
+
+        const sales = locationsWithSales[location.id];
+        if (sales?.length) {
+          sales.map(s => {
+            s.product = allProducts[s.productId];
+            return s;
+          });
+          location.sales = sales;
+        }
       });
       locationZip = await this.service.packageAsZip(locations);
     } else {

@@ -1,4 +1,4 @@
-import { In, Repository } from 'typeorm';
+import { getConnectionManager, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -45,6 +45,37 @@ export class ManufacturingService {
       }, relations: ['ingredients']
     });
     return manufactures;
+  }
+
+  async getLocationsWithManufactures(locationIds: string[]): Promise<Record<string, ManufacturingEntity[]>> {
+    if (locationIds.length === 0) { return {} };
+    const db = getConnectionManager().get();
+    const locationManufactures = await db.query(`SELECT * FROM location_manufactures_manufacturing WHERE "locationId" IN ('${locationIds.join("','")}')`);
+
+    // Get all manufactures associated with the passed in locations
+    const allManufactures = locationManufactures.reduce((all, lm) => {
+      all.push(lm.manufacturingId);
+      return all;
+    }, []);
+
+    // Get full manufactures
+    const manufactures = await this.getManufacturesWithIds(allManufactures);
+    const manufacturesDictionary = manufactures.reduce((mDict, m) => {
+      mDict[m.id] = m;
+      return mDict;
+    }, {});
+
+    // Get all manufactures per location
+    const locationManufacturesDictionary: Record<string, ManufacturingEntity[]> = locationManufactures.reduce((lmDict, lm) => {
+      if (!!lmDict[lm.locationId]) {
+        lmDict[lm.locationId].push(manufacturesDictionary[lm.manufacturingId]);
+      } else {
+        lmDict[lm.locationId] = [manufacturesDictionary[lm.manufacturingId]];
+      }
+      return lmDict;
+    }, {});
+
+    return locationManufacturesDictionary;
   }
 
   async getManufacturingLocations(businessId: string) {

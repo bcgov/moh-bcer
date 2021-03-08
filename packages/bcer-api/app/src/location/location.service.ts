@@ -105,15 +105,10 @@ export class LocationService {
     locationsQb.leftJoinAndSelect('location.business', 'business');
     locationsQb.leftJoinAndSelect('location.noi', 'noi');
     if (locationIds?.length > 0) locationsQb.andWhere('location.id IN (:...locationIds)', { locationIds });
-    locationsQb.andWhere('noi IS NOT NULL');
-    locationsQb.loadAllRelationIds();
+    locationsQb.andWhere('location."noiId" IS NOT NULL');
     const locations = await locationsQb.getMany();
 
-    const locationNoisQb = this.locationRepository.createQueryBuilder('location');
-    locationNoisQb.leftJoinAndSelect('location.noi', 'noi');
-    locationNoisQb.andWhere('location.id IN (:...locationIds)', { locationIds: locations.map(location => location.id)});
-    const locationWithNois = await locationNoisQb.getMany();
-    const noisDictionary = locationWithNois.reduce((dict, location) => {
+    const noisDictionary = locations.reduce((dict, location) => {
       dict[location.id] = location.noi;
       return dict;
     }, {});
@@ -150,32 +145,32 @@ export class LocationService {
     zip.folder('Locations');
     
     locations.map(location => {
-      const noiRow = `${location.business.businessName},${location.business.legalName},${location.addressLine1},${location.addressLine2},${location.postal},${location.city},${location.email},${location.phone},${location.underage},${location.ha},${location.doingBusinessAs},${location.manufacturing},${moment(location.noi.created_at).format('ll')}\n`;
+      const noiRow = `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`;
       let productRows = '';
     
       zip.folder(`Locations/${location.addressLine1}`)
       .file('Noi.csv', noiHeaders + noiRow);
       
-      if (location.products.length) {
+      if (location.products?.length) {
         location.products.map(product => {
-          productRows += `${product.type},${product.brandName},${product.productName},${product.manufacturerName},${product.manufacturerContact},${product.manufacturerAddress},${product.manufacturerPhone},${product.manufacturerEmail},${product.concentration},${product.containerCapacity},${product.cartridgeCapacity},${product.ingredients},${product.flavour}\n` 
+          productRows += `"${product.type}","${product.brandName}","${product.productName}","${product.manufacturerName}","${product.manufacturerContact}","${product.manufacturerAddress}","${product.manufacturerPhone}","${product.manufacturerEmail}","${product.concentration}","${product.containerCapacity}","${product.cartridgeCapacity}","${product.ingredients}","${product.flavour}"\n` 
         });
         zip.folder(`Locations/${location.addressLine1}/Product Report`)
           .file(`ProductReport.csv`, productHeaders + productRows );
       }
 
-      if (location.manufactures.length) {
+      if (location.manufactures?.length) {
         location.manufactures.map((report) => {
           let reportRows = '';
           report.ingredients.map((ingredient) => {
-            reportRows += `${ingredient.name},${ingredient.scientificName},${ingredient.manufacturerName},${ingredient.manufacturerAddress},${ingredient.manufacturerPhone},${ingredient.manufacturerEmail}\n`;
+            reportRows += `"${ingredient.name}","${ingredient.scientificName}","${ingredient.manufacturerName}","${ingredient.manufacturerAddress}","${ingredient.manufacturerPhone}","${ingredient.manufacturerEmail}"\n`;
           });
           zip.folder(`Locations/${location.addressLine1}/Manufacturing Reports`)
             .file(`${report.productName}.csv`, manufacturesHeaders + reportRows);
         });
       }
 
-      if (location.sales.length) {
+      if (location.sales?.length) {
         const yearsDict = location.sales.reduce((yearsDict, sale) => {
           if (yearsDict[sale.year]) {
             yearsDict[sale.year].push(sale);
@@ -189,7 +184,7 @@ export class LocationService {
           const yearSales = yearsDict[year];
           let salesRows = '';
           yearSales.forEach(sale => {
-            salesRows += `${location.business.businessName},${sale.product.brandName},${sale.product.productName},${sale.product.type},${sale.product.flavour},${sale.product.concentration},${sale.containers},${sale.cartridges},${location.ha}\n`;
+            salesRows += `"${location.business.businessName}","${sale.product.brandName}","${sale.product.productName}","${sale.product.type}","${sale.product.flavour}","${sale.product.concentration}","${sale.containers}","${sale.cartridges}","${location.ha}"\n`;
           });
           const startDate = moment(`10-01-${year}`, 'MM-DD-YYYY').format('LL');
           const endDate = moment(`09-30-${year}`, 'MM-DD-YYYY').add(1, 'year').format('LL');
@@ -212,7 +207,7 @@ export class LocationService {
     let noiRows = '';
 
     locations.map(location => {
-      noiRows += `${location.business.businessName},${location.business.legalName},${location.addressLine1},${location.addressLine2},${location.postal},${location.city},${location.email},${location.phone},${location.underage},${location.ha},${location.doingBusinessAs},${location.manufacturing},${moment(location.noi.created_at).format('ll')}\n`  
+      noiRows += `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`  
     });
 
     zip.file('All NOIs.csv', noiHeaders + noiRows);
