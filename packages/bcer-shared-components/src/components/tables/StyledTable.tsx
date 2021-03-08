@@ -2,7 +2,7 @@
 import React, { ReactElement, CSSProperties, forwardRef } from 'react';
 import { makeStyles, Paper, IconButton } from '@material-ui/core';
 import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
-import MaterialTable, { MTableToolbar } from 'material-table';
+import MaterialTable, { MTableToolbar } from '@material-table/core';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
 import { StyledButton } from '@/index';
@@ -163,6 +163,7 @@ export function StyledTable ({
   }
   
   return (
+    // @ts-ignore
     <MaterialTable
       components={customComponents}
       options={{

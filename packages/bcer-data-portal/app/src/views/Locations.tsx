@@ -384,11 +384,19 @@ export default function Locations() {
                     });
                   }}
                   onOrderChange={(orderColumn: number, orderDirection: any) => {
-                    // setSearchTerms({
-                    //   ...searchTerms,
-                    //   orderBy: orderColumn,
-                    //   orderDirection,
-                    // });
+                    if (orderColumn === -1) {
+                      setSearchTerms({
+                        ...searchTerms,
+                        orderBy: undefined,
+                        orderDirection: undefined,
+                      });
+                      return;
+                    }
+                    setSearchTerms({
+                      ...searchTerms,
+                      orderBy: orderColumn,
+                      orderDirection,
+                    });
                     // console.log(tableRef.current);
                   }}
                   totalCount={totalRowCount}
