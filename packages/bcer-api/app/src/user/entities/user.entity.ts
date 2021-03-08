@@ -55,6 +55,12 @@ export class UserEntity {
   })
   bceid: string;
 
+  @Column('varchar', {
+    length: 255,
+    nullable: true,
+  })
+  bceidUser: string;
+
   @Column('time', {
     nullable: true,
   })

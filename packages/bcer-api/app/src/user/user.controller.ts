@@ -32,16 +32,22 @@ export class UserController {
   @Roles('user')
   @Post('profile')
   async profile(@Request() req: RequestWithUser): Promise<ProfileRO> {
-    const { bceidGuid, email, firstName, lastName, businessId } = req.ctx;
+    const { bceidGuid, bceidUser, email, firstName, lastName, businessId } = req.ctx;
     let validatedUser = await this.userService.findByBCeID(bceidGuid);
     if (!validatedUser) {
       const user = await this.userService.create({
         bceid: bceidGuid,
+        bceidUser,
         email,
         firstName,
         lastName,
       });
       validatedUser = user;
+    } else if (!validatedUser.bceidUser) {
+      await this.userService.update({
+        id: validatedUser.id,
+        bceidUser,
+      });
     }
     const userData: UserRO = validatedUser.toResponseObject();
     const business = businessId ? await this.businessService.getBusinessById(businessId, 'locations') : null;
