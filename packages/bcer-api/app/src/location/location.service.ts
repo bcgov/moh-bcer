@@ -92,7 +92,6 @@ export class LocationService {
     // TYPEORM wonkiness: Skip and Take broken here, but offset and limit may not be ideal?
     qb.offset((query.page-1) * query.numPerPage);
     qb.limit(query.numPerPage);
-    console.log(qb.getSql());
     return await qb.getManyAndCount();
   }
 
