@@ -47,6 +47,31 @@ export class LocationDataPortalController {
   @ApiOperation({ summary: 'Get all locations as MoH' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationSearchRO })
   @ApiQuery({
+    name: 'order',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'orderBy',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'numPerPage',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'includes',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
     name: 'search',
     type: String,
     required: false,

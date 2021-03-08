@@ -66,10 +66,13 @@ export class LocationService {
     // TypeORM wonkiness: https://github.com/typeorm/typeorm/issues/3501
     if (query.orderBy === 'Submitted Date') {
       qb.orderBy(`"noi"."created_at"`, query.order);
+      qb.addOrderBy('"noi"."id"', 'ASC');
     } else if (query.orderBy === 'Business Legal Name') {
       qb.orderBy('LOWER("business"."legalName")', query.order);
+      qb.addOrderBy('"noi"."id"', 'ASC');
     } else if (query.orderBy === 'Health Authority') {
       qb.orderBy(`"location"."health_authority"`, query.order);
+      qb.addOrderBy('"noi"."id"', 'ASC');
     }
     qb.where('location.noi IS NOT NULL');
 
@@ -89,6 +92,7 @@ export class LocationService {
     // TYPEORM wonkiness: Skip and Take broken here, but offset and limit may not be ideal?
     qb.offset((query.page-1) * query.numPerPage);
     qb.limit(query.numPerPage);
+    console.log(qb.getSql());
     return await qb.getManyAndCount();
   }
 
