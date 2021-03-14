@@ -47,9 +47,9 @@ export class ProductsController {
   async createProducts(
     @Body() payload: ProductsDTO,
     @Request() req: RequestWithUser,
-    ): Promise<ProductRO[]> {
+    ): Promise<void> {
     const products = await this.service.createProducts(payload, req.ctx.businessId);
-    return products.map(p => p.toResponseObject());
+    return;
   }
 
   @ApiOperation({ summary: 'Get Products' })

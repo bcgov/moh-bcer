@@ -92,6 +92,10 @@ export class LocationEntity {
   @JoinTable()
   manufactures: ManufacturingEntity[];
 
+  productsCount?: number;
+  manufacturesCount?: number;
+  salesCount?: number;
+
   toResponseObject(): LocationRO {
     return {
       id: this.id,
@@ -112,6 +116,9 @@ export class LocationEntity {
       products: this.products?.map((product: ProductEntity) => product.toResponseObject()),
       sales: this.sales?.map((sale: SalesReportEntity) => sale.toResponseObject()),
       manufactures: this.manufactures?.map((manufacturing: ManufacturingEntity) => manufacturing.toResponseObject()),
+      productsCount: this.productsCount,
+      manufacturesCount: this.manufacturesCount,
+      salesCount: this.salesCount,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };

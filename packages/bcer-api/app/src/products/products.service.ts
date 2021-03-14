@@ -15,22 +15,41 @@ export class ProductsService {
     private readonly locationRepository: Repository<LocationEntity>,
   ) {}
   async createProducts(dto: ProductsDTO, businessId: string) {
+    console.log(dto.locationIds.length * dto.products.length);
+    if (dto.locationIds.length * dto.products.length > 200000) {
+      // throw error
+    }
 
     const locations = await this.locationRepository.createQueryBuilder('locations')
       .where('locations.id IN (:...locationIds)', { locationIds: dto.locationIds })
       .getMany()
     Logger.log(`Creating products for ${locations.length} locations`);
-    const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId }, locations })));
-    await this.productRepository.save(productEntities);
 
-    // TODO track error if the locationIds length does not match the length of returned products
-    const products = await this.productRepository.createQueryBuilder('products')
-      .leftJoinAndSelect('products.locations', 'location')
-      .where('location.id IN (:...locationIds)', { locationIds: dto.locationIds })
-      .getMany();
 
-    return products;
-  }
+    try {
+      // transaction
+      const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId } })));
+      const savedProducts = await this.productRepository.save(productEntities, { chunk: productEntities.length / 300});
+
+      let sql = `INSERT INTO location_products_product("locationId", "productId") VALUES `;
+      const allProductLocations = [];
+      for (const locationId of dto.locationIds) {
+        savedProducts.forEach(product => {
+          allProductLocations.push({ locationId, productId: product.id });
+        });
+      }
+
+      allProductLocations.forEach(pl => {
+        sql += `('${pl.locationId}', '${pl.productId}'),`;
+      });
+      sql = sql.slice(0, -1);
+      const db = getConnectionManager().get();
+      const x = await db.query(sql);
+    } catch (e) {
+      console.log('err')
+    }
+    return;
+  } 
 
   async getProducts(businessId: string) {
     const products = await this.productRepository.find({ where: { business: { id: businessId } }, relations: ['locations'] });
