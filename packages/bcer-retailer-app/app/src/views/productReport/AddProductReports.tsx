@@ -200,7 +200,7 @@ export default function AddProductReports() {
   }
   const selectFromLocation = async() => { 
     if (value) {
-      await get({ url:`/location/${value.id}?count=products` })
+      await get({ url:`/location/${value.id}?includes=products` })
       history.push('/products/confirm-products')
     }
   }
