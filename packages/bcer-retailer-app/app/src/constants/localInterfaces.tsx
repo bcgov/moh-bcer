@@ -56,8 +56,11 @@ export interface BusinessLocation {
   noi?: {
     created_at: Date
   },
-  products?: Array<Products>
-  sales?: Array<Sale>
+  products?: Array<Products>;
+  productsCount: number;
+  manufacturesCount: number;
+  sales?: Array<Sale>;
+  salesCount: number;
   created_at?: Date;
 }
 
