@@ -58,6 +58,8 @@ export function StyledDialog ({
   acceptButtonText,
   cancelHandler,
   acceptHandler,
+  acceptDisabled,
+  cancelDisabled,
   ...props
 }: StyledDialogProps):ReactElement {
   
@@ -79,6 +81,8 @@ export function StyledDialog ({
         cancelHandler={cancelHandler}
         acceptButtonText={acceptButtonText} 
         acceptHandler={acceptHandler}
+        acceptDisabled={acceptDisabled || false}
+        cancelDisabled={cancelDisabled || false}
       />
     </Dialog>
   );

@@ -7,6 +7,8 @@ export interface StyledDialogProps extends DialogProps {
   acceptButtonText: string,
   cancelHandler: ReactEventHandler,
   acceptHandler: ReactEventHandler | "submit",
+  acceptDisabled?: boolean,
+  cancelDisabled?: boolean,
 }
 
 export interface StyledConfirmDialogProps extends DialogProps {
@@ -15,6 +17,8 @@ export interface StyledConfirmDialogProps extends DialogProps {
   dialogMessage: string,
   checkboxLabel: string,
   dialogTitle: string,
+  acceptDisabled?: boolean,
+  cancelDisabled?: boolean,
 }
 
 export interface StyledDialogActionProps {

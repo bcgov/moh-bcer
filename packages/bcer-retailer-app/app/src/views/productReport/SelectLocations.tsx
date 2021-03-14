@@ -186,6 +186,8 @@ export default function SelectLocations() {
         dialogMessage='You are about to submit your product report.'
         setOpen={() => setOpenConfirm(false)}
         confirmHandler={confirmSubmit}
+        acceptDisabled={patchLoading}
+        cancelDisabled={patchLoading}
       />
     </>
   );
