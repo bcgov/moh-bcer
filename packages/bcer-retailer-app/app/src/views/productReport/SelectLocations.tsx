@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { makeStyles, Typography, Paper } from '@material-ui/core';
+import { makeStyles, Typography, Paper, Snackbar } from '@material-ui/core';
 import { CSVLink } from 'react-csv';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
@@ -68,7 +68,7 @@ export default function SelectLocations() {
   const classes = useStyles();
   const history = useHistory();
 
-  const [{ data: locations = [], loading, error }, get] = useAxiosGet(`/location?includes=products`); 
+  const [{ data: locations = [], loading, error }, get] = useAxiosGet(`/location`); 
   const [{ response, loading: patchLoading, error: patchError }, patch] = useAxiosPatch(`/products`, { manual: true });
   const [isConfirmOpen, setOpenConfirm] = useState<boolean>(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -120,7 +120,13 @@ export default function SelectLocations() {
         <Paper className={classes.box} variant='outlined'>
           <Typography className={classes.boxTitle} variant='subtitle1'>Select locations that this report applies to.</Typography>
           <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>You have {locations.length} retail locations</Typography>
+            <Typography className={classes.tableRowCount} variant='body2'>
+              You have {locations.length} retail locations.
+              {productInfo.products.length * productInfo.locations.length < 200000
+                ? ` You are submitting ${productInfo.products.length} products to ${productInfo.locations.length} locations.`
+                : ` Please limit your submission to ${Math.floor(200000 / productInfo.products.length)} locations.`
+              }
+            </Typography>
             {
               locations.length
               ?
@@ -161,12 +167,17 @@ export default function SelectLocations() {
           <StyledButton
             variant='contained'
             onClick={() => setOpenConfirm(true)}
-            disabled={!selectedProducts.length}
+            disabled={!selectedProducts.length || productInfo.products.length * productInfo.locations.length > 200000}
           >
             Submit
           </StyledButton>
         </div>
       </div>
+      <Snackbar
+        open={patchLoading}
+        message={'Submitting product report. Please wait...'}
+        ClickAwayListenerProps={{mouseEvent: false, touchEvent: false}}
+      />
       <StyledConfirmDialog
         open={isConfirmOpen}
         maxWidth='sm'
