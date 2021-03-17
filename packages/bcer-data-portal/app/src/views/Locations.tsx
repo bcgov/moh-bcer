@@ -150,10 +150,19 @@ export default function Locations() {
   });
   const [locations, setLocations] = useState([]);
 
-  const { location: { pathname } } = history;
-  const [{ data, loading, error }, get] = useAxiosGet(`/data/location?includes=noi${searchTerms.term ? `&search=${searchTerms.term}` : ''}`, { manual: true });
+  const buildSearchUrl = (): string => {
+    let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
+    searchTerms?.term && searchTerms.term.length > 3 ? url += `&search=${searchTerms.term}` : null;
+    searchTerms?.authority ? url += `&authority=${searchTerms.authority}` : null;
+    searchTerms?.orderBy ? url += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
+    searchTerms?.orderDirection ? url += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
+    return url;
+  }
+
+  const [{ data, loading, error }, get] = useAxiosGet(buildSearchUrl(), { manual: true });
   const [{ data: zipFile, loading: zipLoading, error: zipError }, post] = useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+  
   const healthAuthorityOptions = [
     { value: 'all', label: 'All' },
     { value: 'coastal', label: 'Coastal' },
@@ -214,17 +223,18 @@ export default function Locations() {
   }
 
   useEffect(() => {
-    let URL = `${process.env.BASE_URL}/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`
+    let URL = `${process.env.BASE_URL}/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
     searchTerms?.term && searchTerms.term.length > 3 ? URL += `&search=${searchTerms.term}` : null;
     searchTerms?.authority ? URL += `&authority=${searchTerms.authority}` : null;
     searchTerms?.orderBy ? URL += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
     searchTerms?.orderDirection ? URL += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
-    fetch(URL).then(res => res.json())
-      .then(res => {
-        setTotalRowCount(res?.totalRows);
-        setLocations(res?.rows);
-      });
+    get();
   }, [searchTerms]);
+
+  useEffect(() => {
+    setTotalRowCount(data?.totalRows || 0);
+    setLocations(data?.rows || []);
+  }, [data]);
 
   const getReportsFile = (requestFilter: string = 'selected') => {
     let postConfig: { url: string; data: Array<string> } = { url: '', data: [] };
