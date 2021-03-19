@@ -1,10 +1,13 @@
 import { getConnectionManager, getManager, In, Repository } from 'typeorm';
 import { ForbiddenException, Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import moment from 'moment';
+import { v4 as uuid } from 'uuid';
 
-import { ProductEntity } from 'src/products/entities/product.entity';
 import { LocationEntity } from 'src/location/entities/location.entity';
-import { ProductsDTO } from 'src/products/dto/products.dto';
+import { ProductEntity } from './entities/product.entity';
+import { ProductsDTO } from './dto/products.dto';
+import { ProductUploadRO } from './ro/product-upload.ro';
 
 @Injectable()
 export class ProductsService {
@@ -15,7 +18,6 @@ export class ProductsService {
     private readonly locationRepository: Repository<LocationEntity>,
   ) {}
   async createProducts(dto: ProductsDTO, businessId: string) {
-    console.log(dto.locationIds.length * dto.products.length);
     if (dto.locationIds.length * dto.products.length > 200000) {
       throw new ForbiddenException('Attempting to create too many products');
     }
@@ -25,6 +27,20 @@ export class ProductsService {
       .getMany()
     Logger.log(`Creating products for ${locations.length} locations`);
 
+    let productUploadId;
+    (async () => {
+      do {
+        productUploadId = uuid();
+      } while (!(await this.productRepository.findOne({ where: { productUploadId }})));
+    })();
+
+    dto.products = dto.products.map(product => {
+      return {
+        ...product,
+        productUploadId,
+      };
+    });
+    
     try {
       return await getManager().transaction(async transactionManager => {
         const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId } })));
@@ -47,11 +63,19 @@ export class ProductsService {
     } catch (e) {
       throw new UnprocessableEntityException('There was a problem creating these products');
     }
-    return;
   } 
 
-  async getProducts(businessId: string) {
-    const products = await this.productRepository.find({ where: { business: { id: businessId } }, relations: ['locations'] });
+  async getProducts(businessId: string, submissionId?: string) {
+    const findOptions = {
+      where: {
+        business: { id: businessId },
+      },
+      relations: ['locations'],
+    };
+    if (submissionId) {
+      findOptions.where['productUploadId'] = submissionId;
+    }
+    const products = await this.productRepository.find(findOptions);
     products.forEach((product: any) => {
       if (Array.isArray(product.ingredients)) {
         product.ingredients = product.ingredients.join(',');
@@ -103,6 +127,34 @@ export class ProductsService {
 
   async clearProducts() {
     await this.productRepository.delete({})
+    return;
+  }
+
+  async getProductSubmissions(businessId: string): Promise<ProductUploadRO[]> {
+    const products = await this.productRepository.find({ where: { business: { id: businessId } }, order: { created_at: 'DESC' } });
+    const productsBySubmissionId: Record<string, { productCount: number, dateSubmitted: string }> = products.reduce((dict, product) => {
+      if (dict[product.productUploadId]) {
+        dict[product.productUploadId].productCount += 1;
+      } else {
+        dict[product.productUploadId] = {
+          productCount: 1,
+          dateSubmitted: moment(product.created_at).startOf('minute').format(),
+        };
+      }
+      return dict;
+    }, {});
+    const submissions = Object.keys(productsBySubmissionId).map(key => {
+      return {
+        productUploadId: key,
+        productCount: productsBySubmissionId[key].productCount,
+        dateSubmitted: productsBySubmissionId[key].dateSubmitted,
+      };
+    });
+    return submissions;
+  }
+
+  async deleteProductSubmissions(businessId: string, productUploadId: string): Promise<void> {
+    const products = await this.productRepository.softDelete({ business: { id: businessId }, productUploadId });
     return;
   }
 }
