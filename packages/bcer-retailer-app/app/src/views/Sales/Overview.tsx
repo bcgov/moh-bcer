@@ -74,7 +74,7 @@ export default function SalesOverview() {
   const [submitted, setSubmitted] = useState([]);
 
   const { location: { pathname } } = history;
-  const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?includes=sales,products`);
+  const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?count=sales,products`);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const tableAction = () => (
@@ -89,8 +89,8 @@ export default function SalesOverview() {
 
   useEffect(() => {
     if (locations.length && !error) {
-      const outstanding = locations.filter((l: BusinessLocation) => !l.sales || l.sales.length === 0);
-      const submitted = locations.filter((l: BusinessLocation) => l?.sales.length > 0);
+      const outstanding = locations.filter((l: BusinessLocation) => (!l.sales || l.sales?.length === 0) || l.salesCount === 0);
+      const submitted = locations.filter((l: BusinessLocation) => l?.sales?.length > 0 || l.salesCount > 0);
       setOutstanding(outstanding);
       setSubmitted(submitted);
     } else {

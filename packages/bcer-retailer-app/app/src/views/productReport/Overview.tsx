@@ -118,7 +118,7 @@ export default function ProductOverview() {
   const { location: { pathname } } = history;
   const [withProducts, setWithProducts] = useState([]);
   const [withoutProducts, setWithoutProducts] = useState([]);
-  const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?includes=products`);
+  const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?count=products`);
   const [{ loading: patchLoading, error: patchError, data: patchedSubmission }, patch] = useAxiosPatch('/submission', { manual: true });
   const [productInfo, setProductInfo] = useContext(ProductInfoContext);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
@@ -147,8 +147,8 @@ export default function ProductOverview() {
 
   useEffect(() => {
     if (locations.length && !error) {
-      const withProducts = locations?.filter((l: BusinessLocation) => l.products.length) || [];
-      const withoutProducts = locations?.filter((l: BusinessLocation) => !l.products.length) || [];
+      const withProducts = locations?.filter((l: BusinessLocation) => l.products?.length || l.productsCount > 0) || [];
+      const withoutProducts = locations?.filter((l: BusinessLocation) => !l.products?.length || l.productsCount === 0) || [];
       setWithProducts(withProducts);
       setWithoutProducts(withoutProducts);
     } else {
@@ -167,7 +167,7 @@ export default function ProductOverview() {
       }
     }
     if (pathname.includes('success')) {
-      if (locations.length > 0 && !locations.find((l: BusinessLocation) => l.products?.length === 0)) {
+      if (locations.length > 0 && !locations.find((l: BusinessLocation) => l.products?.length === 0 || l.productsCount === 0)) {
         setAppGlobal({ ...appGlobal, productReportComplete: true });
       };
     };
@@ -197,7 +197,7 @@ export default function ProductOverview() {
                 <Typography variant='body1'>
                   You need to submit product reports for all locations listed in the "Outstanding Product Reports"
                   section of this page. Click the "Submit Product Report" button to begin your submission.
-                    </Typography>
+                </Typography>
               </div>
             </div>
             :
@@ -320,7 +320,7 @@ export default function ProductOverview() {
                 },
                 {
                   title: 'Status',
-                  render: (rd: BusinessLocation) => `${rd.products.length ? 'Submitted' : 'Not Submitted'}`
+                  render: (rd: BusinessLocation) => `${rd.products?.length || rd.productsCount > 0 ? 'Submitted' : 'Not Submitted'}`
                 },
               ]}
               actions={[

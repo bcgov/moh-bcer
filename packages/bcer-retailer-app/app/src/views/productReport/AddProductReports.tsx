@@ -118,7 +118,7 @@ export default function AddProductReports() {
   const [productInfo, setProductInfo] = useContext(ProductInfoContext);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [{ loading: productsLoading, error: productsError, data: productsData }, get] = useAxiosGet('/location/:id/products', { manual: true });
-  const [{ loading: locationsLoading, error: locationsError, data: locations }, getLocations] = useAxiosGet('/location?includes=products');
+  const [{ loading: locationsLoading, error: locationsError, data: locations }, getLocations] = useAxiosGet('/location?count=products');
   const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch('/submission', { manual: true });
   const [{ error: mapError, response: mapResponse, data: mappedSubmission }, patchMap] = useAxiosPatch('/submission/map', { manual: true });
 
@@ -324,7 +324,7 @@ export default function AddProductReports() {
                             onChange={(event: React.ChangeEvent<any>, newValue: BusinessLocation) => setValue(newValue)}
                             inputValue={inputValue}
                             onInputChange={(event: React.ChangeEvent<any>, newInputValue: string | null) => setInputValue(newInputValue)}
-                            options={locations.filter((l: any) => l.products.length)}
+                            options={locations.filter((l: any) => l.products?.length || l.productsCount > 0)}
                             getOptionLabel={(option: BusinessLocation) => option.addressLine1}
                           />
                         </div>

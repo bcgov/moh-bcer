@@ -1,4 +1,4 @@
-import { Repository, In, Not, IsNull } from 'typeorm';
+import { Repository, In, Not, IsNull, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -104,12 +104,27 @@ export class LocationService {
     return location;
   }
 
-  async getBusinessLocations(businessId: string, includes?: string) {
-    const locations = await this.locationRepository.find({
-      where: {
-        business: { id: businessId }
-      }, relations: includes ? includes.split(',') : []
-    });
+  async getBusinessLocations(businessId: string, includes?: string, count?: string) {
+    const locationsQb = this.locationRepository.createQueryBuilder('location');
+    locationsQb.andWhere('location.businessId = :businessId', { businessId });
+    if (includes && includes.length > 0) {
+      includes.split(',').forEach((include) => {
+        if (!['business', 'noi', 'products', 'manufactures', 'sales'].includes(include)) {
+          throw new ForbiddenException('Invalid includes');
+        }
+        locationsQb.leftJoinAndSelect(`location.${include}`, include);
+      });
+    }
+    if (count && count.length > 0) {
+      count.split(',').forEach((colToCount) => {
+        if (!['products', 'manufactures', 'sales'].includes(colToCount)) {
+          throw new ForbiddenException('Invalid count');
+        }
+        locationsQb.addSelect((subQuery) => this.buildCountSubquery(colToCount, subQuery), `${colToCount}Count`);
+        locationsQb.loadRelationCountAndMap('location.productsCount', 'location.products');
+      });
+    }
+    const locations = await locationsQb.getMany();
     return locations;
   }
 
@@ -235,5 +250,25 @@ export class LocationService {
         Logger.log('zip written.');
       }
     );
+  }
+
+  private buildCountSubquery = (relation: string, qb: SelectQueryBuilder<any>) => {
+    if (relation === 'products') {
+      return qb
+        .select('COUNT(p.productId)')
+        .from('location_products_product', 'p')
+        .where('p.locationId = location.id');
+    } else if (relation === 'manufactures') {
+      return qb
+        .select('COUNT(m.manufacturingId)')
+        .from('location_manufactures_manufacturing', 'm')
+        .where('m.locationId = location.id');
+    } else if (relation === 'sales') {
+      return qb
+        .select('COUNT(s.id)')
+        .from('salesreport', 's')
+        .where('s.locationId = location.id');
+    }
+    throw new ForbiddenException('Forbidden relation');
   }
 }

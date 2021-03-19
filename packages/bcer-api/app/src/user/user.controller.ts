@@ -73,13 +73,13 @@ export class UserController {
       }
     }
     const business = await this.businessService.getBusinessById(businessId);
-    const locations = await this.locationService.getBusinessLocations(businessId, 'noi,products,manufactures');
+    const locations = await this.locationService.getBusinessLocations(businessId, 'noi', 'products,manufactures');
 
     let statusObject = {
       myBusinessComplete: Boolean(business.legalName && business.email),
       noiComplete: locations.length > 0 ? locations.every(l => l.noi) : false,
-      productReportComplete: locations.length > 0 ? locations.every(l => l.products.length) : false,
-      manufacturingReportComplete: locations.length > 0 ? locations.filter(l => l.manufacturing).every(l => l.manufactures.length) : false,
+      productReportComplete: locations.length > 0 ? locations.every(l => l.products?.length || l.productsCount > 0) : false,
+      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) : false,
     };
 
     return statusObject;

@@ -57,10 +57,19 @@ export class LocationRO {
   manufactures?: ManufacturingRO[];
 
   @ApiProperty()
+  manufacturesCount?: number = 0;
+
+  @ApiProperty()
   products?: ProductRO[];
 
   @ApiProperty()
+  productsCount?: number = 0;
+
+  @ApiProperty()
   sales?: SalesReportRO[];
+
+  @ApiProperty()
+  salesCount?: number = 0;
 
   @ApiProperty()
   created_at: Date;

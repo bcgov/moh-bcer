@@ -1,5 +1,5 @@
-import { getConnectionManager, In, Repository } from 'typeorm';
-import { Injectable, Logger } from '@nestjs/common';
+import { getConnectionManager, getManager, In, Repository } from 'typeorm';
+import { ForbiddenException, Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ProductEntity } from 'src/products/entities/product.entity';
@@ -15,22 +15,40 @@ export class ProductsService {
     private readonly locationRepository: Repository<LocationEntity>,
   ) {}
   async createProducts(dto: ProductsDTO, businessId: string) {
+    console.log(dto.locationIds.length * dto.products.length);
+    if (dto.locationIds.length * dto.products.length > 200000) {
+      throw new ForbiddenException('Attempting to create too many products');
+    }
 
     const locations = await this.locationRepository.createQueryBuilder('locations')
       .where('locations.id IN (:...locationIds)', { locationIds: dto.locationIds })
       .getMany()
     Logger.log(`Creating products for ${locations.length} locations`);
-    const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId }, locations })));
-    await this.productRepository.save(productEntities);
 
-    // TODO track error if the locationIds length does not match the length of returned products
-    const products = await this.productRepository.createQueryBuilder('products')
-      .leftJoinAndSelect('products.locations', 'location')
-      .where('location.id IN (:...locationIds)', { locationIds: dto.locationIds })
-      .getMany();
+    try {
+      return await getManager().transaction(async transactionManager => {
+        const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId } })));
+        const savedProducts = await transactionManager.save(productEntities, { chunk: productEntities.length / 300});
 
-    return products;
-  }
+        let sql = `INSERT INTO location_products_product("locationId", "productId") VALUES `;
+        const allProductLocations = [];
+        for (const locationId of dto.locationIds) {
+          savedProducts.forEach(product => {
+            allProductLocations.push({ locationId, productId: product.id });
+          });
+        }
+
+        allProductLocations.forEach(pl => {
+          sql += `('${pl.locationId}', '${pl.productId}'),`;
+        });
+        sql = sql.slice(0, -1);
+        return await transactionManager.query(sql);
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException('There was a problem creating these products');
+    }
+    return;
+  } 
 
   async getProducts(businessId: string) {
     const products = await this.productRepository.find({ where: { business: { id: businessId } }, relations: ['locations'] });

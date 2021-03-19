@@ -23,6 +23,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { BusinessGuard } from 'src/user/guards/business.guard';
@@ -50,9 +51,15 @@ export class LocationController {
 
   @ApiOperation({ summary: 'Get Locations' })
   @ApiResponse({ status: HttpStatus.OK, type: [LocationRO] })
-  @ApiParam({
+  @ApiQuery({
     name: 'includes',
-    description: 'Comma separated list of relations to includes. For all: business,nois,products,manufactures'
+    description: 'Comma separated list of relations to includes. For all: business,nois,products,manufactures',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'count',
+    description: 'Comma separated list of relations to find if relations exist. For all: products,manufactures,sales',
+    required: false,
   })
   @HttpCode(HttpStatus.OK)
   @Roles('user')
@@ -61,8 +68,9 @@ export class LocationController {
   async getLocation(
     @Request() req: RequestWithUser,
     @Query('includes') includes: string,
+    @Query('count') count: string,
   ): Promise<LocationRO[]> {
-    const locations = await this.service.getBusinessLocations(req.ctx.businessId, includes)
+    const locations = await this.service.getBusinessLocations(req.ctx.businessId, includes, count)
     return locations.map(location => location.toResponseObject())
   }
 
