@@ -8,6 +8,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
 
 import { ProductRO } from 'src/products/ro/product.ro';
@@ -59,6 +61,10 @@ export class ProductEntity {
   @Column('varchar', { nullable: true })
   flavour: string;
 
+  @Index()
+  @Column('uuid', { nullable: true })
+  productUploadId: string;
+
   @OneToMany(() => SalesReportEntity, (salesReport: SalesReportEntity) => salesReport.product)
   sales: SalesReportEntity[];
 
@@ -74,6 +80,9 @@ export class ProductEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   toResponseObject(): ProductRO {
     return {
@@ -92,6 +101,7 @@ export class ProductEntity {
       ingredients: this.ingredients,
       flavour: this.flavour,
       locationIds: this.locations?.map(l => l.id),
+      productUploadId: this.productUploadId,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };

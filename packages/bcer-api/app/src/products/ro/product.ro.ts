@@ -48,6 +48,9 @@ export class ProductRO {
   locationIds?: string[];
 
   @ApiProperty()
+  productUploadId?: string;
+
+  @ApiProperty()
   created_at: Date;
 
   @ApiProperty()

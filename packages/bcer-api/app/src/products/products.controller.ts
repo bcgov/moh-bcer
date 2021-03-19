@@ -9,6 +9,8 @@ import {
   Request,
   UseGuards,
   UseInterceptors,
+  Query,
+  Param,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,6 +18,8 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
+  ApiParam,
 } from '@nestjs/swagger';
 
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -28,10 +32,11 @@ import { ProductsService } from 'src/products/products.service';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { ProductsDTO } from 'src/products/dto/products.dto';
 import { ProductRO } from 'src/products/ro/product.ro';
+import { ProductUploadRO } from './ro/product-upload.ro';
 
 @ApiBearerAuth()
 @ApiTags('Products')
-@UseGuards(AuthGuard, RoleGuard)
+// @UseGuards(AuthGuard, RoleGuard)
 @Controller('products')
 export class ProductsController {
   constructor(
@@ -54,14 +59,19 @@ export class ProductsController {
 
   @ApiOperation({ summary: 'Get Products' })
   @ApiResponse({ status: HttpStatus.OK, type: [ProductRO] })
+  @ApiQuery({
+    name: 'submissionId',
+    required: false,
+  })
   @HttpCode(HttpStatus.OK)
   @Roles('user')
   @UseGuards(BusinessGuard)
   @Get()
   async getProducts(
     @Request() req: RequestWithUser,
+    @Query('submissionId') submissionId?: string,
   ): Promise<ProductRO[]> {
-    const product = await this.service.getProducts(req.ctx.businessId)
+    const product = await this.service.getProducts(req.ctx.businessId, submissionId)
     return product.map((product: ProductEntity) => product.toResponseObject())
   }
 
@@ -72,6 +82,36 @@ export class ProductsController {
   @Delete()
   async clearProducts(): Promise<void> {
     await this.service.clearProducts();
+    return;
+  }
+
+  @ApiOperation({ summary: 'Get product submissions' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @HttpCode(HttpStatus.OK)
+  // @Roles('user')
+  @Get('submissions')
+  async getProductSubmissions(
+    @Request() req: RequestWithUser,
+  ): Promise<ProductUploadRO[]> {
+    const submissions = await this.service.getProductSubmissions(req.ctx.businessId);
+    return submissions;
+  }
+
+  @ApiOperation({ summary: 'Delete products of a submission' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @ApiParam({
+    name: 'productUploadId',
+    description: 'Product Upload uuid',
+    required: true,
+  })
+  @HttpCode(HttpStatus.OK)
+  @Roles('user')
+  @Delete('submission/:productUploadId')
+  async deleteProductsWithUploadId(
+    @Request() req: RequestWithUser,
+    @Param('productUploadId') productUploadId: string,
+  ): Promise<void> {
+    await this.service.deleteProductSubmissions(req.ctx.businessId, productUploadId);
     return;
   }
 }

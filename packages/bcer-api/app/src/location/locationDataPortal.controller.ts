@@ -98,6 +98,7 @@ export class LocationDataPortalController {
   @ApiOperation({ summary: 'Download locations reports' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
   @Post('reportsFile')
   @ApiQuery({
     name: 'getAll',

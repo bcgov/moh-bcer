@@ -119,6 +119,7 @@ export default function ProductOverview() {
   const [withProducts, setWithProducts] = useState([]);
   const [withoutProducts, setWithoutProducts] = useState([]);
   const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?count=products`);
+  const [{ data: productSubmissions = [] }] = useAxiosGet(`/products/submissions`);
   const [{ loading: patchLoading, error: patchError, data: patchedSubmission }, patch] = useAxiosPatch('/submission', { manual: true });
   const [productInfo, setProductInfo] = useContext(ProductInfoContext);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
@@ -195,7 +196,7 @@ export default function ProductOverview() {
                   You have outstanding product reports that need to be submitted
                     </Typography>
                 <Typography variant='body1'>
-                  You need to submit product reports for all locations listed in the "Outstanding Product Reports"
+                  You need to submit product reports for all locations listed in the "Locations without Product Reports"
                   section of this page. Click the "Submit Product Report" button to begin your submission.
                 </Typography>
               </div>
@@ -245,7 +246,7 @@ export default function ProductOverview() {
             <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
         </div>
         <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6'>Outstanding Product Reports</Typography>
+          <Typography className={classes.subtitle} variant='h6'>Locations without Product Reports</Typography>
         </div>
         <Paper variant='outlined' className={classes.box}>
           <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
@@ -288,7 +289,7 @@ export default function ProductOverview() {
           </div>
         </Paper>
         <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6'>Submitted Product Reports</Typography>
+          <Typography className={classes.subtitle} variant='h6'>Locations with Submitted Products</Typography>
         </div>
         <Paper className={classes.box} variant='outlined' >
           <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
@@ -330,6 +331,34 @@ export default function ProductOverview() {
                 }
               ]}
               data={withProducts}
+            />
+          </div>
+        </Paper>
+
+
+
+
+        <div className={classes.subtitleWrapper}>
+          <Typography className={classes.subtitle} variant='h6'>Product Report Submissions</Typography>
+        </div>
+        <Paper className={classes.box} variant='outlined' >
+          <Typography className={classes.boxTitle} variant='subtitle1'>Product Report Submisisons</Typography>
+          <div className={classes.actionsWrapper}>
+            <Typography className={classes.tableRowCount} variant='body2'>You have submitted {productSubmissions.length} product reports</Typography>
+          </div>
+          <div>
+            <StyledTable
+              columns={[
+                { title: 'Submission Date', render: (submission: any) => `${moment(submission.dateSubmitted).format('LLL')}` },
+                { title: 'Products Submitted', render: (submission: any) => `${submission.productCount}` },
+              ]}
+              actions={[
+                {
+                  icon: tableAction,
+                  onClick: (event: any, rowData: any) => history.push(`/products/submission/${rowData.productUploadId}`)
+                }
+              ]}
+              data={productSubmissions}
             />
           </div>
         </Paper>

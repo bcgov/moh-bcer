@@ -9,6 +9,7 @@ import ProductOverview from '@/views/productReport/Overview'
 import AddProductReports from '@/views/productReport/AddProductReports';
 import SelectLocations from '@/views/productReport/SelectLocations';
 import ConfirmProducts from '@/views/productReport/ConfirmProducts';
+import DeleteProductSubmissions from '@/views/productReport/DeleteProductSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 
 
@@ -93,9 +94,9 @@ export default function ProductRoutes(){
           <Route exact path='/products/add-reports' component={AddProductReports} />
           <Route exact path='/products/confirm-products' component={ConfirmProducts} />
           <Route exact path='/products/select-locations' component={SelectLocations} />
+          <Route exact path='/products/submission/:submissionId' component={DeleteProductSubmissions} />
         </Switch>
       </ProductInfoProvider>
     </>
-
   )
 }

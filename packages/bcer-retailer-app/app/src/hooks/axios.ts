@@ -10,57 +10,70 @@ function successInterceptor(request: AxiosRequestConfig) {
   } else {
     request.headers = {
       'Authorization': `Bearer ${store.get('TOKEN')}`,
-    }
+    };
   }
-  return request
+  return request;
 }
 
 const axiosPost = axios.create({
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  }
-})
+  },
+});
 
 const axiosPostForm = axios.create({
   method: 'POST',
   headers: {
     'Content-Type': 'multipart/form-data',
-  }
-})
+  },
+});
 
 const axiosPatch = axios.create({
   method: 'PATCH',
   headers: {
     'Content-Type': 'application/json',
-  }
-})
+  },
+});
 
 const axiosGet = axios.create({
   method: 'GET',
-})
+});
 
-axiosPost.interceptors.request.use(successInterceptor)
-axiosPostForm.interceptors.request.use(successInterceptor)
-axiosPatch.interceptors.request.use(successInterceptor)
-axiosGet.interceptors.request.use(successInterceptor)
+const axiosDelete = axios.create({
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+axiosPost.interceptors.request.use(successInterceptor);
+axiosPostForm.interceptors.request.use(successInterceptor);
+axiosPatch.interceptors.request.use(successInterceptor);
+axiosGet.interceptors.request.use(successInterceptor);
+axiosDelete.interceptors.request.use(successInterceptor);
 
 export const useAxiosPost = makeUseAxios({
   cache: false,
-  axios: axiosPost
+  axios: axiosPost,
 });
 
 export const useAxiosPostFormData = makeUseAxios({
   cache: false,
-  axios: axiosPostForm
+  axios: axiosPostForm,
 });
 
 export const useAxiosPatch = makeUseAxios({
   cache: false,
-  axios: axiosPatch
+  axios: axiosPatch,
 });
 
 export const useAxiosGet = makeUseAxios({
   cache: false,
-  axios: axiosGet
+  axios: axiosGet,
+});
+
+export const useAxiosDelete = makeUseAxios({
+  cache: false,
+  axios: axiosDelete,
 });
