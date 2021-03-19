@@ -36,7 +36,7 @@ import { ProductUploadRO } from './ro/product-upload.ro';
 
 @ApiBearerAuth()
 @ApiTags('Products')
-// @UseGuards(AuthGuard, RoleGuard)
+@UseGuards(AuthGuard, RoleGuard)
 @Controller('products')
 export class ProductsController {
   constructor(
@@ -88,7 +88,7 @@ export class ProductsController {
   @ApiOperation({ summary: 'Get product submissions' })
   @ApiResponse({ status: HttpStatus.OK })
   @HttpCode(HttpStatus.OK)
-  // @Roles('user')
+  @Roles('user')
   @Get('submissions')
   async getProductSubmissions(
     @Request() req: RequestWithUser,
