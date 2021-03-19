@@ -68,5 +68,8 @@
       "afterAll",
       "jest"
     ]
+  },
+  "dependencies": {
+    "@material-table/core": "2.3.28"
   }
 }

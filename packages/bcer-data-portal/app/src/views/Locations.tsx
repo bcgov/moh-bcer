@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { makeStyles, Typography, Paper, Snackbar, CircularProgress, IconButton, SnackbarContent } from '@material-ui/core';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Box, ButtonGroup, Grid, makeStyles, Typography, Paper, Snackbar, CircularProgress, IconButton, SnackbarContent, TextField } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { CSVLink } from 'react-csv';
+import { Form, Formik } from 'formik';
 import { useAxiosGet, useAxiosPostFormData } from '@/hooks/axios';
 import { useKeycloak } from '@react-keycloak/web';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -10,8 +10,7 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import moment from 'moment';
 import store from 'store';
 
-import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
-import { BusinessLocationHeaders } from '@/constants/localEnums';
+import { StyledButton, StyledSelectField, StyledTable, StyledTextField } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 
@@ -139,17 +138,101 @@ export default function Locations() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [searchTerms, setSearchTerms] = useState({
+    term: undefined,
+    authority: undefined,
+    page: 0,
+    pageSize: 20,
+    orderBy: undefined,
+    orderDirection: undefined,
+  });
+  const [locations, setLocations] = useState([]);
 
-  const { location: { pathname } } = history;
-  const [{ data: locations, loading, error }, get] = useAxiosGet(`/data/location?includes=noi`, { manual: true });
+  const buildSearchUrl = (): string => {
+    let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
+    searchTerms?.term && searchTerms.term.length > 3 ? url += `&search=${searchTerms.term}` : null;
+    searchTerms?.authority ? url += `&authority=${searchTerms.authority}` : null;
+    searchTerms?.orderBy ? url += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
+    searchTerms?.orderDirection ? url += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
+    return url;
+  }
+
+  const [{ data, loading, error }, get] = useAxiosGet(buildSearchUrl(), { manual: true });
   const [{ data: zipFile, loading: zipLoading, error: zipError }, post] = useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+  
+  const healthAuthorityOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'coastal', label: 'Coastal' },
+    { value: 'fraser', label: 'Fraser' },
+    { value: 'interior', label: 'Interior' },
+    { value: 'island', label: 'Island' },
+    { value: 'northern', label: 'Northern' },
+  ];
+
+  const tableColumns = [
+    {
+      title: 'Business Name',
+      field: 'business.businessName',
+      sorting: false
+    },
+    {
+      title: 'Business Legal Name',
+      field: 'business.legalName',
+    },
+    {
+      title: 'Phone Number',
+      field: 'phone',
+      sorting: false
+    },
+    {
+      title: 'Address 1',
+      render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
+      sorting: false
+    },
+    {
+      title: 'Email Address',
+      field: 'email',
+      sorting: false,
+    },
+    {
+      title: 'Submitted Date',
+      render: (rd: BusinessLocation) => rd.noi?.created_at ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}` : '',
+    },
+    {
+      title: 'Health Authority',
+      field: 'health_authority',
+    }
+  ];
 
   const logout = () => {
     store.clearAll();
     keycloak.logout();
     history.push('/');
   };
+
+  const search = (e: any) => {
+    const authority = e.authority !== 'all' ? e.authority : undefined;
+    setSearchTerms({
+      ...searchTerms,
+      term: e.search,
+      authority,
+    });
+  }
+
+  useEffect(() => {
+    let URL = `${process.env.BASE_URL}/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
+    searchTerms?.term && searchTerms.term.length > 3 ? URL += `&search=${searchTerms.term}` : null;
+    searchTerms?.authority ? URL += `&authority=${searchTerms.authority}` : null;
+    searchTerms?.orderBy ? URL += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
+    searchTerms?.orderDirection ? URL += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
+    get();
+  }, [searchTerms]);
+
+  useEffect(() => {
+    setTotalRowCount(data?.totalRows || 0);
+    setLocations(data?.rows || []);
+  }, [data]);
 
   const getReportsFile = (requestFilter: string = 'selected') => {
     let postConfig: { url: string; data: Array<string> } = { url: '', data: [] };
@@ -227,6 +310,29 @@ export default function Locations() {
             </div>
             <Paper className={classes.box} variant='outlined' >
               <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
+              <Formik
+                onSubmit={search}
+                initialValues={{
+                  search: undefined,
+                  authority: 'all',
+                }}
+              >
+                <Form>
+                  <Grid container spacing={2}>
+                    <Grid item xs={7}>
+                      <StyledTextField name='search' label='Search (Address, Business Name, Legal Name, Doing Business As)' />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <StyledSelectField name='authority' options={healthAuthorityOptions} label='Health Authority' />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Box alignContent='center' alignItems='center' justifyContent='center' display='flex' minHeight='100%'>
+                      <StyledButton fullWidth variant='contained' type='submit'>Search</StyledButton>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Form>
+              </Formik>
               <div className={classes.actionsWrapper}>
                 <Typography className={classes.tableRowCount} variant='body2'>{totalRowCount} retail locations have submitted a Notice of Intent</Typography>
                 <StyledButton
@@ -256,69 +362,53 @@ export default function Locations() {
               </div>
               <div className={'tableDiv'}>
                 <StyledTable
-                  columns={[
-                    {
-                      title: 'Business Name',
-                      field: 'business.businessName',
-                      sorting: false
-                    },
-                    {
-                      title: 'Business Legal Name',
-                      field: 'business.legalName'
-                    },
-                    {
-                      title: 'Phone Number',
-                      field: 'phone',
-                      sorting: false
-                    },
-                    {
-                      title: 'Address 1',
-                      render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
-                      sorting: false
-                    },
-                    {
-                      title: 'Email Address',
-                      field: 'email',
-                      sorting: false,
-                    },
-                    {
-                      title: 'Submitted Date',
-                      render: (rd: BusinessLocation) => rd.noi?.created_at ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}` : '',
-                    },
-                    {
-                      title: 'Health Authority',
-                      field: 'health_authority'
-                    }
-                  ]}
+                  columns={tableColumns}
                   options={{
                     selection: true,
                     pageSize: 20,
                     pageSizeOptions: [20, 30, 50],
-                    sorting: true
+                    sorting: true,
                   }}
                   onSelectionChange={(rows: any) => {
-                    const displayedIds = rows.map((result: BusinessLocation) => result.id)
-                    const selectedRowsNotDisplayed = selectedRows.filter(selectedRow => {
-                      return !displayedIds.includes(selectedRow.id)
-                    })
-                    setSelectedRows([...selectedRowsNotDisplayed, ...rows])
+                    if (rows && rows.length > 0) {
+                      const displayedIds = rows.map((result: BusinessLocation) => result.id)
+                      const selectedRowsNotDisplayed = selectedRows.filter(selectedRow => {
+                        return !displayedIds.includes(selectedRow.id)
+                      })
+                      setSelectedRows([...selectedRowsNotDisplayed, ...rows])
+                    }
                   }}
+                  onChangePage={(page: number) => {
+                    setSearchTerms({
+                      ...searchTerms,
+                      page: page,
+                    });
+                  }}
+                  onChangeRowsPerPage={(rowsPerPage: number) => {
+                    setSearchTerms({
+                      ...searchTerms,
+                      pageSize: rowsPerPage,
+                    });
+                  }}
+                  onOrderChange={(orderColumn: number, orderDirection: any) => {
+                    if (orderColumn === -1) {
+                      setSearchTerms({
+                        ...searchTerms,
+                        orderBy: undefined,
+                        orderDirection: undefined,
+                      });
+                      return;
+                    }
+                    setSearchTerms({
+                      ...searchTerms,
+                      orderBy: orderColumn,
+                      orderDirection,
+                    });
+                  }}
+                  totalCount={totalRowCount}
+                  page={searchTerms.page}
                   data={
-                    (query: any) =>
-                    new Promise((resolve, reject) => {
-                      let URL = `${process.env.BASE_URL}/data/location?page=${query.page + 1}&numPerPage=${query.pageSize}&includes=business,noi`
-                      query?.orderBy?.title ? URL += `&orderBy=${query.orderBy.title}` : null
-                      query?.orderDirection ? URL += `&order=${query.orderDirection.toUpperCase()}` : null
-                      fetch(URL).then(res => res.json())
-                        .then(res => {
-                          setTotalRowCount(res?.totalRows)
-                          resolve({
-                            data: res?.rows ? res.rows?.map((row: BusinessLocation) => selectedRows.find(selected => selected.id === row.id) ? { ...row, tableData: { checked: true } } : row) : [],
-                            page: res?.pageNum ? res.pageNum - 1 : 0,
-                            totalCount: res?.totalRows ? res.totalRows : 0,
-                          })
-                        })
-                    })
+                    locations ? locations.map((row: BusinessLocation) => selectedRows.find(selected => selected.id === row.id) ? { ...row, tableData: { checked: true } } : row) : []
                   }
                 />
               </div>

@@ -37,4 +37,18 @@ export class LocationSearchDTO {
   @IsString()
   @IsOptional()
   includes?: string;
+
+  @ApiProperty({
+    description: 'Search term',
+  })
+  @IsString()
+  @IsOptional()
+  search?: string;
+
+  @ApiProperty({
+    description: 'Health Authority',
+  })
+  @IsString()
+  @IsOptional()
+  authority?: string;
 }
