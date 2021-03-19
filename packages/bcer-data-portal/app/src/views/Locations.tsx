@@ -131,8 +131,6 @@ const useStyles = makeStyles({
   },
 });
 
-const tableRef = React.createRef();
-
 export default function Locations() {
   const classes = useStyles();
   const history = useHistory();
@@ -364,7 +362,6 @@ export default function Locations() {
               </div>
               <div className={'tableDiv'}>
                 <StyledTable
-                  tableRef={tableRef}
                   columns={tableColumns}
                   options={{
                     selection: true,
