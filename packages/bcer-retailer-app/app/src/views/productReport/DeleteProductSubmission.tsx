@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles, Typography, Paper } from '@material-ui/core';
 import { CSVLink } from 'react-csv';
@@ -8,6 +8,7 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt'
 import moment from 'moment';
 
 import { StyledTable, StyledButton, StyledConfirmDialog } from 'vaping-regulation-shared-components';
+import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { Products } from '@/constants/localInterfaces';
 import { ProductReportHeaders } from '@/constants/localEnums';
 import { useAxiosDelete, useAxiosGet } from '@/hooks/axios';
@@ -68,10 +69,11 @@ export default function DeleteProductSubmissions() {
   const history = useHistory();
   const [submissionDate, setSubmissionDate] = useState<string>();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
+  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const { submissionId } : { submissionId: string } = useParams();
 
   const [{ data: products = [] }] = useAxiosGet(`/products?submissionId=${submissionId}`);
-  const [{}, request] = useAxiosDelete(`/products/submission/${submissionId}`, { manual: true });
+  const [{ error }, request] = useAxiosDelete(`/products/submission/${submissionId}`, { manual: true });
 
   useEffect(() => {
     if (!!products.length) {
@@ -82,7 +84,11 @@ export default function DeleteProductSubmissions() {
   
   const confirmDelete = async() => {
     await request();
-    history.push('/products');
+    if (!error) {
+      history.push('/products');
+    } else {
+      setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message || 'Error with deleting products' })
+    }
   }
 
   return (
@@ -157,8 +163,6 @@ export default function DeleteProductSubmissions() {
             />
           </div>
         </Paper>
-        <div>
-        </div>
         <div className={classes.submitWrapper}>
           <StyledButton
             variant='contained'

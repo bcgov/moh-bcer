@@ -334,10 +334,6 @@ export default function ProductOverview() {
             />
           </div>
         </Paper>
-
-
-
-
         <div className={classes.subtitleWrapper}>
           <Typography className={classes.subtitle} variant='h6'>Product Report Submissions</Typography>
         </div>
