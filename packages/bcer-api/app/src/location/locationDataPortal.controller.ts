@@ -18,7 +18,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
