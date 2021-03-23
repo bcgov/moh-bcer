@@ -148,8 +148,8 @@ export default function ProductOverview() {
 
   useEffect(() => {
     if (locations.length && !error) {
-      const withProducts = locations?.filter((l: BusinessLocation) => l.products?.length || l.productsCount > 0) || [];
-      const withoutProducts = locations?.filter((l: BusinessLocation) => !l.products?.length || l.productsCount === 0) || [];
+      const withProducts = locations?.filter((l: BusinessLocation) => l.productsCount > 0) || [];
+      const withoutProducts = locations?.filter((l: BusinessLocation) => l.productsCount === 0) || [];
       setWithProducts(withProducts);
       setWithoutProducts(withoutProducts);
     } else {

@@ -85,6 +85,13 @@ export default function SelectLocations() {
   }
 
   useEffect(() => {
+    setProductInfo({
+      ...productInfo,
+      locations: [],
+    });
+  }, []);
+
+  useEffect(() => {
     if (patchError) {
       setAppGlobal({...appGlobal, networkErrorMessage: patchError?.response?.data?.message})
     }

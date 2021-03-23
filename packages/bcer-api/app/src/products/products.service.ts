@@ -44,7 +44,7 @@ export class ProductsService {
     try {
       return await getManager().transaction(async transactionManager => {
         const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId } })));
-        const savedProducts = await transactionManager.save(productEntities, { chunk: productEntities.length / 300});
+        const savedProducts = await transactionManager.save(productEntities, { chunk: 5 });
 
         let sql = `INSERT INTO location_products_product("locationId", "productId") VALUES `;
         const allProductLocations = [];
@@ -114,6 +114,9 @@ export class ProductsService {
 
     // Get all products per location
     const locationProductsDictionary: Record<string, ProductEntity[]> = locationProducts.reduce((lpDict, lp) => {
+      if (!productsDictionary[lp.productId]) {
+        return lpDict;
+      }
       if (!!lpDict[lp.locationId]) {
         lpDict[lp.locationId].push(productsDictionary[lp.productId]);
       } else {

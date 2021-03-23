@@ -78,12 +78,12 @@ export class LocationService {
 
     if (query.search) {
       qb.andWhere(`
-      location.addressLine1 || ' ' || 
-      location.doingBusinessAs || ' ' || 
-      business.legalName || ' ' || 
-      business.businessName
+      LOWER(location.addressLine1) || ' ' || 
+      LOWER(location.doingBusinessAs) || ' ' || 
+      LOWER(business.legalName) || ' ' || 
+      LOWER(business.businessName)
       ILIKE :search`,
-      { search: `%${query.search}%` });
+      { search: `%${query.search.toLowerCase()}%` });
     }
     if (query.authority) {
       qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
@@ -240,7 +240,7 @@ export class LocationService {
     let noiRows = '';
 
     locations.map(location => {
-      noiRows += `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`  
+      noiRows += `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`
     });
 
     zip.file('All NOIs.csv', noiHeaders + noiRows);
