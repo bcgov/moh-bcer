@@ -154,7 +154,7 @@ export default function ProductOverview() {
       setWithoutProducts(withoutProducts);
     } else {
       if (error) {
-        setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
+        setAppGlobal({ ...appGlobal, networkErrorMessage: error?.response?.data?.message })
       }
     }
   }, [locations, error])
@@ -164,7 +164,7 @@ export default function ProductOverview() {
       history.push('/products/add-reports')
     } else {
       if (patchError) {
-        setAppGlobal({...appGlobal, networkErrorMessage: patchError?.response?.data?.message})
+        setAppGlobal({ ...appGlobal, networkErrorMessage: patchError?.response?.data?.message })
       }
     }
     if (pathname.includes('success')) {
@@ -214,36 +214,36 @@ export default function ProductOverview() {
           product information reports for each restricted E-substance you intend to sell. Product reports must be submitted
           at least 6 weeks prior to selling a restricted E-substance at retail.
           </Typography>
-          <span className={classes.highlightedText}>A Product Report </span> must include the following information for each
+        <span className={classes.highlightedText}>A Product Report </span> must include the following information for each
             restricted E-substance that will be sold from the sales premises:
             <div className={classes.listGroup}>
-            <div className={classes.listRow}>
-              <div className={classes.listBullet} />
+          <div className={classes.listRow}>
+            <div className={classes.listBullet} />
                 The name and contact information for the manufacturer
               </div>
-            <div className={classes.listRow}>
-              <div className={classes.listBullet} />
+          <div className={classes.listRow}>
+            <div className={classes.listBullet} />
                 The brand name and product name
               </div>
-            <div className={classes.listRow}>
-              <div className={classes.listBullet} />
+          <div className={classes.listRow}>
+            <div className={classes.listBullet} />
                 The type of product
               </div>
-            <div className={classes.listRow}>
-              <div className={classes.listBullet} />
+          <div className={classes.listRow}>
+            <div className={classes.listBullet} />
                 The concentration of nicotine (in mg/mL)
               </div>
-            <div className={classes.listRow}>
-              <div className={classes.listBullet} />
+          <div className={classes.listRow}>
+            <div className={classes.listBullet} />
                 The capacity (in mLs) of either the refillable container,
                 or the tank/cartridge to hold the E-substance
               </div>
-            <div className={classes.listRow}>
-              <div className={classes.listBullet} />
+          <div className={classes.listRow}>
+            <div className={classes.listBullet} />
                 A list of all the ingredients in an E-substance
                 (both the common and scientific names unless one of these names is not available from the manufacturer)
               </div>
-            <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
+          <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
         </div>
         <div className={classes.subtitleWrapper}>
           <Typography className={classes.subtitle} variant='h6'>Locations without Product Reports</Typography>
@@ -298,14 +298,14 @@ export default function ProductOverview() {
             {
               withProducts.length
                 ?
-                  <CSVLink
-                    headers={Object.keys(BusinessLocationHeaders)}
-                    data={withProducts.map((l: BusinessLocation) => {
-                      return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-                    })}
-                    filename={'business_locations_with_products.csv'} className={classes.csvLink} target='_blank'>
-                    <StyledButton variant='outlined'>
-                      <SaveAltIcon className={classes.buttonIcon} />
+                <CSVLink
+                  headers={Object.keys(BusinessLocationHeaders)}
+                  data={withProducts.map((l: BusinessLocation) => {
+                    return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+                  })}
+                  filename={'business_locations_with_products.csv'} className={classes.csvLink} target='_blank'>
+                  <StyledButton variant='outlined'>
+                    <SaveAltIcon className={classes.buttonIcon} />
                       Download CSV
                     </StyledButton>
                 </CSVLink>
@@ -338,7 +338,7 @@ export default function ProductOverview() {
           <Typography className={classes.subtitle} variant='h6'>Product Report Submissions</Typography>
         </div>
         <Paper className={classes.box} variant='outlined' >
-          <Typography className={classes.boxTitle} variant='subtitle1'>Product Report Submisisons</Typography>
+          <Typography className={classes.boxTitle} variant='subtitle1'>Product Report Submissions</Typography>
           <div className={classes.actionsWrapper}>
             <Typography className={classes.tableRowCount} variant='body2'>You have submitted {productSubmissions.length} product reports</Typography>
           </div>

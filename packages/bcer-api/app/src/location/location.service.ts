@@ -22,18 +22,18 @@ const manufacturingLocationDictionary = {
 }
 
 const manufacturingLocationTranslation = (manufacturing: string): boolean => {
-  if (typeof(manufacturing) === 'boolean') return manufacturing;
+  if (typeof (manufacturing) === 'boolean') return manufacturing;
   return manufacturingLocationDictionary[manufacturing];
 }
 
 @Injectable()
 export class LocationService {
   constructor(
-  @InjectRepository(LocationEntity)
+    @InjectRepository(LocationEntity)
     private readonly locationRepository: Repository<LocationEntity>,
-  @InjectRepository(BusinessEntity)
+    @InjectRepository(BusinessEntity)
     private readonly businessRepository: Repository<BusinessEntity>,
-  ) {}
+  ) { }
 
   async createLocations(dto: [LocationDTO], businessId: string) {
     const business = await this.businessRepository.findOne(businessId);
@@ -73,24 +73,21 @@ export class LocationService {
     } else if (query.orderBy === 'Health Authority') {
       qb.orderBy(`"location"."health_authority"`, query.order);
       qb.addOrderBy('"noi"."id"', 'ASC');
+    } else if (query.orderBy === 'Doing Business As') {
+      qb.orderBy(`"location"."doingBusinessAs"`, query.order);
+      qb.addOrderBy('"noi"."id"', 'ASC');
     }
     qb.where('location.noi IS NOT NULL');
 
     if (query.search) {
-      qb.andWhere(`
-      LOWER(location.addressLine1) || ' ' || 
-      LOWER(location.doingBusinessAs) || ' ' || 
-      LOWER(business.legalName) || ' ' || 
-      LOWER(business.businessName)
-      ILIKE :search`,
-      { search: `%${query.search.toLowerCase()}%` });
+      qb.andWhere('(LOWER(location.addressLine1) LIKE :search OR LOWER(location.doingBusinessAs) LIKE :search OR LOWER(business.legalName) LIKE :search OR LOWER(business.businessName) LIKE :search)', { search: `%${query.search.toLowerCase()}%` });
     }
     if (query.authority) {
       qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
     }
 
     // TYPEORM wonkiness: Skip and Take broken here, but offset and limit may not be ideal?
-    qb.offset((query.page-1) * query.numPerPage);
+    qb.offset((query.page - 1) * query.numPerPage);
     qb.limit(query.numPerPage);
     return await qb.getManyAndCount();
   }
@@ -133,11 +130,17 @@ export class LocationService {
     return;
   }
 
-  async getLocationWithIds(locationIds?: string[]): Promise<LocationEntity[]> {
+  async getLocationWithIds(locationIds?: string[], search?: string, authority?: string): Promise<LocationEntity[]> {
     const locationsQb = this.locationRepository.createQueryBuilder('location');
     locationsQb.leftJoinAndSelect('location.business', 'business');
     locationsQb.leftJoinAndSelect('location.noi', 'noi');
     if (locationIds?.length > 0) locationsQb.andWhere('location.id IN (:...locationIds)', { locationIds });
+    if (search) {
+      locationsQb.andWhere('(LOWER(location.addressLine1) LIKE :search OR LOWER(location.doingBusinessAs) LIKE :search OR LOWER(business.legalName) LIKE :search OR LOWER(business.businessName) LIKE :search)', { search: `%${search.toLowerCase()}%` });
+    }
+    if (authority) {
+      locationsQb.andWhere(`location.health_authority = :authority`, { authority });
+    }
     locationsQb.andWhere('location."noiId" IS NOT NULL');
     const locations = await locationsQb.getMany();
 
@@ -176,20 +179,20 @@ export class LocationService {
     const salesHeaders = 'Business Name,Brand,Product Name,Type,Flavour,Volume,Number of Containers Sold,Number of Cartridges Sold,Health Authority\n';
 
     zip.folder('Locations');
-    
+
     locations.map(location => {
       const noiRow = `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`;
       let productRows = '';
-    
+
       zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}`)
-      .file('Noi.csv', noiHeaders + noiRow);
-      
+        .file('Noi.csv', noiHeaders + noiRow);
+
       if (location.products?.length) {
         location.products.map(product => {
-          productRows += `"${product.type}","${product.brandName}","${product.productName}","${product.manufacturerName}","${product.manufacturerContact}","${product.manufacturerAddress}","${product.manufacturerPhone}","${product.manufacturerEmail}","${product.concentration}","${product.containerCapacity}","${product.cartridgeCapacity}","${product.ingredients}","${product.flavour}"\n` 
+          productRows += `"${product.type}","${product.brandName}","${product.productName}","${product.manufacturerName}","${product.manufacturerContact}","${product.manufacturerAddress}","${product.manufacturerPhone}","${product.manufacturerEmail}","${product.concentration}","${product.containerCapacity}","${product.cartridgeCapacity}","${product.ingredients}","${product.flavour}"\n`
         });
         zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Product Report`)
-          .file(`ProductReport.csv`, productHeaders + productRows );
+          .file(`ProductReport.csv`, productHeaders + productRows);
       }
 
       if (location.manufactures?.length) {
@@ -227,13 +230,13 @@ export class LocationService {
       }
     })
 
-    return zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+    return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
       .on('finish', () => {
         Logger.log('zip written.');
       }
-    )
+      )
   }
-  
+
   public packageOnlyNOI(locations: LocationEntity[]): NodeJS.ReadableStream {
     let zip = new JSZip();
     const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date\n';
@@ -245,11 +248,11 @@ export class LocationService {
 
     zip.file('All NOIs.csv', noiHeaders + noiRows);
 
-    return zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+    return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
       .on('finish', () => {
         Logger.log('zip written.');
       }
-    );
+      );
   }
 
   private buildCountSubquery = (relation: string, qb: SelectQueryBuilder<any>) => {

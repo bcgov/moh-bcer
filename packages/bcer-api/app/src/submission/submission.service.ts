@@ -20,7 +20,7 @@ export class SubmissionService {
     private readonly productsService: ProductsService,
     @InjectRepository(SubmissionEntity)
     private readonly submissionRepository: Repository<SubmissionEntity>,
-  ) {}
+  ) { }
 
   async createSubmission(dto: SubmissionDTO) {
     let business = await this.businessService.getBusinessById(dto.businessId);
@@ -54,7 +54,7 @@ export class SubmissionService {
       });
       return submission;
     } catch (error) {
-      throw new GenericException(SubmissionError.FAILED_TO_GET_SUBMSISSION, error)
+      throw new GenericException(SubmissionError.FAILED_TO_GET_SUBMISSION, error)
     }
   }
 
@@ -71,7 +71,7 @@ export class SubmissionService {
     return
   }
 
-  async mapSubmission(submissionId: string, { data } : UpdateSubmissionDTO) {
+  async mapSubmission(submissionId: string, { data }: UpdateSubmissionDTO) {
     const submission = await this.submissionRepository.findOne({ id: submissionId }, { relations: ['business'] });
     const mapping = data.mapping;
     // apply mapping and save based on the type

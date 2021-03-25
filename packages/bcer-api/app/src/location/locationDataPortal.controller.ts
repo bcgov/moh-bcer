@@ -42,7 +42,7 @@ export class LocationDataPortalController {
     private manufacturingService: ManufacturingService,
     private productsService: ProductsService,
     private salesReportService: SalesReportService,
-  ){}
+  ) { }
   @ApiOperation({ summary: 'Get all locations as MoH' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationSearchRO })
   @ApiQuery({
@@ -109,15 +109,27 @@ export class LocationDataPortalController {
     description: 'OPTIONAL Boolean to denote if the response should contain only NOIs. Used in conjunction with the getAll flag - will only ever be set to true if getAll is also true.',
     required: false
   })
+  @ApiQuery({
+    name: 'search',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'authority',
+    type: String,
+    required: false,
+  })
   async getLocationZip(
     @Res() res: Response,
     @Query('getAll') getAll?: string,
     @Query('getNOI') getNOI?: string,
+    @Query('search') search?: string,
+    @Query('authority') authority?: string,
     @Body() payload?: Array<string>
   ) {
     let locations: LocationEntity[];
-    if(getAll === 'true') {
-      locations = await this.service.getLocationWithIds();
+    if (getAll === 'true') {
+      locations = await this.service.getLocationWithIds(null, search, authority);
     } else {
       locations = await this.service.getLocationWithIds(payload);
     }
@@ -130,7 +142,7 @@ export class LocationDataPortalController {
       ids.add(location.businessId);
       return ids;
     }, new Set([]));
-    
+
     const businesses = await this.businessService.getBusinessesWithIds(Array.from(businessIds));
     const businessesDictionary = businesses.reduce((bDict, business) => {
       bDict[business.id] = business;

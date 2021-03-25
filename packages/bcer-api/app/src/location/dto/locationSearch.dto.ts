@@ -11,11 +11,11 @@ export class LocationSearchDTO {
   order?: 'ASC' | 'DESC' = 'ASC';
 
   @ApiProperty({
-    description: 'Business Legal Name, Submitted Date, Health Authority',
+    description: 'Business Legal Name, Submitted Date, Health Authority, Doing Business As',
   })
   @IsOptional()
   @IsString()
-  @IsIn(['Business Legal Name', 'Submitted Date', 'Health Authority'])
+  @IsIn(['Business Legal Name', 'Submitted Date', 'Health Authority', 'Doing Business As'])
   orderBy?: string = 'Submitted Date';
 
   @ApiProperty({

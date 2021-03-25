@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, ButtonGroup, Grid, makeStyles, Typography, Paper, Snackbar, CircularProgress, IconButton, SnackbarContent, TextField } from '@material-ui/core';
+import { Box, Grid, makeStyles, Typography, Paper, Snackbar, CircularProgress, IconButton, SnackbarContent, Tooltip } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Form, Formik } from 'formik';
 import { useAxiosGet, useAxiosPostFormData } from '@/hooks/axios';
@@ -148,28 +148,6 @@ export default function Locations() {
   });
   const [locations, setLocations] = useState([]);
 
-  const buildSearchUrl = (): string => {
-    let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
-    searchTerms?.term && searchTerms.term.length > 3 ? url += `&search=${searchTerms.term}` : null;
-    searchTerms?.authority ? url += `&authority=${searchTerms.authority}` : null;
-    searchTerms?.orderBy ? url += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
-    searchTerms?.orderDirection ? url += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
-    return url;
-  }
-
-  const [{ data, loading, error }, get] = useAxiosGet(buildSearchUrl(), { manual: true });
-  const [{ data: zipFile, loading: zipLoading, error: zipError }, post] = useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
-  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
-  
-  const healthAuthorityOptions = [
-    { value: 'all', label: 'All' },
-    { value: 'coastal', label: 'Coastal' },
-    { value: 'fraser', label: 'Fraser' },
-    { value: 'interior', label: 'Interior' },
-    { value: 'island', label: 'Island' },
-    { value: 'northern', label: 'Northern' },
-  ];
-
   const tableColumns = [
     {
       title: 'Business Name',
@@ -179,6 +157,10 @@ export default function Locations() {
     {
       title: 'Business Legal Name',
       field: 'business.legalName',
+    },
+    {
+      title: 'Doing Business As',
+      field: 'doingBusinessAs',
     },
     {
       title: 'Phone Number',
@@ -205,6 +187,28 @@ export default function Locations() {
     }
   ];
 
+  const buildSearchUrl = (): string => {
+    let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
+    searchTerms?.term && searchTerms.term.length > 3 ? url += `&search=${searchTerms.term}` : null;
+    searchTerms?.authority ? url += `&authority=${searchTerms.authority}` : null;
+    searchTerms?.orderBy ? url += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
+    searchTerms?.orderDirection ? url += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
+    return url;
+  }
+
+  const [{ data, loading, error }, get] = useAxiosGet(buildSearchUrl(), { manual: true });
+  const [{ data: zipFile, loading: zipLoading, error: zipError }, post] = useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
+  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+
+  const healthAuthorityOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'coastal', label: 'Coastal' },
+    { value: 'fraser', label: 'Fraser' },
+    { value: 'interior', label: 'Interior' },
+    { value: 'island', label: 'Island' },
+    { value: 'northern', label: 'Northern' },
+  ];
+
   const logout = () => {
     store.clearAll();
     keycloak.logout();
@@ -221,11 +225,6 @@ export default function Locations() {
   }
 
   useEffect(() => {
-    let URL = `${process.env.BASE_URL}/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
-    searchTerms?.term && searchTerms.term.length > 3 ? URL += `&search=${searchTerms.term}` : null;
-    searchTerms?.authority ? URL += `&authority=${searchTerms.authority}` : null;
-    searchTerms?.orderBy ? URL += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
-    searchTerms?.orderDirection ? URL += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
     get();
   }, [searchTerms]);
 
@@ -239,7 +238,7 @@ export default function Locations() {
     switch (requestFilter) {
 
       case 'all':
-        postConfig.url = '/data/location/reportsFile?getAll=true'
+        postConfig.url = `/data/location/reportsFile?getAll=true${searchTerms.authority ? `&authority=${searchTerms.authority}` : ''}${searchTerms.term ? `&search=${searchTerms.term}` : ''}`;
         break
 
       case 'selected':
@@ -248,7 +247,7 @@ export default function Locations() {
         break
 
       case 'NOI':
-        postConfig.url = '/data/location/reportsFile?getAll=true&getNOI=true'
+        postConfig.url = `/data/location/reportsFile?getAll=true&getNOI=true${searchTerms.authority ? `&authority=${searchTerms.authority}` : ''}${searchTerms.term ? `&search=${searchTerms.term}` : ''}`;
         break
 
       default:
@@ -327,7 +326,7 @@ export default function Locations() {
                     </Grid>
                     <Grid item xs={3}>
                       <Box alignContent='center' alignItems='center' justifyContent='center' display='flex' minHeight='100%'>
-                      <StyledButton fullWidth variant='contained' type='submit'>Search</StyledButton>
+                        <StyledButton fullWidth variant='contained' type='submit'>Search</StyledButton>
                       </Box>
                     </Grid>
                   </Grid>
@@ -351,14 +350,18 @@ export default function Locations() {
                   <SaveAltIcon className={classes.buttonIcon} />
                   Download Selected
                 </StyledButton>
-                <StyledButton
-                  variant='contained'
-                  onClick={() => getReportsFile('all')}
-                  disabled={zipLoading}
-                >
-                  <SaveAltIcon className={classes.buttonIconAlt} />
-                  Download All Locations
-                </StyledButton>
+                <Tooltip title={totalRowCount > 400 ? 'Must be less than 400 locations to download' : ''} placement='top'>
+                  <div>
+                    <StyledButton
+                      variant='contained'
+                      onClick={() => getReportsFile('all')}
+                      disabled={zipLoading || totalRowCount > 400}
+                    >
+                      <SaveAltIcon className={classes.buttonIconAlt} />
+                      Download All Locations
+                    </StyledButton>
+                  </div>
+                </Tooltip>
               </div>
               <div className={'tableDiv'}>
                 <StyledTable

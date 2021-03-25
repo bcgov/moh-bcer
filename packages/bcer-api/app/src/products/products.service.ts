@@ -12,11 +12,11 @@ import { ProductUploadRO } from './ro/product-upload.ro';
 @Injectable()
 export class ProductsService {
   constructor(
-  @InjectRepository(ProductEntity)
+    @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
-  @InjectRepository(LocationEntity)
+    @InjectRepository(LocationEntity)
     private readonly locationRepository: Repository<LocationEntity>,
-  ) {}
+  ) { }
   async createProducts(dto: ProductsDTO, businessId: string) {
     if (dto.locationIds.length * dto.products.length > 200000) {
       throw new ForbiddenException('Attempting to create too many products');
@@ -31,7 +31,7 @@ export class ProductsService {
     (async () => {
       do {
         productUploadId = uuid();
-      } while (!(await this.productRepository.findOne({ where: { productUploadId }})));
+      } while (!(await this.productRepository.findOne({ where: { productUploadId } })));
     })();
 
     dto.products = dto.products.map(product => {
@@ -40,11 +40,11 @@ export class ProductsService {
         productUploadId,
       };
     });
-    
+
     try {
       return await getManager().transaction(async transactionManager => {
         const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId } })));
-        const savedProducts = await transactionManager.save(productEntities, { chunk: 5 });
+        const savedProducts = await transactionManager.save(productEntities, { chunk: Math.ceil(productEntities.length / 300) });
 
         let sql = `INSERT INTO location_products_product("locationId", "productId") VALUES `;
         const allProductLocations = [];
@@ -63,7 +63,7 @@ export class ProductsService {
     } catch (e) {
       throw new UnprocessableEntityException('There was a problem creating these products');
     }
-  } 
+  }
 
   async getProducts(businessId: string, submissionId?: string) {
     const findOptions = {
@@ -98,7 +98,7 @@ export class ProductsService {
     if (locationIds.length === 0) { return {} };
     const db = getConnectionManager().get();
     const locationProducts = await db.query(`SELECT * FROM location_products_product WHERE "locationId" IN ('${locationIds.join("','")}')`);
-    
+
     // Get all products associated with the passed in locations
     const allProducts = locationProducts.reduce((all, lp) => {
       all.push(lp.productId);
