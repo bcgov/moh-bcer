@@ -41,7 +41,7 @@ export default function Welcome() {
     <div className={classes.splashContainer}>
       <div className={classes.splashWrapper}>
         <Typography variant='h5'>Welcome to E-Substances Reporting Application</Typography>
-        <Typography variant='body1'>As a first-time user of this application, you need to finish the initial setup of your organization. Next time you login, you will not have to complete this step. If you completed your Notice of Intent prior to September 30th, 2020 using the previous process, you should have been sent a code to register your BCeID with the report that you have already submitted. </Typography>
+        <Typography variant='body1'>As a first-time user of this application, you need to finish the initial setup of your organization. Next time you login, you will not have to complete this step.</Typography>
         <Typography variant='body1'>If you have already submitted a product and manufacturing report using the previous process, this will be uploaded to the application. However, when updating your product and manufacturing reports, you are asked to update these through the application.</Typography>
         <div className={classes.buttonWrapper}> 
           <StyledButton variant='contained' onClick={() => history.push('/business/details')}>

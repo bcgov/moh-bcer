@@ -213,37 +213,64 @@ export default function ProductOverview() {
           As a business owner who sells or intends to sell E-substances in British Columbia, you are required to provide
           product information reports for each restricted E-substance you intend to sell. Product reports must be submitted
           at least 6 weeks prior to selling a restricted E-substance at retail.
-          </Typography>
+        </Typography>
         <span className={classes.highlightedText}>A Product Report </span> must include the following information for each
             restricted E-substance that will be sold from the sales premises:
             <div className={classes.listGroup}>
-          <div className={classes.listRow}>
-            <div className={classes.listBullet} />
-                The name and contact information for the manufacturer
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Product Type
               </div>
-          <div className={classes.listRow}>
-            <div className={classes.listBullet} />
-                The brand name and product name
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Brand Name
               </div>
-          <div className={classes.listRow}>
-            <div className={classes.listBullet} />
-                The type of product
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Product Name
               </div>
-          <div className={classes.listRow}>
-            <div className={classes.listBullet} />
-                The concentration of nicotine (in mg/mL)
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Manufacturer Name
               </div>
-          <div className={classes.listRow}>
-            <div className={classes.listBullet} />
-                The capacity (in mLs) of either the refillable container,
-                or the tank/cartridge to hold the E-substance
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Manufacturer Contact (contact person, if applicable)
               </div>
-          <div className={classes.listRow}>
-            <div className={classes.listBullet} />
-                A list of all the ingredients in an E-substance
-                (both the common and scientific names unless one of these names is not available from the manufacturer)
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Manufaturer Address
+              </div>
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Manufacturer Phone
+              </div>
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Manufacturer Email
+              </div>
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Concentration (mg/mL)
+              </div>
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Container Capacity (Max 30 mL)
+              </div>
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Cartridge Capacity (Max 2 mL)
+              </div>
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Ingredients
+              </div>
+              <div className={classes.listRow}>
+                <div className={classes.listBullet} />
+                Flavour
               </div>
           <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
+          <Typography variant='body1'><span className={classes.highlightedText}>Note:</span> If you are resubmitting a product report that was previously submitted before December 16, 2020, you are not required to wait 6 weeks before selling. You are only required to wait 6 weeks for any new products that you intend to sell and have not yet been reported.</Typography>
         </div>
         <div className={classes.subtitleWrapper}>
           <Typography className={classes.subtitle} variant='h6'>Locations without Product Reports</Typography>
@@ -337,6 +364,12 @@ export default function ProductOverview() {
         <div className={classes.subtitleWrapper}>
           <Typography className={classes.subtitle} variant='h6'>Product Report Submissions</Typography>
         </div>
+        <Typography variant='body1' className={classes.pageDescription}>
+          In this section, you can review the product reports that you have submitted. When you select “view”
+          you can review and delete specific submissions. <span className={classes.highlightedText}>Note</span>: the purpose of this option is to delete products
+          that were submitted in error. If you are no longer selling a product, please <span className={classes.highlightedText}>do not delete</span> the product
+          from the list, as you will be required to report on it for your sales report in that current year.
+        </Typography>
         <Paper className={classes.box} variant='outlined' >
           <Typography className={classes.boxTitle} variant='subtitle1'>Product Report Submissions</Typography>
           <div className={classes.actionsWrapper}>

@@ -39,6 +39,7 @@ const useStyles = makeStyles({
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
+    marginBottom: '20px',
   },
   boxTitle: {
     paddingBottom: '10px'
@@ -62,6 +63,10 @@ const useStyles = makeStyles({
   checkboxLabel: {
     marginTop: '20px'
   },
+  highlightedText: {
+    fontWeight: 600,
+    color: '#0053A4'
+  },
 });
 
 export default function DeleteProductSubmissions() {
@@ -72,15 +77,14 @@ export default function DeleteProductSubmissions() {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const { submissionId } : { submissionId: string } = useParams();
 
-  const [{ data: products = [] }] = useAxiosGet(`/products?submissionId=${submissionId}`);
+  const [{ data: productsAndLocations = [] }] = useAxiosGet(`/products?submissionId=${submissionId}`);
   const [{ error }, request] = useAxiosDelete(`/products/submission/${submissionId}`, { manual: true });
 
   useEffect(() => {
-    if (!!products.length) {
-      setSubmissionDate(moment(products[0].created_at).format('LLL'));
+    if (!!productsAndLocations.products?.length) {
+      setSubmissionDate(moment(productsAndLocations?.products[0].created_at).format('LLL'));
     }
-  }, [products]);
-
+  }, [productsAndLocations]);
   
   const confirmDelete = async() => {
     await request();
@@ -94,29 +98,32 @@ export default function DeleteProductSubmissions() {
   return (
     <>
       <div>
-        <StyledButton onClick={() => history.push('/products/add-reports')}>
+        <StyledButton onClick={() => history.push('/products')}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Cancel
         </StyledButton>
         <Typography variant='h5'  className={classes.title}>
-          Products in this Submission
+          Delete Products in Submission
         </Typography>
         <div className={classes.helpTextWrapper}>
           <ChatBubbleOutlineIcon className={classes.helperIcon} />
           <Typography variant='body1'>
-            These products were submitted on {submissionDate}
+            On this page, you can review and delete a product report. If you have submitted this product report in
+            error, or you have accidentally resubmitted your entire list of products (instead of just the new ones),
+            you can select “delete” and upload a new product report that contains the correct information. <span className={classes.highlightedText}>Please
+            note that this will delete the product report from all locations that are currently attached to it.</span>
           </Typography>
         </div>
         <Paper className={classes.box} variant='outlined'>
           <Typography className={classes.boxTitle} variant='subtitle1'>Products in this Submission</Typography>
           <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>{products?.length} products found</Typography>
+            <Typography className={classes.tableRowCount} variant='body2'>{productsAndLocations.products?.length || 0} products found, submitted on {submissionDate}</Typography>
             {
-              products?.length
+              productsAndLocations.products?.length
               ?
                 <CSVLink
                   headers={Object.keys(ProductReportHeaders)}
-                  data={products?.map((p: Products) => {
+                  data={productsAndLocations.products?.map((p: Products) => {
                       return [
                         p.type,
                         p.brandName, 
@@ -159,10 +166,27 @@ export default function DeleteProductSubmissions() {
                 {title: "Ingredients", field: 'ingredients'},
                 {title: "Flavour", field: 'flavour'},
               ]}
-              data={products}
+              data={productsAndLocations.products}
             />
           </div>
         </Paper>
+
+        <Paper className={classes.box} variant='outlined'>
+          <Typography className={classes.boxTitle} variant='subtitle1'>Locations Affected</Typography>
+          <div style={{ overflowX: 'auto' }}>
+            <StyledTable
+              columns={[
+                {title: 'Doing Business As', field: 'doingBusinessAs'},
+                {title: 'Address', field: 'addressLine1'},
+                {title: 'City', field: 'city'},
+                {title: 'Postal Code', field: 'postal'},
+                {title: 'Health Authority', field: 'health_authority'},
+              ]}
+              data={productsAndLocations.locations}
+            />
+          </div>
+        </Paper>
+
         <div className={classes.submitWrapper}>
           <StyledButton
             variant='contained'
