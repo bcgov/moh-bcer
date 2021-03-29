@@ -259,7 +259,6 @@ export default function ManufacturingOverview() {
           </div>
           <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
         </div>
-        If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.
         <div className={classes.subtitleWrapper}>
           <Typography className={classes.subtitle} variant='h6'>Submitted Manufacturing Reports</Typography>
         </div>

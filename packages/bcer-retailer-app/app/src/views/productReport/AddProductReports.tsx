@@ -94,7 +94,11 @@ const useStyles = makeStyles({
     borderBottom: '1px solid #CCCCCC',
     padding: '0px 0px 16px 0px',
     margin: '16px 24px 0px 24px'
-  }
+  },
+  highlightedText: {
+    fontWeight: 600,
+    color: '#0053A4'
+  },
 })
 
 const ContextHandler = (): null => {
@@ -234,6 +238,8 @@ export default function AddProductReports() {
           <Typography variant='body1' className={classes.description}>
           You are required to submit a Product Report for all locations that you have added.
           You may choose to submit the same product report for multiple locations, if applicable.
+          If you are adding new products to your product list, <span className={classes.highlightedText}>only upload the new products</span>. Do not re-upload
+          your entire product list as this will create a duplicate of all existing entries.
           </Typography>
         </div>
         <Formik enableReinitialize initialValues={{'mode select': entry}} onSubmit={(value) => handleModeSwitch(value)}>

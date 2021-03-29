@@ -24,6 +24,7 @@ import {
 
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { BusinessGuard } from 'src/user/guards/business.guard';
+import { LocationService } from 'src/location/location.service';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/auth/auth.module';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
@@ -32,7 +33,9 @@ import { ProductsService } from 'src/products/products.service';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { ProductsDTO } from 'src/products/dto/products.dto';
 import { ProductRO } from 'src/products/ro/product.ro';
+import { ProductsLocationsRO } from './ro/products-locations.ro';
 import { ProductUploadRO } from './ro/product-upload.ro';
+import { LocationEntity } from 'src/location/entities/location.entity';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -41,6 +44,7 @@ import { ProductUploadRO } from './ro/product-upload.ro';
 export class ProductsController {
   constructor(
     public service: ProductsService,
+    private locationService: LocationService,
   ){}
 
   @ApiOperation({ summary: 'Create products' })
@@ -58,7 +62,7 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary: 'Get Products' })
-  @ApiResponse({ status: HttpStatus.OK, type: [ProductRO] })
+  @ApiResponse({ status: HttpStatus.OK, type: ProductsLocationsRO })
   @ApiQuery({
     name: 'submissionId',
     required: false,
@@ -70,9 +74,15 @@ export class ProductsController {
   async getProducts(
     @Request() req: RequestWithUser,
     @Query('submissionId') submissionId?: string,
-  ): Promise<ProductRO[]> {
-    const product = await this.service.getProducts(req.ctx.businessId, submissionId)
-    return product.map((product: ProductEntity) => product.toResponseObject())
+  ): Promise<ProductsLocationsRO> {
+    const products = await this.service.getProducts(req.ctx.businessId, submissionId);
+    const productIds = products.map((product: ProductEntity) => product.id);
+    const locationIds = await this.service.getLocationIdsForProducts(productIds);
+    const locations = await this.locationService.getLocationWithIds(locationIds);
+    return {
+      locations: locations.map((location: LocationEntity) => location.toResponseObject()),
+      products: products.map((product: ProductEntity) => product.toResponseObject()),
+    }
   }
 
   @ApiOperation({ summary: 'Clear Products' })

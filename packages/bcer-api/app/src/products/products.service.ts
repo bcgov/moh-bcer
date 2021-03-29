@@ -84,6 +84,14 @@ export class ProductsService {
     return products;
   }
 
+  async getLocationIdsForProducts(productIds: string[]): Promise<string[]> {
+    if (productIds.length === 0) { return [] };
+    // we only need one product to know which locations this product list applies to
+    const db = getConnectionManager().get();
+    const locationProducts = await db.query(`SELECT * FROM location_products_product WHERE "productId" = '${productIds[0]}'`);
+    return locationProducts.map(lp => lp.locationId);
+  }
+
   async getProductsWithIds(productIds: string[]): Promise<ProductEntity[]> {
     if (productIds.length === 0) return [];
     const products = await this.productRepository.find({
