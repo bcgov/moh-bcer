@@ -15,6 +15,7 @@ import { ProductInfoContext } from '@/contexts/ProductReport';
 import SendIcon from '@material-ui/icons/Send';
 import ProductReportSubmission from '@/components/productReport/ProductReportSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -152,27 +153,31 @@ export default function ProductOverview() {
       const withoutProducts = locations?.filter((l: BusinessLocation) => l.productsCount === 0) || [];
       setWithProducts(withProducts);
       setWithoutProducts(withoutProducts);
-    } else {
-      if (error) {
-        setAppGlobal({ ...appGlobal, networkErrorMessage: error?.response?.data?.message })
-      }
     }
-  }, [locations, error])
+  }, [locations]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(error) })
+    }
+  }, [error]);
 
   useEffect(() => {
     if (patchedSubmission && !patchError) {
       history.push('/products/add-reports')
-    } else {
-      if (patchError) {
-        setAppGlobal({ ...appGlobal, networkErrorMessage: patchError?.response?.data?.message })
-      }
     }
     if (pathname.includes('success')) {
       if (locations.length > 0 && !locations.find((l: BusinessLocation) => l.products?.length === 0 || l.productsCount === 0)) {
         setAppGlobal({ ...appGlobal, productReportComplete: true });
       };
     };
-  }, [patchedSubmission, patchError]);
+  }, [patchedSubmission]);
+
+  useEffect(() => {
+    if (patchError) {
+      setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(patchError) })
+    }
+  }, [patchError]);
 
   return loading ? <CircularProgress /> : (
     <>

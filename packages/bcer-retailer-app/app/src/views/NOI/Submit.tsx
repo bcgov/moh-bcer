@@ -13,6 +13,7 @@ import { BusinessLocation } from '@/constants/localInterfaces';
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -101,7 +102,7 @@ export default function NoiSubmit() {
 
   useEffect(() => {
     if (postError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: postError?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(postError)})
     }
   }, [postError])
 
@@ -109,12 +110,14 @@ export default function NoiSubmit() {
     if (locations.length && !error) {
       const outstanding = locations.filter((l: BusinessLocation) => !l.noi);
       setOutstanding(outstanding);
-    } else {
-      if (error) {
-        setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
-      }
     }
-  }, [locations, error]);
+  }, [locations]);
+  
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+    }
+  }, [error]);
 
   return loading ? <CircularProgress /> : response?.status === 201 ? <Redirect to='/noi/success' /> : (
     <>

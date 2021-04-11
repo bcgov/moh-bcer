@@ -9,10 +9,11 @@ import SendIcon from '@material-ui/icons/Send';
 import moment from 'moment';
 
 import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
-import { BusinessLocationHeaders } from '@/constants/localEnums';
-import { BusinessLocation } from '@/constants/localInterfaces';
-import NoiSubmission from '@/components/Noi/NoiSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { BusinessLocation } from '@/constants/localInterfaces';
+import { BusinessLocationHeaders } from '@/constants/localEnums';
+import { formatError } from '@/utils/formatting';
+import NoiSubmission from '@/components/Noi/NoiSubmission';
 
 const useStyles = makeStyles({
   box: {
@@ -89,20 +90,22 @@ export default function NoiOverview() {
     if (pathname.includes('success') && !appGlobal.noiComplete) {
       setAppGlobal({ ...appGlobal, noiComplete: true })
     }
-  }, [pathname, setAppGlobal, appGlobal]);
+  }, [pathname, appGlobal.noiComplete]);
 
   useEffect(() => {
-    if (locations.length && !error) {
+    if (locations.length) {
       const outstanding = locations.filter((l: BusinessLocation) => !l.noi);
       const submitted = locations.filter((l: BusinessLocation) => l.noi);
       setOutstanding(outstanding);
       setSubmitted(submitted);
-    } else {
-        if (error) {
-          setAppGlobal({...appGlobal, networkErrorMessage: error.response.data.message})
-        }
     }
-  }, [locations, error]);
+  }, [locations]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+    }
+  }, [error]);
 
   return loading ? <CircularProgress /> : (
     <>

@@ -14,6 +14,7 @@ import { useAxiosGet } from '@/hooks/axios';
 import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -76,7 +77,7 @@ export default function ManufacturingSubmit() {
 
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error])
 

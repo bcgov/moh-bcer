@@ -9,6 +9,7 @@ import { IconButton, Typography } from '@material-ui/core';
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { ProductInfoContext } from '@/contexts/ProductReport';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 import UploadSuccess from '@/assets/images/file-check.png';
 import uploadIcon from '@/assets/images/upload.png';
 
@@ -88,10 +89,13 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
       }
       setFileData(fileInformation)
     }
+  }, [data]);
+
+  useEffect(() => {
     if(uploadError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: uploadError?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(uploadError)})
     }
-  }, [data, uploadError])
+  }, [uploadError]);
 
   const handleResetUpload = () => {
     upload(null)

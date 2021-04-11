@@ -16,6 +16,7 @@ import FileCheckGreen from '@/assets/images/file-check-green.png';
 import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
 import { BusinessLocation, ManufacturingReport } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -154,10 +155,10 @@ export default function ManufacturingOverview() {
 
   useEffect(() => {
     if (locationsError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: locationsError?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(locationsError)})
     }
     if (manufacturingError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: manufacturingError?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(manufacturingError)})
     }
   }, [locationsError, manufacturingError ])
 

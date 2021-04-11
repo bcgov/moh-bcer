@@ -20,6 +20,7 @@ import {
 } from '@material-ui/core';
 import userSignOutLogo from '@/assets/images/sign-out.png';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   sideNav: {
@@ -126,12 +127,14 @@ export default function SideNav() {
         ...appGlobal,
         ...status,
       })
-    } else {
-      if (error) {
-        setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
-      }
     }
-  }, [status, error]);
+  }, [status]);
+  
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+    }
+  }, [error])
 
   const NavItem: React.SFC<IconProps> = ({ formStep }) => {
     let completedStep = false;

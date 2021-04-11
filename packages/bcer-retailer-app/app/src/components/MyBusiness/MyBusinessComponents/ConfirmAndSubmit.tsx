@@ -14,6 +14,7 @@ import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
 import BusinessDetailsEditInputs from '@/components/form/inputs/BusinessDetailsEditInputs';
 import { useAxiosPatch } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   box: {
@@ -103,9 +104,9 @@ export default function ConfirmAndSubmit () {
 
   useEffect(() => {
     if (postError) {
-      setAppGlobalContext({...appGlobal, networkErrorMessage: postError?.response?.data?.message})
+      setAppGlobalContext({...appGlobal, networkErrorMessage: formatError(postError)});
     }
-  }, [postError])
+  }, [postError]);
   
   const confirmDelete = () => {
     const remainder = businessInfo.locations.filter((element: IBusinessLocationValues) =>{

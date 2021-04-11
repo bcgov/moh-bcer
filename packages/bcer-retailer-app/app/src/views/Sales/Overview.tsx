@@ -13,6 +13,7 @@ import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import NoiSubmission from '@/components/Noi/NoiSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   box: {
@@ -93,12 +94,14 @@ export default function SalesOverview() {
       const submitted = locations.filter((l: BusinessLocation) => l?.sales?.length > 0 || l.salesCount > 0);
       setOutstanding(outstanding);
       setSubmitted(submitted);
-    } else {
-        if (error) {
-          setAppGlobal({...appGlobal, networkErrorMessage: error.response.data.message})
-        }
     }
-  }, [locations, error]);
+  }, [locations]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+    }
+  }, [error]);
 
   return loading ? <CircularProgress /> : (
     <>

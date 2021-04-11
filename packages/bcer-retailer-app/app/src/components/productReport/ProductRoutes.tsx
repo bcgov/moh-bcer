@@ -11,7 +11,7 @@ import SelectLocations from '@/views/productReport/SelectLocations';
 import ConfirmProducts from '@/views/productReport/ConfirmProducts';
 import DeleteProductSubmissions from '@/views/productReport/DeleteProductSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-
+import { formatError } from '@/utils/formatting';
 
 export default function ProductRoutes(){
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
@@ -64,12 +64,14 @@ export default function ProductRoutes(){
         ...submission.data,
         submissionId: submission.id,
       })
-    } else {
-      if (error) {
-        setAppGlobalContext({...appGlobal, networkErrorMessage: error?.response?.data?.message})
-      }
     }
-  }, [submission, error])
+  }, [submission, error]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobalContext({...appGlobal, networkErrorMessage: formatError(error)});
+    }
+  }, [error]);
 
   useEffect(() => {
     if (newSubmission && !postError) {
@@ -79,12 +81,14 @@ export default function ProductRoutes(){
         ...newSubmission.data,
         submissionId: newSubmission.id,
       })
-    } else {
-      if (postError) {
-        setAppGlobalContext({...appGlobal, networkErrorMessage: postError?.response?.data?.message})
-      }    
     }
-  }, [newSubmission, postError])
+  }, [newSubmission]);
+
+  useEffect(() => {
+    if (postError) {
+      setAppGlobalContext({...appGlobal, networkErrorMessage: formatError(postError)});
+    }
+  }, [postError]);
 
   return(
     <>
