@@ -79,21 +79,21 @@ const Routes = () => {
             </Switch>
           </Suspense>
         </AppGlobalProvider>
+        <Snackbar
+          open={snackbarOpen}
+          onClose={() => setSnackbarOpen(false)}
+          message={appGlobal.networkErrorMessage}
+          key={appGlobal.networkErrorMessage}
+          ClickAwayListenerProps={{mouseEvent: false,touchEvent: false}}
+          action={
+            <>
+              <IconButton size="small" aria-label="close" color="inherit" onClick={() => setSnackbarOpen(false)}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </>
+          }
+        />
       </ThemeProvider>
-      <Snackbar
-        open={snackbarOpen}
-        onClose={() => setSnackbarOpen(false)}
-        message={appGlobal.networkErrorMessage}
-        key={appGlobal.networkErrorMessage}
-        ClickAwayListenerProps={{mouseEvent: false,touchEvent: false}}
-        action={
-          <>
-            <IconButton size="small" aria-label="close" color="inherit" onClick={() => setSnackbarOpen(false)}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </>
-        }
-      />
     </HashRouter>
   );
 };
