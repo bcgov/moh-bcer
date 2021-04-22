@@ -26,10 +26,11 @@ Requirements:
 4. Your PG database will be available on the docker volume and the API will be exposed onto `http://localhost:4000`
 
 **NPM**
-1. Navigate into the `app` directory and run `npm i`
-2. Ensure you have a local instance of Postgres running. Check the `.env` file to ensure the `DB_` values matches with your PG db.
-3. Run `npm run start`
-4. The API will be exposed onto `http://localhost:4000`
+1. Ensure you have postgres running locally
+2. Navigate into the `app` directory and run `npm i`
+3. Ensure you have a local instance of Postgres running. Check the `.env` file to ensure the `DB_` values matches with your PG db.
+4. Run `npm run start`
+5. The API will be exposed onto `http://localhost:4000`
 
 ## Build and Deploy
 We have four environments for this app - Internal/UAT hosted on AWS, and a Dev, Test, and Prod server hosted by CGI on premise.

@@ -18,7 +18,7 @@ The retailer application uses BCeID Keycloak for authentication.
 The data portal application uses IDIR Keycloak for authentication.
 
 ## Shared Components
-The shared components are used for importing onto both the retailer application and the common portal. The intention is for this package to be published to a package manager. As of now, this only works on the bitbucket repository version of this package.
+The shared components are used for importing onto both the retailer application and the common portal. This package is developed and imported locally in the other frontend packages. However, after making changes to any shared components, `npm run build` must be ran within the shared components package for the other packages to find the changes.
 
 ### Notes
 - At the moment, the containerized versions of these apps are non-functional.
