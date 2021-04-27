@@ -8,6 +8,7 @@ import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import store from 'store';
 import useAxios from 'axios-hooks';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -73,12 +74,14 @@ export default function Bottom ({
         store.remove('submissionId');
         history.push(`/submission/${dataForContext.submissionId}`);
       } else next()
-    } else {
-      if (error) {
-        setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
-      }
     }
-  }, [response, error])
+  }, [response]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)});
+    }
+  }, [error]);
 
   const stepAction = async () => {
     const { submissionId, ...rest } = dataForContext;

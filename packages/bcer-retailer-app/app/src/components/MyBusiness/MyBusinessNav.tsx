@@ -23,6 +23,7 @@ import ConfirmLocations from './MyBusinessComponents/ConfirmLocations';
 import ConfirmAndSubmit from './MyBusinessComponents/ConfirmAndSubmit';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { BusinessLocation } from '@/constants/localInterfaces';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
     stepTitle: {
@@ -164,8 +165,6 @@ export default function MyBusinessNav () {
               ...appGlobal,
               myBusinessComplete: true,
             })
-          } else {
-            setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
           }
         } else {
           setBusinessInfo({
@@ -174,11 +173,21 @@ export default function MyBusinessNav () {
             locations: profile?.business?.locations,
           })
         }
-      } else {
-        setAppGlobal({...appGlobal, networkErrorMessage: profileError?.response?.data?.message})
       }
     })()
-  }, [profile, submission, error, profileError])
+  }, [profile, submission]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (profileError) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(profileError)})
+    }
+  }, [profileError]);
 
   useEffect(() => {
     if (newSubmission && !postError) {
@@ -190,12 +199,14 @@ export default function MyBusinessNav () {
           ...initialData,
           submissionId: newSubmission.id,
         })
-    } else {
-      if (postError) {
-        setAppGlobal({...appGlobal, networkErrorMessage: postError?.response?.data?.message})
-      }
     }
-  }, [newSubmission, postError])
+  }, [newSubmission])
+
+  useEffect(() => {
+    if (postError) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(postError)})
+    }
+  }, [postError]);
 
   useEffect(() => {
     setBusinessInfo({ ...businessInfo, currentStep })

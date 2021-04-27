@@ -12,6 +12,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { Products } from '@/constants/localInterfaces';
 import { ProductReportHeaders } from '@/constants/localEnums';
 import { useAxiosDelete, useAxiosGet } from '@/hooks/axios';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -91,7 +92,7 @@ export default function DeleteProductSubmissions() {
     if (!error) {
       history.push('/products');
     } else {
-      setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message || 'Error with deleting products' })
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error) })
     }
   }
 

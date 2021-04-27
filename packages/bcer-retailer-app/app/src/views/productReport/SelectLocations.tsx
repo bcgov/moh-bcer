@@ -12,6 +12,7 @@ import { BusinessLocation } from '@/constants/localInterfaces';
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { ProductInfoContext } from '@/contexts/ProductReport';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -93,19 +94,21 @@ export default function SelectLocations() {
 
   useEffect(() => {
     if (patchError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: patchError?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(patchError)})
     }
   }, [patchError])
 
   useEffect(() => {
     if (response && !error) {
       history.push('/products/success')
-    } else {
-      if (error) {
-        setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
-      }
     }
-  }, [response, error]);
+  }, [response]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+    }
+  }, [error]);
 
   return (
     <>

@@ -12,6 +12,7 @@ import UploadArea from '@/components/form/UploadArea';
 import { useAxiosPatch } from '@/hooks/axios';
 import { exampleBusinessLocations } from '@/constants/exampleCsvData';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles((theme) => // TODO: grab any color data from theme once implemented
   createStyles({
@@ -116,13 +117,14 @@ export default function AddLocations () {
   useEffect(() => {
     if (mappedSubmission && !mapError) {
       setBusinessInfo({...businessInfo, locations: mappedSubmission.data.locations.concat(businessInfo.locations.filter(l => l.id))})
-    } else {
-      if (mapError) {
-        setAppGlobalContext({...appGlobal, networkErrorMessage: mapError?.response?.data?.message})
-      }
     }
-  }, [mappedSubmission, mapError])
+  }, [mappedSubmission])
 
+  useEffect(() => {
+    if (mapError) {
+      setAppGlobalContext({...appGlobal, networkErrorMessage: formatError(mapError)})
+    }
+  }, [mapError])
 
   useEffect(() => {
     !!businessInfo.entry

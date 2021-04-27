@@ -10,6 +10,7 @@ import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
 import { ManufacturingReport, BusinessLocation } from '@/constants/localInterfaces';
 import { HealthAuthorities } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   box: {
@@ -40,7 +41,7 @@ export default function ManufacturingReport() {
 
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error])
 

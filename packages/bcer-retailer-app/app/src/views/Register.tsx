@@ -5,6 +5,7 @@ import useAxios from 'axios-hooks';
 
 import Header from '@/components/Header';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const Signup = () => {
   const [registerError, setRegisterError] = useState('');
@@ -24,11 +25,15 @@ const Signup = () => {
       store.set('TOKEN', response.data.token);
       store.set('profile', response.data.profile);
       history.push('/');
-    } else if (error) {
+    } 
+  }, [data, loading, response, history]);
+
+  useEffect(() => {
+    if (error) {
       setRegisterError(error.message);
-      setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
-  }, [data, loading, error, response, history]);
+  }, [error]);
 
   const [values, setValue] = useState({
     firstName: '',

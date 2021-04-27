@@ -11,7 +11,7 @@ import { BusinessDetails } from '@/constants/localInterfaces';
 import SuccessStep from '@/components/successStep/SuccessStep'
 import FileCheckGreen from '@/assets/images/file-check-green.png';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   title: {
@@ -124,12 +124,14 @@ export default function MyBusinessSubmission (props: any) {
     if (submission && !error) {
       setDetails(submission.data.details);
       setlocations(submission.data.locations)
-    } else {
-      if (error) {
-        setAppGlobalContext({...appGlobal, networkErrorMessage: error?.response?.data?.message})
-      }
     }
-  }, [submission, error]);
+  }, [submission]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobalContext({...appGlobal, networkErrorMessage: formatError(error)})
+    }
+  }, [error])
 
   return (
     <div>

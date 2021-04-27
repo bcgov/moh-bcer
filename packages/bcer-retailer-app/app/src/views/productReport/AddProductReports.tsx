@@ -14,6 +14,7 @@ import UploadArea from '@/components/form/UploadArea';
 import { CSVLink } from 'react-csv';
 import { exampleProductReport } from '@/constants/exampleCsvData';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -134,7 +135,7 @@ export default function AddProductReports() {
 
   useEffect(() => {
     if (postError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: postError?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(postError)})
     }
   }, [postError])
   
@@ -164,36 +165,42 @@ export default function AddProductReports() {
             type: SubmissionTypeEnum.product,
           }, { data: productInfo })
         });
-      } else {
-        if (productsError) {
-          setAppGlobal({...appGlobal, networkErrorMessage: productsError?.response?.data?.message})
-        }
       }
     })()
-  }, [productsData, productsError])
+  }, [productsData]);
+
+  useEffect(() => {
+    if (productsError) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(productsError)})
+    }
+  }, [productsError])
 
   useEffect(() => {
     (async () => {
       if (locations?.length && !locationsError) {
         setProductInfo({...productInfo, locations: locations });
-      } else {
-        if (locationsError) {
-          setAppGlobal({...appGlobal, networkErrorMessage: locationsError?.response?.data?.message})
-        }
       }
     })()
-  }, [locations, locationsError])
+  }, [locations]);
+
+  useEffect(() => {
+    if (locationsError) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(locationsError)})
+    }
+  }, [locationsError]);
 
   useEffect(() => {
     if (mappedSubmission && !mapError) {
       setProductInfo({...productInfo, products: mappedSubmission.data.products})
       history.push('/products/confirm-products')
-    } else {
-      if (mapError) {
-        setAppGlobal({...appGlobal, networkErrorMessage: mapError?.response?.data?.message})
-      }
     }
-  }, [mappedSubmission, mapError])
+  }, [mappedSubmission]);
+
+  useEffect(() => {
+    if (mapError) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(mapError)})
+    }
+  }, [mapError]);
 
   useEffect(() => {
     setProductInfo({...productInfo, entry})

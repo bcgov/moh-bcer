@@ -11,6 +11,7 @@ import { Products, BusinessLocation, BusinessDetails, ManufacturingReport, Ingre
 import { ManufacturingReportHeaders, ProductReportHeaders, SalesReportHeaders } from '@/constants/localEnums';
 import { useAxiosGet } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -82,22 +83,26 @@ export default function ConfirmProducts() {
   useEffect(() => {
     if(locationData && !error) {
       setLocation(locationData);
-    } else {
-      if (error) {
-        setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message});
-      }
     }
-  }, [locationData, error]);
+  }, [locationData]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)});
+    }
+  }, [error]);
 
   useEffect(() => {
     if(businessData && !businessError) {
       setBusiness(businessData);
-    } else {
-      if (businessError) {
-        setAppGlobal({...appGlobal, networkErrorMessage: businessError?.response?.data?.message});
-      }
     }
-  }, [businessData, businessError]);
+  }, [businessData]);
+
+  useEffect(() => {
+    if (businessError) {
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(businessError)});
+    }
+  }, [businessError]);
 
   const formatDate = (year: string) => {
     const startDate = moment(`10-01-${year}`, 'MM-DD-YYYY').format('LL');

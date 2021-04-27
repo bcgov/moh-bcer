@@ -15,19 +15,24 @@ NestJS API for Vaping Regulation application
 - Keycloak
 
 ## Run
+Requirements: 
+- node v12.18.3
+- Postgresql v11, v12, or v13
 
-uses node v12.18.3
-**Docker-Compose**
+**Docker-Compose** (Not functional as of 04-13-2021)
 1. Navigate into the `app` directory and run `npm i`.  This only needs to be done when you are first initializing the project, due to a 'chicken-egg-problem' with the docker-volumes: `cd app && npm i`
 2. Build docker containers from root: `docker-compose build`
 3. Run docker containers: `docker-compose up -d`
 4. Your PG database will be available on the docker volume and the API will be exposed onto `http://localhost:4000`
 
 **NPM**
-1. Navigate into the `app` directory and run `npm i`
-2. Ensure you have a local instance of Postgres running. Check the `.env` file to ensure the `DB_` values matches with your PG db.
-3. Run `npm run start`
-4. The API will be exposed onto `http://localhost:4000`
+1. Ensure you have postgres running locally
+2. Navigate into the `app` directory and run `npm i`
+3. Ensure you have a local instance of Postgres running. Check the `.env` file to ensure the `DB_` values matches with your PG db.
+4. Run `npm run start`
+5. The API will be exposed onto `http://localhost:4000`
+
+NOTE: We are currently decrypting the DB Password. In order to run this properly, either have no password in your local database, encyrpt it using the values in `ormconfig.js` to fill in your `DB_PASSWORD` environment variable, or remove the decrypting code from `ormconfig.js` (but please do not commit this change).
 
 ## Build and Deploy
 We have four environments for this app - Internal/UAT hosted on AWS, and a Dev, Test, and Prod server hosted by CGI on premise.
@@ -43,7 +48,7 @@ To get a build going, run `npm run build:prem` to produce a resulting `/dist` fo
 Run `npm run tar` to find a `dist.tar.gz` produced. Please give this a version (e.g. `dist-1.1.1.tar.gz`) depending on the last version they were given (no automated versioning for now).
 Before passing it to CGI, please try to run it and check the code for any gotchas.
 1. In a different directory, untar the `tar.gz` file
-2. Navigate the code in the resulting project. You'll want to try the `NODE_ENV` environment variable as `development`, `staging`, or `production`.
+2. Navigate the code in the resulting project. You'll want to set the `NODE_ENV` environment variable as `development`, `staging`, or `production`.
 3. ONLY WHILE YOU'RE TESTING, set `LOAD_CERTS` environment variable to false. You wouldn't have these SSL keys, so it is unnecessary.
 4. Run `npm i --only=production`
 5. You'll need to have a local instance of postgres running, and set those variables in the `.env`
@@ -117,6 +122,7 @@ To format a custom error, throw a new GenericException from a service with an er
 
 ## Logging
 
+Errors and requests are being logged locally when transports are on (in `development`, `test`, or `production` `NODE_ENV`s). It runs on a Daily Transport file using winston in a directory named according to the env `LOGS_PATH`. 
 
 ## Migrations
 In order to create a migration, run `npm run migrate:create -- -n MigrationName`. Please create a new migration whenever the entities change. The flow goes:
@@ -126,6 +132,8 @@ In order to create a migration, run `npm run migrate:create -- -n MigrationName`
 - You'll want to make sure the previous migration has been applied to your `vape_migrations` database. Run `npm run migrate:run` beforehand. That way, your migration generation should specifically be the changes you made to the entities.
 - TODO: We need a command on the build pipelines to apply this migration to the destination database. Until then, we keep it `synchronize`d.
 - NOTE: This only works with a local or remote postgres db. This will need to be working with containers.
+
+If you see any issues with running or generating migrations, please check that directories are being referred to properly. For example, migrations will need to point to what's in `dist` where your migrations sit, and same with entities. Please check `ormconfig.js` to amend this.
 
 In short:
 - When you make entity changes, first run `npm run migrate:run` and then `npm run migrate:create -- -n MigrationName`.

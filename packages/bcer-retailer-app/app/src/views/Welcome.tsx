@@ -5,6 +5,7 @@ import { useAxiosPost } from '@/hooks/axios';
 import { makeStyles, CircularProgress, Typography } from '@material-ui/core';
 import classes from '*.module.css';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   splashContainer: {
@@ -33,7 +34,7 @@ export default function Welcome() {
 
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error])
 

@@ -10,7 +10,7 @@
 
 #### Running app locally
 
-All run and build commands are handled by the Makefile at the app's root directory.
+All run and build commands are handled by the Makefile at the app's root directory. Ensure your API is running.
 
 - To run the app locally, `make local`, app will be available at *localhost/3000*
 - Hot module reloading is enabled, all changes to files under ./src/ will automatically update the docker volume and trigger a webpage refresh
@@ -19,6 +19,16 @@ All run and build commands are handled by the Makefile at the app's root directo
 - installing new node modules
 - changing/creating typescript interface variables
 - updating environment variables in the `.config` folder
+
+If Makefile fails, you can instead:
+- Run `make setup-local-env` from `/packages/bcer-retailer-app`
+- Navigate to the `app` directory
+- Run `npm run start` to expose the app at `localhost:3000`
+
+This goes through the BCER development environment, and you must have a BCeID to authenticate.
+
+#### Shared Components
+This app has a number of shared components in the `bcer-shared-components` package. If you make any changes there, you must run `npm run build` within the `bcer-shared-components` package, and then rebuild your Frontend apps to see those changes reflected. You're able to develop locally within the shared-components package using Storybook, however. Please see the readme.
 
 #### Environment Variables
 

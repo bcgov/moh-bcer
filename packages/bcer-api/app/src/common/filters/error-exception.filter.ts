@@ -10,6 +10,9 @@ import {
   LoggerService,
   UnauthorizedException,
 } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+import moment from 'moment';
+
 import { ClassValidationParser } from 'src/common/parsers/class-validation.parser';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { Response } from 'express';
@@ -25,8 +28,9 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<RequestWithUser>();
     const response = ctx.getResponse<Response>();
     const message = exception.message;
-    
-    this.logger.error(`${new Date()}: error thrown with message ${message}, ${request.ctx?.bceidGuid || 'unknown user'}`, request.path, request.body);
+    const errorId = uuid();
+
+    this.logger.error(`${moment().format('LLL')} - ${errorId}: error thrown with message ${message}, ${request.ctx?.bceidGuid || 'unknown user'}`, request.path, request.body);
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -35,11 +39,15 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     if (exception instanceof BadRequestException) {
       response
         .status(status)
-        .json(ClassValidationParser.transformClassValidatorException(message));
+        .json({
+          id: errorId,
+          message: ClassValidationParser.transformClassValidatorException(message),
+        });
     } else if (exception instanceof UnauthorizedException) {
       response
         .status(status)
         .json({
+          id: errorId,
           type: 'UNAUTHORIZED',
           message: 'Authentication failed.',
           details: message,
@@ -56,6 +64,7 @@ export class ErrorExceptionFilter implements ExceptionFilter {
       response
         .status(status)
         .json({
+          id: errorId,
           type: flattenedException.type || 'UNKNOWN',
           message,
           details: originalError?.message || originalError,

@@ -9,6 +9,7 @@ import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { useAxiosPatch } from '@/hooks/axios';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/utils/formatting';
 
 export default function SubmitBusinessInfoButton() {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
@@ -37,9 +38,9 @@ export default function SubmitBusinessInfoButton() {
 
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: error?.response?.data?.message})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
-  }, [error, loading])
+  }, [error])
 
   return response?.status === 201 ? <Redirect to='/business/map' /> : (
     <>

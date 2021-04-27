@@ -7,7 +7,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { AppGlobalContext, AppGlobalProvider } from '@/contexts/AppGlobal';
 import { useKeycloak } from '@react-keycloak/web';
-import { Snackbar } from '@material-ui/core';
+import { IconButton, Snackbar } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import { theme } from '@/theme';
 import keycloakConfig from './keycloak';
 
@@ -78,15 +79,21 @@ const Routes = () => {
             </Switch>
           </Suspense>
         </AppGlobalProvider>
+        <Snackbar
+          open={snackbarOpen}
+          onClose={() => setSnackbarOpen(false)}
+          message={appGlobal.networkErrorMessage}
+          key={appGlobal.networkErrorMessage}
+          ClickAwayListenerProps={{mouseEvent: false,touchEvent: false}}
+          action={
+            <>
+              <IconButton size="small" aria-label="close" color="inherit" onClick={() => setSnackbarOpen(false)}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </>
+          }
+        />
       </ThemeProvider>
-      <Snackbar
-        open={snackbarOpen}
-        onClose={() => setSnackbarOpen(false)}
-        message={appGlobal.networkErrorMessage}
-        autoHideDuration={6000}
-        key={appGlobal.networkErrorMessage}
-        ClickAwayListenerProps={{mouseEvent: false,touchEvent: false}}
-      />
     </HashRouter>
   );
 };
