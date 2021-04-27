@@ -20,6 +20,18 @@ All run and build commands are handled by the Makefile at the app's root directo
 - changing/creating typescript interface variables
 - updating environment variables in the `.config` folder
 
+If Makefile fails, you can instead:
+- Run `make setup-local-env` from `/packages/bcer-data-portal`
+- Navigate to the `app` directory
+- Run `npm run start` to expose the app at `localhost:3000`
+
+This goes through the BCER development environment, and you must have an IDIR or Health Authority ID to authenticate. This will need to come from BCGov.
+
+If you do not have the means to authenticate, you can configure the backend to be completely public on the data portal requests and configure the FE to bypass auth. Please do not commit any changes related to this.
+
+#### Shared Components
+This app has a number of shared components in the `bcer-shared-components` package. If you make any changes there, you must run `npm run build` within the `bcer-shared-components` package, and then rebuild your Frontend apps to see those changes reflected. You're able to develop locally within the shared-components package using Storybook, however. Please see the readme.
+
 #### Environment Variables
 
 Local development uses environment variables tied to the *Development* instance, which are included at build from `./.config/.env.dev`

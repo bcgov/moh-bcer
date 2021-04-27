@@ -32,6 +32,8 @@ Requirements:
 4. Run `npm run start`
 5. The API will be exposed onto `http://localhost:4000`
 
+NOTE: We are currently decrypting the DB Password. In order to run this properly, either have no password in your local database, encyrpt it using the values in `ormconfig.js` to fill in your `DB_PASSWORD` environment variable, or remove the decrypting code from `ormconfig.js` (but please do not commit this change).
+
 ## Build and Deploy
 We have four environments for this app - Internal/UAT hosted on AWS, and a Dev, Test, and Prod server hosted by CGI on premise.
 
