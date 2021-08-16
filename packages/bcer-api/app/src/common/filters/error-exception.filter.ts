@@ -35,7 +35,7 @@ export class ErrorExceptionFilter implements ExceptionFilter {
       logBody = { 'body': 'Body is too large to log.' };
     }
 
-    this.logger.error(`${moment().format('LLL')} - ${errorId}: error thrown with message ${message}, ${request.ctx?.bceidUser || 'unknown user'}`, exception.stack, logBody);
+    this.logger.error(`${moment().format('LLL')} - ${errorId}: error thrown with message ${message}, ${request.ctx?.bceidUser || 'unknown user'}`, request.path, logBody);
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
