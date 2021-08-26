@@ -1,6 +1,7 @@
-import { Injectable, NestMiddleware, Inject, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NestMiddleware, Inject, UnauthorizedException, Logger } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
+import { getDurationInMilliseconds } from '../../utils/util';
 import { RequestWithUser } from '../interface/requestWithUser.interface';
 
 @Injectable()
@@ -16,7 +17,9 @@ export class AuthMiddleware implements NestMiddleware {
     if (path.includes('data/location')) { next(); }
     else if (authorization) {
       try {
+        const start = process.hrtime();
         const profile = await this.authService.getProfile(authorization);
+        Logger.log(`Auth Middleware after keycloak call ${getDurationInMilliseconds(start)} ms`);
         if (profile.bceid_user_guid) {
           req.ctx = {
             bceidGuid: profile.bceid_user_guid || profile.sub || profile.id,

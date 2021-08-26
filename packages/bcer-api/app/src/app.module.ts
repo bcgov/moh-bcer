@@ -19,6 +19,7 @@ import { SalesReportModule } from './sales/sales.module';
 import { SubmissionModule } from './submission/submission.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { UserModule } from './user/user.module';
     UploadModule,
     ProductsModule,
     SalesReportModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [

@@ -1,4 +1,4 @@
-import { Controller, ForbiddenException, Get, HttpCode, HttpStatus, Inject, Req, UseGuards } from '@nestjs/common';
+import { Controller, ForbiddenException, Get, HttpCode, HttpStatus, Inject, Patch, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
@@ -36,5 +36,12 @@ export class AppController {
   @Roles('user')
   async getProfile(@Req() request: Request): Promise<any> {
     return await this.authService.getProfile(request.headers.authorization);
+  }
+
+  @Patch('/heapsnapshot')
+  @Unprotected()
+  async getHeapSnapShot(): Promise<void> {
+    this.appService.generateHeapSnapShot();
+    return;
   }
 }
