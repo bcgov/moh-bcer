@@ -7,6 +7,7 @@ import SalesOverview from '@/views/Sales/Overview';
 import SelectSalesLocation from '@/views/Sales/SelectLocation';
 import SubmitSalesReport from '@/views/Sales/SubmitSales';
 import SuccessSalesReport from '@/views/Sales/Success';
+import CommingSoon from '@/views/CommingSoon';
 
 export default function SalesRoutes(){
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
@@ -21,7 +22,7 @@ export default function SalesRoutes(){
     <>
       <SalesReportProvider value={[sales, setSales]} >
         <Switch>
-          <Route exact path='/sales' component={SalesOverview} />
+          <Route exact path='/sales' component={CommingSoon} />
           <Route exact path='/sales/select' component={SelectSalesLocation} />
           <Route exact path='/sales/submit' component={SubmitSalesReport} />
           <Route exact path='/sales/success' component={SuccessSalesReport} />
