@@ -1,9 +1,6 @@
 import React from "react";
 import { makeStyles, Typography } from "@material-ui/core";
 
-import clockIcon from "@/assets/images/clock.png";
-import sendIcon from "@/assets/images/send.png";
-
 const useStyles = makeStyles({
   parent: {
     padding: "1rem 2rem",
@@ -28,11 +25,9 @@ export default function CommingSoon() {
   return (
     <div className={classes.parent}>
       <Typography variant="h5">Important Notice To Be Aware Of</Typography>
-     
       <div className={classes.warningTextContainer}>
-      This functionality is not yet available and will be coming soon.
+        This functionality is not yet available and will be coming soon.
       </div>
-
     </div>
   );
 }
