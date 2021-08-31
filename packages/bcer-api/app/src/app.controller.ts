@@ -41,7 +41,9 @@ export class AppController {
   @Patch('/heapsnapshot')
   @Unprotected()
   async getHeapSnapShot(): Promise<void> {
-    this.appService.generateHeapSnapShot();
+    if (!process.env.STOP_HEAPSNAPSHOT || process.env.STOP_HEAPSNAPSHOT != 'true') {
+      this.appService.generateHeapSnapShot();
+    }
     return;
   }
 }
