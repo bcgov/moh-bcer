@@ -1,4 +1,9 @@
-import { Logger, Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import {
+  Logger,
+  Module,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { CsvModule } from 'nest-csv-parser';
 
@@ -19,22 +24,29 @@ import { SalesReportModule } from './sales/sales.module';
 import { SubmissionModule } from './submission/submission.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
+import { ScheduleModule } from '@nestjs/schedule';
+
+const moduleImports = [
+  AuthModule,
+  CsvModule,
+  BusinessModule,
+  DatabaseModule,
+  UserModule,
+  SubmissionModule,
+  NoiModule,
+  ManufacturingModule,
+  LocationModule,
+  UploadModule,
+  ProductsModule,
+  SalesReportModule,
+];
+
+if (process.env.HEAPSNAPSHOT_ENABLED === 'true') {
+  moduleImports.push(ScheduleModule.forRoot());
+}
 
 @Module({
-  imports: [
-    AuthModule,
-    CsvModule,
-    BusinessModule,
-    DatabaseModule,
-    UserModule,
-    SubmissionModule,
-    NoiModule,
-    ManufacturingModule,
-    LocationModule,
-    UploadModule,
-    ProductsModule,
-    SalesReportModule,
-  ],
+  imports: moduleImports,
   controllers: [AppController],
   providers: [
     AppService,

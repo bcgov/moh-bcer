@@ -29,6 +29,7 @@ services:
       - KEYCLOAK_DATA_REALM=moh_applications
       - KEYCLOAK_DATA_CLIENT=BCER-CP
       - KEYCLOAK_DATA_AUTH_URL=https://common-logon-dev.hlth.gov.bc.ca/auth/
+      - HEAPSNAPSHOT_ENABLED=false
     ports:
       - "4000:4000"
     expose:

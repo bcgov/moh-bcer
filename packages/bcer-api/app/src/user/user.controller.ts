@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Logger, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -9,6 +9,7 @@ import { UserRO, ProfileRO, StatusRO } from 'src/user/ro/user.ro';
 import { UserService } from 'src/user/user.service';
 import { BusinessService } from 'src/business/business.service';
 import { LocationService } from 'src/location/location.service';
+import { getDurationInMilliseconds } from '../utils/util';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -32,6 +33,7 @@ export class UserController {
   @Roles('user')
   @Post('profile')
   async profile(@Request() req: RequestWithUser): Promise<ProfileRO> {
+    const start = process.hrtime();
     const { bceidGuid, bceidUser, email, firstName, lastName, businessId } = req.ctx;
     let validatedUser = await this.userService.findByBCeID(bceidGuid);
     if (!validatedUser) {
@@ -51,6 +53,7 @@ export class UserController {
     }
     const userData: UserRO = validatedUser.toResponseObject();
     const business = businessId ? await this.businessService.getBusinessById(businessId, 'locations') : null;
+    Logger.log(`Time to process profile request after middleware ${getDurationInMilliseconds(start)} ms`);
     return {
       userData,
       business: business?.toResponseObject(),
@@ -63,8 +66,10 @@ export class UserController {
   @Roles('user')
   @Get('status')
   async status(@Request() req: RequestWithUser): Promise<StatusRO> {
+    const start = process.hrtime();
     const { businessId } = req.ctx;
     if (!businessId) {
+      Logger.log(`Time to process status request after middleware ${getDurationInMilliseconds(start)} ms`);
       return {
         myBusinessComplete: false,
         noiComplete: false,
@@ -82,6 +87,7 @@ export class UserController {
       manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) : false,
     };
 
+    Logger.log(`Time to process status request after middleware ${getDurationInMilliseconds(start)} ms`);
     return statusObject;
   }
 }
