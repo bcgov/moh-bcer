@@ -31,8 +31,8 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     const errorId = uuid();
 
     let logBody = request.body;
-    if (JSON.stringify(logBody).length > 4000) {
-      logBody = { 'body': 'Body is too large to log.' };
+    if (logBody && JSON.stringify(logBody).length > 4000) {
+      logBody = { 'message': 'Body is too large to log.' };
     }
 
     this.logger.error(`${moment().format('LLL')} - ${errorId}: error thrown with message ${message}, ${request.ctx?.bceidUser || 'unknown user'}`, request.path, logBody);
