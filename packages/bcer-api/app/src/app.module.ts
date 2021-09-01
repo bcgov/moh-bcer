@@ -41,7 +41,7 @@ const moduleImports = [
   SalesReportModule,
 ];
 
-if (!process.env.STOP_HEAPSNAPSHOT || process.env.STOP_HEAPSNAPSHOT != 'true') {
+if (process.env.HEAPSNAPSHOT_ENABLED === 'true') {
   moduleImports.push(ScheduleModule.forRoot());
 }
 
