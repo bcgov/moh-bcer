@@ -97,6 +97,29 @@ export enum SalesReportHeaders {
   'Number of Cartridges Sold' = 'Number of Cartridges Sold',
 }
 
+export enum SalesReportCSVHeaders {
+  'Brand Name' = 'Brand Name',
+  'Product Name' = 'Product Name',
+  'Concentration (mg/mL)' = 'Concentration (mg/mL)',
+  'Container Capacity' = 'Container Capacity',
+  'Cartridge Capacity' = 'Cartridge Capacity',
+  'Flavour' = 'Flavour',
+  'UPC' = 'UPC',
+  'Number of Containers Sold' = 'Number of Containers Sold',
+  'Number of Cartridges Sold' = 'Number of Cartridges Sold',
+}
+
+export enum SalesReportDTOHeaders {
+  brandName = 'Brand Name',
+  productName = 'Product Name',
+  concentration = 'Concentration (mg/mL)',
+  containerCapacity = 'Container Capacity',
+  cartridgeCapacity = 'Cartridge Capacity',
+  flavour = 'Flavour',
+  containers = 'Number of Containers Sold',
+  cartridges = 'Number of Cartridges Sold',
+}
+
 export enum SubmissionTypeEnum { sales = 'Sales Report',
   product = 'Product Report',
   manufacturing = 'Manufacturing Report',

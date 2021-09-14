@@ -1,19 +1,69 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { CSVLink } from 'react-csv';
 import { useAxiosGet } from '@/hooks/axios';
-import { makeStyles, Typography, Paper } from '@material-ui/core';
+import {
+  makeStyles,
+  Typography,
+  Paper,
+  styled,
+  Button,
+  Dialog,
+} from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import SendIcon from '@material-ui/icons/Send';
 import moment from 'moment';
+import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 
 import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
-import { BusinessLocationHeaders } from '@/constants/localEnums';
+import {
+  BusinessLocationHeaders,
+  SalesReportCSVHeaders,
+} from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import NoiSubmission from '@/components/Noi/NoiSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import SaleBanner from './SaleBanner';
+import { SalesReportContext } from '@/contexts/SalesReport';
+import SalesSubmittedStatus from '@/components/Sales/SalesSubmittedStatus';
+import { SalesTable } from '@/components/Sales/SalesTable';
+
+const IconButton = styled(Button)({
+  minWidth: '30px !important',
+  height: '30px',
+  marginRight: '0.5rem',
+  padding: '5px 0 !important',
+  color: '#234075',
+  textTransform: 'none',
+  border: '1px solid #234075',
+  fontSize: '16px',
+  fontWeight: 600,
+  boxShadow: 'none',
+  '&:hover': {
+    backgroundColor: '#e6efff',
+    boxShadow: 'none',
+  },
+});
+
+const FullscreenButton = styled(Button)({
+  minWidth: '150px',
+  height: '30px',
+  marginRight: '0.5rem',
+  marginBottom: '0.5rem',
+  padding: '5px 0',
+  color: '#234075',
+  textTransform: 'none',
+  borderRadius: '5px',
+  backgroundColor: '#F2F9FF',
+  fontSize: '12px',
+  fontWeight: 600,
+  boxShadow: 'none',
+  '&:hover': {
+    backgroundColor: '#e6efff',
+    boxShadow: 'none',
+  },
+});
 
 const useStyles = makeStyles({
   box: {
@@ -23,7 +73,7 @@ const useStyles = makeStyles({
   },
   title: {
     padding: '20px 0px',
-    color: '#002C71'
+    color: '#002C71',
   },
   subtitleWrapper: {
     display: 'flex',
@@ -35,130 +85,198 @@ const useStyles = makeStyles({
     color: '#0053A4',
   },
   boxTitle: {
-    paddingBottom: '10px'
+    paddingBottom: '10px',
   },
   tableRowCount: {
-    paddingBottom: '10px'
+    paddingBottom: '10px',
   },
   actionsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingBottom: '10px'
+    paddingBottom: '10px',
   },
   csvLink: {
     textDecoration: 'none',
   },
   buttonIcon: {
-    paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
   sendIcon: {
     height: '24px',
-    paddingRight: '4px'
+    paddingRight: '4px',
   },
   actionLink: {
     color: 'blue',
     cursor: 'pointer',
-    textDecoration: 'underline'
+    textDecoration: 'underline',
   },
   buttonWrapper: {
     display: 'flex',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
+  editButton: {
+    width: '90px',
+    fontSize: '14px',
+    minWidth: '90px',
+    lineHeight: '18px',
+  },
+  dialogWrap: {
+    padding: '1rem 1.5rem',
+  },
 });
 
 export default function SalesOverview() {
   const classes = useStyles();
   const history = useHistory();
-  const [outstanding, setOutstanding] = useState([]);
-  const [submitted, setSubmitted] = useState([]);
 
-  const { location: { pathname } } = history;
-  const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?count=sales,products`);
+  const {
+    location: { pathname },
+  } = history;
+  const [
+    {
+      data: outstanding = [],
+      loading: outstandingLoading,
+      error: outstandingError,
+    },
+  ] = useAxiosGet(`/sales/locations`);
+  const [
+    { data: submitted = [], loading: submittedLoading, error: submittedError },
+  ] = useAxiosGet(`/sales/locations?isSubmitted=${true}`);
+  const [
+    { data: download = [], loading: downloadLoading, error: downloadError },
+    getDownload,
+  ] = useAxiosGet(`/sales/download/`, { manual: true });
+
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+  const [sale, setSale] = useContext(SalesReportContext);
+
+  // full screen
+  const [nonSubmittedOpen, setNonSubmittedOpen] = useState(false);
+  const [submittedOpen, setSubmittedOpen] = useState(false);
+
+  // download CSV
+  const [downloadCSV, setDownloadCSV] = useState<any>([]);
+  const csvRef = useRef(null);
 
   const tableAction = () => (
-    <Typography variant='body1' className={classes.actionLink}>View</Typography>
-  )
+    <Typography variant="body1" className={classes.actionLink}>
+      View
+    </Typography>
+  );
 
   useEffect(() => {
     if (pathname.includes('success') && !appGlobal.noiComplete) {
-      setAppGlobal({ ...appGlobal, noiComplete: true })
+      setAppGlobal({ ...appGlobal, noiComplete: true });
     }
   }, [pathname, setAppGlobal, appGlobal]);
 
-  useEffect(() => {
-    if (locations.length && !error) {
-      const outstanding = locations.filter((l: BusinessLocation) => (!l.sales || l.sales?.length === 0) || l.salesCount === 0);
-      const submitted = locations.filter((l: BusinessLocation) => l?.sales?.length > 0 || l.salesCount > 0);
-      setOutstanding(outstanding);
-      setSubmitted(submitted);
-    }
-  }, [locations]);
-
-  useEffect(() => {
-    if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
-    }
-  }, [error]);
-
-  return loading ? <CircularProgress /> : (
+  return outstandingLoading || submittedLoading ? (
+    <CircularProgress />
+  ) : (
     <>
       <div>
         <div className={classes.actionsWrapper}>
-          <Typography className={classes.title} variant='h5'>Sales Reports</Typography>
-          <div className={classes.buttonWrapper}>
-            <StyledButton variant='contained' onClick={() => history.push('/sales/select')}>
-              <SendIcon className={classes.sendIcon} />
-              Submit New Sales Report
-            </StyledButton>
-          </div>
+          <Typography className={classes.title} variant="h5">
+            Sales Reports
+          </Typography>
+        </div>
+        <div>
+          <SaleBanner
+            content={
+              <span>
+                You are required to submit a Sale Report for all locations that
+                you have added. You must only submit 1 Sale Report per location.
+                Select the locations that this Sale Report applies, by clicking
+                on "<strong>Select</strong>" button. You must submit a Sale
+                Report for all locations where you formulate, package or
+                re-package e-substances.
+              </span>
+            }
+          />
         </div>
         <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6'>Outstanding Sales Reports</Typography>
+          <Typography className={classes.subtitle} variant="h6">
+            Outstanding Sales Reports
+          </Typography>
         </div>
-        <Paper variant='outlined' className={classes.box}>
-          <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
+        <Paper variant="outlined" className={classes.box}>
+          <Typography className={classes.boxTitle} variant="subtitle1">
+            Business Locations
+          </Typography>
           <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>
-              You have {outstanding.length} retail locations that are missing Sales Reports
+            <Typography className={classes.tableRowCount} variant="body2">
+              You have {outstanding.length} retail locations that are missing
+              Sales Reports
             </Typography>
-            {
-              outstanding.length
-                ?
-                  <CSVLink
-                    headers={Object.keys(BusinessLocationHeaders)}
-                    data={
-                      outstanding.reduce((dataList: Array<any>, l: BusinessLocation) => {
-                        dataList.push([l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing]);
-                        return dataList;
-                      }, [])
-                    }
-                    filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-                    <StyledButton variant='outlined'>
-                      <SaveAltIcon className={classes.buttonIcon} />
-                      Download CSV
-                    </StyledButton>
-                  </CSVLink>
-                :
-                null
-            }
           </div>
           <div>
-            <StyledTable
+            <FullscreenButton
+              variant="outlined"
+              onClick={() => setNonSubmittedOpen(true)}
+            >
+              <ZoomOutMapIcon fontSize="small" />
+              View Fullscreen
+            </FullscreenButton>
+          </div>
+          <div>
+            <SalesTable
+              options={{
+                fixedColumns: {
+                  right: 1,
+                },
+                search: true,
+                searchFieldAlignment: 'left',
+              }}
               columns={[
                 {
-                  title: 'Address 1',
-                  render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
+                  title: 'Doing Business As',
+                  field: 'doingBusinessAs',
+                  render: (rd: BusinessLocation) => rd.doingBusinessAs,
                 },
                 {
-                  title: 'Added Date',
-                  render: (rd: BusinessLocation) => rd.created_at ? `${moment(rd.created_at).format('MMM DD, YYYY')}` : '',
+                  title: 'Address 1',
+                  field: 'addressLine1',
+                  render: (rd: BusinessLocation) => `${rd.addressLine1}`,
+                },
+
+                {
+                  title: 'City',
+                  field: 'city',
+                  render: (rd: BusinessLocation) => rd.city,
+                },
+                {
+                  title: 'Timeline',
+                  render: (rd: BusinessLocation) =>
+                    `${moment().year() - 1}/${moment().year()}`,
                 },
                 {
                   title: 'Status',
-                  render: (rd: BusinessLocation) => `${rd.noi ? 'Submitted' : 'Not Submitted'}`
+                  render: (rd: BusinessLocation) => (
+                    <SalesSubmittedStatus isSubmitted={false} />
+                  ),
+                },
+                {
+                  title: '',
+                  render: (rd: BusinessLocation) => (
+                    <StyledButton
+                      className={classes.editButton}
+                      variant="outlined"
+                      onClick={() => {
+                        setSale({
+                          ...sale,
+                          year: `${moment().year()}`,
+                          locationId: rd.id,
+                          address: rd.addressLine1,
+                          doingBusinessAs: rd.doingBusinessAs,
+                          isSubmitted: false,
+                        });
+                        history.push('/sales/upload');
+                      }}
+                    >
+                      Select
+                    </StyledButton>
+                  ),
                 },
               ]}
               data={outstanding}
@@ -166,56 +284,326 @@ export default function SalesOverview() {
           </div>
         </Paper>
         <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6' >Submitted Sales Reports</Typography>
+          <Typography className={classes.subtitle} variant="h6">
+            Submitted Sales Reports
+          </Typography>
         </div>
-        <Paper className={classes.box} variant='outlined' >
-          <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
+        <Paper className={classes.box} variant="outlined">
+          <Typography className={classes.boxTitle} variant="subtitle1">
+            Business Locations
+          </Typography>
           <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>You have {submitted.length} retail locations</Typography>
-            {
-              submitted.length
-                ?
-                  <CSVLink
-                    headers={Object.keys(BusinessLocationHeaders)}
-                    data={
-                      submitted.reduce((dataList: Array<any>, l: BusinessLocation) => {
-                        dataList.push([l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing]);
-                        return dataList;
-                      }, [])
-                    }
-                    filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-                    <StyledButton variant='outlined'>
-                      <SaveAltIcon className={classes.buttonIcon} />
-                      Download CSV
-                    </StyledButton>
-                  </CSVLink>
-                :
-              null
-            }
+            <Typography className={classes.tableRowCount} variant="body2">
+              You have {submitted.length} retail locations
+            </Typography>
           </div>
           <div>
-            <StyledTable
+            <FullscreenButton
+              variant="outlined"
+              onClick={() => setSubmittedOpen(true)}
+            >
+              <ZoomOutMapIcon fontSize="small" />
+              View Fullscreen
+            </FullscreenButton>
+          </div>
+          <div>
+            <SalesTable
+              options={{
+                fixedColumns: {
+                  right: 1,
+                },
+                search: true,
+                searchFieldAlignment: 'left',
+              }}
               columns={[
                 {
+                  title: 'Doing Business As',
+                  field: 'doingBusinessAs',
+                  render: (rd: BusinessLocation) => rd.doingBusinessAs,
+                },
+                {
                   title: 'Address 1',
-                  render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
+                  field: 'addressLine1',
+                  render: (rd: BusinessLocation) => `${rd.addressLine1}`,
+                },
+
+                {
+                  title: 'City',
+                  field: 'city',
+                  render: (rd: BusinessLocation) => rd.city,
                 },
                 {
-                  title: 'Sales Reports Submitted',
-                  render: (rd: BusinessLocation) => new Set(rd.sales.map(sale => sale.year)).size,
+                  title: 'Timeline',
+                  render: (rd: BusinessLocation) =>
+                    `${moment().year() - 1}/${moment().year()}`,
                 },
-              ]}
-              actions={[
                 {
-                  icon: tableAction,
-                  onClick: (event: any, rowData: any) => history.push(`/view-location/${rowData.id}`)
-                }
+                  title: 'Status',
+                  render: (rd: BusinessLocation) => (
+                    <SalesSubmittedStatus isSubmitted />
+                  ),
+                },
+                {
+                  title: '',
+                  render: (rd: BusinessLocation) => (
+                    <>
+                      <IconButton variant="outlined">
+                        <SaveAltIcon
+                          className={classes.buttonIcon}
+                          onClick={async () => {
+                            await getDownload({
+                              url: `/sales/download?locationId=${rd.id}&year=${
+                                moment().year() - 1
+                              }`,
+                            });
+                            csvRef.current.link.click();
+                          }}
+                        />
+                      </IconButton>
+
+                      <StyledButton
+                        className={classes.editButton}
+                        variant="outlined"
+                        onClick={() => {
+                          setSale({
+                            ...sale,
+                            year: `${moment().year()}`,
+                            locationId: rd.id,
+                            address: rd.addressLine1,
+                            doingBusinessAs: rd.doingBusinessAs,
+                            isSubmitted: true,
+                          });
+                          history.push('/sales/upload');
+                        }}
+                      >
+                        Select
+                      </StyledButton>
+                    </>
+                  ),
+                },
               ]}
               data={submitted}
             />
           </div>
         </Paper>
+        <CSVLink
+          ref={csvRef}
+          headers={Object.keys(SalesReportCSVHeaders)}
+          data={download}
+          filename={'sales_report.csv'}
+          className={classes.csvLink}
+          target="_blank"
+        />
       </div>
+      {/* nonSubmittedDialog */}
+      <Dialog
+        fullScreen
+        open={nonSubmittedOpen}
+        onClose={() => setNonSubmittedOpen((open) => !open)}
+      >
+        <div className={classes.dialogWrap}>
+          <div className={classes.subtitleWrapper}>
+            <Typography className={classes.subtitle} variant="h6">
+              Outstanding Sales Reports
+            </Typography>
+          </div>
+          <Paper variant="outlined" className={classes.box}>
+            <Typography className={classes.boxTitle} variant="subtitle1">
+              Business Locations
+            </Typography>
+            <div className={classes.actionsWrapper}>
+              <Typography className={classes.tableRowCount} variant="body2">
+                You have {outstanding.length} retail locations that are missing
+                Sales Reports
+              </Typography>
+            </div>
+            <div>
+              <SalesTable
+                options={{
+                  fixedColumns: {
+                    right: 1,
+                  },
+                  search: true,
+                  searchFieldAlignment: 'left',
+                }}
+                columns={[
+                  {
+                    title: 'Doing Business As',
+                    field: 'doingBusinessAs',
+                    render: (rd: BusinessLocation) => rd.doingBusinessAs,
+                  },
+                  {
+                    title: 'Address 1',
+                    field: 'addressLine1',
+                    render: (rd: BusinessLocation) => `${rd.addressLine1}`,
+                  },
+
+                  {
+                    title: 'City',
+                    field: 'city',
+                    render: (rd: BusinessLocation) => rd.city,
+                  },
+                  {
+                    title: 'Timeline',
+                    render: (rd: BusinessLocation) =>
+                      `${moment().year() - 1}/${moment().year()}`,
+                  },
+                  {
+                    title: 'Status',
+                    render: (rd: BusinessLocation) => (
+                      <SalesSubmittedStatus isSubmitted={false} />
+                    ),
+                  },
+                  {
+                    title: '',
+                    render: (rd: BusinessLocation) => (
+                      <StyledButton
+                        className={classes.editButton}
+                        variant="outlined"
+                        onClick={() => {
+                          setSale({
+                            ...sale,
+                            year: `${moment().year()}`,
+                            locationId: rd.id,
+                            address: rd.addressLine1,
+                            doingBusinessAs: rd.doingBusinessAs,
+                            isSubmitted: false,
+                          });
+                          history.push('/sales/upload');
+                        }}
+                      >
+                        Select
+                      </StyledButton>
+                    ),
+                  },
+                ]}
+                data={outstanding}
+              />
+            </div>
+          </Paper>
+          <div>
+            <StyledButton
+              variant="outlined"
+              onClick={() => setNonSubmittedOpen(false)}
+              style={{ margin: '1rem 0' }}
+            >
+              Close
+            </StyledButton>
+          </div>
+        </div>
+      </Dialog>
+      {/* Submitted Dialog */}
+      <Dialog
+        fullScreen
+        open={submittedOpen}
+        onClose={() => setSubmittedOpen((open) => !open)}
+      >
+        <div className={classes.dialogWrap}>
+          <div className={classes.subtitleWrapper}>
+            <Typography className={classes.subtitle} variant="h6">
+              Submitted Sales Reports
+            </Typography>
+          </div>
+          <Paper className={classes.box} variant="outlined">
+            <Typography className={classes.boxTitle} variant="subtitle1">
+              Business Locations
+            </Typography>
+            <div className={classes.actionsWrapper}>
+              <Typography className={classes.tableRowCount} variant="body2">
+                You have {submitted.length} retail locations
+              </Typography>
+            </div>
+            <div>
+              <SalesTable
+                options={{
+                  fixedColumns: {
+                    right: 1,
+                  },
+                  search: true,
+                  searchFieldAlignment: 'left',
+                }}
+                columns={[
+                  {
+                    title: 'Doing Business As',
+                    field: 'doingBusinessAs',
+                    render: (rd: BusinessLocation) => rd.doingBusinessAs,
+                  },
+                  {
+                    title: 'Address 1',
+                    field: 'addressLine1',
+                    render: (rd: BusinessLocation) => `${rd.addressLine1}`,
+                  },
+
+                  {
+                    title: 'City',
+                    field: 'city',
+                    render: (rd: BusinessLocation) => rd.city,
+                  },
+                  {
+                    title: 'Timeline',
+                    render: (rd: BusinessLocation) =>
+                      `${moment().year() - 1}/${moment().year()}`,
+                  },
+                  {
+                    title: 'Status',
+                    render: (rd: BusinessLocation) => (
+                      <SalesSubmittedStatus isSubmitted />
+                    ),
+                  },
+                  {
+                    title: '',
+                    render: (rd: BusinessLocation) => (
+                      <>
+                        <IconButton variant="outlined">
+                          <SaveAltIcon
+                            className={classes.buttonIcon}
+                            onClick={async () => {
+                              await getDownload({
+                                url: `/sales/download?locationId=${
+                                  rd.id
+                                }&year=${moment().year() - 1}`,
+                              });
+                              csvRef.current.link.click();
+                            }}
+                          />
+                        </IconButton>
+
+                        <StyledButton
+                          className={classes.editButton}
+                          variant="outlined"
+                          onClick={() => {
+                            setSale({
+                              ...sale,
+                              year: `${moment().year()}`,
+                              locationId: rd.id,
+                              address: rd.addressLine1,
+                              doingBusinessAs: rd.doingBusinessAs,
+                              isSubmitted: true,
+                            });
+                            history.push('/sales/upload');
+                          }}
+                        >
+                          Select
+                        </StyledButton>
+                      </>
+                    ),
+                  },
+                ]}
+                data={submitted}
+              />
+            </div>
+          </Paper>
+          <div>
+            <StyledButton
+              variant="outlined"
+              onClick={() => setSubmittedOpen(false)}
+              style={{ margin: '1rem 0' }}
+            >
+              Close
+            </StyledButton>
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 }

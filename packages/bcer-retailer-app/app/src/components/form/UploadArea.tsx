@@ -12,6 +12,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import UploadSuccess from '@/assets/images/file-check.png';
 import uploadIcon from '@/assets/images/upload.png';
+import { SalesReportContext } from '@/contexts/SalesReport';
 
 const useStyles = makeStyles({
   label: {
@@ -65,6 +66,7 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext)
   const [productInfo, setProductInfo] = useContext(ProductInfoContext)
+  const [saleInfo, setSaleInfo] = useContext(SalesReportContext)
   
   useEffect(() => {
     if (businessInfo.fileData) {
@@ -72,6 +74,9 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
     }
     if (productInfo.fileData) {
       setFileData(productInfo.fileData)
+    }
+    if (saleInfo.fileData) {
+      setFileData(saleInfo.fileData)
     }
   }, [])
 
@@ -86,6 +91,9 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
       }
       if (productInfo.entry === 'upload') {
         setProductInfo({...productInfo, fileData: {name: fileInformation.name}})
+      }
+      if (saleInfo) {
+        setSaleInfo({ ...saleInfo, fileData: { name: fileInformation.name } })
       }
       setFileData(fileInformation)
     }
@@ -103,12 +111,13 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
     setFileData(undefined)
     setBusinessInfo({...businessInfo, locations: businessInfo.locations.filter(l => l.id), fileData: undefined})
     setProductInfo({...productInfo, fileData: undefined})
+    setSaleInfo({ ...saleInfo,saleReports: [], fileData: undefined })
   }
 
   return (
     <div>
       {
-        (!data && !fileData) || (businessInfo.entry === 'upload' && !businessInfo?.locations?.length) || (productInfo.entry === 'upload' ) ? (
+        (!data && !fileData) || (businessInfo.entry === 'upload' && !businessInfo?.locations?.length) || (productInfo.entry === 'upload' )  || (!saleInfo?.saleReports?.length) ? (
           <StyledDropzone
             fileUploaded={!!fileData}
             uploadCallbackHandler={(file: Array<File>) => {
@@ -122,7 +131,7 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
         : null
       }
       {
-      (fileData !== undefined && businessInfo.locations.length) 
+      (fileData !== undefined && (businessInfo.locations.length || saleInfo.saleReports.length)) 
         ? 
           (
             <div className={classes.uploadedFile} >

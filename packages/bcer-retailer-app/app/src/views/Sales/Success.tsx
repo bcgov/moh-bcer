@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { Box, makeStyles, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
 import { SalesReportContext } from '@/contexts/SalesReport';
@@ -9,6 +9,7 @@ import { SalesReportContext } from '@/contexts/SalesReport';
 const useStyles = makeStyles({
   box: {
     display: 'flex',
+    flexDirection: 'column',
     padding: '20px',
     borderRadius: '10px',
     border: '1px solid #CDCED2',
@@ -19,40 +20,38 @@ const useStyles = makeStyles({
     fontSize: '128px',
     color: '#002C71',
   },
-})
+  text: {
+    fontSize: '24px',
+    textAlign: 'center',
+  },
+});
 
 export default function SuccessSalesReport() {
   const history = useHistory();
   const classes = useStyles();
 
-  const [salesReport, ] = useContext(SalesReportContext);
+  const [salesReport] = useContext(SalesReportContext);
 
   return (
-    <>
-      <Box textAlign='center' paddingTop={'60px'}>
-        <Typography variant={'subtitle1'}>
-          Thank you. Your Sales Report for { salesReport.address } has been submitted.
-        </Typography>
-      </Box>
-      <Box textAlign='center'>
+    <div className={classes.box}>
+      <Box textAlign="center">
         <CheckCircleOutlineIcon className={classes.checkIcon} />
       </Box>
-      <Box paddingY={1} textAlign='center'>
-        <StyledButton
-          onClick={() => history.push('/sales/select')}
-          variant='contained'
-        >
-          Submit for Another Location
-        </StyledButton>
+      <Box textAlign="center" paddingTop={1}>
+        <Typography className={classes.text}>Thank you!</Typography>
+        <Typography className={classes.text}>
+          Your Sales Report for <strong>{salesReport.address}</strong> has been
+          submitted.
+        </Typography>
       </Box>
-      <Box paddingY={1} textAlign='center'>
+      <Box paddingTop={2} textAlign="center">
         <StyledButton
           onClick={() => history.push('/sales')}
-          variant='contained'
+          variant="contained"
         >
-          Back to Sales Overview
+          Go back to my Sales Reports
         </StyledButton>
       </Box>
-    </>
-  )
+    </div>
+  );
 }
