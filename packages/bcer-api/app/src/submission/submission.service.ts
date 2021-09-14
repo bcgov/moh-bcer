@@ -104,6 +104,20 @@ export class SubmissionService {
         submission.data.products = mappedProducts;
         break;
 
+      case SubmissionTypeEnum.sales:
+        const providedSaleReports = submission.data.saleReports;
+        if (!providedSaleReports) throw new Error('No sales report were found on this submission')
+        const mappedSaleReports = providedSaleReports.map((sale: Object) => {
+          let mappedSaleReport = {}
+          for (let k in mapping) {
+            mappedSaleReport[k] = mapping[k] ? sale[mapping[k]] : ''
+          }
+          return mappedSaleReport
+        })
+        submission.data = data;
+        submission.data.saleReports = mappedSaleReports;
+        break;
+
       default:
         Logger.log(`no submission type match on ${submissionId}`)
         break;

@@ -12,10 +12,11 @@ import { ProductsModule } from 'src/products/products.module';
 import { SalesReportModule } from 'src/sales/sales.module';
 import { UserMiddleware } from 'src/user/middleware/user.middleware';
 import { UserModule } from 'src/user/user.module';
+import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LocationEntity, BusinessEntity]),
+    TypeOrmModule.forFeature([LocationEntity, BusinessEntity, SalesReportEntity]),
     forwardRef(() => BusinessModule),
     forwardRef(() => ManufacturingModule),
     forwardRef(() => ProductsModule),

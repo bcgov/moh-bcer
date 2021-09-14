@@ -25,6 +25,7 @@ import { SubmissionModule } from './submission/submission.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ProductSoldModule } from './product-sold/product-sold.module';
 
 const moduleImports = [
   AuthModule,
@@ -39,6 +40,7 @@ const moduleImports = [
   UploadModule,
   ProductsModule,
   SalesReportModule,
+  ProductSoldModule,
 ];
 
 if (process.env.HEAPSNAPSHOT_ENABLED === 'true') {

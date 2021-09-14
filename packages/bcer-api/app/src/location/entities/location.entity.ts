@@ -20,6 +20,7 @@ import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { ManufacturingEntity } from 'src/manufacturing/entities/manufacturing.entity';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
+import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 
 @Entity('location')
 export class LocationEntity {
@@ -84,6 +85,10 @@ export class LocationEntity {
   @ManyToMany(() => ProductEntity, (product: ProductEntity) => product.locations)
   @JoinTable()
   products: ProductEntity[];
+
+  @OneToMany(() => ProductSoldEntity, (productSold: ProductSoldEntity) => productSold.location)
+  @JoinTable()
+  productSolds: ProductSoldEntity[];
 
   @OneToMany(() => SalesReportEntity, (sales: SalesReportEntity) => sales.location)
   sales: SalesReportEntity[];
