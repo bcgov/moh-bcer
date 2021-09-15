@@ -22,15 +22,15 @@ export class AddProductSold1631689948434 implements MigrationInterface {
             CONSTRAINT "UQ_9b83599a9b9049d48be7ffaab45" UNIQUE (upc),
             CONSTRAINT "UQ_c562a8b6dad3f3183388f5e3d97" UNIQUE ("saleId"),
             CONSTRAINT "FK_12a4111fe9779302deec9ad564e" FOREIGN KEY ("locationId")
-                REFERENCES public.location (id) MATCH SIMPLE
+                REFERENCES "location"("id")
                 ON UPDATE NO ACTION
                 ON DELETE NO ACTION,
             CONSTRAINT "FK_64ade5ad3544a801853bde21f7e" FOREIGN KEY ("businessId")
-                REFERENCES public.business (id) MATCH SIMPLE
+                REFERENCES "business"("id")
                 ON UPDATE NO ACTION
                 ON DELETE NO ACTION,
             CONSTRAINT "FK_c562a8b6dad3f3183388f5e3d97" FOREIGN KEY ("saleId")
-                REFERENCES public.salesreport (id) MATCH SIMPLE
+                REFERENCES "salesreport"("id")
                 ON UPDATE NO ACTION
                 ON DELETE NO ACTION
         )`);

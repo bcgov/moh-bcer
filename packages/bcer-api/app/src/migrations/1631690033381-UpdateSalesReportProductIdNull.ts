@@ -8,7 +8,7 @@ export class UpdateSalesReportProductIdNull1631690033381
     );
     await queryRunner.query(`ALTER TABLE salesreport
             ADD CONSTRAINT "FK_f50e36ee6f559dfb4e5470075d8" FOREIGN KEY ("productSoldId")
-            REFERENCES public.product_sold (id) MATCH SIMPLE
+            REFERENCES "product_sold"("id")
             ON UPDATE NO ACTION
             ON DELETE NO ACTION
         `);
@@ -16,8 +16,8 @@ export class UpdateSalesReportProductIdNull1631690033381
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE salesreport
-            DROP CONSTRAINT "FK_f50e36ee6f559dfb4e5470075d8"
-        `);
+      DROP CONSTRAINT "FK_f50e36ee6f559dfb4e5470075d8"
+    `);
     await queryRunner.query(
       `ALTER TABLE salesreport DROP COLUMN productSoldId`,
     );
