@@ -359,7 +359,7 @@ export default function SalesOverview() {
                       <StyledButton
                         className={classes.editButton}
                         variant="outlined"
-                        // disabled={!submitted?.isAbleToEdit}
+                        disabled={!submitted?.isAbleToEdit}
                         onClick={() => {
                           setSale({
                             ...sale,
