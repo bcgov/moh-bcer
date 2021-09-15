@@ -97,8 +97,10 @@ export class SalesReportService {
       },
       relations: ['productSold'],
     });
-    console.log('existingSalesReports:', existingSalesReports);
+    
     await this.salesReportRepository.remove(existingSalesReports);
+
+    return existingSalesReports.map(sp => sp.productSold);
   }
 
   async getDownloadCSV(locationId: string, year: string) {

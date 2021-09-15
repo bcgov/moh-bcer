@@ -11,6 +11,7 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
+import { getSalesReportYear } from 'src/common/common.utils';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -281,22 +282,24 @@ export class LocationService {
    * 
    */
   async getLocationsSalesReportWithCurrentYear (businessId: string, query: QuerySaleDTO) {
-    const saleReportYear = moment().year() - 1;
+    const saleReportYear = getSalesReportYear();
+   
     const { isSubmitted } = query;
-console.log(isSubmitted)
+  
     const locations = await this.locationRepository.createQueryBuilder('location')
       .leftJoinAndSelect('location.business', 'business')
       .where('business.id = :businessId', { businessId })
+      .andWhere('location.noiId IS NOT NULL')
       .andWhere(qb => {
         const subQuery = qb.subQuery()
         .select('sr.locationId')
         .from(SalesReportEntity, 'sr')
-        .where('sr.year = :year', { year: saleReportYear })
+        .where('sr.year = :year', { year: saleReportYear.year })
         .groupBy('sr.locationId')
         .getQuery();
         return isSubmitted ? `location.id IN ${subQuery}` : `location.id NOT IN ${subQuery}`
       })
       .getMany();
-      return locations;
+      return { ...saleReportYear, data: locations };
   }
 }

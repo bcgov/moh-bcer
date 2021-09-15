@@ -38,4 +38,8 @@ export class ProductSoldService {
 
     return this.productSoldRepository.save(productSolds);
   }
+
+  async remove(existingProductSolds: ProductSoldEntity[]) {
+    this.productSoldRepository.remove(existingProductSolds);
+  }
 }

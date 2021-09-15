@@ -34,11 +34,11 @@ import { SalesReportService } from 'src/sales/sales.service';
 import { SalesReportDTO } from './dto/sales.dto';
 import { LocationService } from 'src/location/location.service';
 
-import { Unprotected } from 'src/auth/auth.module';
 import { QuerySaleDTO } from './dto/query-sale.dto';
 import { SubmissionService } from 'src/submission/submission.service';
 import { ProductSoldService } from 'src/product-sold/product-sold.service';
 import { DownloadSaleDTO } from './dto/download-sale.dto';
+import { LocationEntity } from 'src/location/entities/location.entity';
 
 @ApiBearerAuth()
 @ApiTags('Sales')
@@ -83,11 +83,10 @@ export class SalesReportController {
     );
   }
 
-  @ApiOperation({ summary: 'Create Sales Reports' })
+  @ApiOperation({ summary: 'Create Sales Reports from Submission' })
   @ApiResponse({ status: HttpStatus.CREATED, type: [SalesReportRO] })
   @HttpCode(HttpStatus.CREATED)
   @Roles('user')
-  // @Unprotected()
   @UseGuards(BusinessGuard)
   @Post('/:submissionId')
   async createProductSoldSalesReports(
@@ -104,12 +103,13 @@ export class SalesReportController {
 
     const saleReportsData = submission.data.saleReports;
     const locationId = submission.data.locationId;
-    const year = String(+submission.data.year - 1);
+    const year = submission.data.year;
     const businessId = submission.businessId;
 
     // replace existing sales reports, deleting the existing one.
     if (submission.data.isSubmitted) {
-      await this.service.remove(locationId, year);
+      const existingProductSolds = await this.service.remove(locationId, year);
+      await this.productSoldService.remove(existingProductSolds);
     }
 
     const productSolds = await this.productSoldService.createProductSold(
@@ -132,15 +132,26 @@ export class SalesReportController {
   async getSaleReportLocations(
     @Query() query: QuerySaleDTO,
     @Request() req: RequestWithUser,
-  ) {
+  ): Promise<{
+    data: LocationEntity[];
+    year: number;
+    isAbleToEdit: boolean;
+  }> {
     const { businessId } = req.ctx;
-    const locations = await this.locationService.getLocationsSalesReportWithCurrentYear(
+    const locationData = await this.locationService.getLocationsSalesReportWithCurrentYear(
       businessId,
       query,
     );
-    return locations;
+    return locationData;
   }
 
+  /**
+   * Download Sales Report CSV
+   * @param query
+   * @param req
+   * @returns
+   */
+  @ApiOperation({ summary: 'Download Sales Report CSV' })
   @UseGuards(BusinessGuard)
   @Roles('user')
   @Get('/download')
