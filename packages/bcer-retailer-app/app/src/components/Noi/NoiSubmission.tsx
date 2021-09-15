@@ -56,6 +56,7 @@ export default function NoiSubmission () {
         <SuccessStep active={false} completed={true} step={SuccessStepEnum.noi}/>
         <SuccessStep active={true} completed={false} step={SuccessStepEnum.product}/>
         <SuccessStep active={true} completed={false} step={SuccessStepEnum.manufacturing}/>
+        <SuccessStep active={true} completed={false} step={SuccessStepEnum.sale}/>
       </Paper>
     </div>
   )

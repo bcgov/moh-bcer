@@ -144,7 +144,6 @@ function SaleUplad() {
   }, [mapError]);
 
   const handleUpload = (data: any | null) => {
-    console.log('handleUpload:', data);
     if (data) {
       const { saleReports, submissionId, headers } = data;
       setSale({

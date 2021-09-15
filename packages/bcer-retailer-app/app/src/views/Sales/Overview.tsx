@@ -9,6 +9,7 @@ import {
   styled,
   Button,
   Dialog,
+  Tooltip,
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
@@ -134,14 +135,10 @@ export default function SalesOverview() {
     location: { pathname },
   } = history;
   const [
-    {
-      data: outstanding = [],
-      loading: outstandingLoading,
-      error: outstandingError,
-    },
+    { data: outstanding, loading: outstandingLoading, error: outstandingError },
   ] = useAxiosGet(`/sales/locations`);
   const [
-    { data: submitted = [], loading: submittedLoading, error: submittedError },
+    { data: submitted, loading: submittedLoading, error: submittedError },
   ] = useAxiosGet(`/sales/locations?isSubmitted=${true}`);
   const [
     { data: download = [], loading: downloadLoading, error: downloadError },
@@ -156,14 +153,8 @@ export default function SalesOverview() {
   const [submittedOpen, setSubmittedOpen] = useState(false);
 
   // download CSV
-  const [downloadCSV, setDownloadCSV] = useState<any>([]);
+  const [downloadFilename, setDownloadFilename] = useState<string>('');
   const csvRef = useRef(null);
-
-  const tableAction = () => (
-    <Typography variant="body1" className={classes.actionLink}>
-      View
-    </Typography>
-  );
 
   useEffect(() => {
     if (pathname.includes('success') && !appGlobal.noiComplete) {
@@ -206,21 +197,21 @@ export default function SalesOverview() {
           </Typography>
           <div className={classes.actionsWrapper}>
             <Typography className={classes.tableRowCount} variant="body2">
-              You have {outstanding.length} retail locations that are missing
-              Sales Reports
+              You have {outstanding?.data?.length} retail location(s) that are
+              missing Sales Reports
             </Typography>
           </div>
           <div>
-            <FullscreenButton
-              variant="outlined"
-              onClick={() => setNonSubmittedOpen(true)}
-            >
-              <ZoomOutMapIcon fontSize="small" />
-              View Fullscreen
-            </FullscreenButton>
-          </div>
-          <div>
             <SalesTable
+              fullscreenButton={
+                <FullscreenButton
+                  variant="outlined"
+                  onClick={() => setNonSubmittedOpen(true)}
+                >
+                  <ZoomOutMapIcon fontSize="small" />
+                  View Fullscreen
+                </FullscreenButton>
+              }
               options={{
                 fixedColumns: {
                   right: 1,
@@ -248,7 +239,7 @@ export default function SalesOverview() {
                 {
                   title: 'Timeline',
                   render: (rd: BusinessLocation) =>
-                    `${moment().year() - 1}/${moment().year()}`,
+                    `${outstanding?.year}/${+outstanding?.year + 1}`,
                 },
                 {
                   title: 'Status',
@@ -265,7 +256,7 @@ export default function SalesOverview() {
                       onClick={() => {
                         setSale({
                           ...sale,
-                          year: `${moment().year()}`,
+                          year: outstanding?.year,
                           locationId: rd.id,
                           address: rd.addressLine1,
                           doingBusinessAs: rd.doingBusinessAs,
@@ -279,7 +270,7 @@ export default function SalesOverview() {
                   ),
                 },
               ]}
-              data={outstanding}
+              data={outstanding?.data || []}
             />
           </div>
         </Paper>
@@ -294,20 +285,21 @@ export default function SalesOverview() {
           </Typography>
           <div className={classes.actionsWrapper}>
             <Typography className={classes.tableRowCount} variant="body2">
-              You have {submitted.length} retail locations
+              You have {(submitted?.data || []).length} retail location(s)
             </Typography>
           </div>
-          <div>
-            <FullscreenButton
-              variant="outlined"
-              onClick={() => setSubmittedOpen(true)}
-            >
-              <ZoomOutMapIcon fontSize="small" />
-              View Fullscreen
-            </FullscreenButton>
-          </div>
+
           <div>
             <SalesTable
+              fullscreenButton={
+                <FullscreenButton
+                  variant="outlined"
+                  onClick={() => setSubmittedOpen(true)}
+                >
+                  <ZoomOutMapIcon fontSize="small" />
+                  View Fullscreen
+                </FullscreenButton>
+              }
               options={{
                 fixedColumns: {
                   right: 1,
@@ -335,7 +327,7 @@ export default function SalesOverview() {
                 {
                   title: 'Timeline',
                   render: (rd: BusinessLocation) =>
-                    `${moment().year() - 1}/${moment().year()}`,
+                    `${submitted?.year}/${+submitted?.year + 1}`,
                 },
                 {
                   title: 'Status',
@@ -347,27 +339,31 @@ export default function SalesOverview() {
                   title: '',
                   render: (rd: BusinessLocation) => (
                     <>
-                      <IconButton variant="outlined">
-                        <SaveAltIcon
-                          className={classes.buttonIcon}
-                          onClick={async () => {
-                            await getDownload({
-                              url: `/sales/download?locationId=${rd.id}&year=${
-                                moment().year() - 1
-                              }`,
-                            });
-                            csvRef.current.link.click();
-                          }}
-                        />
-                      </IconButton>
+                      <Tooltip title="Download CSV" placement="top">
+                        <IconButton variant="outlined">
+                          <SaveAltIcon
+                            className={classes.buttonIcon}
+                            onClick={async () => {
+                              await getDownload({
+                                url: `/sales/download?locationId=${
+                                  rd.id
+                                }&year=${moment().year() - 1}`,
+                              });
+                              setDownloadFilename(rd.doingBusinessAs);
+                              csvRef.current.link.click();
+                            }}
+                          />
+                        </IconButton>
+                      </Tooltip>
 
                       <StyledButton
                         className={classes.editButton}
                         variant="outlined"
+                        // disabled={!submitted?.isAbleToEdit}
                         onClick={() => {
                           setSale({
                             ...sale,
-                            year: `${moment().year()}`,
+                            year: submitted?.year,
                             locationId: rd.id,
                             address: rd.addressLine1,
                             doingBusinessAs: rd.doingBusinessAs,
@@ -382,7 +378,7 @@ export default function SalesOverview() {
                   ),
                 },
               ]}
-              data={submitted}
+              data={submitted?.data || []}
             />
           </div>
         </Paper>
@@ -390,7 +386,7 @@ export default function SalesOverview() {
           ref={csvRef}
           headers={Object.keys(SalesReportCSVHeaders)}
           data={download}
-          filename={'sales_report.csv'}
+          filename={`sales_report_${downloadFilename}.csv`}
           className={classes.csvLink}
           target="_blank"
         />
@@ -413,8 +409,8 @@ export default function SalesOverview() {
             </Typography>
             <div className={classes.actionsWrapper}>
               <Typography className={classes.tableRowCount} variant="body2">
-                You have {outstanding.length} retail locations that are missing
-                Sales Reports
+                You have {(outstanding?.data || []).length} retail location(s)
+                that are missing Sales Reports
               </Typography>
             </div>
             <div>
@@ -446,7 +442,7 @@ export default function SalesOverview() {
                   {
                     title: 'Timeline',
                     render: (rd: BusinessLocation) =>
-                      `${moment().year() - 1}/${moment().year()}`,
+                      `${outstanding?.year}/${+outstanding?.year + 1}`,
                   },
                   {
                     title: 'Status',
@@ -463,7 +459,7 @@ export default function SalesOverview() {
                         onClick={() => {
                           setSale({
                             ...sale,
-                            year: `${moment().year()}`,
+                            year: outstanding?.year,
                             locationId: rd.id,
                             address: rd.addressLine1,
                             doingBusinessAs: rd.doingBusinessAs,
@@ -477,7 +473,7 @@ export default function SalesOverview() {
                     ),
                   },
                 ]}
-                data={outstanding}
+                data={outstanding?.data || []}
               />
             </div>
           </Paper>
@@ -510,7 +506,7 @@ export default function SalesOverview() {
             </Typography>
             <div className={classes.actionsWrapper}>
               <Typography className={classes.tableRowCount} variant="body2">
-                You have {submitted.length} retail locations
+                You have {(submitted?.data || []).length} retail location(s)
               </Typography>
             </div>
             <div>
@@ -542,7 +538,7 @@ export default function SalesOverview() {
                   {
                     title: 'Timeline',
                     render: (rd: BusinessLocation) =>
-                      `${moment().year() - 1}/${moment().year()}`,
+                      `${submitted?.year}/${+submitted?.year + 1}`,
                   },
                   {
                     title: 'Status',
@@ -554,27 +550,29 @@ export default function SalesOverview() {
                     title: '',
                     render: (rd: BusinessLocation) => (
                       <>
-                        <IconButton variant="outlined">
-                          <SaveAltIcon
-                            className={classes.buttonIcon}
-                            onClick={async () => {
-                              await getDownload({
-                                url: `/sales/download?locationId=${
-                                  rd.id
-                                }&year=${moment().year() - 1}`,
-                              });
-                              csvRef.current.link.click();
-                            }}
-                          />
-                        </IconButton>
-
+                        <Tooltip title="Download CSV" placement="top">
+                          <IconButton variant="outlined">
+                            <SaveAltIcon
+                              className={classes.buttonIcon}
+                              onClick={async () => {
+                                await getDownload({
+                                  url: `/sales/download?locationId=${
+                                    rd.id
+                                  }&year=${moment().year() - 1}`,
+                                });
+                                csvRef.current.link.click();
+                              }}
+                            />
+                          </IconButton>
+                        </Tooltip>
                         <StyledButton
                           className={classes.editButton}
+                          disabled={!submitted?.isAbleToEdit}
                           variant="outlined"
                           onClick={() => {
                             setSale({
                               ...sale,
-                              year: `${moment().year()}`,
+                              year: submitted?.year,
                               locationId: rd.id,
                               address: rd.addressLine1,
                               doingBusinessAs: rd.doingBusinessAs,
@@ -589,7 +587,7 @@ export default function SalesOverview() {
                     ),
                   },
                 ]}
-                data={submitted}
+                data={submitted?.data || []}
               />
             </div>
           </Paper>

@@ -130,5 +130,6 @@ export enum SubmissionTypeEnum { sales = 'Sales Report',
 export enum SuccessStepEnum {
   noi = 'noi',
   product = 'product',
-  manufacturing = 'manufacturing'
+  manufacturing = 'manufacturing',
+  sale = 'sale',
 }

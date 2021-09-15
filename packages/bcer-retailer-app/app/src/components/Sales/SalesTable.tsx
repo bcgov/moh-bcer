@@ -9,6 +9,7 @@ export interface StyledTableProps extends MaterialTableProps<any> {
   isEditable?: boolean;
   editHandler?: Function;
   deleteHandler?: Function;
+  fullscreenButton?: React.ReactElement;
 }
 const useStyles = makeStyles({
   root: {
@@ -45,6 +46,12 @@ const useStyles = makeStyles({
     '& .Mui-checked': {
       color: '#0053A4',
     },
+  },
+  toolbarWrap: {
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
 
@@ -84,13 +91,6 @@ const rowStyle = (rowData: any): CSSProperties => {
 };
 
 /**
- * Override for MTable Toolbar component
- */
-const CustomToolbar = (props: any) => {
-  return <MTableToolbar {...props} />;
-};
-
-/**
  * Override for MTable Container component
  */
 const CustomContainer = (props: any) => {
@@ -114,8 +114,22 @@ export function SalesTable({
   options,
   localization,
   editable,
+  fullscreenButton,
   ...props
 }: StyledTableProps): ReactElement {
+  const classes = useStyles();
+  /**
+   * Override for MTable Toolbar component
+   */
+  const CustomToolbar = React.memo((props: any) => {
+    return (
+      <div className={!!fullscreenButton ? classes.toolbarWrap : ''}>
+        {fullscreenButton}
+        <MTableToolbar {...props} />
+      </div>
+    );
+  });
+
   const customComponents = {
     Toolbar: CustomToolbar,
     Container: CustomContainer,

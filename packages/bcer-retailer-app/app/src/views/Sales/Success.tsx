@@ -49,7 +49,7 @@ export default function SuccessSalesReport() {
           onClick={() => history.push('/sales')}
           variant="contained"
         >
-          Go back to my Sales Reports
+          Return to my Sales Reports
         </StyledButton>
       </Box>
     </div>
