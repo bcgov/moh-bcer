@@ -106,6 +106,30 @@ export class SalesReportController {
     const year = submission.data.year;
     const businessId = submission.businessId;
 
+    // validation
+    const violations = saleReportsData.filter(
+      ({
+        containerCapacity,
+        cartridgeCapacity,
+        containers,
+        cartridges,
+      }: any) => {
+        return (
+          (!containerCapacity && !cartridges && !containers && !cartridges) ||
+          (containerCapacity && !cartridgeCapacity && !containers && cartridges) ||
+          (!containerCapacity && cartridgeCapacity && containers && !cartridges) ||
+          (!containerCapacity && !cartridgeCapacity && !containers && cartridges) ||
+          (!containerCapacity && !cartridgeCapacity && containers && !cartridges) ||
+          (!containerCapacity && !cartridgeCapacity && containers && cartridges) ||
+          (containerCapacity && cartridgeCapacity && !containers && !cartridges)
+        );
+      },
+    );
+
+    if(violations && violations.length > 0) {
+      throw new Error('1.	“At least one value for Cartridges or Containers sold as well as capacity must be provided for a given product. The capacity column and the number sold column should match. Both should either be for containers or for cartridges.”')
+    }
+
     // replace existing sales reports, deleting the existing one.
     if (submission.data.isSubmitted) {
       const existingProductSolds = await this.service.remove(locationId, year);

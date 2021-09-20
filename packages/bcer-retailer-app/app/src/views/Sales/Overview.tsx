@@ -265,6 +265,8 @@ export default function SalesOverview() {
                           address: rd.addressLine1,
                           doingBusinessAs: rd.doingBusinessAs,
                           isSubmitted: false,
+                          file: undefined,
+                          saleReports: [],
                         });
                         history.push('/sales/upload');
                       }}
@@ -383,6 +385,8 @@ export default function SalesOverview() {
                             address: rd.addressLine1,
                             doingBusinessAs: rd.doingBusinessAs,
                             isSubmitted: true,
+                            file: undefined,
+                            saleReports: [],
                           });
                           history.push('/sales/upload');
                         }}
@@ -479,6 +483,8 @@ export default function SalesOverview() {
                             address: rd.addressLine1,
                             doingBusinessAs: rd.doingBusinessAs,
                             isSubmitted: false,
+                            file: undefined,
+                            saleReports: [],
                           });
                           history.push('/sales/upload');
                         }}
@@ -602,6 +608,8 @@ export default function SalesOverview() {
                               address: rd.addressLine1,
                               doingBusinessAs: rd.doingBusinessAs,
                               isSubmitted: true,
+                              file: undefined,
+                              saleReports: [],
                             });
                             history.push('/sales/upload');
                           }}

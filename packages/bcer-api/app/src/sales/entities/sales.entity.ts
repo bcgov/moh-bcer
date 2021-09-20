@@ -46,10 +46,10 @@ export class SalesReportEntity {
   @Column('varchar')
   locationId?: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   containers: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   cartridges: string;
 
   @Column('varchar')
