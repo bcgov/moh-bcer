@@ -25,6 +25,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import withNav from '@/components/Sales/withNav';
 import { SalesReportContext } from '@/contexts/SalesReport';
+import ReplaceWarning from '@/components/Sales/ReplaceWarning';
 
 const useStyles = makeStyles(
   (
@@ -148,7 +149,6 @@ function SaleUplad() {
       const { saleReports, submissionId, headers } = data;
       setSale({
         ...sale,
-        // saleReports: saleReports.concat(sale.saleReports),
         saleReports,
         submissionId,
       });
@@ -202,8 +202,22 @@ function SaleUplad() {
                     </div>
                   </CSVLink>
                 </div>
+                {sale.isSubmitted ? (
+                  <ReplaceWarning
+                    content={
+                      <p>
+                        You are choosing to update the Sales Report for this
+                        location. This will replace all information that was
+                        previously submitted for this reporting period. Please
+                        ensure that you are uploading all sales for this
+                        location.
+                      </p>
+                    }
+                  />
+                ) : null}
               </div>
             </div>
+
             <div>
               <div className={classes.boxTitle}>
                 1. Upload file from your device

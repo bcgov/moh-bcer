@@ -11,6 +11,7 @@ import { SalesReportContext } from '@/contexts/SalesReport';
 import { formatError } from '@/utils/formatting';
 import { useAxiosPost } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { getSalesReportYear } from '@/utils/time';
 
 interface IProps {
   isAction?: boolean | Function;
@@ -109,6 +110,8 @@ export default function withNav<P>({
         );
       };
 
+      const periodYear = getSalesReportYear();
+
       return (
         <>
           <header>
@@ -135,8 +138,10 @@ export default function withNav<P>({
             open={sale?.isConfirmOpen}
             maxWidth="sm"
             dialogTitle="Confirm Your Submission and Acknowledge"
-            checkboxLabel="I understand  that I will be required to wait for 6 weeks from the time that I file or update my product report before I can sell my product."
-            dialogMessage={`You are going to 
+            checkboxLabel={`I confirm that I am submitting my sales report for all vapour products sold from this location for the
+            reporting period of October 1, ${periodYear - 1} to September 30, ${periodYear}. I understand that if I submit a new Sales
+            Report for this location, that all previously submitted Sales Reports for this location will be replaced.`}
+            dialogMessage={`You are about to 
             ${sale.isSubmitted ? 'replace a previously submitted' : 'submit'}
             your sales report`}
             setOpen={() => setSale({ ...sale, isConfirmOpen: false })}

@@ -29,6 +29,7 @@ import SaleBanner from './SaleBanner';
 import { SalesReportContext } from '@/contexts/SalesReport';
 import SalesSubmittedStatus from '@/components/Sales/SalesSubmittedStatus';
 import { SalesTable } from '@/components/Sales/SalesTable';
+import { getSalesReportYear } from '@/utils/time';
 
 const IconButton = styled(Button)({
   minWidth: '30px !important',
@@ -162,6 +163,8 @@ export default function SalesOverview() {
     }
   }, [pathname, setAppGlobal, appGlobal]);
 
+  const periodYear = getSalesReportYear();
+
   return outstandingLoading || submittedLoading ? (
     <CircularProgress />
   ) : (
@@ -176,12 +179,13 @@ export default function SalesOverview() {
           <SaleBanner
             content={
               <span>
-                You are required to submit a Sale Report for all locations that
-                you have added. You must only submit 1 Sale Report per location.
-                Select the locations that this Sale Report applies, by clicking
-                on "<strong>Select</strong>" button. You must submit a Sale
-                Report for all locations where you formulate, package or
-                re-package e-substances.
+                As a vapour product retailer, you must submit a Sales Report for
+                location(s) that you have listed. You must submit 1 Sales Report
+                per location by uploading a CSV file. To submit a Sales Report,
+                click on the "<strong>Select</strong>" button in the table below
+                for the location that you would like to submit. The deadline to
+                submit your Sales Reports is January 15, {periodYear + 1}, for the reporting
+                period of October 1, {periodYear - 1} – September 30, {periodYear}.
               </span>
             }
           />
@@ -283,9 +287,20 @@ export default function SalesOverview() {
           <Typography className={classes.boxTitle} variant="subtitle1">
             Business Locations
           </Typography>
-          <div className={classes.actionsWrapper}>
+          <div>
             <Typography className={classes.tableRowCount} variant="body2">
-              You have {(submitted?.data || []).length} retail location(s)
+              You have {(submitted?.data || []).length} retail location(s) that
+              have submitted a Sales Report.
+            </Typography>
+
+            <Typography className={classes.tableRowCount} variant="body2">
+              If you would like to update the Sales Report, please click “
+              <strong>Select</strong>” for the location that you would like to
+              update. <strong>Note</strong>: updating your Sales Report will
+              replace any reports that were previously submitted for this
+              location and reporting period. You may download a copy of your
+              submitted report by selecting the download button beside “
+              <strong>Select</strong>”.
             </Typography>
           </div>
 
@@ -347,7 +362,7 @@ export default function SalesOverview() {
                               await getDownload({
                                 url: `/sales/download?locationId=${
                                   rd.id
-                                }&year=${moment().year() - 1}`,
+                                }&year=${submitted?.year}`,
                               });
                               setDownloadFilename(rd.doingBusinessAs);
                               csvRef.current.link.click();
@@ -504,9 +519,19 @@ export default function SalesOverview() {
             <Typography className={classes.boxTitle} variant="subtitle1">
               Business Locations
             </Typography>
-            <div className={classes.actionsWrapper}>
+            <div>
               <Typography className={classes.tableRowCount} variant="body2">
                 You have {(submitted?.data || []).length} retail location(s)
+                that have submitted a Sales Report.
+              </Typography>
+              <Typography className={classes.tableRowCount} variant="body2">
+                If you would like to update the Sales Report, please click “
+                <strong>Select</strong>” for the location that you would like to
+                update. <strong>Note</strong>: updating your Sales Report will
+                replace any reports that were previously submitted for this
+                location and reporting period. You may download a copy of your
+                submitted report by selecting the download button beside “
+                <strong>Select</strong>”.
               </Typography>
             </div>
             <div>
@@ -558,7 +583,7 @@ export default function SalesOverview() {
                                 await getDownload({
                                   url: `/sales/download?locationId=${
                                     rd.id
-                                  }&year=${moment().year() - 1}`,
+                                  }&year=${submitted?.year}`,
                                 });
                                 csvRef.current.link.click();
                               }}

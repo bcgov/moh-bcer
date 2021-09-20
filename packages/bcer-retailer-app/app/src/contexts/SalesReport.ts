@@ -25,6 +25,7 @@ const Context = createContext<[SalesReportContext, Function]>([
       containerCapacity: '',
       cartridgeCapacity: '',
       flavour: '',
+      upc: '',
       containers: '',
       cartridges: '',
     },

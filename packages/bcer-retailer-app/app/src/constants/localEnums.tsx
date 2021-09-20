@@ -30,7 +30,7 @@ export enum BusinessLocationHeaders {
   'Underage Permitted' = 'Do you allow underage persons on premises?',
   'Health Authority' = 'Retail location health authority region',
   'Doing Business As' = 'The name this location is doing business as',
-  'Manufacturing' = 'Do you manufacture E-substances on premises?'
+  'Manufacturing' = 'Do you manufacture E-substances on premises?',
 }
 
 export enum BusinessLocationDTOHeaders {
@@ -47,19 +47,19 @@ export enum BusinessLocationDTOHeaders {
 }
 
 export enum ProductReportHeaders {
-  'Type' = "Type of Product",
-  'Brand Name' = "Brand Name",
-  'Product Name' = "Product Name",
+  'Type' = 'Type of Product',
+  'Brand Name' = 'Brand Name',
+  'Product Name' = 'Product Name',
   'Manufacturer Name' = "Manufacturer's Name",
-  'Manufacturer Contact' = "Manufacturer Contact",
+  'Manufacturer Contact' = 'Manufacturer Contact',
   'Manufacturer Address' = "Manufacturer's Address",
-  'Manufacturer Phone'= "Manufacturer's Phone",
+  'Manufacturer Phone' = "Manufacturer's Phone",
   'Manufacturer Email' = "Manufacturer's Email",
-  'Concentration (mg/mL)' = "The concentration of non-therapeutic nicotine expressed in mg/mL",
-  'Container Capacity' = "The container that holds the restricted e-substance",
-  'Cartridge Capacity' = "The cartridge that holds or is packaged with the restricted e-substance",
-  'Ingredients' = "Ingredients",
-  'Flavour' = "Flavour"
+  'Concentration (mg/mL)' = 'The concentration of non-therapeutic nicotine expressed in mg/mL',
+  'Container Capacity' = 'The container that holds the restricted e-substance',
+  'Cartridge Capacity' = 'The cartridge that holds or is packaged with the restricted e-substance',
+  'Ingredients' = 'Ingredients',
+  'Flavour' = 'Flavour',
 }
 
 export enum ProductReportDTOHeaders {
@@ -75,16 +75,16 @@ export enum ProductReportDTOHeaders {
   containerCapacity = 'Container Capacity',
   cartridgeCapacity = 'Cartridge Capacity',
   ingredients = 'Ingredients',
-  flavour = 'Flavour'
+  flavour = 'Flavour',
 }
 
 export enum ManufacturingReportHeaders {
-  "Ingredient Name" = "Ingredient Name",
-  "Scientific Name" = "Scientific Name",
-  "Manufacturer Name" = "Manufacturer Name",
-  "Manufacturer Address" = "Manufacturer Address",
-  "Manufacturer Email" = "Manufacturer Email",
-  "Manufacturer Phone" = "Manufacturer Phone",
+  'Ingredient Name' = 'Ingredient Name',
+  'Scientific Name' = 'Scientific Name',
+  'Manufacturer Name' = 'Manufacturer Name',
+  'Manufacturer Address' = 'Manufacturer Address',
+  'Manufacturer Email' = 'Manufacturer Email',
+  'Manufacturer Phone' = 'Manufacturer Phone',
 }
 
 export enum SalesReportHeaders {
@@ -104,7 +104,7 @@ export enum SalesReportCSVHeaders {
   'Container Capacity' = 'Container Capacity',
   'Cartridge Capacity' = 'Cartridge Capacity',
   'Flavour' = 'Flavour',
-  'UPC' = 'UPC',
+  'UPC (optional)' = 'UPC (optional)',
   'Number of Containers Sold' = 'Number of Containers Sold',
   'Number of Cartridges Sold' = 'Number of Cartridges Sold',
 }
@@ -116,11 +116,13 @@ export enum SalesReportDTOHeaders {
   containerCapacity = 'Container Capacity',
   cartridgeCapacity = 'Cartridge Capacity',
   flavour = 'Flavour',
+  upc = 'UPC (optional)',
   containers = 'Number of Containers Sold',
   cartridges = 'Number of Cartridges Sold',
 }
 
-export enum SubmissionTypeEnum { sales = 'Sales Report',
+export enum SubmissionTypeEnum {
+  sales = 'Sales Report',
   product = 'Product Report',
   manufacturing = 'Manufacturing Report',
   noi = 'Notice of Intent',

@@ -25,7 +25,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ReplaceWarning() {
+interface IProps {
+  content?: string | React.ReactElement;
+}
+
+export default function ReplaceWarning({ content }: IProps) {
   const classes = useStyles();
 
   return (
@@ -33,11 +37,13 @@ export default function ReplaceWarning() {
       <div className={classes.warningIcon}>
         <img src={InfoIcon} />
       </div>
-      <div className={classes.warningTextContainer}>
-        Please know that all the previously submitted records for this location
-        and reporting period will be overridden, and only your new submission
-        will be kept.
-      </div>
+      <div className={classes.warningTextContainer}>{content}</div>
     </div>
   );
 }
+
+ReplaceWarning.defaultProps = {
+  content: `Please know that all the previously submitted records for this location
+  and reporting period will be overridden, and only your new submission
+  will be kept.`,
+};

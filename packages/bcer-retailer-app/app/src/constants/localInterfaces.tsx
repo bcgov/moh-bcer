@@ -125,6 +125,7 @@ export interface SalesReport {
   containerCapacity: string;
   cartridgeCapacity: string;
   flavour: string;
+  upc?: string;
   containers: string;
   cartridges: string;
 }

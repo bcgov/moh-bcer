@@ -31,6 +31,7 @@ export default function SalesRoutes(){
       containerCapacity:'',
       cartridgeCapacity:'',
       flavour:'',
+      upc: '',
       containers:'',
       cartridges:'',
     },
