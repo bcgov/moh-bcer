@@ -100,7 +100,7 @@ export enum SalesReportHeaders {
 export enum SalesReportCSVHeaders {
   'Brand Name' = 'Brand Name',
   'Product Name' = 'Product Name',
-  'Concentration (mg/mL)' = 'Concentration (mg/mL)',
+  'Concentration (mg/mL) (optional)' = 'Concentration (mg/mL) (optional)',
   'Container Capacity' = 'Container Capacity',
   'Cartridge Capacity' = 'Cartridge Capacity',
   'Flavour' = 'Flavour',
@@ -112,7 +112,7 @@ export enum SalesReportCSVHeaders {
 export enum SalesReportDTOHeaders {
   brandName = 'Brand Name',
   productName = 'Product Name',
-  concentration = 'Concentration (mg/mL)',
+  concentration = 'Concentration (mg/mL) (optional)',
   containerCapacity = 'Container Capacity',
   cartridgeCapacity = 'Cartridge Capacity',
   flavour = 'Flavour',
