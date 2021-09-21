@@ -289,7 +289,7 @@ export default function AddProductReports() {
                       <Typography variant='subtitle1' className={classes.uploaderSubtitle}>
                         1. Upload file from your device.
                       </Typography>
-                      <UploadArea endpoint={`/upload/submission/${productInfo.submissionId}`} handleUpload={handleUpload} /> 
+                      <UploadArea actionText={'Drop your product report here'} endpoint={`/upload/submission/${productInfo.submissionId}`} handleUpload={handleUpload} /> 
                     </div>
                   }
                   {

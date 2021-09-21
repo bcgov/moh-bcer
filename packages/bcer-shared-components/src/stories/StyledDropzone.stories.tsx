@@ -24,6 +24,7 @@ export const Dropzone = () => {
   return (
     <div>
         <StyledDropzone
+          actionText={'Drop your product report here'}
           fileUploaded={!!dialogFileState.fileUploaded}
           uploadCallbackHandler={handleFileUpload}
         />

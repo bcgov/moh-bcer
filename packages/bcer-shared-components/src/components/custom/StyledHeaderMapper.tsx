@@ -114,7 +114,7 @@ export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapC
           <Form>
             <div className={classes.header}>
               <Typography variant='body2' className={`${classes.headerText} ${classes.requiredColumn}`}>Required field in our system</Typography>
-              <Typography variant='body2' className={`${classes.headerText} ${classes.csvHeaderColumn}`}>Required field in our system</Typography>
+              <Typography variant='body2' className={`${classes.headerText} ${classes.csvHeaderColumn}`}>Field from your CSV file</Typography>
             </div>
             {
               keys.map((header: string, index: number) => (

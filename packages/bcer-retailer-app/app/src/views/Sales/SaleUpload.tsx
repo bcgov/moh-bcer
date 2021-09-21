@@ -223,6 +223,7 @@ function SaleUplad() {
                 1. Upload file from your device
               </div>
               <UploadArea
+                actionText={'Drag your Sales Report here'}
                 endpoint={`/upload/sales-report/${sale.submissionId}`}
                 handleUpload={handleUpload}
               />

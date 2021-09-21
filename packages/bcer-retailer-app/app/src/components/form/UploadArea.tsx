@@ -59,7 +59,7 @@ const useStyles = makeStyles({
 });
 
 
-export default function UploadArea({ handleUpload, endpoint }: { handleUpload: Function, endpoint: string }) {
+export default function UploadArea({ handleUpload, endpoint, actionText }: { handleUpload: Function, endpoint: string, actionText: string }) {
   const classes = useStyles();
   const [fileData, setFileData] = useState<any>();
   const [{ uploadError, data, loading, fileData: fileInformation }, upload] = useFileUpload(endpoint);
@@ -119,6 +119,7 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
       {
         (!data && !fileData) || (businessInfo.entry === 'upload' && !businessInfo?.locations?.length) || (productInfo.entry === 'upload' )  || (!saleInfo?.saleReports?.length) ? (
           <StyledDropzone
+            actionText={actionText}
             fileUploaded={!!fileData}
             uploadCallbackHandler={(file: Array<File>) => {
               file 
