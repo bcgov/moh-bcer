@@ -256,6 +256,7 @@ export default function SalesOverview() {
                   render: (rd: BusinessLocation) => (
                     <StyledButton
                       className={classes.editButton}
+                      disabled={!submitted?.isAbleToEdit}
                       variant="outlined"
                       onClick={() => {
                         setSale({
@@ -474,6 +475,7 @@ export default function SalesOverview() {
                     render: (rd: BusinessLocation) => (
                       <StyledButton
                         className={classes.editButton}
+                        disabled={!submitted?.isAbleToEdit}
                         variant="outlined"
                         onClick={() => {
                           setSale({

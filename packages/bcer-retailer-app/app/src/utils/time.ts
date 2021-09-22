@@ -2,9 +2,9 @@ import moment from 'moment';
 export const getSalesReportYear = () => {
   const current = moment();
   const currentYear = current.year();
-  // const startReport = moment(`${currentYear}-10-01T00:00:00-07:00`);
+  const startReport = moment(`${currentYear}-10-01T00:00:00-07:00`);
   // ! This is temporarily changed for clients testing purpose. Will deleted once clients had tested it.
-  const startReport = moment(`${currentYear}-09-15T00:00:00-07:00`);
+  // const startReport = moment(`${currentYear}-09-15T00:00:00-07:00`);
   const endReport = moment(`${currentYear + 1}-01-15T23:59:59-07:00`);
   const prevStartReport = moment(`${currentYear - 1}-10-01T00:00:00-07:00`);
   const prevEndReport = moment(`${currentYear}-01-15T23:59:59-07:00`);
