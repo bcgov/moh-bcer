@@ -36,10 +36,10 @@ export class ProductSoldService {
       return productSold;
     });
 
-    return this.productSoldRepository.save(productSolds);
+    return this.productSoldRepository.save(productSolds, { chunk: 500 });
   }
 
   async remove(existingProductSolds: ProductSoldEntity[]) {
-    this.productSoldRepository.remove(existingProductSolds);
+    this.productSoldRepository.remove(existingProductSolds, { chunk: 100 });
   }
 }

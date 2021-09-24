@@ -86,21 +86,28 @@ export class SalesReportService {
       sp.locationId = locationId;
       return sp;
     });
-    return await this.salesReportRepository.save(saleReports);
+    return await this.salesReportRepository.save(saleReports, { chunk: 500 });
   }
 
   async remove(locationId: string, year: string) {
-    const existingSalesReports = await this.salesReportRepository.find({
-      where: {
-        locationId,
-        year,
-      },
-      relations: ['productSold'],
-    });
-    
-    await this.salesReportRepository.remove(existingSalesReports);
+    const deleteProductSolds = await this.salesReportRepository
+      .createQueryBuilder('salesreport')
+      .leftJoinAndSelect('salesreport.location', 'location')
+      .leftJoinAndSelect('salesreport.productSold', 'productSold')
+      .select('productSold.id', 'id')
+      .where('location.id = :locationId', { locationId })
+      .andWhere('salesreport.year = :year', { year })
+      .execute();
 
-    return existingSalesReports.map(sp => sp.productSold);
+    await this.salesReportRepository
+      .createQueryBuilder('salesreport')
+      .leftJoinAndSelect('salesreport.location', 'location')
+      .where('location.id = :locationId', { locationId })
+      .andWhere('salesreport.year = :year', { year })
+      .delete()
+      .execute();
+
+    return deleteProductSolds;
   }
 
   async getDownloadCSV(locationId: string, year: string) {
