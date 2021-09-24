@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+import { makeStyles, Box } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import {
   StyledButton,
@@ -33,6 +34,24 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
   },
 });
+
+const Loader = () => (
+  <Box
+    style={{
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      position: 'absolute',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 9999,
+    }}
+  >
+    <CircularProgress />
+  </Box>
+);
 
 export default function withNav<P>({
   cancelRoute = '',
@@ -114,6 +133,7 @@ export default function withNav<P>({
 
       return (
         <>
+          {postLoading && <Loader />}
           <header>
             <StyledButton
               onClick={() => {
@@ -139,7 +159,9 @@ export default function withNav<P>({
             maxWidth="sm"
             dialogTitle="Confirm Your Submission and Acknowledge"
             checkboxLabel={`I confirm that I am submitting my sales report for all vapour products sold from this location for the
-            reporting period of October 1, ${periodYear - 1} to September 30, ${periodYear}. I understand that if I submit a new Sales
+            reporting period of October 1, ${
+              periodYear - 1
+            } to September 30, ${periodYear}. I understand that if I submit a new Sales
             Report for this location, that all previously submitted Sales Reports for this location will be replaced.`}
             dialogMessage={`You are about to 
             ${sale.isSubmitted ? 'replace a previously submitted' : 'submit'}
