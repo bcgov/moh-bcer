@@ -72,7 +72,7 @@ export class UploadController {
     }).on('header', (header: Array<string>) => {
       headers = header
     }).fromString(file.buffer.toString());
-    console.dir(data);
+    
     await this.submissionService.updateSubmission({
       data: { locations: data },
     }, submissionId);

@@ -9,7 +9,7 @@ import SelectSalesLocation from '@/views/Sales/SelectLocation';
 import SubmitSalesReport from '@/views/Sales/SubmitSales';
 import SuccessSalesReport from '@/views/Sales/Success';
 import CommingSoon from '@/views/CommingSoon';
-import SaleUplad from '@/views/Sales/SaleUpload';
+import SaleUpload from '@/views/Sales/SaleUpload';
 import { SubmissionTypeEnum } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
@@ -101,7 +101,7 @@ export default function SalesRoutes(){
       <SalesReportProvider value={[sales, setSales]} >
         <Switch>
           <Route exact path='/sales' component={SalesOverview} />
-          <Route exact path='/sales/upload' component={SaleUplad} />
+          <Route exact path='/sales/upload' component={SaleUpload} />
           <Route exact path='/sales/review' component={SaleReview} />
           <Route exact path='/sales/submit' component={SubmitSalesReport} />
           <Route exact path='/sales/success' component={SuccessSalesReport} />
