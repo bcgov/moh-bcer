@@ -13,6 +13,7 @@ import { formatError } from '@/utils/formatting';
 import UploadSuccess from '@/assets/images/file-check.png';
 import uploadIcon from '@/assets/images/upload.png';
 import { SalesReportContext } from '@/contexts/SalesReport';
+import Loader from '@/components/Sales/Loader';
 
 const useStyles = makeStyles({
   label: {
@@ -116,6 +117,7 @@ export default function UploadArea({ handleUpload, endpoint, actionText }: { han
 
   return (
     <div>
+      <Loader open={loading} message="File processing. Please wait…" />
       {
         (!data && !fileData) || (businessInfo.entry === 'upload' && !businessInfo?.locations?.length) || (productInfo.entry === 'upload' )  || (!saleInfo?.saleReports?.length) ? (
           <StyledDropzone

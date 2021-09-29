@@ -26,6 +26,7 @@ import { formatError } from '@/utils/formatting';
 import withNav from '@/components/Sales/withNav';
 import { SalesReportContext } from '@/contexts/SalesReport';
 import ReplaceWarning from '@/components/Sales/ReplaceWarning';
+import Loader from '@/components/Sales/Loader';
 
 const useStyles = makeStyles(
   (
@@ -102,7 +103,7 @@ function SaleUplad() {
   const [mapping, setMapping] = useState<{ [key: string]: string }>();
   const [sale, setSale] = useContext(SalesReportContext);
   const [
-    { error: mapError, response: mapResponse, data: mappedSubmission },
+    { error: mapError, loading: mappedLoading, data: mappedSubmission },
     patch,
   ] = useAxiosPatch(`/submission/:id/map`, { manual: true });
 
@@ -129,7 +130,6 @@ function SaleUplad() {
     if (mappedSubmission && !mapError) {
       setSale({
         ...sale,
-        // saleReports: mappedSubmission.data.saleReports.concat(sale.saleReports),
         saleReports: mappedSubmission.data.saleReports,
       });
     }
@@ -174,6 +174,7 @@ function SaleUplad() {
   return (
     <>
       <div>
+        <Loader open={mappedLoading} message="File processing. Please wait…" />
         <div className={classes.title}>
           {sale.isSubmitted ? 'Replace' : 'Upload'} Sales Report for location
         </div>

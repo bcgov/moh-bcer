@@ -30,6 +30,7 @@ import { SalesReportContext } from '@/contexts/SalesReport';
 import SalesSubmittedStatus from '@/components/Sales/SalesSubmittedStatus';
 import { SalesTable } from '@/components/Sales/SalesTable';
 import { getSalesReportYear } from '@/utils/time';
+import Loader from '@/components/Sales/Loader';
 
 const IconButton = styled(Button)({
   minWidth: '30px !important',
@@ -170,6 +171,10 @@ export default function SalesOverview() {
   ) : (
     <>
       <div>
+        <Loader
+          open={downloadLoading}
+          message="File downloading. Please wait…"
+        />
         <div className={classes.actionsWrapper}>
           <Typography className={classes.title} variant="h5">
             Sales Reports
@@ -184,8 +189,9 @@ export default function SalesOverview() {
                 per location by uploading a CSV file. To submit a Sales Report,
                 click on the "<strong>Select</strong>" button in the table below
                 for the location that you would like to submit. The deadline to
-                submit your Sales Reports is January 15, {periodYear + 1}, for the reporting
-                period of October 1, {periodYear - 1} – September 30, {periodYear}.
+                submit your Sales Reports is January 15, {periodYear + 1}, for
+                the reporting period of October 1, {periodYear - 1} – September
+                30, {periodYear}.
               </span>
             }
           />
@@ -363,9 +369,7 @@ export default function SalesOverview() {
                             className={classes.buttonIcon}
                             onClick={async () => {
                               await getDownload({
-                                url: `/sales/download?locationId=${
-                                  rd.id
-                                }&year=${submitted?.year}`,
+                                url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
                               });
                               setDownloadFilename(rd.doingBusinessAs);
                               csvRef.current.link.click();
@@ -589,9 +593,7 @@ export default function SalesOverview() {
                               className={classes.buttonIcon}
                               onClick={async () => {
                                 await getDownload({
-                                  url: `/sales/download?locationId=${
-                                    rd.id
-                                  }&year=${submitted?.year}`,
+                                  url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
                                 });
                                 csvRef.current.link.click();
                               }}

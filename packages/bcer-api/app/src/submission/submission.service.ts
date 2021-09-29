@@ -42,7 +42,7 @@ export class SubmissionService {
         ...dto.data
       }
     })
-    await this.submissionRepository.save(updateSubmission);
+    await this.submissionRepository.save(updateSubmission, { chunk: 500 });
     const returnSubmission = await this.getOne(dto.submissionId);
     return returnSubmission;
   }

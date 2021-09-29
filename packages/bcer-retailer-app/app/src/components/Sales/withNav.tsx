@@ -1,8 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { makeStyles, Box } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import {
   StyledButton,
@@ -13,6 +12,7 @@ import { formatError } from '@/utils/formatting';
 import { useAxiosPost } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { getSalesReportYear } from '@/utils/time';
+import Loader from './Loader';
 
 interface IProps {
   isAction?: boolean | Function;
@@ -34,24 +34,6 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
   },
 });
-
-const Loader = () => (
-  <Box
-    style={{
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-      position: 'absolute',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999,
-    }}
-  >
-    <CircularProgress />
-  </Box>
-);
 
 export default function withNav<P>({
   cancelRoute = '',
@@ -133,7 +115,10 @@ export default function withNav<P>({
 
       return (
         <>
-          {postLoading && <Loader />}
+          <Loader
+            open={postLoading}
+            message="Submitting sales report. Please wait…"
+          />
           <header>
             <StyledButton
               onClick={() => {
@@ -168,6 +153,8 @@ export default function withNav<P>({
             your sales report`}
             setOpen={() => setSale({ ...sale, isConfirmOpen: false })}
             confirmHandler={confirmSubmit}
+            acceptDisabled={postLoading}
+            cancelDisabled={postLoading}
           />
         </>
       );
