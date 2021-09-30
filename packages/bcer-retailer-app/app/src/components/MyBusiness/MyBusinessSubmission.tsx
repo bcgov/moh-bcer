@@ -149,6 +149,7 @@ export default function MyBusinessSubmission (props: any) {
         <SuccessStep active={true} completed={false} step={SuccessStepEnum.noi}/>
         <SuccessStep active={false} completed={false} step={SuccessStepEnum.product}/>
         <SuccessStep active={false} completed={false} step={SuccessStepEnum.manufacturing}/>
+        <SuccessStep active={false} completed={false} step={SuccessStepEnum.sale}/>
       </Paper>
       {
         details

@@ -88,7 +88,7 @@ const useStyles = makeStyles({
  * @returns object of type ReactElement
  *
  */
-export function StyledDropzone(props: {fileUploaded: boolean, uploadCallbackHandler: Function, icon?: string, displayValidity?: boolean}) {
+export function StyledDropzone(props: {fileUploaded: boolean, actionText: string, uploadCallbackHandler: Function, icon?: string, displayValidity?: boolean}) {
   const classes = useStyles();
 
   const {
@@ -99,8 +99,7 @@ export function StyledDropzone(props: {fileUploaded: boolean, uploadCallbackHand
     isDragActive,
     open,
     // isDragAccept,
-    isDragReject
-    
+    isDragReject,
   } = useDropzone({
     noClick: true,
     accept: '.csv',
@@ -141,7 +140,7 @@ export function StyledDropzone(props: {fileUploaded: boolean, uploadCallbackHand
         }
         <div className={classes.descriptionWrapper}>
           <div className={classes.description}>
-            Drop your product report here, or &nbsp;  
+            {props.actionText}, or &nbsp;  
             <div className={classes.uploadOpenLink} onClick={open}>browse from your device</div>.
           </div>
         </div>

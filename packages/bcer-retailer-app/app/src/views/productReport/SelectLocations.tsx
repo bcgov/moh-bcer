@@ -192,7 +192,7 @@ export default function SelectLocations() {
         open={isConfirmOpen}
         maxWidth='sm'
         dialogTitle="Confirm Your Submission and Acknowledge"
-        checkboxLabel='I understand that I will be required to wait for 6 weeks from the time that I file or update my product report before I can sell my product.'
+        checkboxLabel='I understand that I will be required to wait 6 weeks from the time that I file or update my product report before I can sell these products. I acknowledge that submission of my product reports does not indicate Ministry approval of the submitted products and that I am still subject to enforcement actions from Health Authorities, should my products be in non-compliance with the E-Substances Regulation.'
         dialogMessage='You are about to submit your product report.'
         setOpen={() => setOpenConfirm(false)}
         confirmHandler={confirmSubmit}

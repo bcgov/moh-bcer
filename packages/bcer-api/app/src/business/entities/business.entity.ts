@@ -16,6 +16,7 @@ import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { ManufacturingEntity } from 'src/manufacturing/entities/manufacturing.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
+import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 
 @Entity('business')
 export class BusinessEntity {
@@ -61,6 +62,9 @@ export class BusinessEntity {
 
   @OneToMany(() => ProductEntity, (product) => product.business)
   products: []
+
+  @OneToMany(() => ProductSoldEntity, (productSold) => productSold.business)
+  productSolds: []
 
   @OneToMany(() => ManufacturingEntity, (manufacturingReport) => manufacturingReport.business)
   manufactures: []

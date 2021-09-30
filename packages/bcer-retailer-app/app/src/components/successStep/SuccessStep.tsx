@@ -11,6 +11,9 @@ import ProductActive from '@/assets/images/product-active.png';
 import ProductInactive from '@/assets/images/product-inactive.png';
 import ManufacturingActive from '@/assets/images/manufacturing-active.png';
 import ManufacturingInactive from '@/assets/images/manufacturing-inactive.png';
+import TrendingUpActive from '@/assets/images/trending_up-active.png';
+import TrendingUpInactive from '@/assets/images/trending_up-inactive.png';
+
 
 const useStyles = makeStyles({
   container: {
@@ -95,6 +98,11 @@ export default function SuccessStep (props: {active : boolean,  completed: boole
         ? icon = ManufacturingActive
         : icon = ManufacturingInactive
       break;
+    case SuccessStepEnum.sale :
+      active
+        ? icon = TrendingUpActive
+        : icon = TrendingUpInactive
+      break;
     default :
       return null;
   }
@@ -109,6 +117,9 @@ export default function SuccessStep (props: {active : boolean,  completed: boole
         break;
       case SuccessStepEnum.manufacturing :
         history.push('/manufacturing')
+        break;
+      case SuccessStepEnum.sale :
+        history.push('/sales');
         break;
       default :
         break;
@@ -143,6 +154,8 @@ export default function SuccessStep (props: {active : boolean,  completed: boole
                   ? 'Product Report'
                 : step === SuccessStepEnum.manufacturing
                   ? 'Manufacturing Report'
+                : step === SuccessStepEnum.sale 
+                  ? 'Sales Report'
                 : null
               }
             </Typography>
@@ -152,6 +165,8 @@ export default function SuccessStep (props: {active : boolean,  completed: boole
                   ? 'Submit Notice of Intent to sell E-substances'
                 : step === SuccessStepEnum.product || step === SuccessStepEnum.manufacturing
                   ? 'Manually fill in form or upload CSV file'
+                : step === SuccessStepEnum.sale 
+                  ? 'Upload CSV file'
                 : null
               }
             </Typography>

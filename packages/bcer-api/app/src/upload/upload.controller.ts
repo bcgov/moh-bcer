@@ -72,7 +72,7 @@ export class UploadController {
     }).on('header', (header: Array<string>) => {
       headers = header
     }).fromString(file.buffer.toString());
-    console.dir(data);
+    
     await this.submissionService.updateSubmission({
       data: { locations: data },
     }, submissionId);
@@ -111,6 +111,38 @@ export class UploadController {
       headers,
       submissionId,
       products: data.slice(0, 5),
+    };
+  }
+
+  @ApiOperation({ summary: 'Upload Sales Report from a CSV' })
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({ status: HttpStatus.CREATED })
+  @HttpCode(HttpStatus.CREATED)
+  @Roles('user')
+  @Post('sales-report/:submissionId')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiBody({
+    description: 'CSV',
+    type: FileUploadDto,
+  })
+  async saleReportSubmit(
+    @UploadedFile() file: File & { buffer: Buffer },
+    @Param('submissionId') submissionId?: string
+  ): Promise<any> {
+    let headers = [];
+    const data = await csv({
+      ignoreEmpty: true,
+    }).on('header', (header: Array<string>) => {
+      headers = header
+    }).fromString(file.buffer.toString());
+    console.dir(data);
+    await this.submissionService.updateSubmission({
+      data: { saleReports: data },
+    }, submissionId);
+    return {
+      headers,
+      submissionId,
+      saleReports: data,
     };
   }
 }

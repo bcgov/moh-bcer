@@ -52,10 +52,10 @@ export interface BusinessLocation {
   health_authority: HealthAuthority;
   doingBusinessAs: string;
   manufacturing: string;
-  manufactures: Array<ManufacturingReport>
+  manufactures: Array<ManufacturingReport>;
   noi?: {
-    created_at: Date
-  },
+    created_at: Date;
+  };
   products?: Array<Products>;
   productsCount: number;
   manufacturesCount: number;
@@ -116,4 +116,16 @@ export interface Sale {
   cartridges: string;
   containers: string;
   year: string;
+}
+
+export interface SalesReport {
+  brandName: string;
+  productName: string;
+  concentration: string;
+  containerCapacity: string;
+  cartridgeCapacity: string;
+  flavour: string;
+  upc?: string;
+  containers: string;
+  cartridges: string;
 }

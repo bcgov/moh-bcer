@@ -12,6 +12,8 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import UploadSuccess from '@/assets/images/file-check.png';
 import uploadIcon from '@/assets/images/upload.png';
+import { SalesReportContext } from '@/contexts/SalesReport';
+import Loader from '@/components/Sales/Loader';
 
 const useStyles = makeStyles({
   label: {
@@ -58,13 +60,14 @@ const useStyles = makeStyles({
 });
 
 
-export default function UploadArea({ handleUpload, endpoint }: { handleUpload: Function, endpoint: string }) {
+export default function UploadArea({ handleUpload, endpoint, actionText }: { handleUpload: Function, endpoint: string, actionText: string }) {
   const classes = useStyles();
   const [fileData, setFileData] = useState<any>();
   const [{ uploadError, data, loading, fileData: fileInformation }, upload] = useFileUpload(endpoint);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext)
   const [productInfo, setProductInfo] = useContext(ProductInfoContext)
+  const [saleInfo, setSaleInfo] = useContext(SalesReportContext)
   
   useEffect(() => {
     if (businessInfo.fileData) {
@@ -72,6 +75,9 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
     }
     if (productInfo.fileData) {
       setFileData(productInfo.fileData)
+    }
+    if (saleInfo.fileData) {
+      setFileData(saleInfo.fileData)
     }
   }, [])
 
@@ -86,6 +92,9 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
       }
       if (productInfo.entry === 'upload') {
         setProductInfo({...productInfo, fileData: {name: fileInformation.name}})
+      }
+      if (saleInfo) {
+        setSaleInfo({ ...saleInfo, fileData: { name: fileInformation.name } })
       }
       setFileData(fileInformation)
     }
@@ -103,13 +112,16 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
     setFileData(undefined)
     setBusinessInfo({...businessInfo, locations: businessInfo.locations.filter(l => l.id), fileData: undefined})
     setProductInfo({...productInfo, fileData: undefined})
+    setSaleInfo({ ...saleInfo,saleReports: [], fileData: undefined })
   }
 
   return (
     <div>
+      <Loader open={loading} message="File processing. Please wait…" />
       {
-        (!data && !fileData) || (businessInfo.entry === 'upload' && !businessInfo?.locations?.length) || (productInfo.entry === 'upload' ) ? (
+        (!data && !fileData) || (businessInfo.entry === 'upload' && !businessInfo?.locations?.length) || (productInfo.entry === 'upload' )  || (!saleInfo?.saleReports?.length) ? (
           <StyledDropzone
+            actionText={actionText}
             fileUploaded={!!fileData}
             uploadCallbackHandler={(file: Array<File>) => {
               file 
@@ -122,7 +134,7 @@ export default function UploadArea({ handleUpload, endpoint }: { handleUpload: F
         : null
       }
       {
-      (fileData !== undefined && businessInfo.locations.length) 
+      (fileData !== undefined && (businessInfo.locations.length || saleInfo.saleReports.length)) 
         ? 
           (
             <div className={classes.uploadedFile} >

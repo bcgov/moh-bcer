@@ -9,14 +9,15 @@ import { SubmissionController } from 'src/submission/submission.controller';
 import { SubmissionEntity } from 'src/submission/entities/submission.entity';
 import { UserMiddleware } from 'src/user/middleware/user.middleware';
 import { UserModule } from 'src/user/user.module';
+import { forwardRef } from '@nestjs/common';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SubmissionEntity, BusinessEntity]),
-    BusinessModule,
-    LocationModule,
-    ProductsModule,
-    UserModule,
+    forwardRef(() => BusinessModule),
+    forwardRef(() => LocationModule),
+    forwardRef(() => ProductsModule),
+    forwardRef(() => UserModule),
   ],
   providers: [SubmissionService],
   exports: [SubmissionService],

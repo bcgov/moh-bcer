@@ -207,7 +207,7 @@ export default function AddLocations () {
                 </div>
                 <div>
                   {
-                    entry === 'upload' && <UploadArea endpoint={`/upload/location/${businessInfo.submissionId}`} handleUpload={handleUpload} />
+                    entry === 'upload' && <UploadArea actionText={'Drag your locations here'} endpoint={`/upload/location/${businessInfo.submissionId}`} handleUpload={handleUpload} />
                   }
                   {
                     providedHeaders?.length && entry === 'upload' && !mapping

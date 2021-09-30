@@ -5,36 +5,51 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToOne,
   JoinColumn,
 } from 'typeorm';
 
 import { LocationEntity } from 'src/location/entities/location.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { SalesReportRO } from 'src/sales/ro/sales.ro';
+import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 
 @Entity('salesreport')
 export class SalesReportEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => ProductEntity, (product: ProductEntity) => product.sales)
+  @ManyToOne(
+    () => ProductEntity,
+    (product: ProductEntity) => product.sales,
+  )
   @JoinColumn()
   product: ProductEntity;
 
-  @Column('varchar')
+  @OneToOne(
+    () => ProductSoldEntity,
+    (productSold: ProductSoldEntity) => productSold.sale,
+  )
+  @JoinColumn()
+  productSold: ProductSoldEntity;
+
+  @Column('varchar', { nullable: true })
   productId?: string;
 
-  @ManyToOne(() => LocationEntity, (location: LocationEntity) => location.sales)
+  @ManyToOne(
+    () => LocationEntity,
+    (location: LocationEntity) => location.sales,
+  )
   @JoinColumn()
-  location: ProductEntity;
+  location: LocationEntity;
 
   @Column('varchar')
   locationId?: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   containers: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   cartridges: string;
 
   @Column('varchar')

@@ -42,7 +42,7 @@ export class SubmissionService {
         ...dto.data
       }
     })
-    await this.submissionRepository.save(updateSubmission);
+    await this.submissionRepository.save(updateSubmission, { chunk: 500 });
     const returnSubmission = await this.getOne(dto.submissionId);
     return returnSubmission;
   }
@@ -102,6 +102,20 @@ export class SubmissionService {
           return mappedProduct
         })
         submission.data.products = mappedProducts;
+        break;
+
+      case SubmissionTypeEnum.sales:
+        const providedSaleReports = submission.data.saleReports;
+        if (!providedSaleReports) throw new Error('No sales report were found on this submission')
+        const mappedSaleReports = providedSaleReports.map((sale: Object) => {
+          let mappedSaleReport = {}
+          for (let k in mapping) {
+            mappedSaleReport[k] = mapping[k] ? sale[mapping[k]] : ''
+          }
+          return mappedSaleReport
+        })
+        submission.data = data;
+        submission.data.saleReports = mappedSaleReports;
         break;
 
       default:
