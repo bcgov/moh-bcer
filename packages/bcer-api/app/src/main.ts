@@ -25,13 +25,15 @@ import 'winston-daily-rotate-file';
     key: process.env.PEM_KEY_PATH ? fs.readFileSync(process.env.PEM_KEY_PATH) : null,
     cert: process.env.PEM_CERT_PATH ? fs.readFileSync(process.env.PEM_CERT_PATH) : null,
   } : null;
-  const transports: winston.transport[] = [new winston.transports.Console({ level: 'debug' })];
+  const transports: winston.transport[] = [];
   if (['development', 'test', 'production'].includes(process.env.NODE_ENV)) {
     const rotateFile = new winston.transports.DailyRotateFile({
       datePattern: 'yyyy-MM-DD',
       filename: path.join(process.env.LOGS_PATH || './', 'logs.log'),
     });
     transports.push(rotateFile);
+  } else {
+    transports.push(new winston.transports.Console({ level: 'debug' }));
   }
   const app = await NestFactory.create(AppModule, {
     httpsOptions,
