@@ -27,12 +27,7 @@ export class ProductsService {
       .getMany()
     Logger.log(`Creating products for ${locations.length} locations`);
 
-    let productUploadId;
-    (async () => {
-      do {
-        productUploadId = uuid();
-      } while (!(await this.productRepository.findOne({ where: { productUploadId } })));
-    })();
+    const productUploadId = uuid();
 
     dto.products = dto.products.map(product => {
       return {
