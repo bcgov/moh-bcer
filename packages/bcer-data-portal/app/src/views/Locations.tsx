@@ -1,5 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, Grid, makeStyles, Typography, Paper, Snackbar, CircularProgress, IconButton, SnackbarContent, Tooltip } from '@material-ui/core';
+import {
+  Box,
+  Grid,
+  makeStyles,
+  Typography,
+  Paper,
+  Snackbar,
+  CircularProgress,
+  IconButton,
+  SnackbarContent,
+  Tooltip,
+} from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Form, Formik } from 'formik';
 import { useAxiosGet, useAxiosPostFormData } from '@/hooks/axios';
@@ -10,7 +21,12 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import moment from 'moment';
 import store from 'store';
 
-import { StyledButton, StyledSelectField, StyledTable, StyledTextField } from 'vaping-regulation-shared-components';
+import {
+  StyledButton,
+  StyledSelectField,
+  StyledTable,
+  StyledTextField,
+} from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 
@@ -19,17 +35,17 @@ const useStyles = makeStyles({
     display: 'flex',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   contentWrapper: {
     display: 'flex',
     width: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   content: {
     maxWidth: '1440px',
     width: '95%',
-    padding: '30px'
+    padding: '30px',
   },
   helpTextWrapper: {
     display: 'flex',
@@ -51,7 +67,7 @@ const useStyles = makeStyles({
   },
   title: {
     padding: '20px 0px',
-    color: '#002C71'
+    color: '#002C71',
   },
   highlighted: {
     fontWeight: 600,
@@ -67,15 +83,15 @@ const useStyles = makeStyles({
     color: '#0053A4',
   },
   boxTitle: {
-    paddingBottom: '10px'
+    paddingBottom: '10px',
   },
   tableRowCount: {
-    paddingBottom: '10px'
+    paddingBottom: '10px',
   },
   actionsWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingBottom: '10px'
+    paddingBottom: '10px',
   },
   csvLink: {
     textDecoration: 'none',
@@ -92,42 +108,49 @@ const useStyles = makeStyles({
   },
   sendIcon: {
     height: '24px',
-    paddingRight: '4px'
+    paddingRight: '4px',
   },
   actionLink: {
     color: 'blue',
     cursor: 'pointer',
-    textDecoration: 'underline'
+    textDecoration: 'underline',
   },
   buttonWrapper: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   downloadSnackbar: {
     height: '100px',
     backgroundColor: 'white',
     '& .MuiSnackbarContent-message': {
       fontWeight: '600',
-      color: '#0053A4'
+      color: '#0053A4',
     },
     '& .MuiSnackbarContent-action': {
-      minWidth: '64px'
-    }
+      minWidth: '64px',
+    },
   },
   messageTextContent: {
-    paddingLeft: '10px'
+    paddingLeft: '10px',
   },
   fileLoading: {
     fontSize: '2.5rem',
-    color: 'rgba(0, 0, 0, 0.2)'
+    color: 'rgba(0, 0, 0, 0.2)',
   },
   fileComplete: {
     fontSize: '2.5rem',
-    color: '#0053A4'
+    color: '#0053A4',
   },
   downloadButtonIcon: {
     color: '#285CBC',
     fontSize: '40px',
+  },
+  groupButtons: {
+    display: 'flex',
+    marginBottom: '1rem',
+    '& > * + *': {
+      marginLeft: '1rem',
+    },
   },
 });
 
@@ -152,7 +175,7 @@ export default function Locations() {
     {
       title: 'Business Name',
       field: 'business.businessName',
-      sorting: false
+      sorting: false,
     },
     {
       title: 'Business Legal Name',
@@ -165,12 +188,13 @@ export default function Locations() {
     {
       title: 'Phone Number',
       field: 'phone',
-      sorting: false
+      sorting: false,
     },
     {
       title: 'Address 1',
-      render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
-      sorting: false
+      render: (rd: BusinessLocation) =>
+        `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
+      sorting: false,
     },
     {
       title: 'Email Address',
@@ -179,25 +203,41 @@ export default function Locations() {
     },
     {
       title: 'Submitted Date',
-      render: (rd: BusinessLocation) => rd.noi?.created_at ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}` : '',
+      render: (rd: BusinessLocation) =>
+        rd.noi?.created_at
+          ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}`
+          : '',
     },
     {
       title: 'Health Authority',
       field: 'health_authority',
-    }
+    },
   ];
 
   const buildSearchUrl = (): string => {
-    let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${searchTerms.pageSize || 20}&includes=business,noi`;
-    searchTerms?.term && searchTerms.term.length > 3 ? url += `&search=${searchTerms.term}` : null;
-    searchTerms?.authority ? url += `&authority=${searchTerms.authority}` : null;
-    searchTerms?.orderBy ? url += `&orderBy=${tableColumns[searchTerms.orderBy].title}` : null;
-    searchTerms?.orderDirection ? url += `&order=${searchTerms.orderDirection.toUpperCase()}` : null;
+    let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${
+      searchTerms.pageSize || 20
+    }&includes=business,noi`;
+    searchTerms?.term && searchTerms.term.length > 3
+      ? (url += `&search=${searchTerms.term}`)
+      : null;
+    searchTerms?.authority
+      ? (url += `&authority=${searchTerms.authority}`)
+      : null;
+    searchTerms?.orderBy
+      ? (url += `&orderBy=${tableColumns[searchTerms.orderBy].title}`)
+      : null;
+    searchTerms?.orderDirection
+      ? (url += `&order=${searchTerms.orderDirection.toUpperCase()}`)
+      : null;
     return url;
-  }
+  };
 
-  const [{ data, loading, error }, get] = useAxiosGet(buildSearchUrl(), { manual: true });
-  const [{ data: zipFile, loading: zipLoading, error: zipError }, post] = useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
+  const [{ data, loading, error }, get] = useAxiosGet(buildSearchUrl(), {
+    manual: true,
+  });
+  const [{ data: zipFile, loading: zipLoading, error: zipError }, post] =
+    useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const healthAuthorityOptions = [
@@ -222,7 +262,7 @@ export default function Locations() {
       term: e.search,
       authority,
     });
-  }
+  };
 
   useEffect(() => {
     get();
@@ -234,35 +274,49 @@ export default function Locations() {
   }, [data]);
 
   const getReportsFile = (requestFilter: string = 'selected') => {
-    let postConfig: { url: string; data: Array<string> } = { url: '', data: [] };
+    let postConfig: { url: string; data: Array<string> } = {
+      url: '',
+      data: [],
+    };
     switch (requestFilter) {
-
       case 'all':
-        postConfig.url = `/data/location/reportsFile?getAll=true${searchTerms.authority ? `&authority=${searchTerms.authority}` : ''}${searchTerms.term ? `&search=${searchTerms.term}` : ''}`;
-        break
+        postConfig.url = `/data/location/reportsFile?getAll=true${
+          searchTerms.authority ? `&authority=${searchTerms.authority}` : ''
+        }${searchTerms.term ? `&search=${searchTerms.term}` : ''}`;
+        break;
 
       case 'selected':
-        postConfig.url = '/data/location/reportsFile'
-        postConfig.data = selectedRows.map(row => row.id)
-        break
+        postConfig.url = '/data/location/reportsFile';
+        postConfig.data = selectedRows.map((row) => row.id);
+        break;
 
       case 'NOI':
-        postConfig.url = `/data/location/reportsFile?getAll=true&getNOI=true${searchTerms.authority ? `&authority=${searchTerms.authority}` : ''}${searchTerms.term ? `&search=${searchTerms.term}` : ''}`;
-        break
+        postConfig.url = `/data/location/reportsFile?getAll=true&getNOI=true${
+          searchTerms.authority ? `&authority=${searchTerms.authority}` : ''
+        }${searchTerms.term ? `&search=${searchTerms.term}` : ''}`;
+        break;
+
+      case 'SELECTED_SALESREPORT':
+        postConfig.url = `/data/location/reportsFile?getSalesReport=true`;
+        postConfig.data = selectedRows.map((row) => row.id);
+        break;
 
       default:
-        return
+        return;
     }
 
-    post(postConfig)
-    setSnackbarOpen(true)
-  }
+    post(postConfig);
+    setSnackbarOpen(true);
+  };
 
   useEffect(() => {
     if (locations && !error) {
     } else {
       if (error) {
-        setAppGlobal({ ...appGlobal, networkErrorMessage: error?.response?.data?.message })
+        setAppGlobal({
+          ...appGlobal,
+          networkErrorMessage: error?.response?.data?.message,
+        });
       }
     }
   }, [error]);
@@ -270,45 +324,54 @@ export default function Locations() {
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
-        {error &&
+        {error && (
           <>
             <div className={classes.helpTextWrapper}>
               <GetAppIcon className={classes.helperIcon} />
-              <Typography variant='body1'>
+              <Typography variant="body1">
                 You do not have the correct role to view this page.
               </Typography>
             </div>
             <div className={classes.buttonWrapper}>
-              <StyledButton variant='outlined' onClick={logout}>
+              <StyledButton variant="outlined" onClick={logout}>
                 Log Out
               </StyledButton>
             </div>
           </>
-        }
-        {!error &&
+        )}
+        {!error && (
           <>
             <div className={classes.actionsWrapper}>
-              <Typography className={classes.title} variant='h5'>Submitted Locations</Typography>
+              <Typography className={classes.title} variant="h5">
+                Submitted Locations
+              </Typography>
               <div className={classes.buttonWrapper}>
-                <StyledButton variant='outlined' onClick={logout}>
+                <StyledButton variant="outlined" onClick={logout}>
                   Log Out
                 </StyledButton>
               </div>
             </div>
             <div className={classes.helpTextWrapper}>
               <GetAppIcon className={classes.helperIcon} />
-              <Typography variant='body1'>
-                You may download all submitted reports for one or more locations by selecting them from the table below and clicking the 'Download Selected' button.
+              <Typography variant="body1">
+                You may download all submitted reports for one or more locations
+                by selecting them from the table below and clicking the
+                'Download Selected' button.
               </Typography>
             </div>
-            <Typography variant='body1'>
-              All locations with a submitted Notice of Intent can be viewed here.
+            <Typography variant="body1">
+              All locations with a submitted Notice of Intent can be viewed
+              here.
             </Typography>
             <div className={classes.subtitleWrapper}>
-              <Typography className={classes.subtitle} variant='h6' >Locations with a Notice of Intent</Typography>
+              <Typography className={classes.subtitle} variant="h6">
+                Locations with a Notice of Intent
+              </Typography>
             </div>
-            <Paper className={classes.box} variant='outlined' >
-              <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
+            <Paper className={classes.box} variant="outlined">
+              <Typography className={classes.boxTitle} variant="subtitle1">
+                Business Locations
+              </Typography>
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -319,49 +382,88 @@ export default function Locations() {
                 <Form>
                   <Grid container spacing={2}>
                     <Grid item xs={7}>
-                      <StyledTextField name='search' label='Search (Address, Business Name, Legal Name, Doing Business As)' />
+                      <StyledTextField
+                        name="search"
+                        label="Search (Address, Business Name, Legal Name, Doing Business As)"
+                      />
                     </Grid>
                     <Grid item xs={2}>
-                      <StyledSelectField name='authority' options={healthAuthorityOptions} label='Health Authority' />
+                      <StyledSelectField
+                        name="authority"
+                        options={healthAuthorityOptions}
+                        label="Health Authority"
+                      />
                     </Grid>
                     <Grid item xs={3}>
-                      <Box alignContent='center' alignItems='center' justifyContent='center' display='flex' minHeight='100%'>
-                        <StyledButton fullWidth variant='contained' type='submit'>Search</StyledButton>
+                      <Box
+                        alignContent="center"
+                        alignItems="center"
+                        justifyContent="center"
+                        display="flex"
+                        minHeight="100%"
+                      >
+                        <StyledButton
+                          fullWidth
+                          variant="contained"
+                          type="submit"
+                        >
+                          Search
+                        </StyledButton>
                       </Box>
                     </Grid>
                   </Grid>
                 </Form>
               </Formik>
-              <div className={classes.actionsWrapper}>
-                <Typography className={classes.tableRowCount} variant='body2'>{totalRowCount} retail locations have submitted a Notice of Intent</Typography>
-                <StyledButton
-                  variant='outlined'
-                  onClick={() => getReportsFile('NOI')}
-                  disabled={zipLoading}
-                >
-                  <SaveAltIcon className={classes.buttonIcon} />
-                  Download All NOIs
-                </StyledButton >
-                <StyledButton
-                  variant='outlined'
-                  onClick={() => getReportsFile()}
-                  disabled={!selectedRows.length || zipLoading}
-                >
-                  <SaveAltIcon className={classes.buttonIcon} />
-                  Download Selected
-                </StyledButton>
-                <Tooltip title={totalRowCount > 400 ? 'Must be less than 400 locations to download' : ''} placement='top'>
-                  <div>
-                    <StyledButton
-                      variant='contained'
-                      onClick={() => getReportsFile('all')}
-                      disabled={zipLoading || totalRowCount > 400}
-                    >
-                      <SaveAltIcon className={classes.buttonIconAlt} />
-                      Download All Locations
-                    </StyledButton>
-                  </div>
-                </Tooltip>
+              <div>
+                <Typography className={classes.tableRowCount} variant="body2">
+                  {totalRowCount} retail locations have submitted a Notice of
+                  Intent
+                </Typography>
+                <div className={classes.groupButtons}>
+                  <StyledButton
+                    variant="outlined"
+                    onClick={() => getReportsFile('NOI')}
+                    disabled={zipLoading}
+                  >
+                    <SaveAltIcon className={classes.buttonIcon} />
+                    Download All NOIs
+                  </StyledButton>
+                  <StyledButton
+                    variant="outlined"
+                    onClick={() => getReportsFile('selected')}
+                    disabled={!selectedRows.length || zipLoading}
+                  >
+                    <SaveAltIcon className={classes.buttonIcon} />
+                    Download Selected
+                  </StyledButton>
+                  <StyledButton
+                    variant="outlined"
+                    onClick={() => getReportsFile('SELECTED_SALESREPORT')}
+                    disabled={!selectedRows.length || zipLoading}
+                  >
+                    <SaveAltIcon className={classes.buttonIcon} />
+                    Download Selected Sales Report(s)
+                  </StyledButton>
+                  <Tooltip
+                    title={
+                      totalRowCount > 400
+                        ? 'Must be less than 400 locations to download'
+                        : ''
+                    }
+                    placement="top"
+                  >
+                    <div>
+                      <StyledButton
+                        variant="contained"
+                        onClick={() => getReportsFile('all')}
+                        disabled={zipLoading || totalRowCount > 400}
+                      >
+                        <SaveAltIcon className={classes.buttonIconAlt} />
+                        Download All Locations
+                      </StyledButton>
+                    </div>
+                  </Tooltip>
+                </div>
               </div>
               <div className={'tableDiv'}>
                 <StyledTable
@@ -372,14 +474,20 @@ export default function Locations() {
                     pageSizeOptions: [20, 30, 50],
                     sorting: true,
                   }}
-                  onSelectionChange={(rows: any) => {
-                    if (rows && rows.length > 0) {
-                      const displayedIds = rows.map((result: BusinessLocation) => result.id)
-                      const selectedRowsNotDisplayed = selectedRows.filter(selectedRow => {
-                        return !displayedIds.includes(selectedRow.id)
-                      })
-                      setSelectedRows([...selectedRowsNotDisplayed, ...rows])
-                    }
+                  onSelectionChange={(rows: BusinessLocation[]) => {
+                    const currentLocationIds = locations.map(
+                      (location) => location.id
+                    );
+                    const filterCurrentLocationsFromSelectedRows =
+                      selectedRows.filter(
+                        (selectedRow) =>
+                          !currentLocationIds.includes(selectedRow.id)
+                      );
+                    const finalRows = [
+                      ...filterCurrentLocationsFromSelectedRows,
+                      ...rows,
+                    ];
+                    setSelectedRows(finalRows);
                   }}
                   onChangePage={(page: number) => {
                     setSearchTerms({
@@ -411,13 +519,23 @@ export default function Locations() {
                   totalCount={totalRowCount}
                   page={searchTerms.page}
                   data={
-                    locations ? locations.map((row: BusinessLocation) => selectedRows.find(selected => selected.id === row.id) ? { ...row, tableData: { checked: true } } : row) : []
+                    locations
+                      ? locations.map((row: BusinessLocation) => ({
+                          ...row,
+                          tableData: {
+                            ...row.tableData,
+                            checked: !!selectedRows.find(
+                              (selected) => selected.id === row.id
+                            ),
+                          },
+                        }))
+                      : []
                   }
                 />
               </div>
             </Paper>
           </>
-        }
+        )}
       </div>
       <Snackbar
         open={snackbarOpen}
@@ -428,27 +546,31 @@ export default function Locations() {
           className={classes.downloadSnackbar}
           message={
             <div>
-              <FileCopyIcon className={zipLoading ? classes.fileLoading : classes.fileComplete} />
+              <FileCopyIcon
+                className={
+                  zipLoading ? classes.fileLoading : classes.fileComplete
+                }
+              />
               <span className={classes.messageTextContent}>
                 {`locations-${moment().format('MMM-DD-hh-mm')}.zip`}
               </span>
             </div>
           }
-          action={[
-            zipLoading
-              ?
+          action={
+            zipLoading ? (
               <CircularProgress />
-              :
+            ) : (
               <IconButton
                 href={window.URL.createObjectURL(new Blob([zipFile]))}
                 download={`locations-${moment().format('MMM-DD-hh-mm')}.zip`}
                 onClick={() => {
-                  setSnackbarOpen(false)
+                  setSnackbarOpen(false);
                 }}
               >
                 <SaveAltIcon className={classes.downloadButtonIcon} />
-              </IconButton>,
-          ]}
+              </IconButton>
+            )
+          }
         />
       </Snackbar>
     </div>
