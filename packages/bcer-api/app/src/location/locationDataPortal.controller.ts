@@ -125,6 +125,7 @@ export class LocationDataPortalController {
     @Query('getNOI') getNOI?: string,
     @Query('search') search?: string,
     @Query('authority') authority?: string,
+    @Query('getSalesReport') getSalesReport?: string,
     @Body() payload?: Array<string>
   ) {
     let locations: LocationEntity[];
@@ -133,8 +134,6 @@ export class LocationDataPortalController {
     } else {
       locations = await this.service.getLocationWithIds(payload);
     }
-
-    let locationZip;
 
     // Optimizations!
     const businessIds = locations.reduce((ids, location) => {
@@ -153,41 +152,7 @@ export class LocationDataPortalController {
       location.business = businessesDictionary[location.businessId];
     });
 
-    if (getNOI !== 'true') {
-      const locationIds = locations.map(l => l.id);
-      // Get locations with products dictionary
-      const locationsWithProducts = await this.productsService.getLocationsWithProducts(locationIds);
-      const allProducts = Object.values(locationsWithProducts).reduce((products, pArray) => {
-        products = [...products, ...pArray];
-        return products;
-      }, []).reduce((pDict, product) => {
-        pDict[product.id] = product;
-        return pDict;
-      }, {});
-
-      // Get locations with manufactures dictionary
-      const locationsWithManufactures = await this.manufacturingService.getLocationsWithManufactures(locationIds);
-
-      // Get sales dictionary
-      const locationsWithSales = await this.salesReportService.getLocationsWithSalesReports(locationIds);
-
-      locations.forEach((location) => {
-        location.products = locationsWithProducts[location.id];
-        location.manufactures = locationsWithManufactures[location.id];
-
-        const sales = locationsWithSales[location.id];
-        if (sales?.length) {
-          sales.map(s => {
-            s.product = allProducts[s.productId];
-            return s;
-          });
-          location.sales = sales;
-        }
-      });
-      locationZip = await this.service.packageAsZip(locations);
-    } else {
-      locationZip = await this.service.packageOnlyNOI(locations);
-    }
+   const locationZip = await this.generateLocationZip(locations, getNOI, getSalesReport);
 
     res.set({
       'Content-Type': 'application/zip',
@@ -195,5 +160,67 @@ export class LocationDataPortalController {
     })
 
     locationZip.pipe(res)
+  }
+
+  /**
+   * Generating the locationZip by the conditions.
+   * @param locations 
+   * @param getNOI 
+   * @param getSalesReport 
+   * @param getSelectedNOI 
+   * @returns locationZip ReadableStream
+   */
+  private async generateLocationZip(
+    locations: LocationEntity[],
+    getNOI: string | undefined,
+    getSalesReport: string | undefined,
+  ): Promise<NodeJS.ReadableStream> {
+    if (getSalesReport === 'true') { // get selected salesreport
+      return this.service.packageOnlySalesReport(locations);
+    }
+
+    if (getNOI === 'true') { // get all NOI
+      return this.service.packageOnlyNOI(locations);
+    }
+
+    const locationIds = locations.map(l => l.id);
+    // Get locations with products dictionary
+    const locationsWithProducts = await this.productsService.getLocationsWithProducts(
+      locationIds,
+    );
+    const allProducts = Object.values(locationsWithProducts)
+      .reduce((products, pArray) => {
+        products = [...products, ...pArray];
+        return products;
+      }, [])
+      .reduce((pDict, product) => {
+        pDict[product.id] = product;
+        return pDict;
+      }, {});
+
+    // Get locations with manufactures dictionary
+    const locationsWithManufactures = await this.manufacturingService.getLocationsWithManufactures(
+      locationIds,
+    );
+
+    // Get sales dictionary
+    const locationsWithSales = await this.salesReportService.getLocationsWithSalesReports(
+      locationIds,
+    );
+
+    locations.forEach(location => {
+      location.products = locationsWithProducts[location.id];
+      location.manufactures = locationsWithManufactures[location.id];
+
+      const sales = locationsWithSales[location.id];
+      if (sales?.length) {
+        sales.map(s => {
+          s.product = allProducts[s.productId];
+          return s;
+        });
+        location.sales = sales;
+      }
+    });
+    return this.service.packageAsZip(locations);
   }
 }

@@ -12,6 +12,7 @@ import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
 import { getSalesReportYear } from 'src/common/common.utils';
+import { convertNullToEmptyString } from 'src/utils/util';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -137,6 +138,8 @@ export class LocationService {
     const locationsQb = this.locationRepository.createQueryBuilder('location');
     locationsQb.leftJoinAndSelect('location.business', 'business');
     locationsQb.leftJoinAndSelect('location.noi', 'noi');
+    locationsQb.leftJoinAndSelect('location.sales', 'sales');
+    locationsQb.leftJoinAndSelect('sales.productSold', 'productSold');
     if (locationIds?.length > 0) locationsQb.andWhere('location.id IN (:...locationIds)', { locationIds });
     if (search) {
       locationsQb.andWhere('(LOWER(location.addressLine1) LIKE :search OR LOWER(location.doingBusinessAs) LIKE :search OR LOWER(business.legalName) LIKE :search OR LOWER(business.businessName) LIKE :search)', { search: `%${search.toLowerCase()}%` });
@@ -179,7 +182,6 @@ export class LocationService {
     const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date\n';
     const productHeaders = 'Type,Brand Name,Product Name,Manufacturer Name,Manufacturer Contact,Manufacturer Address,Manufacturer Phone,Manufacturer Email,Concentration (mg/mL),Container Capacity,Cartridge Capacity,Ingredients,Flavour\n';
     const manufacturesHeaders = 'Ingredient Name,Scientific Name,Manufacturer Name,Manufacturer Address,Manufacturer Phone,Manufacturer Email\n';
-    const salesHeaders = 'Business Name,Brand,Product Name,Type,Flavour,Volume,Number of Containers Sold,Number of Cartridges Sold,Health Authority\n';
 
     zip.folder('Locations');
 
@@ -209,28 +211,7 @@ export class LocationService {
         });
       }
 
-      if (location.sales?.length) {
-        const yearsDict = location.sales.reduce((yearsDict, sale) => {
-          if (yearsDict[sale.year]) {
-            yearsDict[sale.year].push(sale);
-          } else {
-            yearsDict[sale.year] = [sale];
-          }
-          return yearsDict;
-        }, {});
-
-        Object.keys(yearsDict).forEach(year => {
-          const yearSales = yearsDict[year];
-          let salesRows = '';
-          yearSales.forEach(sale => {
-            salesRows += `"${location.business.businessName}","${sale.product.brandName}","${sale.product.productName}","${sale.product.type}","${sale.product.flavour}","${sale.product.concentration}","${sale.containers}","${sale.cartridges}","${location.ha}"\n`;
-          });
-          const startDate = moment(`10-01-${year}`, 'MM-DD-YYYY').format('LL');
-          const endDate = moment(`09-30-${year}`, 'MM-DD-YYYY').add(1, 'year').format('LL');
-          zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Sales Reports`)
-            .file(`${startDate} - ${endDate}.csv`, salesHeaders + salesRows);
-        });
-      }
+      this.generateLocationSalesReport(zip, location);
     })
 
     return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
@@ -255,7 +236,48 @@ export class LocationService {
       .on('finish', () => {
         Logger.log('zip written.');
       }
-      );
+    );
+  }
+
+  public packageOnlySalesReport(locations: LocationEntity[]): NodeJS.ReadableStream {
+    let zip = new JSZip();
+    
+    locations.forEach(location => {
+      this.generateLocationSalesReport(zip, location);
+    })
+
+    return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+      .on('finish', () => {
+        Logger.log('zip written.');
+      }
+    );
+  }
+
+  private generateLocationSalesReport(zip: JSZip, location: LocationEntity) {
+    const headers = 'Brand Name,Product Name,Concentration (mg/mL) (optional),Container Capacity,Cartridge Capacity,Flavour,UPC (optional),Number of Containers Sold,Number of Cartridges Sold\n';
+
+    if (location.sales?.length) {
+      const yearsDict = location.sales.reduce((yearsDict, sale) => {
+        if (yearsDict[sale.year]) {
+          yearsDict[sale.year].push(sale);
+        } else {
+          yearsDict[sale.year] = [sale];
+        }
+        return yearsDict;
+      }, {});
+
+      Object.keys(yearsDict).forEach(year => {
+        const yearSales = yearsDict[year];
+        let salesRows = '';
+        yearSales.forEach(sale => {
+          salesRows += `"${convertNullToEmptyString(sale?.productSold?.brandName)}","${convertNullToEmptyString(sale?.productSold?.productName)}","${convertNullToEmptyString(sale?.productSold?.concentration)}","${convertNullToEmptyString(sale?.productSold?.containerCapacity)}","${convertNullToEmptyString(sale?.productSold?.cartridgeCapacity)}","${convertNullToEmptyString(sale?.productSold?.flavour)}","${convertNullToEmptyString(sale?.productSold?.upc)}","${convertNullToEmptyString(sale?.containers)}", "${convertNullToEmptyString(sale?.cartridges)}"\n`;
+        });
+        const startDate = moment(`10-01-${year}`, 'MM-DD-YYYY').format('LL');
+        const endDate = moment(`09-30-${year}`, 'MM-DD-YYYY').add(1, 'year').format('LL');
+        zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Sales Reports`)
+          .file(`${startDate} - ${endDate}.csv`, headers + salesRows);
+      });
+    }
   }
 
   private buildCountSubquery = (relation: string, qb: SelectQueryBuilder<any>) => {
