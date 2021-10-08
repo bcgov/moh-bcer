@@ -47,6 +47,11 @@ print-status:
 ## Local Development
 ####################################################################
 
+setup-local:
+	@echo "+\n++ Make: setting for local development ...\n+"
+	@cd ./packages/bcer-shared-components && npm i && npm run build && cd ../../
+	@cd ./packages/bcer-retailer-app && make setup-local-env
+
 run-local:
 	@echo "+\n++ Make: Running locally ...\n+"
 	@docker-compose -f docker-compose.dev.yml up
