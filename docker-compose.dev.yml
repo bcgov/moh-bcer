@@ -29,7 +29,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=local-dev
       - DB_CONFIG_NAME=${DB_CONFIG_NAME}
       - DB_CONFIG_TYPE=${DB_CONFIG_TYPE}
       - DB_HOST=${DB_HOST}

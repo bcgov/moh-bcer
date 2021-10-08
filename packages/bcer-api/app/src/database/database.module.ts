@@ -6,7 +6,7 @@ import { LOCAL_DB_CONFIG } from './local-db-config.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(process.env.NODE_ENV ==='development' ? LOCAL_DB_CONFIG : {})
+    TypeOrmModule.forRoot(process.env.NODE_ENV ==='local-dev' ? LOCAL_DB_CONFIG : {})
   ],
   providers: [DatabaseService],
 })

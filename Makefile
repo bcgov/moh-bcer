@@ -7,7 +7,7 @@ export GIT_LOCAL_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 export GIT_LOCAL_BRANCH := $(or $(GIT_LOCAL_BRANCH),dev)
 export PROJECT := $(or $(PROJECT),bcer)
 
-# Kay clock
+# Keycloak
 export KEYCLOAK_PORT := $(or $(KEYCLOAK_PORT),8080)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM),bcerd)
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL),https://common-logon-dev.hlth.gov.bc.ca/auth/)
