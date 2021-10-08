@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  retailer-app:
+    image: bcer-retailer-app:dev
+    container_name: bcer-retailer-app
+    build:
+      context: ./packages
+      dockerfile: Dockerfile.retailer-app.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/bcer-retailer-app:/usr/src/app/bcer-retailer-app
+      - ./packages/bcer-shared-components:/usr/src/app/bcer-shared-components
+      - /usr/src/app/bcer-retailer-app/app/node_modules
+      - /usr/src/app/bcer-shared-components/node_modules
+    depends_on:
+      - postgres
+      - application
+    networks:
+      - backend
+
+  application:
+    image: vape-nest-api:dev
+    container_name: vape-nest-api
+    build:
+      context: ./packages/bcer-api/app
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - DB_CONFIG_NAME=${DB_CONFIG_NAME}
+      - DB_CONFIG_TYPE=${DB_CONFIG_TYPE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - KEYCLOAK_PORT=${KEYCLOAK_PORT}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT=${KEYCLOAK_CLIENT}
+      - KEYCLOAK_AUTH_URL=${KEYCLOAK_AUTH_URL}
+      - KEYCLOAK_DATA_REALM=${KEYCLOAK_DATA_REALM}
+      - KEYCLOAK_DATA_CLIENT=${KEYCLOAK_DATA_CLIENT}
+      - KEYCLOAK_DATA_AUTH_URL=${KEYCLOAK_DATA_AUTH_URL}
+    expose:
+      - "4000"
+    volumes:
+      - ./packages/bcer-api/app:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  postgres:
+    image: vape-nest-api-postgres:dev
+    container_name: vape-nest-api-postgres
+    build:
+      context: ./packages/bcer-api/.docker/postgres
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES="nest_api_dev","nest_api_test","vape_migrations"
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"
+
+volumes:
+  postgres:
