@@ -138,8 +138,6 @@ export class LocationService {
     const locationsQb = this.locationRepository.createQueryBuilder('location');
     locationsQb.leftJoinAndSelect('location.business', 'business');
     locationsQb.leftJoinAndSelect('location.noi', 'noi');
-    locationsQb.leftJoinAndSelect('location.sales', 'sales');
-    locationsQb.leftJoinAndSelect('sales.productSold', 'productSold');
     if (locationIds?.length > 0) locationsQb.andWhere('location.id IN (:...locationIds)', { locationIds });
     if (search) {
       locationsQb.andWhere('(LOWER(location.addressLine1) LIKE :search OR LOWER(location.doingBusinessAs) LIKE :search OR LOWER(business.legalName) LIKE :search OR LOWER(business.businessName) LIKE :search)', { search: `%${search.toLowerCase()}%` });
