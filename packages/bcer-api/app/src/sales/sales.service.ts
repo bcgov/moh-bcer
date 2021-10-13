@@ -133,4 +133,41 @@ export class SalesReportService {
       ];
     });
   }
+
+ /**
+  * get year list from sales report
+  * @param locationIds 
+  * @returns [{year: '2021'},...]
+  */
+  async getYears(locationIds: string[]) {
+    const years = await this.salesReportRepository
+      .createQueryBuilder('s')
+      .select('s.year', 'year')
+      .groupBy('s.year')
+      .orderBy('s.year', 'ASC')
+      .where('s.locationId IN (:...locationIds)', { locationIds })
+      .execute();
+    return years;
+  }
+
+  /**
+   * get all salesreport for zip
+   * @param year 
+   * @param locationIds 
+   * @returns 
+   */
+  async getSalesReportsByYear(year: string, locationIds: string[]) {
+    const salesreports = await this.salesReportRepository
+      .createQueryBuilder('s')
+      .leftJoinAndSelect('s.location', 'l')
+      .leftJoinAndSelect('l.business', 'b')
+      .leftJoinAndSelect('s.productSold', 'p')
+      .where('s.year = :year', { year })
+      .andWhere('s.locationId IN (:...locationIds)', { locationIds })
+      .orderBy('b.businessName', 'ASC')
+      .addOrderBy('l.doingBusinessAs', 'ASC')
+      .execute();
+
+    return salesreports;
+  }
 }

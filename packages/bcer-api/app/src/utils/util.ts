@@ -5,3 +5,10 @@ export const getDurationInMilliseconds = (start: [number, number]): string => {
 
   return ((diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS).toLocaleString();
 };
+
+/**
+ * Converting null, undefined value to "", used in csv
+ * @param str 
+ * @returns 
+ */
+export const convertNullToEmptyString = (str: string | null) => str == null ? '' : str;
