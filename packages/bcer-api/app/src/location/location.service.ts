@@ -210,8 +210,6 @@ export class LocationService {
             .file(`${report.productName}.csv`, manufacturesHeaders + reportRows);
         });
       }
-
-      this.generateLocationSalesReport(zip, location);
     })
 
     return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
@@ -251,6 +249,37 @@ export class LocationService {
         Logger.log('zip written.');
       }
     );
+  }
+
+  public packageSalesReport(years: { year: string }[], salesReportsByYear: any[][]): NodeJS.ReadableStream {
+    let zip = new JSZip();
+    
+    salesReportsByYear.forEach((s, idx) => {
+      this.generateSalesReportZip(zip, s, years[idx].year);
+    })
+
+    return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+      .on('finish', () => {
+        Logger.log('zip written.');
+      }
+    );
+  }
+
+  private generateSalesReportZip(zip: JSZip, salesReportsByYear: any[], year: string) {
+    const businessHeader = 'Business Name,';
+    const locationHeader = 'Health Authority,Doing Business As,Address,Underage,';
+    const salesReportHeader = 'Brand Name,Product Name,Concentration (mg/mL) (optional),Container Capacity,Cartridge Capacity,Flavour,UPC (optional),Number of Containers Sold,Number of Cartridges Sold\n';
+
+    let salesRows = '';
+    salesReportsByYear.forEach(sale => {
+      salesRows += `"${convertNullToEmptyString(sale['b_businessName'])}",`;
+      salesRows += `"${convertNullToEmptyString(sale['l_health_authority'])}","${convertNullToEmptyString(sale['l_doingBusinessAs'])}","${convertNullToEmptyString(sale['l_addressLine1'])}, ${convertNullToEmptyString(sale['l_addressLine2'])}, ${convertNullToEmptyString(sale['l_postal'])}, ${convertNullToEmptyString(sale['l_city'])}","${convertNullToEmptyString(sale['l_underage'])}",`;
+      salesRows += `"${convertNullToEmptyString(sale['p_brand_name'])}","${convertNullToEmptyString(sale['p_product_name'])}","${convertNullToEmptyString(sale['p_concentration'])}","${convertNullToEmptyString(sale['p_container_capacity'])}","${convertNullToEmptyString(sale['p_cartridge_capacity'])}","${convertNullToEmptyString(sale['p_flavour'])}","${convertNullToEmptyString(sale['p_upc'])}","${convertNullToEmptyString(sale['s_containers'])}", "${convertNullToEmptyString(sale['s_cartridges'])}"\n`;
+    })
+
+    zip
+    .folder(year)
+    .file(`salesreport.csv`, businessHeader + locationHeader + salesReportHeader + salesRows);
   }
 
   private generateLocationSalesReport(zip: JSZip, location: LocationEntity) {
