@@ -1,4 +1,4 @@
-import { Repository, In, Not, IsNull, SelectQueryBuilder } from 'typeorm';
+import { Repository, In, Not, IsNull, SelectQueryBuilder, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -13,6 +13,8 @@ import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
 import { getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString } from 'src/utils/util';
+import { NoiEntity } from 'src/noi/entities/noi.entity';
+import { NoiStatus } from 'src/noi/enums/status.enum';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -350,5 +352,26 @@ export class LocationService {
       })
       .getMany();
       return { ...saleReportYear, data: locations };
+  }
+
+  async cancelAllLocationWithExpiredNOI(): Promise<UpdateResult>{
+    // TODO: Add location != 'deleted'
+    const locations = await this.locationRepository
+      .createQueryBuilder()
+      .select('loc.id')
+      .from(LocationEntity, 'loc')
+      .innerJoin(NoiEntity, 'noi', 'loc.noiId = noi.id')
+      .andWhere('noi.status = :status', {
+        status: NoiStatus.NOT_RENEWED,
+      })
+      .getMany();
+
+    const locationIds = locations?.map(l => l.id);
+
+    const result = await this.locationRepository.update(
+      { id: In(locationIds) },
+      { closed: true },
+    );
+    return result;
   }
 }

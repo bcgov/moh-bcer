@@ -93,6 +93,24 @@ const StyledDialogAcceptButton = styled(Button)({
 });
 
 /**
+ * Uses react styled() to apply styles to the button component
+ * @returns A Material-UI ReactElement with specified styles
+ */
+const StyledTableButton = styled(Button)({
+  color: '#234075',
+  backgroundColor: '#e6efff',
+  textTransform: 'none',
+  fontSize: '14px',
+  fontWeight: 600,
+  boxShadow: 'none',
+  padding: '5px 15px',
+  '&:hover': {
+    backgroundColor: '#d6dfff',
+    boxShadow: 'none',
+  }
+})
+
+/**
  * Styled button reusable component
  *
  * @param {ButtonProps} props - MUI defined button props
@@ -122,6 +140,11 @@ export function StyledButton ({ variant, ...props }: StyledButtonProps):ReactEle
         : variant === 'dialog-cancel' 
           ? <StyledDialogCancelButton
               variant="outlined"
+              {...props}
+            />
+        : variant === 'table'
+          ? <StyledTableButton
+              variant="text"
               {...props}
             />
         : <StyledTextButton

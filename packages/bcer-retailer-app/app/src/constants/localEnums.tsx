@@ -135,3 +135,8 @@ export enum SuccessStepEnum {
   manufacturing = 'manufacturing',
   sale = 'sale',
 }
+
+export enum NoiStatus {
+  SUBMITTED = 'submitted',
+  NOT_RENEWED = 'not_renewed' 
+}

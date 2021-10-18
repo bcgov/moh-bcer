@@ -26,6 +26,7 @@ import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ProductSoldModule } from './product-sold/product-sold.module';
+import { CronModule } from './cron/cron.module';
 
 const moduleImports = [
   AuthModule,
@@ -41,11 +42,9 @@ const moduleImports = [
   ProductsModule,
   SalesReportModule,
   ProductSoldModule,
+  ScheduleModule.forRoot(),
+  CronModule,
 ];
-
-if (process.env.HEAPSNAPSHOT_ENABLED === 'true') {
-  moduleImports.push(ScheduleModule.forRoot());
-}
 
 @Module({
   imports: moduleImports,

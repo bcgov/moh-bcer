@@ -76,4 +76,7 @@ export class LocationRO {
 
   @ApiProperty()
   updated_at: Date;
+
+  @ApiProperty()
+  closed: boolean;
 }

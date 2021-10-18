@@ -97,6 +97,12 @@ export class LocationEntity {
   @JoinTable()
   manufactures: ManufacturingEntity[];
 
+  @Column('boolean', {
+    nullable: false,
+    default: false,
+  })
+  closed: boolean;
+
   productsCount?: number;
   manufacturesCount?: number;
   salesCount?: number;
@@ -126,6 +132,7 @@ export class LocationEntity {
       salesCount: this.salesCount,
       created_at: this.created_at,
       updated_at: this.updated_at,
+      closed: this.closed,
     };
   }
 }

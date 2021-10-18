@@ -1,4 +1,4 @@
-import { UserType, HealthAuthority } from '@/constants/localEnums';
+import { UserType, HealthAuthority, NoiStatus } from '@/constants/localEnums';
 
 export interface UserProfile {
   id: string;
@@ -55,6 +55,7 @@ export interface BusinessLocation {
   manufactures: Array<ManufacturingReport>;
   noi?: {
     created_at: Date;
+    status: NoiStatus;
   };
   products?: Array<Products>;
   productsCount: number;
@@ -62,6 +63,7 @@ export interface BusinessLocation {
   sales?: Array<Sale>;
   salesCount: number;
   created_at?: Date;
+  closed: boolean;
 }
 
 export interface LocationFileUploadRO {
@@ -128,4 +130,11 @@ export interface SalesReport {
   upc?: string;
   containers: string;
   cartridges: string;
+}
+
+export interface GenericTableProp {
+  data: Array<any>;
+  fullScreenProp?: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
+  handleActionButton?: Function;
+  handleSelection?: Function;
 }

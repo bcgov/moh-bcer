@@ -15,4 +15,7 @@ export class NoiRO {
 
   @ApiProperty()
   updated_at: Date;
+
+  @ApiProperty()
+  status: string;
 }

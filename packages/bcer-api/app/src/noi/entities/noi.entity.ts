@@ -6,11 +6,13 @@ import {
   OneToOne,
   ManyToOne,
   JoinColumn,
+  Column,
 } from 'typeorm';
 
 import { NoiRO } from 'src/noi/ro/noi.ro';
 import { LocationEntity } from 'src/location/entities/location.entity';
 import { BusinessEntity } from 'src/business/entities/business.entity';
+import { NoiStatus } from '../enums/status.enum';
 
 @Entity('noi')
 export class NoiEntity {
@@ -30,6 +32,13 @@ export class NoiEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Column('enum', {
+    enum: NoiStatus,
+    nullable: false,
+    default: NoiStatus.SUBMITTED
+  })
+  status: string;
+
   toResponseObject(): NoiRO {
     return {
       id: this.id,
@@ -37,6 +46,7 @@ export class NoiEntity {
       businessId: this.business?.id,
       created_at: this.created_at,
       updated_at: this.updated_at,
+      status: this.status,
     };
   }
 }

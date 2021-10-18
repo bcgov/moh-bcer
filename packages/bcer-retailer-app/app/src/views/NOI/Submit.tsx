@@ -1,19 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
-import { makeStyles, Typography, Paper, Checkbox, FormControlLabel } from '@material-ui/core';
-import { CSVLink } from 'react-csv';
+import { makeStyles, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
 
-import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog } from 'vaping-regulation-shared-components';
+import { StyledButton, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
-import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import { formatError } from '@/utils/formatting';
+import { NoiUtil } from '@/utils/noi.util';
+import { NoiSubmissionTable } from './Tables';
+import FullScreen from '@/components/generic/FullScreen';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -37,28 +36,9 @@ const useStyles = makeStyles({
     color: '#0053A4',
     paddingRight: '25px',
   },
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-  },
-  boxTitle: {
-    paddingBottom: '10px'
-  },
-  tableRowCount: {
-    paddingBottom: '10px'
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px'
-  },
-  csvLink: {
-    textDecoration: 'none',
-  },
   submitWrapper: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     paddingTop: '30px'
   },
   checkboxLabel: {
@@ -81,8 +61,9 @@ const useStyles = makeStyles({
 export default function NoiSubmit() {
   const classes = useStyles();
   const history = useHistory();
-
-  const [outstanding, setOutstanding] = useState([]);
+  const [outstanding, setOutstanding] = useState<Array<BusinessLocation>>([]);
+  const [selected, setSelected] = useState<Array<BusinessLocation>>([]);
+  const submitTableFullscreenState = useState<boolean>(false);
 
   const [isConfirmOpen, setOpenConfirm] = useState<boolean>(false);
   const [isConfirmChecked, setConfirmChecked] = useState<boolean>();
@@ -91,13 +72,18 @@ export default function NoiSubmit() {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const confirmSubmit = async () => {
+    const ids: Array<string> = selected.map((r:BusinessLocation) => r.id);
     await post({
-      data: locations.map((l: BusinessLocation) => l.id)
+      data: { locationIds: ids },
     });
   }
 
   const submit = () => {
     setOpenConfirm(true);
+  }
+
+  const handleSelection = (rows: Array<BusinessLocation>) => {
+    setSelected(rows);
   }
 
   useEffect(() => {
@@ -108,7 +94,7 @@ export default function NoiSubmit() {
 
   useEffect(() => {
     if (locations.length && !error) {
-      const outstanding = locations.filter((l: BusinessLocation) => !l.noi);
+      const outstanding:Array<BusinessLocation> = locations.filter(NoiUtil.outstandingNoi);
       setOutstanding(outstanding);
     }
   }, [locations]);
@@ -124,7 +110,7 @@ export default function NoiSubmit() {
       <div>
         <StyledButton onClick={() => history.push('/noi')}>
           <ArrowBackIcon className={classes.buttonIcon} />
-          Back
+          Cancel
         </StyledButton>
         <Typography variant='h5'  className={classes.title}>
           Confirm and Submit Notice of Intent
@@ -132,54 +118,27 @@ export default function NoiSubmit() {
         <div className={classes.helpTextWrapper}>
           <ChatBubbleOutlineIcon className={classes.helperIcon} />
           <Typography variant='body1'>
-          Ensure that all of your locations are here and correct. You may also download a CSV version of your location list for your review. When you have confirmed that all of your locations are correct, please press the submit button.
+            Select the location(s) for which you want to submit or renew the Notice of Intent.
           </Typography>
         </div>
-        <Paper className={classes.box} variant='outlined'>
-          <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
-          <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>You have {locations.filter((l: BusinessLocation) => !l.noi).length} retail locations</Typography>
-            {
-              outstanding.length
-              ?
-                <CSVLink
-                  headers={Object.keys(BusinessLocationHeaders)}
-                  data={outstanding?.map((l: BusinessLocation) => {
-                      return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-                    })
-                  }
-                  filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-                  <StyledButton variant='outlined'>
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download CSV
-                  </StyledButton>
-                </CSVLink>
-              : null
-            }
-          </div>
-          <div style={{ overflowX: 'auto' }}>
-            <StyledTable
-              columns={[
-                {title: 'Address 1', field: 'addressLine1'},
-                {title: 'Address 2', field: 'addressLine2'},
-                {title: 'Postal Code', field: 'postal'},
-                {title: 'City', field: 'city'},
-                {title: 'Business Phone', field: 'phone'},
-                {title: 'Business email', field: 'email'},
-                {title: 'Health Authority', field: 'health_authority'},
-                {title: 'Doing Business As', field: 'doingBusinessAs'},
-                {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`},
-                {title: 'Manufacturing  Premises', field: 'manufacturing'}
-              ]}
-              data={outstanding}
-            />
-          </div>
-        </Paper>
+        <FullScreen
+          fullScreenProp={submitTableFullscreenState}
+        >
+          <NoiSubmissionTable 
+            data={outstanding}
+            handleSelection={handleSelection}
+            fullScreenProp={submitTableFullscreenState}
+          />
+        </FullScreen>
+        
         <div className={classes.submitWrapper}>
+          <StyledButton variant='outlined' onClick={() => history.push('/noi')}>
+            Back
+          </StyledButton>
           <StyledButton
             variant='contained'
             onClick={submit}
-            disabled={!outstanding.length}
+            disabled={!selected.length}
           >
             Submit
           </StyledButton>
@@ -188,9 +147,9 @@ export default function NoiSubmit() {
       <StyledConfirmDialog
         open={isConfirmOpen}
         maxWidth='sm'
-        dialogTitle="Confirm Your Submission and Acknowledge"
-        checkboxLabel='I agree that the location information entered above is correct and wish to submit my Notice of Intent.'
-        dialogMessage="You are about to submit notice of intent for all of your businesses' retail locations."
+        dialogTitle="Confirm Your Submission"
+        checkboxLabel='I agree that the location information entered is correct and wish to submit my Notice of Intent.'
+        dialogMessage='You are about to submit/renew notice of intent for the selected businesses retail locations'
         setOpen={() => setOpenConfirm(false)}
         confirmHandler={confirmSubmit}
       />

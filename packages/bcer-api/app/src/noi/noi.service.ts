@@ -1,11 +1,13 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { NoiDTO } from 'src/noi/dto/noi.dto';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 
 import { BusinessService } from 'src/business/business.service';
 import { LocationService } from 'src/location/location.service';
+import { NoiStatus } from './enums/status.enum';
+import { IdsDTO } from './dto/ids.dto';
 
 @Injectable()
 export class NoiService {
@@ -16,23 +18,30 @@ export class NoiService {
     private readonly noiRepository: Repository<NoiEntity>,
   ) {}
 
-  async createNois(locationIds: string[], businessId: string) {
+  async createOrRenewNois(locationIds: string[], businessId: string) {
     const business = await this.businessService.getBusinessById(businessId);
+
     // TODO refactor into a single find of all locations then map on them
     return Promise.all(locationIds.map(async (locationId: string) => {
-      const location = await this.locationService.getLocation(locationId, 'business');
+      const location = await this.locationService.getLocation(locationId, 'business,noi');
+      
       if (location.business.id !== businessId) {
         throw new ForbiddenException(`This user does not have access to location ${locationId}`);
       }
-      const noi = this.noiRepository.create({ location, business });
-      await this.noiRepository.save(noi);
+      if(location.noi?.id){
+        await this.noiRepository.update({ id: location.noi.id }, { status: NoiStatus.SUBMITTED });
+      }else{
+        const noi = this.noiRepository.create({ location, business });
+        await this.noiRepository.save(noi);
+      }
+      
       const updatedLocation = await this.locationService.getLocation(locationId);
       return updatedLocation;
-    }))
+    }));
   }
 
   async createSingleNoi(dto: NoiDTO, businessId: string) {
-    const business = await this.businessService.getBusinessById(businessId)
+    const business = await this.businessService.getBusinessById(businessId);
     const noi = this.noiRepository.create({ ...dto, business });
     await this.noiRepository.save(noi);
     return noi;
@@ -50,5 +59,13 @@ export class NoiService {
       .where('business.id = :businessId', { businessId })
       .getMany();
     return nois;
+  }
+
+  async markAllNoisExpired(): Promise<UpdateResult> {
+    const result = await this.noiRepository.update(
+      { status: NoiStatus.SUBMITTED },
+      { status: NoiStatus.NOT_RENEWED },
+    );
+    return result;
   }
 }

@@ -28,6 +28,7 @@ import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/auth/auth.module';
 import { UserService } from 'src/user/user.service';
+import { IdsDTO } from './dto/ids.dto';
 
 @UseGuards(AuthGuard, RoleGuard)
 @ApiBearerAuth()
@@ -47,9 +48,9 @@ export class NoiController {
   @Post()
   async submitNoi(
     @Request() req: RequestWithUser,
-    @Body() locationIds: string[],
+    @Body() { locationIds }: IdsDTO,
   ): Promise<LocationRO[]> {
-    const locations = await this.noiService.createNois(locationIds, req.ctx.businessId);
+    const locations = await this.noiService.createOrRenewNois(locationIds, req.ctx.businessId);
     return locations.map(l => l.toResponseObject());
   }
 
