@@ -26,7 +26,7 @@ export class CronService {
       let result: UpdateResult;
       switch(cronJob){
         case CronName.CLOSE_LOCATION_WITH_EXPIRED_NOI:
-          result = await this.locationService.cancelAllLocationWithExpiredNOI();
+          result = await this.locationService.closeAllLocationWithExpiredNOI();
           break;
         default:
           break;

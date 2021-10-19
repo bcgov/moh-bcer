@@ -101,12 +101,12 @@ export class LocationEntity {
   @Column('enum', {
     enum: LocationStatus,
     nullable: false,
-    default: LocationStatus.ACTIVE,
+    default: LocationStatus.Active,
   })
   status: LocationStatus
 
-  @Column({ type: 'timestamp', nullable: true, default: null })
-  closed_at: Date;
+  @Column({ type: 'timestamp', nullable: true, default: null, name: 'closed_at' })
+  closedAt : Date;
 
   productsCount?: number;
   manufacturesCount?: number;
@@ -138,6 +138,7 @@ export class LocationEntity {
       created_at: this.created_at,
       updated_at: this.updated_at,
       status: this.status,
+      closedAt: this.closedAt,
     };
   }
 }

@@ -356,7 +356,7 @@ export class LocationService {
       return { ...saleReportYear, data: locations };
   }
 
-  async cancelAllLocationWithExpiredNOI(): Promise<UpdateResult>{
+  async closeAllLocationWithExpiredNOI(): Promise<UpdateResult>{
     const locations = await this.locationRepository
       .createQueryBuilder()
       .select('loc.id')
@@ -366,7 +366,7 @@ export class LocationService {
         expiryDate: CronConfig.getNoiExpiryDate().toDate(),
       })
       .andWhere('loc.status = :active', {
-        active: LocationStatus.ACTIVE,
+        active: LocationStatus.Active,
       })
       .getMany();
 
@@ -375,8 +375,8 @@ export class LocationService {
     const result = await this.locationRepository.update(
       { id: In(locationIds) },
       { 
-        status: LocationStatus.CLOSED,
-        closed_at: moment().toDate(),
+        status: LocationStatus.Closed,
+        closedAt: moment().toDate(),
       },
     );
     return result;

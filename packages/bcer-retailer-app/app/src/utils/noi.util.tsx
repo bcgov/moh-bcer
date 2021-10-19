@@ -8,12 +8,12 @@ import moment from 'moment';
 export class NoiUtil {
   static outstandingNoi(l: BusinessLocation): boolean {
     return (
-      l.status === LocationStatus.ACTIVE && (!l.noi || l.noi?.status === NoiStatus.NOT_RENEWED)
+      l.status === LocationStatus.Active && (!l.noi || l.noi?.status === NoiStatus.NotRenewed)
     );
   }
 
   static submittedNoi(l: BusinessLocation): boolean {
-    return l.noi && (l.noi.status === NoiStatus.SUBMITTED || (l.status == LocationStatus.CLOSED));
+    return l.noi && (l.noi.status === NoiStatus.Submitted || (l.status == LocationStatus.Closed));
   }
 
   static renderAddressLine1(l: BusinessLocation): string {
@@ -45,14 +45,14 @@ export class NoiUtil {
   static renderStatus(l: BusinessLocation) {
     const {noi, status} = l;
     let statusDetails = {text: '', color: ''};
-    if(noi && noi.status === NoiStatus.SUBMITTED && status === LocationStatus.ACTIVE){
-      statusDetails = { text: NoiStatusHeaders.SUBMITTED, color: 'green' };
-    }else if(noi && status === LocationStatus.CLOSED){
-      statusDetails = { text: NoiStatusHeaders.NOT_REQUIRED, color: 'grey'};
-    }else if(noi && noi.status === NoiStatus.NOT_RENEWED && status === LocationStatus.ACTIVE){
-      statusDetails = { text: NoiStatusHeaders.NOT_RENEWED, color: 'red' };
+    if(noi && noi.status === NoiStatus.Submitted && status === LocationStatus.Active){
+      statusDetails = { text: NoiStatusHeaders.Submitted, color: 'green' };
+    }else if(noi && status === LocationStatus.Closed){
+      statusDetails = { text: NoiStatusHeaders.NotRequired, color: 'grey'};
+    }else if(noi && noi.status === NoiStatus.NotRenewed && status === LocationStatus.Active){
+      statusDetails = { text: NoiStatusHeaders.NotRenewed, color: 'red' };
     }else if(!noi){
-      statusDetails = { text: NoiStatusHeaders.NOT_SUBMITTED, color: '#FFC300' };
+      statusDetails = { text: NoiStatusHeaders.NotSubmitted, color: '#FFC300' };
     }
         
     return (

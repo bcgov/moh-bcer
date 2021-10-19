@@ -137,19 +137,19 @@ export enum SuccessStepEnum {
 }
 
 export enum NoiStatus {
-  SUBMITTED = 'submitted',
-  NOT_RENEWED = 'not_renewed' 
+  Submitted = 'submitted',
+  NotRenewed = 'not_renewed' 
 }
 
 export enum NoiStatusHeaders {
-  SUBMITTED = 'Submitted',
-  NOT_SUBMITTED = 'Not Submitted',
-  NOT_RENEWED = 'Not Renewed',
-  NOT_REQUIRED = 'Not Required',
+  Submitted = 'Submitted',
+  NotSubmitted = 'Not Submitted',
+  NotRenewed = 'Not Renewed',
+  NotRequired = 'Not Required',
 }
 
 export enum LocationStatus {
-  ACTIVE = 'active',
-  CLOSED = 'closed',
-  DELETED = 'deleted',
+  Active = 'active',
+  Closed = 'closed',
+  Deleted = 'deleted',
 }

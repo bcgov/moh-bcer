@@ -1,5 +1,5 @@
 export enum LocationStatus {
-    ACTIVE = 'active',
-    CLOSED = 'closed',
-    DELETED = 'deleted',
+    Active = 'active',
+    Closed = 'closed',
+    Deleted = 'deleted',
 }

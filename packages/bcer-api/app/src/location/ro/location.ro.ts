@@ -80,4 +80,7 @@ export class LocationRO {
 
   @ApiProperty()
   status: LocationStatus;
+
+  @ApiProperty()
+  closedAt: Date;
 }
