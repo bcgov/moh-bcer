@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { SetupBusinessDTO, BusinessDTO } from 'src/business/dto/business.dto';
 import { BusinessEntity } from 'src/business/entities/business.entity';
+import { LocationStatus } from 'src/location/enums/location-status.enum';
 
 @Injectable()
 export class BusinessService {
@@ -41,6 +42,9 @@ export class BusinessService {
   }
 
   async getBusinessById(id: string, includes?: string) {
+    if (includes?.includes('locations')) {
+      return await this.getBusinessWithLocationsById(id);
+    }
     const business = await this.businessRepository.findOne(id, {
       relations: includes ? includes.split(',') : []
     });
@@ -55,5 +59,21 @@ export class BusinessService {
       }
     });
     return products;
+  }
+
+  /**
+   * Filter locations with status. Not query deleted locations.
+   * @param id 
+   * @returns 
+   */
+  async getBusinessWithLocationsById(id: string) {
+    const business = await this.businessRepository
+    .createQueryBuilder('b')
+    .leftJoinAndSelect('b.locations', 'l')
+    .where('b.id = :id', { id })
+    .andWhere('l.status NOT IN (:...status)', { status: [LocationStatus.Deleted] })
+    .getOne();
+
+    return business;
   }
 }
