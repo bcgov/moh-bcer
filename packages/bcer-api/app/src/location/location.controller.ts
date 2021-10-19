@@ -102,7 +102,7 @@ export class LocationController {
    * Close location
    */
   @ApiOperation({ summary: 'Close Single Location' })
-  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
+  @ApiResponse({ status: HttpStatus.OK })
   @HttpCode(HttpStatus.OK)
   @Roles('user')
   @UseGuards(BusinessGuard)
@@ -116,6 +116,6 @@ export class LocationController {
       throw new ForbiddenException('This user does not have access to this location');
     }
     // close location
-    await this.service.closeLocation(location);
+    await this.service.closeLocation([id]);
   }
 }
