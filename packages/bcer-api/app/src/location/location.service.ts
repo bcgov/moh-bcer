@@ -372,6 +372,16 @@ export class LocationService {
 
     const locationIds = locations?.map(l => l.id);
 
+    const result = await this.closeLocation(locationIds);
+    return result;
+  }
+
+  /**
+   * Close locations with ids
+   * @param locationIds 
+   * @returns 
+   */
+  async closeLocation(locationIds: string[]): Promise<UpdateResult> {
     const result = await this.locationRepository.update(
       { id: In(locationIds) },
       { 
@@ -380,13 +390,5 @@ export class LocationService {
       },
     );
     return result;
-  }
-
-  async closeLocation(location: LocationEntity) {
-    return await this.locationRepository.createQueryBuilder()
-    .update(location)
-    .set({})
-    .where('id = :id', { id: location.id })
-    .execute();
   }
 }
