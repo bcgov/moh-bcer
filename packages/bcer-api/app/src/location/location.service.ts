@@ -1,4 +1,4 @@
-import { Repository, In, Not, IsNull, SelectQueryBuilder } from 'typeorm';
+import { Repository, In, Not, IsNull, SelectQueryBuilder, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -13,6 +13,10 @@ import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
 import { getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString } from 'src/utils/util';
+import { NoiEntity } from 'src/noi/entities/noi.entity';
+import { NoiStatus } from 'src/noi/enums/status.enum';
+import { CronConfig } from 'src/cron/config/cron.config';
+import { LocationStatus } from './enums/location-status.enum';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -350,5 +354,31 @@ export class LocationService {
       })
       .getMany();
       return { ...saleReportYear, data: locations };
+  }
+
+  async closeAllLocationWithExpiredNOI(): Promise<UpdateResult>{
+    const locations = await this.locationRepository
+      .createQueryBuilder()
+      .select('loc.id')
+      .from(LocationEntity, 'loc')
+      .innerJoin(NoiEntity, 'noi', 'loc.noiId = noi.id')
+      .andWhere('COALESCE(noi.renewed_at, noi.created_at) < :expiryDate', {
+        expiryDate: CronConfig.getNoiExpiryDate().toDate(),
+      })
+      .andWhere('loc.status = :active', {
+        active: LocationStatus.Active,
+      })
+      .getMany();
+
+    const locationIds = locations?.map(l => l.id);
+
+    const result = await this.locationRepository.update(
+      { id: In(locationIds) },
+      { 
+        status: LocationStatus.Closed,
+        closedAt: moment().toDate(),
+      },
+    );
+    return result;
   }
 }

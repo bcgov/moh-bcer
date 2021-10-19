@@ -15,15 +15,17 @@ export class AppService {
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM, { timeZone: 'America/Vancouver' })
   generateHeapSnapShot(): void {
-    Logger.log('Heap snapshot process started');
-    const zip = createGzip();
-    const destination = createWriteStream(
-      `${new Date().getTime()}.heapsnapshot.gz`,
-    );
-    const heapStream = v8.getHeapSnapshot();
-    heapStream.pipe(zip).pipe(destination);
-    heapStream.on('end', () => {
-      Logger.log('heap snapshot written.');
-    });
+    if(process.env.HEAPSNAPSHOT_ENABLED === 'true'){
+      Logger.log('Heap snapshot process started');
+      const zip = createGzip();
+      const destination = createWriteStream(
+        `${new Date().getTime()}.heapsnapshot.gz`,
+      );
+      const heapStream = v8.getHeapSnapshot();
+      heapStream.pipe(zip).pipe(destination);
+      heapStream.on('end', () => {
+        Logger.log('heap snapshot written.');
+      });
+    }
   }
 }

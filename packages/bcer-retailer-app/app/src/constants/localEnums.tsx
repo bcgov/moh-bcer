@@ -135,3 +135,21 @@ export enum SuccessStepEnum {
   manufacturing = 'manufacturing',
   sale = 'sale',
 }
+
+export enum NoiStatus {
+  Submitted = 'submitted',
+  NotRenewed = 'not_renewed' 
+}
+
+export enum NoiStatusHeaders {
+  Submitted = 'Submitted',
+  NotSubmitted = 'Not Submitted',
+  NotRenewed = 'Not Renewed',
+  NotRequired = 'Not Required',
+}
+
+export enum LocationStatus {
+  Active = 'active',
+  Closed = 'closed',
+  Deleted = 'deleted',
+}
