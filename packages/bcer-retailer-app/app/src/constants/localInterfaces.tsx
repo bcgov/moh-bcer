@@ -1,4 +1,4 @@
-import { UserType, HealthAuthority, NoiStatus } from '@/constants/localEnums';
+import { UserType, HealthAuthority, NoiStatus, LocationStatus } from '@/constants/localEnums';
 
 export interface UserProfile {
   id: string;
@@ -63,7 +63,7 @@ export interface BusinessLocation {
   sales?: Array<Sale>;
   salesCount: number;
   created_at?: Date;
-  closed: boolean;
+  status: LocationStatus;
 }
 
 export interface LocationFileUploadRO {

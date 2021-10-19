@@ -21,6 +21,7 @@ import { ProductEntity } from 'src/products/entities/product.entity';
 import { ManufacturingEntity } from 'src/manufacturing/entities/manufacturing.entity';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
+import { LocationStatus } from '../enums/location-status.enum';
 
 @Entity('location')
 export class LocationEntity {
@@ -97,11 +98,15 @@ export class LocationEntity {
   @JoinTable()
   manufactures: ManufacturingEntity[];
 
-  @Column('boolean', {
+  @Column('enum', {
+    enum: LocationStatus,
     nullable: false,
-    default: false,
+    default: LocationStatus.ACTIVE,
   })
-  closed: boolean;
+  status: LocationStatus
+
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  closed_at: Date;
 
   productsCount?: number;
   manufacturesCount?: number;
@@ -132,7 +137,7 @@ export class LocationEntity {
       salesCount: this.salesCount,
       created_at: this.created_at,
       updated_at: this.updated_at,
-      closed: this.closed,
+      status: this.status,
     };
   }
 }

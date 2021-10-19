@@ -15,6 +15,8 @@ import { getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { NoiStatus } from 'src/noi/enums/status.enum';
+import { CronConfig } from 'src/cron/config/cron.config';
+import { LocationStatus } from './enums/location-status.enum';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -355,14 +357,16 @@ export class LocationService {
   }
 
   async cancelAllLocationWithExpiredNOI(): Promise<UpdateResult>{
-    // TODO: Add location != 'deleted'
     const locations = await this.locationRepository
       .createQueryBuilder()
       .select('loc.id')
       .from(LocationEntity, 'loc')
       .innerJoin(NoiEntity, 'noi', 'loc.noiId = noi.id')
-      .andWhere('noi.status = :status', {
-        status: NoiStatus.NOT_RENEWED,
+      .andWhere('COALESCE(noi.renewed_at, noi.created_at) < :expiryDate', {
+        expiryDate: CronConfig.getNoiExpiryDate().toDate(),
+      })
+      .andWhere('loc.status = :active', {
+        active: LocationStatus.ACTIVE,
       })
       .getMany();
 
@@ -370,7 +374,10 @@ export class LocationService {
 
     const result = await this.locationRepository.update(
       { id: In(locationIds) },
-      { closed: true },
+      { 
+        status: LocationStatus.CLOSED,
+        closed_at: moment().toDate(),
+      },
     );
     return result;
   }

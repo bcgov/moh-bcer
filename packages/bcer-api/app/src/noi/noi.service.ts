@@ -1,13 +1,12 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { NoiDTO } from 'src/noi/dto/noi.dto';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 
 import { BusinessService } from 'src/business/business.service';
 import { LocationService } from 'src/location/location.service';
-import { NoiStatus } from './enums/status.enum';
-import { IdsDTO } from './dto/ids.dto';
+import moment from 'moment';
 
 @Injectable()
 export class NoiService {
@@ -29,7 +28,7 @@ export class NoiService {
         throw new ForbiddenException(`This user does not have access to location ${locationId}`);
       }
       if(location.noi?.id){
-        await this.noiRepository.update({ id: location.noi.id }, { status: NoiStatus.SUBMITTED });
+        await this.noiRepository.update({ id: location.noi.id }, { renewed_at: moment().toDate() });
       }else{
         const noi = this.noiRepository.create({ location, business });
         await this.noiRepository.save(noi);
@@ -59,13 +58,5 @@ export class NoiService {
       .where('business.id = :businessId', { businessId })
       .getMany();
     return nois;
-  }
-
-  async markAllNoisExpired(): Promise<UpdateResult> {
-    const result = await this.noiRepository.update(
-      { status: NoiStatus.SUBMITTED },
-      { status: NoiStatus.NOT_RENEWED },
-    );
-    return result;
   }
 }

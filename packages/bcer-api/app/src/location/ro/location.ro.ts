@@ -5,6 +5,7 @@ import { ManufacturingRO } from 'src/manufacturing/ro/manufacturing.ro';
 import { NoiRO } from 'src/noi/ro/noi.ro';
 import { ProductRO } from 'src/products/ro/product.ro';
 import { SalesReportRO } from 'src/sales/ro/sales.ro';
+import { LocationStatus } from '../enums/location-status.enum';
 
 export class LocationRO {
 
@@ -78,5 +79,5 @@ export class LocationRO {
   updated_at: Date;
 
   @ApiProperty()
-  closed: boolean;
+  status: LocationStatus;
 }

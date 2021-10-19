@@ -140,3 +140,16 @@ export enum NoiStatus {
   SUBMITTED = 'submitted',
   NOT_RENEWED = 'not_renewed' 
 }
+
+export enum NoiStatusHeaders {
+  SUBMITTED = 'Submitted',
+  NOT_SUBMITTED = 'Not Submitted',
+  NOT_RENEWED = 'Not Renewed',
+  NOT_REQUIRED = 'Not Required',
+}
+
+export enum LocationStatus {
+  ACTIVE = 'active',
+  CLOSED = 'closed',
+  DELETED = 'deleted',
+}

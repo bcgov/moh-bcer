@@ -85,6 +85,8 @@ export default function NoiOverview() {
               <Typography variant='body1'>
                 The business owner must submit the Notice of Intent a minimum of 6 weeks before an e-substance is first sold from the sales premises. The Notice of Intent must also be submitted prior to January 15 of each year that a retailer intends to continue sales.
               </Typography>
+              <Typography variant='h6'>[TODO: Add info]</Typography>
+
             </>
         }
         <FullScreen 

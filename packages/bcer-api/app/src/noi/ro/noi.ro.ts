@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { NoiStatus } from '../enums/status.enum';
 
 export class NoiRO {
   @ApiProperty()
@@ -17,5 +18,5 @@ export class NoiRO {
   updated_at: Date;
 
   @ApiProperty()
-  status: string;
+  status: NoiStatus;
 }
