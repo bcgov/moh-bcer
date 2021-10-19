@@ -381,4 +381,12 @@ export class LocationService {
     );
     return result;
   }
+
+  async closeLocation(location: LocationEntity) {
+    return await this.locationRepository.createQueryBuilder()
+    .update(location)
+    .set({})
+    .where('id = :id', { id: location.id })
+    .execute();
+  }
 }

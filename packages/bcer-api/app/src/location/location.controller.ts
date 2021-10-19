@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   Post,
+  Put,
   HttpCode,
   HttpStatus,
   Param,
@@ -94,5 +95,27 @@ export class LocationController {
       throw new ForbiddenException('This user does not have access to this location');
     }
     return location.toResponseObject();
+  }
+
+  /**
+   * 
+   * Close location
+   */
+  @ApiOperation({ summary: 'Close Single Location' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
+  @HttpCode(HttpStatus.OK)
+  @Roles('user')
+  @UseGuards(BusinessGuard)
+  @Put('/close/:locationId')
+  async closeSingleLocation(
+    @Request() req: RequestWithUser,
+    @Param('locationId') id: string,
+  ): Promise<void> {
+    const location = await this.service.getLocation(id);
+    if (location && location.businessId !== req.ctx.businessId) {
+      throw new ForbiddenException('This user does not have access to this location');
+    }
+    // close location
+    await this.service.closeLocation(location);
   }
 }

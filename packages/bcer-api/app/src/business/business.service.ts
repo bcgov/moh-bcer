@@ -41,6 +41,9 @@ export class BusinessService {
   }
 
   async getBusinessById(id: string, includes?: string) {
+    if (includes.includes('locations')) {
+      return await this.getBusinessWithLocationsById(id);
+    }
     const business = await this.businessRepository.findOne(id, {
       relations: includes ? includes.split(',') : []
     });
@@ -55,5 +58,21 @@ export class BusinessService {
       }
     });
     return products;
+  }
+
+  /**
+   * Filter locations with status. Not query deleted locations.
+   * @param id 
+   * @returns 
+   */
+  async getBusinessWithLocationsById(id: string) {
+    const business = await this.businessRepository
+    .createQueryBuilder('b')
+    .leftJoinAndSelect('b.locations', 'l')
+    .where('b.id = :id', { id })
+    //.andWhere('l.status NOT IN :...status', { status: [LocationStatus.Deleted] })
+    .getOne();
+
+    return business;
   }
 }
