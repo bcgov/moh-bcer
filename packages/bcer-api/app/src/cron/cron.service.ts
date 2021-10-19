@@ -15,7 +15,7 @@ export class CronService {
    */
   @Cron(CronConfig.getCloseLocationCronTime(), CronConfig.getCronTimeZone())
   async CRON_closeLocationWithExpiredNOI(): Promise<void> {
-    await this.runCron(CronName.CLOSE_LOCATION_WITH_EXPIRED_NOI);
+    await this.runCron(CronName.CloseLocationWithExpiredNoi);
   }
 
   async runCron(cronJob: CronName): Promise<void>{
@@ -25,7 +25,7 @@ export class CronService {
       }
       let result: UpdateResult;
       switch(cronJob){
-        case CronName.CLOSE_LOCATION_WITH_EXPIRED_NOI:
+        case CronName.CloseLocationWithExpiredNoi:
           result = await this.locationService.closeAllLocationWithExpiredNOI();
           break;
         default:

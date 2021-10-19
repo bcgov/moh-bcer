@@ -1,3 +1,3 @@
 export enum CronName {
-    CLOSE_LOCATION_WITH_EXPIRED_NOI = 'CLOSE_LOCATION_WITH_EXPIRED_NOI',
+    CloseLocationWithExpiredNoi = 'CLOSE_LOCATION_WITH_EXPIRED_NOI',
 }
