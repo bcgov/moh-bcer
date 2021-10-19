@@ -13,6 +13,6 @@ export class AddLocationClosedAndNoiStatus1645910033222
     await queryRunner.query(`ALTER TABLE "location" DROP COLUMN "status"`);
     await queryRunner.query(`ALTER TABLE "location" DROP COLUMN "closed_at"`);
     await queryRunner.query(`ALTER TABLE "noi" DROP COLUMN "renewed_at`);
-    await queryRunner.query(`DROP TYPE IF EXISTS noi_status_enum`);
+    await queryRunner.query(`DROP TYPE IF EXISTS location_status_enum`);
   }
 }
