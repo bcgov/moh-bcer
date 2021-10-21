@@ -46,7 +46,7 @@ export default function NoiSubmission () {
       <Paper variant='outlined' className={classes.box} >
         <div className={classes.successBanner}>
           <img src={FileCheckGreen} className={classes.bannerIcon} />
-          <Typography variant='body2' className={classes.bannerText} >Your Notice of Intent has been submited.</Typography>
+          <Typography variant='body2' className={classes.bannerText} >Your Notice of Intent has been submitted.</Typography>
         </div>
         <Typography variant='body1' className={classes.description}>
           To continue to sell vape products you must also submit the following items: 

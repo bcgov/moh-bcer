@@ -152,6 +152,7 @@ export default function NoiSubmit() {
         dialogMessage='You are about to submit/renew notice of intent for the selected businesses retail locations'
         setOpen={() => setOpenConfirm(false)}
         confirmHandler={confirmSubmit}
+        acceptButtonText={'Submit Now'}
       />
     </>
   );

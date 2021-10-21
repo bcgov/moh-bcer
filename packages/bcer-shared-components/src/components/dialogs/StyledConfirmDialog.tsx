@@ -89,6 +89,7 @@ export function StyledConfirmDialog(
     dialogMessage,
     checkboxLabel,
     dialogTitle,
+    acceptButtonText,
     ...props
   }: StyledConfirmDialogProps): ReactElement {
     const classes = useStyles();
@@ -112,7 +113,7 @@ export function StyledConfirmDialog(
           {...props}
           title={dialogTitle}
           cancelButtonText="Cancel"
-          acceptButtonText="Confirm"
+          acceptButtonText={acceptButtonText || "Confirm"}
           cancelHandler={() => setOpen(false)}
           acceptHandler='submit'
         >

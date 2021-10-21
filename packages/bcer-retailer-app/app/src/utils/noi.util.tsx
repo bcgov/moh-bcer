@@ -50,9 +50,9 @@ export class NoiUtil {
     }else if(noi && status === LocationStatus.Closed){
       statusDetails = { text: NoiStatusHeaders.NotRequired, color: 'grey'};
     }else if(noi && noi.status === NoiStatus.NotRenewed && status === LocationStatus.Active){
-      statusDetails = { text: NoiStatusHeaders.NotRenewed, color: 'red' };
+      statusDetails = { text: NoiStatusHeaders.NotRenewed, color: '#FFC300' };
     }else if(!noi){
-      statusDetails = { text: NoiStatusHeaders.NotSubmitted, color: '#FFC300' };
+      statusDetails = { text: NoiStatusHeaders.NotSubmitted, color: 'red' };
     }
         
     return (

@@ -19,6 +19,7 @@ export interface StyledConfirmDialogProps extends DialogProps {
   dialogTitle: string,
   acceptDisabled?: boolean,
   cancelDisabled?: boolean,
+  acceptButtonText?: string,
 }
 
 export interface StyledDialogActionProps {

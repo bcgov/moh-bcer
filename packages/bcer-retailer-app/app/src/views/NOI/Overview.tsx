@@ -68,27 +68,27 @@ export default function NoiOverview() {
             ?
               <NoiSubmission />
             :
-            <>
-              <Typography variant='body1'>
-                Business owners must notify the Ministry of Health of their intent to sell restricted E-substances by submitting a, Notice of Intent to sell E-Substances to the Ministry of Health. The Notice of Intent to Sell E-Substances is required for each separate sales premises for your business and for the sale of non-therapeutic nicotine E-substances. Business owners will be required to submit the following information:
-              </Typography>
-              <ul>
-                <li><Typography variant='body1'>Legal name of business</Typography></li>
-                <li><Typography variant='body1'>Name under which business conducted</Typography></li>
-                <li><Typography variant='body1'>Address of sales premises from which restricted E-substances are sold</Typography></li>
-                <li><Typography variant='body1'>Phone Number for sales premises</Typography></li>
-                <li><Typography variant='body1'>Email address for sales premises</Typography></li>
-                <li><Typography variant='body1'>Webpage for sales premises (if applicable)</Typography></li>
-                <li><Typography variant='body1'>If persons under 19 years of age are permitted on the sales premises</Typography></li>
-                <li><Typography variant='body1'>Health authority in which the retail location is located</Typography></li>
-              </ul>
-              <Typography variant='body1'>
-                The business owner must submit the Notice of Intent a minimum of 6 weeks before an e-substance is first sold from the sales premises. The Notice of Intent must also be submitted prior to January 15 of each year that a retailer intends to continue sales.
-              </Typography>
-              <Typography variant='h6'>[TODO: Add info]</Typography>
-
-            </>
+            null
         }
+        <>
+          <Typography variant='body1'>
+            Business owners must notify the Ministry of Health of their intent to sell restricted E-substances by submitting a, Notice of Intent to sell E-Substances to the Ministry of Health. The Notice of Intent to Sell E-Substances is required for each separate sales premises for your business and for the sale of non-therapeutic nicotine E-substances. Business owners will be required to submit the following information:
+          </Typography>
+          <ul>
+            <li><Typography variant='body1'>Legal name of business</Typography></li>
+            <li><Typography variant='body1'>Name under which business conducted</Typography></li>
+            <li><Typography variant='body1'>Address of sales premises from which restricted E-substances are sold</Typography></li>
+            <li><Typography variant='body1'>Phone Number for sales premises</Typography></li>
+            <li><Typography variant='body1'>Email address for sales premises</Typography></li>
+            <li><Typography variant='body1'>Webpage for sales premises (if applicable)</Typography></li>
+            <li><Typography variant='body1'>If persons under 19 years of age are permitted on the sales premises</Typography></li>
+            <li><Typography variant='body1'>Health authority in which the retail location is located</Typography></li>
+          </ul>
+          <Typography variant='body1'>
+            The business owner must submit the Notice of Intent a minimum of 6 weeks before an e-substance is first sold from the sales premises. The Notice of Intent must also be submitted prior to January 15 of each year that a retailer intends to continue sales.
+          </Typography>
+          <Typography variant='h6'>[TODO: Add info]</Typography>
+        </>
         <FullScreen 
           fullScreenProp={outstandingFullscreenState}
         >
