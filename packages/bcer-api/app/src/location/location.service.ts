@@ -381,12 +381,13 @@ export class LocationService {
    * @param locationIds 
    * @returns 
    */
-  async closeLocation(locationIds: string[], closedAt: number = moment().unix()): Promise<UpdateResult> {
+  async closeLocation(locationIds: string[], closedTime?: number): Promise<UpdateResult> {
     const result = await this.locationRepository.update(
       { id: In(locationIds) },
       { 
         status: LocationStatus.Closed,
-        closedAt: moment.unix(closedAt).toDate(),
+        closedAt: moment().toDate(),
+        closedTime: !!closedTime ? moment.unix(closedTime).toDate() : null,
       },
     );
     return result;

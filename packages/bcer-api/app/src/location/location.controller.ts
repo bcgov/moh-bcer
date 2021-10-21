@@ -109,13 +109,13 @@ export class LocationController {
   async closeSingleLocation(
     @Request() req: RequestWithUser,
     @Param('locationId') id: string,
-    @Query('closedAt') closedAt: number
+    @Query('closedTime') closedTime: number
   ): Promise<void> {
     const location = await this.service.getLocation(id);
     if (location && location.businessId !== req.ctx.businessId) {
       throw new ForbiddenException('This user does not have access to this location');
     }
     // close location
-    await this.service.closeLocation([id], closedAt);
+    await this.service.closeLocation([id], closedTime);
   }
 }

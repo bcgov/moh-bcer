@@ -47,7 +47,7 @@ export default function ExistingTableWrap() {
   };
   const handleCloseConfirm = async ({ date }: { date: Date }) => {
     await closePatch({
-      url: `/location/close/${locationId}?closedAt=${moment(date).unix()}`,
+      url: `/location/close/${locationId}?closedTime=${moment(date).unix()}`,
     });
     await postProfile();
     setLocationId(null);
