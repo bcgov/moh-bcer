@@ -1,5 +1,6 @@
 import { FormikProps, FieldAttributes } from "formik";
 import { TextFieldProps, RadioGroupProps, CheckboxProps} from "@material-ui/core";
+import { DatePickerProps } from '@material-ui/pickers';
 import { Dispatch, SetStateAction } from "react";
 
 export interface TextInputProps {
@@ -82,4 +83,13 @@ export interface StyledHeaderMapperProps {
 export interface ContextProps {
   setOptionsHandler: Dispatch<SetStateAction<{ value: string; label: string; }[]>>;
   stateOptions: Array<{label: string, value: string}>;
+}
+
+export interface DtPickerProps {
+  field: FieldAttributes<DatePickerProps>;
+  form: FormikProps<FormData>;
+  name: string;
+  label: string;
+  props: DatePickerProps;
+  disabled?: boolean;
 }
