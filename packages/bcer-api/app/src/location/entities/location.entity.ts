@@ -108,6 +108,9 @@ export class LocationEntity {
   @Column({ type: 'timestamp', nullable: true, default: null, name: 'closed_at' })
   closedAt : Date;
 
+  @Column({ type: 'timestamp', nullable: true, default: null, name: 'closed_time' })
+  closedTime : Date;
+
   productsCount?: number;
   manufacturesCount?: number;
   salesCount?: number;
@@ -139,6 +142,7 @@ export class LocationEntity {
       updated_at: this.updated_at,
       status: this.status,
       closedAt: this.closedAt,
+      closedTime: this.closedTime,
     };
   }
 }
