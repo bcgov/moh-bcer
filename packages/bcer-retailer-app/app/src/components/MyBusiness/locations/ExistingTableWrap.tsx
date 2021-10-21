@@ -66,16 +66,18 @@ export default function ExistingTableWrap() {
 
   return (
     <div>
-      <ExistingTable
-        data={existingLocations}
-        fullScreenProp={[isFullScreen, setIsFullScreen]}
-        handleActionButton={() => {}}
-        handleAction={{
-          handleEdit,
-          handleClose: handleCloseDialog,
-          handleDelete,
-        }}
-      />
+      <FullScreen fullScreenProp={[isFullScreen, setIsFullScreen]}>
+        <ExistingTable
+          data={existingLocations}
+          handleActionButton={() => {}}
+          fullScreenProp={[isFullScreen, setIsFullScreen]}
+          handleAction={{
+            handleEdit,
+            handleClose: handleCloseDialog,
+            handleDelete,
+          }}
+        />
+      </FullScreen>
       {/* loader, dialog,...etc */}
       <>
         <Loader
@@ -90,17 +92,6 @@ export default function ExistingTableWrap() {
           dialogMessage="You are going to close this location. Please provide the following information below."
           checkboxLabel="I confirm that I wish to close this location. I understand that I will still be required to submit a Sales Report for this location for sales that occurred prior to closing."
         />
-        <FullScreen fullScreenProp={[isFullScreen, setIsFullScreen]}>
-          <ExistingTable
-            data={existingLocations}
-            handleActionButton={() => {}}
-            handleAction={{
-              handleEdit,
-              handleClose: handleCloseDialog,
-              handleDelete,
-            }}
-          />
-        </FullScreen>
       </>
     </div>
   );
