@@ -30,3 +30,7 @@ export interface StyledDialogActionProps {
   cancelHandler: ReactEventHandler,
   acceptHandler: ReactEventHandler | "submit",
 }
+
+export interface StyledConfirmDateDialogProps extends StyledConfirmDialogProps {
+  dateLabel: string;
+}

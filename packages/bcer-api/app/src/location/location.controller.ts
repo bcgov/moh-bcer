@@ -5,11 +5,10 @@ import {
   ForbiddenException,
   Get,
   Post,
-  Put,
+  Patch,
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
   Query,
   Request,
   UseGuards,
@@ -106,16 +105,17 @@ export class LocationController {
   @HttpCode(HttpStatus.OK)
   @Roles('user')
   @UseGuards(BusinessGuard)
-  @Put('/close/:locationId')
+  @Patch('/close/:locationId')
   async closeSingleLocation(
     @Request() req: RequestWithUser,
     @Param('locationId') id: string,
+    @Query('closedAt') closedAt: number
   ): Promise<void> {
     const location = await this.service.getLocation(id);
     if (location && location.businessId !== req.ctx.businessId) {
       throw new ForbiddenException('This user does not have access to this location');
     }
     // close location
-    await this.service.closeLocation([id]);
+    await this.service.closeLocation([id], closedAt);
   }
 }
