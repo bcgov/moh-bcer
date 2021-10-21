@@ -1,5 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import moment from 'moment';
+import { Grid, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+import WarningIcon from '@material-ui/icons/Warning';
 
 import { ExistingTable } from './Tables';
 import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
@@ -9,9 +12,6 @@ import { useAxiosPatch, useAxiosPost } from '@/hooks/axios';
 import Loader from '@/components/Sales/Loader';
 import { StyledConfirmDateDialog, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import FullScreen from '@/components/generic/FullScreen';
-import { Grid, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import WarningIcon from '@material-ui/icons/Warning';
 
 const useStyles = makeStyles({
   noiSubmittedBox: {
@@ -111,16 +111,18 @@ export default function ExistingTableWrap() {
 
   return (
     <div>
-      <ExistingTable
-        data={existingLocations}
-        fullScreenProp={[isFullScreen, setIsFullScreen]}
-        handleActionButton={() => {}}
-        handleAction={{
-          handleEdit,
-          handleClose: handleCloseDialog,
-          handleDelete: handleOpenDelete,
-        }}
-      />
+      <FullScreen fullScreenProp={[isFullScreen, setIsFullScreen]}>
+        <ExistingTable
+          data={existingLocations}
+          fullScreenProp={[isFullScreen, setIsFullScreen]}
+          handleActionButton={() => {}}
+          handleAction={{
+            handleEdit,
+            handleClose: handleCloseDialog,
+            handleDelete: handleOpenDelete,
+          }}
+        />
+      </FullScreen>
       {/* loader, dialog,...etc */}
       <>
         <Loader
@@ -182,17 +184,6 @@ export default function ExistingTableWrap() {
           }
           checkboxLabel="I understand that this location will be removed permanently from the database and that this action cannot be undone."
         />
-        <FullScreen fullScreenProp={[isFullScreen, setIsFullScreen]}>
-          <ExistingTable
-            data={existingLocations}
-            handleActionButton={() => {}}
-            handleAction={{
-              handleEdit,
-              handleClose: handleCloseDialog,
-              handleDelete,
-            }}
-          />
-        </FullScreen>
       </>
     </div>
   );
