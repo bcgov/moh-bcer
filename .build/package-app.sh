@@ -33,7 +33,7 @@ function packageApi() {
     cd $ROOT_DIR/packages/bcer-api
     ENVIRONMENT=${ENVIRONMENT} make package-app
 
-    mv ./dist.tar.gz $DIST_FOLDER/${BUILD_SUFFIX}/api-${BUILD_SUFFIX}.tar.gz
+    mv ./dist.tar.gz $DIST_FOLDER/${BUILD_SUFFIX}/dist-${VERSION}.tar.gz
 }
 
 function buildSharedComponents() {
@@ -44,13 +44,13 @@ function buildSharedComponents() {
 function packageRetailerApp() {
     cd $ROOT_DIR/packages/bcer-retailer-app
     ENVIRONMENT=${ENVIRONMENT} make package-app
-    mv ./build.tar.gz $DIST_FOLDER/${BUILD_SUFFIX}/retailer-${BUILD_SUFFIX}.tar.gz
+    mv ./build.tar.gz $DIST_FOLDER/${BUILD_SUFFIX}/build-${BUILD_SUFFIX}.tar.gz
 }
 
 function packageDataPortal() {
     cd $ROOT_DIR/packages/bcer-data-portal
     ENVIRONMENT=${ENVIRONMENT} make package-app
-    mv ./build.tar.gz $DIST_FOLDER/${BUILD_SUFFIX}/data-portal-${BUILD_SUFFIX}.tar.gz
+    mv ./build.tar.gz $DIST_FOLDER/${BUILD_SUFFIX}/build-portal-${BUILD_SUFFIX}.tar.gz
 }
 
 # Create new dist folder if not already exists

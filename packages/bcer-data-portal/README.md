@@ -81,12 +81,10 @@ Generate a coverage report with `npm run test:cov`
 ## Deployment
 There are a couple of steps involved with deploying to each environment.
 
-- Navigate to the root folder and run `make setup-<env>-env`. Replace <env> with the desired environment
--- Dev: `setup-development-env`
--- Test: `setup-staging-env`
--- Prod: `setup-prod-env`
-- Navigate to the `app` directory and run `npm run build`
-- Run `npm run tar`, to generate the `.tar.gz` files to be used for deployment
+1. Build + package the app - run `ENVIRONMENT=<development|staging|prod> VERSION=<version> make package-app`. This will output `build.tar.gz` which contains the app.
+2. Verify that the build worked
+
+Note: it's encouraged to use the build functionality provided at the root of the project which will build all parts of the app instead of building each piece individually.
 
 There are a couple of possibilities to check for debugging if there are issues.
 - Check that the extracted directory from the `.tar.gz` file points ot the right API and Authentication Provider (Keycloak) values by doing a search and cross-referencing the `.env.development` or `.env.test` or `.env.prod` values.
