@@ -10,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 import { HealthAuthority } from 'src/business/enums/health-authority.enum'
@@ -111,6 +112,9 @@ export class LocationEntity {
   @Column({ type: 'timestamp', nullable: true, default: null, name: 'closed_time' })
   closedTime : Date;
 
+  @Column({ type: 'timestamp', nullable: true, default: null, name: 'deleted_at' })
+  deletedAt : Date;
+
   productsCount?: number;
   manufacturesCount?: number;
   salesCount?: number;
@@ -143,6 +147,7 @@ export class LocationEntity {
       status: this.status,
       closedAt: this.closedAt,
       closedTime: this.closedTime,
+      deletedAt: this.deletedAt,
     };
   }
 }

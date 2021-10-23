@@ -41,7 +41,7 @@ export default function ExistingTableWrap() {
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [locationContext, setLocationContext] = useState<BusinessLocation>(null);
-  const existingLocations = locations.filter((l) => !!l.id);
+  const existingLocations = locations?.filter((l) => !!l.id);
 
   /**
    * api request
@@ -52,14 +52,13 @@ export default function ExistingTableWrap() {
     { response: closeResponse, loading: closeLoading, error: closeError },
     closePatch,
   ] = useAxiosPatch(`/location/close/`, { manual: true });
+
   // delete location
-  /**
-   * STUBBED: uncomment once delete endpoint is available
-   */
-  // const [
-  //   { response: deleteResponse, loading: deleteLoading, error: deleteError },
-  //   locationDelete,
-  // ] = useAxiosPatch(`/location/delete/`, { manual: true });
+  const [
+    { response: deleteResponse, loading: deleteLoading, error: deleteError },
+    locationDelete,
+  ] = useAxiosPatch(`/location/delete/`, { manual: true });
+
   // get existing locations
   const [{ data: profile, error: profileError }, postProfile] = useAxiosPost(
     '/users/profile',
@@ -91,20 +90,16 @@ export default function ExistingTableWrap() {
     }
   }, [profile, profileError]);
 
-  // TODO Deleted Location by David
   const handleOpenDelete = (l: BusinessLocation) => {
     setDeleteOpen(true);
     setLocationContext(l);
   };
 
   const handleDelete = async() => {
-    /**
-     * STUBBED: uncomment once delete endpoint is available and delete console log
-     */
-    // await locationDelete({
-    //   url: `/location/delete/${locationContext?.id}`,
-    // })
-    // await postProfile()
+    await locationDelete({
+      url: `/location/delete/${locationContext?.id}`,
+    })
+    await postProfile()
     setDeleteOpen(false)
     console.log(locationContext)
   };
@@ -113,7 +108,7 @@ export default function ExistingTableWrap() {
     <div>
       <FullScreen fullScreenProp={[isFullScreen, setIsFullScreen]}>
         <ExistingTable
-          data={existingLocations}
+          data={existingLocations ? existingLocations : []}
           fullScreenProp={[isFullScreen, setIsFullScreen]}
           handleActionButton={() => {}}
           handleAction={{
@@ -136,6 +131,10 @@ export default function ExistingTableWrap() {
           setOpen={() => setLocationId(null)}
           dialogMessage="You are going to close this location. Please provide the following information below."
           checkboxLabel="I confirm that I wish to close this location. I understand that I will still be required to submit a Sales Report for this location for sales that occurred prior to closing."
+        />
+        <Loader
+          open={deleteLoading}
+          message="Deleting the location. Please wait…"
         />
         <StyledConfirmDialog
           open={isDeleteOpen}
