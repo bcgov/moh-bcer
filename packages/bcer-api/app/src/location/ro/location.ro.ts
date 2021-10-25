@@ -86,4 +86,7 @@ export class LocationRO {
 
   @ApiProperty()
   closedTime: Date;
+
+  @ApiProperty()
+  deletedAt: Date;
 }

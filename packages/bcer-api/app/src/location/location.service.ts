@@ -392,4 +392,15 @@ export class LocationService {
     );
     return result;
   }
+
+  /**
+   * Delete locations with ids,
+   * This is a soft-delete by manipulating the location status.
+   * @param locationIds 
+   * @returns 
+   */
+     async deleteLocation(locationIds: string[]): Promise<UpdateResult> {
+      const result = await this.locationRepository.softDelete({id: In(locationIds)});
+      return;
+    }
 }

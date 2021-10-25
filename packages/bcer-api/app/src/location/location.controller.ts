@@ -118,4 +118,26 @@ export class LocationController {
     // close location
     await this.service.closeLocation([id], closedTime);
   }
+
+  /**
+   * 
+   * Delete location
+   */
+     @ApiOperation({ summary: 'Soft Delete Single Location' })
+     @ApiResponse({ status: HttpStatus.OK })
+     @HttpCode(HttpStatus.OK)
+     @Roles('user')
+     @UseGuards(BusinessGuard)
+     @Patch('/delete/:locationId')
+     async deleteSingleLocation(
+       @Request() req: RequestWithUser,
+       @Param('locationId') id: string,
+     ): Promise<void> {
+       const location = await this.service.getLocation(id);
+       if (location && location.businessId !== req.ctx.businessId) {
+         throw new ForbiddenException('This user does not have access to this location');
+       }
+       // close location
+       await this.service.deleteLocation([id]);
+     }
 }

@@ -10,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 import { HealthAuthority } from 'src/business/enums/health-authority.enum'
@@ -71,6 +72,9 @@ export class LocationEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @DeleteDateColumn({name: 'deleted_at'})
+  deletedAt : Date;
 
   @ManyToOne(() => BusinessEntity, (business: BusinessEntity) => business.locations)
   @JoinColumn()
@@ -143,6 +147,7 @@ export class LocationEntity {
       status: this.status,
       closedAt: this.closedAt,
       closedTime: this.closedTime,
+      deletedAt: this.deletedAt,
     };
   }
 }
