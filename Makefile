@@ -81,3 +81,8 @@ local-server-exec:
 build-local:
 	@echo "+\n++ Make: rebuilding and runing docker-compose"
 	@docker-compose -f docker-compose.dev.yml up --build
+
+package-build:
+	@echo "+\n++ Building + Packaging app for deployment"
+
+	.build/package-app.sh

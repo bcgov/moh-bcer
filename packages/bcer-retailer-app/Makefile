@@ -79,6 +79,7 @@ create-ecr-repos:
 	@aws ecr create-repository --profile $(PROFILE) --region $(REGION) --repository-name $(PROJECT) || :
 	@aws iam attach-role-policy --role-name aws-elasticbeanstalk-ec2-role --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly --profile $(PROFILE) --region $(REGION)
 
+
 ##############################
 # Local development commands #
 ##############################
@@ -140,6 +141,9 @@ pipeline-deploy-version:
 
 pipeline-healthcheck:
 	@aws --profile $(PROFILE) elasticbeanstalk describe-environments --application-name $(PROJECT) --environment-name $(DEPLOY_ENV) --query 'Environments[*].{Status: Status, Health: Health}'
+
+package-app:
+	.build/package-app.sh
 
 ############################################
 # Pipeline lint, test, and report commands #

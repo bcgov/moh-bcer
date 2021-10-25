@@ -157,6 +157,9 @@ pipeline-report:
 	@echo "+\n++ Reporting...\n+"
 	@docker cp $(PROJECT)-test:/app/test-results .
 
+package-app:
+	.build/package-app.sh
+
 ##############################
 # Pipeline clean up commands #
 ##############################

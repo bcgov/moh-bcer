@@ -75,6 +75,9 @@ create-ecr-repos:
 	@aws ecr create-repository --profile $(PROFILE) --region $(REGION) --repository-name $(PROJECT) || :
 	@aws iam attach-role-policy --role-name aws-elasticbeanstalk-ec2-role --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly --profile $(PROFILE) --region $(REGION)
 
+package-app:
+	.build/package-app.sh
+
 ##############################
 # Local development commands #
 ##############################

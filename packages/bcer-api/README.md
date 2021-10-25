@@ -146,9 +146,11 @@ In short:
 [NestJS](https://docs.nestjs.com).
 
 ## Deployment
-To prepare the NodeJS app for deployment, thereyou only need to run two things:
-- In the `app` directory, run `npm run build:prem"`
-- Run `npm run tar` to produce a `.tar.gz` file
+To prepare the NodeJS app for deployment, you need to build and package the app:
+
+`make package-app`
+
+Note: it's encouraged to use the build functionality provided at the root of the project which will build all parts of the app instead of building each piece individually.
 
 This produces a whole package that includes all the files necessary. For deployment, it is only required to replace specific values in the produced `.env` file. The values are
 ```
