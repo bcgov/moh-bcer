@@ -73,6 +73,9 @@ export class LocationEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @DeleteDateColumn()
+  deletedAt : Date;
+
   @ManyToOne(() => BusinessEntity, (business: BusinessEntity) => business.locations)
   @JoinColumn()
   business: BusinessEntity;
@@ -111,9 +114,6 @@ export class LocationEntity {
 
   @Column({ type: 'timestamp', nullable: true, default: null, name: 'closed_time' })
   closedTime : Date;
-
-  @Column({ type: 'timestamp', nullable: true, default: null, name: 'deleted_at' })
-  deletedAt : Date;
 
   productsCount?: number;
   manufacturesCount?: number;

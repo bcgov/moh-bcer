@@ -400,13 +400,7 @@ export class LocationService {
    * @returns 
    */
      async deleteLocation(locationIds: string[]): Promise<UpdateResult> {
-      const result = await this.locationRepository.update(
-        { id: In(locationIds) },
-        { 
-          status: LocationStatus.Deleted,
-          deletedAt: moment().toDate(),
-        },
-      );
-      return result;
+      const result = await this.locationRepository.softDelete({id: In(locationIds)});
+      return;
     }
 }
