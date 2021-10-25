@@ -73,7 +73,7 @@ export class LocationEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({name: 'deleted_at'})
   deletedAt : Date;
 
   @ManyToOne(() => BusinessEntity, (business: BusinessEntity) => business.locations)
