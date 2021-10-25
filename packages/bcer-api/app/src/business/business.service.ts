@@ -1,4 +1,4 @@
-import { In, Repository } from 'typeorm';
+import { In, Repository, Brackets } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 
@@ -71,7 +71,10 @@ export class BusinessService {
     .createQueryBuilder('b')
     .leftJoinAndSelect('b.locations', 'l')
     .where('b.id = :id', { id })
-    .andWhere('l.status NOT IN (:...status)', { status: [LocationStatus.Deleted] })
+    .andWhere(new Brackets(qb => {
+      qb.where('l.status NOT IN (:...status)', { status: [LocationStatus.Deleted] })
+      .orWhere('l.status IS NULL');                                 
+    }));
 
     const remainIncludes = includes.split(',').filter(location => location !== 'locations');
     remainIncludes.forEach((include) => {
