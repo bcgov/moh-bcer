@@ -83,7 +83,7 @@ const steps = [
   {
     icon: MapOutlinedIcon,
     label: 'Confirm Locations',
-    title: 'Confirm Business Locations',
+    title: 'Confirm New Business Locations',
     path: '/business/map',
     component: <Route key='map' exact path='/business/map' component={ConfirmLocations} />,
     helpText: 'Confirm the details of the business locations that you have added on the previous page. You will be able to update this information at any time. Upon completion of this section you will be able to complete a Notice of Intent to sell E-substances and submit Product and Manufacturing Reports for each location you have listed.',

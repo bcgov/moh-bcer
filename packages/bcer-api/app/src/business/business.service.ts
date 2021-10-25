@@ -1,6 +1,6 @@
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 
 import { SetupBusinessDTO, BusinessDTO } from 'src/business/dto/business.dto';
 import { BusinessEntity } from 'src/business/entities/business.entity';
@@ -43,7 +43,7 @@ export class BusinessService {
 
   async getBusinessById(id: string, includes?: string) {
     if (includes?.includes('locations')) {
-      return await this.getBusinessWithLocationsById(id);
+      return await this.getBusinessWithLocationsById(id, includes);
     }
     const business = await this.businessRepository.findOne(id, {
       relations: includes ? includes.split(',') : []
@@ -66,13 +66,23 @@ export class BusinessService {
    * @param id 
    * @returns 
    */
-  async getBusinessWithLocationsById(id: string) {
-    const business = await this.businessRepository
+  async getBusinessWithLocationsById(id: string, includes: string) {
+    const businessQuery = this.businessRepository
     .createQueryBuilder('b')
     .leftJoinAndSelect('b.locations', 'l')
     .where('b.id = :id', { id })
     .andWhere('l.status NOT IN (:...status)', { status: [LocationStatus.Deleted] })
-    .getOne();
+
+    const remainIncludes = includes.split(',').filter(location => location !== 'locations');
+    remainIncludes.forEach((include) => {
+      if (!['noi', 'products', 'manufactures', 'sales'].includes(include)) {
+        throw new ForbiddenException('Invalid includes');
+      }
+      
+      businessQuery.leftJoinAndSelect(`l.${include}`, include);
+    });
+
+    const business = await businessQuery.getOne();
 
     return business;
   }

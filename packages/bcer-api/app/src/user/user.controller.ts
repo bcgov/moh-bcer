@@ -52,7 +52,7 @@ export class UserController {
       });
     }
     const userData: UserRO = validatedUser.toResponseObject();
-    const business = businessId ? await this.businessService.getBusinessById(businessId, 'locations') : null;
+    const business = businessId ? await this.businessService.getBusinessById(businessId, 'locations,noi') : null;
     Logger.log(`Time to process profile request after middleware ${getDurationInMilliseconds(start)} ms`);
     return {
       userData,

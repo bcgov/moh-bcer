@@ -6,6 +6,7 @@ import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import SaveAltIcon from '@material-ui/icons/SaveAlt'
+import { LocationUtil } from '@/utils/location.util';
 
 import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
 
@@ -55,13 +56,16 @@ export default function ConfirmLocations () {
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
-  const [isAddLocationOpen, setOpenAddLocation] = useState<boolean>(false);
+
+  const newLocations = businessInfo.locations.filter((l: any) => !l.id);
+
 
   const confirmDelete = () => {
-    const remainder = businessInfo.locations.filter((element: IBusinessLocationValues) =>{
+    const remainder = newLocations.filter((element: IBusinessLocationValues) =>{
       return element.tableData.id !== targetRow.tableData.id
     })
-    setBusinessInfo({...businessInfo, locations: remainder});
+    const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
+    setBusinessInfo({...businessInfo, locations: [...existingLocations, ...remainder]});
     setOpenDelete(false);
   }
 
@@ -84,20 +88,13 @@ export default function ConfirmLocations () {
       <div className={classes.tableWrapper}>
         <div className={classes.tableWrapperHeader}>
           Business Locations
-          <LocationsEditForm
-            openProps={{
-              isOpen: isAddLocationOpen,
-              toggleOpen: setOpenAddLocation,
-              isAddNew: true,
-            }}
-          />
         </div>
         <div className={classes.tableWrapperSubheader}>
           <div className={classes.actionsWrapper} >
-            You have {businessInfo.locations?.length ? businessInfo.locations.length : '0'} retail locations.
+            You have {newLocations?.length ? newLocations.length : '0'} retail locations.
             <CSVLink
               headers={Object.keys(BusinessLocationHeaders)}
-              data={businessInfo.locations.map((l) => {
+              data={newLocations?.map((l: any) => {
                 return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
               })}
               filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
@@ -109,22 +106,27 @@ export default function ConfirmLocations () {
           </div>
         </div>
         {
-          businessInfo.locations.length ?
+          newLocations?.length ?
             <StyledTable
+              options={{
+                fixedColumns: {
+                  right: 1,
+                },
+              }}
               columns={[
-                {title: 'Address 1', field: 'addressLine1'},
-                {title: 'Address 2', field: 'addressLine2'},
-                {title: 'Postal Code', field: 'postal'},
-                {title: 'City', field: 'city'},
-                {title: 'Business Phone', field: 'phone'},
-                {title: 'Business email', field: 'email'},
-                {title: 'Health Authority', field: 'health_authority'},
-                {title: 'Doing Business As', field: 'doingBusinessAs'},
-                {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`},
-                {title: 'Manufacturing  Premises', field: 'manufacturing'}
+                {title: 'Address 1', field: 'addressLine1', width: 150},
+                {title: 'Address 2', field: 'addressLine2', width: 150},
+                {title: 'Postal Code', field: 'postal', width: 150},
+                {title: 'City', field: 'city', width: 150},
+                {title: 'Business Phone', field: 'phone', width: 150},
+                {title: 'Business email', field: 'email', width: 150},
+                {title: 'Health Authority', field: 'health_authority', width: 150},
+                {title: 'Doing Business As', field: 'doingBusinessAs', width: 150},
+                {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
+                {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
+                {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete }), width: 100}
               ]}
-              data={businessInfo.locations}
-              isEditable={true}
+              data={newLocations}
               editHandler={(rowData: IBusinessLocationValues) => handleEdit(rowData)}
               deleteHandler={(rowData: IBusinessLocationValues) => handleDelete(rowData)}
             />
