@@ -101,7 +101,6 @@ export default function ExistingTableWrap() {
     })
     await postProfile()
     setDeleteOpen(false)
-    console.log(locationContext)
   };
 
   return (
