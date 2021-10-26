@@ -37,6 +37,8 @@ import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { Response } from 'express';
 import { ProductsService } from 'src/products/products.service';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
+import { LocationDTO } from './dto/location.dto';
+import { LocationEntity } from './entities/location.entity';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RoleGuard)
@@ -123,21 +125,44 @@ export class LocationController {
    * 
    * Delete location
    */
-     @ApiOperation({ summary: 'Soft Delete Single Location' })
-     @ApiResponse({ status: HttpStatus.OK })
-     @HttpCode(HttpStatus.OK)
-     @Roles('user')
-     @UseGuards(BusinessGuard)
-     @Patch('/delete/:locationId')
-     async deleteSingleLocation(
-       @Request() req: RequestWithUser,
-       @Param('locationId') id: string,
-     ): Promise<void> {
-       const location = await this.service.getLocation(id);
-       if (location && location.businessId !== req.ctx.businessId) {
-         throw new ForbiddenException('This user does not have access to this location');
-       }
-       // close location
-       await this.service.deleteLocation([id]);
+    @ApiOperation({ summary: 'Soft Delete Single Location' })
+    @ApiResponse({ status: HttpStatus.OK })
+    @HttpCode(HttpStatus.OK)
+    @Roles('user')
+    @UseGuards(BusinessGuard)
+    @Patch('/delete/:locationId')
+    async deleteSingleLocation(
+      @Request() req: RequestWithUser,
+      @Param('locationId') id: string,
+    ): Promise<void> {
+      const location = await this.service.getLocation(id);
+      if (location && location.businessId !== req.ctx.businessId) {
+        throw new ForbiddenException('This user does not have access to this location');
+      }
+      // close location
+      await this.service.deleteLocation([id]);
+    }
+
+  /**
+   * 
+   * Edit location
+   */
+  @ApiOperation({ summary: 'Close Single Location' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @HttpCode(HttpStatus.OK)
+  @Roles('user')
+  @UseGuards(BusinessGuard)
+  @Patch('/edit/:locationId')
+  async editSingleLocation(
+    @Request() req: RequestWithUser,
+    @Param('locationId') id: string,
+    @Body() payload: any
+  ){
+    const location = await this.service.getLocation(id);
+     if (location && location.businessId !== req.ctx.businessId) {
+       throw new ForbiddenException('This user does not have access to this location');
      }
+     await this.service.updateLocation(id, payload);
+     return await this.service.getLocationsWithBusinessId(location?.businessId);
+  }
 }

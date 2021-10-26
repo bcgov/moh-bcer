@@ -71,7 +71,7 @@ export default function ExistingTableWrap() {
   );
 
   // update locations
-  const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/submission/${businessInfo.submissionId}`, { manual: true });
+  const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/edit`, { manual: true });
 
   /**
    * icon button actions
@@ -89,8 +89,10 @@ export default function ExistingTableWrap() {
     const newLocations = [...newExistingLocations, ...addedLocations];
     const newBusinessInfo = {...businessInfo, locations: newLocations }
     
+    console.log('TRG CONFIRM ROW: ', targetConfirmRow)
+
     if (newBusinessInfo?.submissionId) {
-      await patch({ data: { data: newBusinessInfo } });
+      await patch({ url: `/location/edit/${targetConfirmRow.id}`, data: targetConfirmRow });
     }
     
     setBusinessInfo(newBusinessInfo);
