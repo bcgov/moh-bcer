@@ -66,7 +66,7 @@ export class LocationUtil {
   }) {
     return function (l: BusinessLocation) {
       const disabledColor = '#CDCED2';
-      const isEditDisabled: boolean = LocationUtil.isClosed(l) || l?.noi?.status !== NoiStatus.Submitted;
+      const isEditDisabled: boolean = LocationUtil.isClosed(l) || l?.noi?.status === NoiStatus.Submitted;
       return (
         <>
           <Tooltip title="Editing Location" placement="top">

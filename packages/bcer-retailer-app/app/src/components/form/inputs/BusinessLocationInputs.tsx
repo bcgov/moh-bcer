@@ -147,8 +147,8 @@ function BusinessLocationInputs() {
         name="manufacturing"
         default
         options={[
-          {label: 'Yes', value: 'Yes'},
-          {label: 'No', value: 'No'},
+          {label: 'Yes', value: 'yes'},
+          {label: 'No', value: 'no'},
         ]}
       />
     </>

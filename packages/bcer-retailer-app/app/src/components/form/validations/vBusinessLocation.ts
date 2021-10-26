@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 
 export interface IBusinessLocationValues {
+  id?: string;
   addressLine1: string;
   addressLine2: string;
   postal: string;

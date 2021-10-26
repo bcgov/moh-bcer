@@ -6,12 +6,12 @@ import WarningIcon from '@material-ui/icons/Warning';
 
 import { ExistingTable } from './Tables';
 import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
-import BaseForm from '@/components/form/Base';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { useAxiosPatch, useAxiosPost } from '@/hooks/axios';
 import Loader from '@/components/Sales/Loader';
 import { StyledConfirmDateDialog, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import FullScreen from '@/components/generic/FullScreen';
+import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
 
 const useStyles = makeStyles({
   noiSubmittedBox: {
@@ -38,10 +38,15 @@ export default function ExistingTableWrap() {
     useContext<[BIContext, Function]>(BusinessInfoContext);
   const { locations } = businessInfo;
   const [locationId, setLocationId] = useState<string | null>(null);
+  const [targetRow, setTargetRow] = useState<BusinessLocation>(null);
+  const [targetConfirmRow, setTargetConfirmRow] = useState<BusinessLocation>(null);
+  const [isEditOpen, setOpenEdit] = useState<boolean>();
+  const [isEditConfirmOpen, setOpenEditConfirm] = useState<boolean>();
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [locationContext, setLocationContext] = useState<BusinessLocation>(null);
   const existingLocations = locations?.filter((l) => !!l.id);
+  const addedLocations = businessInfo.locations.filter((l: any) => !l.id);
 
   /**
    * api request
@@ -65,11 +70,35 @@ export default function ExistingTableWrap() {
     { manual: true }
   );
 
+  // update locations
+  const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/submission/${businessInfo.submissionId}`, { manual: true });
+
   /**
    * icon button actions
    */
-  // TODO at Edit Ticket
-  const handleEdit = (l: BusinessLocation) => {};
+  const handleEdit = (l: BusinessLocation) => {
+    setOpenEdit(true);
+    setTargetRow(l);
+  };
+  const handleEditConfirm = async () => {
+    const newExistingLocations = existingLocations.map((element: BusinessLocation) => {
+      if (element.id === targetConfirmRow.id) {
+        return targetConfirmRow
+      } else return element;
+    });
+    const newLocations = [...newExistingLocations, ...addedLocations];
+    const newBusinessInfo = {...businessInfo, locations: newLocations }
+    
+    if (newBusinessInfo?.submissionId) {
+      await patch({ data: { data: newBusinessInfo } });
+    }
+    
+    setBusinessInfo(newBusinessInfo);
+    setOpenEditConfirm(false);
+    setOpenEdit(false);
+    setTargetRow(null);
+    setTargetConfirmRow(null);
+  }
   // close locations
   const handleCloseDialog = async (l: BusinessLocation) => {
     setLocationId(l.id);
@@ -122,6 +151,10 @@ export default function ExistingTableWrap() {
         <Loader
           open={closeLoading}
           message="Closing the location. Please wait…"
+        />
+        <Loader
+          open={postLoading}
+          message="Updating the location. Please wait…"
         />
         <StyledConfirmDateDialog
           open={!!locationId}
@@ -181,6 +214,20 @@ export default function ExistingTableWrap() {
             </Grid>
           }
           checkboxLabel="I understand that this location will be removed permanently from the database and that this action cannot be undone."
+        />
+         <LocationsEditForm
+          rowData={targetRow}
+          openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit, isAddNew: false, toggleEditConfirmOpen: setOpenEditConfirm, setConfirmTarget: setTargetConfirmRow }}
+        />
+        <StyledConfirmDialog
+          open={isEditConfirmOpen}
+          maxWidth='sm'
+          dialogTitle="Confirm Your Submission"
+          checkboxLabel='I agree that the location information entered is correct.'
+          dialogMessage='You are about to submit for the selected businesses retail locations'
+          setOpen={() => setOpenEditConfirm(false)}
+          confirmHandler={handleEditConfirm}
+          acceptButtonText={'Submit'}
         />
       </>
     </div>
