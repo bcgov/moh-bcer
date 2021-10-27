@@ -423,10 +423,9 @@ export class LocationService {
       ha: payload.health_authority as HealthAuthority,
       manufacturing: payload.manufacturing === "yes" ? true : false
     }
-    payload.underage === "other" ? updateValue.underage = payload.underage_other : null
+    payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
 
     const result = await this.locationRepository.update({id: locationId}, {...updateValue});
-    return
   }
 
   /**

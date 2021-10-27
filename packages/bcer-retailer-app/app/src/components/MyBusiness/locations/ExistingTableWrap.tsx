@@ -89,8 +89,6 @@ export default function ExistingTableWrap() {
     const newLocations = [...newExistingLocations, ...addedLocations];
     const newBusinessInfo = {...businessInfo, locations: newLocations }
     
-    console.log('TRG CONFIRM ROW: ', targetConfirmRow)
-
     if (newBusinessInfo?.submissionId) {
       await patch({ url: `/location/edit/${targetConfirmRow.id}`, data: targetConfirmRow });
     }
