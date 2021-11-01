@@ -47,13 +47,14 @@ function BusinessLocationForm({ entry }: { entry: string }) {
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
 
+  const newLocations = businessInfo.locations.filter(l => !l.id);
+
   const confirmDelete = () => {
-    const remainder = businessInfo.locations.filter(
-      (element: IBusinessLocationValues) => {
-        return element.tableData.id !== targetRow.tableData.id;
-      }
-    );
-    setBusinessInfo({ ...businessInfo, locations: remainder });
+    const remainder = newLocations.filter((element: IBusinessLocationValues) =>{
+      return element.tableData.id !== targetRow.tableData.id
+    })
+    const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
+    setBusinessInfo({...businessInfo, locations: [...existingLocations, ...remainder]});
     setOpenDelete(false);
   };
 
@@ -66,8 +67,6 @@ function BusinessLocationForm({ entry }: { entry: string }) {
     setTargetRow(rowData);
     setOpenEdit(true);
   };
-
-  const newLocations = businessInfo.locations.filter(l => !l.id);
 
   return (
     <>
@@ -83,17 +82,17 @@ function BusinessLocationForm({ entry }: { entry: string }) {
                       },
                     }}
                     columns={[
-                      {title: 'Address 1', field: 'addressLine1'},
-                      {title: 'Address 2', field: 'addressLine2'},
-                      {title: 'Postal Code', field: 'postal'},
-                      {title: 'City', field: 'city'},
-                      {title: 'Business Phone', field: 'phone'},
-                      {title: 'Business email', field: 'email'},
-                      {title: 'Health Authority', field: 'health_authority'},
-                      {title: 'Doing Business As', field: 'doingBusinessAs'},
-                      {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`},
-                      {title: 'Manufacturing Premises', field: 'manufacturing'},
-                      {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete })}
+                      {title: 'Address 1', field: 'addressLine1', width: 150},
+                      {title: 'Address 2', field: 'addressLine2', width: 150},
+                      {title: 'Postal Code', field: 'postal', width: 150},
+                      {title: 'City', field: 'city', width: 150},
+                      {title: 'Business Phone', field: 'phone', width: 150},
+                      {title: 'Business email', field: 'email', width: 150},
+                      {title: 'Health Authority', field: 'health_authority', width: 150},
+                      {title: 'Doing Business As', field: 'doingBusinessAs', width: 150},
+                      {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
+                      {title: 'Manufacturing Premises', field: 'manufacturing', width: 200},
+                      {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete }), width: 100}
                     ]}
                     data={newLocations}
                   />

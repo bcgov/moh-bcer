@@ -8,6 +8,7 @@ import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined'
 import {
   BusinessLocationHeaders,
   LocationStatus,
+  NoiStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
@@ -65,17 +66,18 @@ export class LocationUtil {
   }) {
     return function (l: BusinessLocation) {
       const disabledColor = '#CDCED2';
+      const isEditDisabled: boolean = LocationUtil.isClosed(l) || l?.noi?.status === NoiStatus.Submitted;
       return (
         <>
           <Tooltip title="Editing Location" placement="top">
             <IconButton
               style={{
-                color: LocationUtil.isClosed(l) ? disabledColor : '#0053A5',
+                color: isEditDisabled ? disabledColor : '#0053A5',
               }}
               onClick={() => {
                 handleAction.handleEdit(l);
               }}
-              disabled={LocationUtil.isClosed(l)}
+              disabled={isEditDisabled}
             >
               <CreateIcon />
             </IconButton>

@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 import moment from 'moment';
 
 import { BusinessEntity } from 'src/business/entities/business.entity';
-import { haTranslation } from 'src/business/enums/health-authority.enum'
+import { haTranslation, HealthAuthority } from 'src/business/enums/health-authority.enum'
 import { LocationDTO } from 'src/location/dto/location.dto';
 import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
@@ -397,10 +397,41 @@ export class LocationService {
    * Delete locations with ids,
    * This is a soft-delete by manipulating the location status.
    * @param locationIds 
-   * @returns 
    */
      async deleteLocation(locationIds: string[]): Promise<UpdateResult> {
       const result = await this.locationRepository.softDelete({id: In(locationIds)});
-      return;
     }
+
+  /**
+   * Update a location
+   * @param locationId
+   */
+  async updateLocation(locationId: string, payload: LocationDTO){
+    let updateValue = {
+      email: payload.email,
+      addressLine1: payload.addressLine1,
+      addressLine2: payload.addressLine2,
+      postal: payload.postal,
+      city: payload.city,
+      phone: payload.phone,
+      webpage: payload.webpage,
+      doingBusinessAs: payload.doingBusinessAs,
+      underage: payload.underage,
+      ha: payload.health_authority as HealthAuthority,
+      manufacturing: payload.manufacturing === "yes" ? true : false
+    }
+    payload.underage === "other" ? updateValue.underage = payload.underage_other : null
+
+    const result = await this.locationRepository.update({id: locationId}, {...updateValue});
+  }
+
+  /**
+   * Get all location for a business
+   * @param businessId
+   * @reutrns
+   */
+  async getLocationsWithBusinessId(businessId: string){
+    return await this.locationRepository.find({ businessId });
+
+  }
 }
