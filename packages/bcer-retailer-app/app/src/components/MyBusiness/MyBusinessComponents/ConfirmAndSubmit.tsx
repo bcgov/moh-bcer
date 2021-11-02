@@ -244,11 +244,6 @@ export default function ConfirmAndSubmit () {
           {newLocations.length ?
             <div style={{ overflowX: 'auto' }}>
               <StyledTable
-                options={{
-                  fixedColumns: {
-                    right: 1,
-                  },
-                }}
                 columns={[
                   {title: 'Address 1', field: 'addressLine1', width: 150},
                   {title: 'Address 2', field: 'addressLine2', width: 150},
@@ -260,11 +255,8 @@ export default function ConfirmAndSubmit () {
                   {title: 'Doing Business As', field: 'doingBusinessAs', width: 150},
                   {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
                   {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
-                  {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete }), width: 100}
                 ]}
                 data={newLocations}
-                editHandler={(rowData: IBusinessLocationValues) => handleEdit(rowData)}
-                deleteHandler={(rowData: IBusinessLocationValues) => handleDelete(rowData)}
               />
             </div>
           : null}

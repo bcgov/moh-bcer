@@ -9,7 +9,7 @@ import {
 } from '@material-ui/pickers';
 
 import { InputFieldError } from '../generic';
-import { StyledCheckboxProps, CheckboxInputProps, DtPickerProps } from '@/constants/interfaces/inputInterfaces';
+import { StyledCheckboxProps, CheckboxInputProps, DtPickerProps, StyledDatePickerProps } from '@/constants/interfaces/inputInterfaces';
 import { StyledDialog } from '@/index';
 import { StyledConfirmDateDialogProps, StyledConfirmDialogProps } from '@/constants/interfaces/dialogInterfaces';
 
@@ -109,6 +109,7 @@ function CheckboxInput ({
  * @param props - MUI defined `DialogProps`
  * @returns A Material-UI ReactElement with Formik context
  */
+
 export function StyledConfirmDateDialog(
   {
     setOpen,
@@ -117,6 +118,8 @@ export function StyledConfirmDateDialog(
     checkboxLabel,
     dialogTitle,
     dateLabel,
+    maxDate,
+    minDate,
     ...props
   }: StyledConfirmDateDialogProps): ReactElement {
     const classes = useStyles();
@@ -151,6 +154,8 @@ export function StyledConfirmDateDialog(
             <DtPickerField 
               name="date" 
               label={dateLabel}
+              maxDate={maxDate}
+              minDate={minDate}
             />
             <StyledCheckbox
               name='confirmed'
@@ -195,6 +200,7 @@ function StyledCheckbox ({
 const TextFieldComponent = (props: any) => {
   return <TextField {...props} disabled={true} />;
 };
+
 function DtPicker ({
   field: { value, ...fieldRest },
   form,
@@ -235,6 +241,7 @@ function DtPicker ({
               onClick={() => setOpen(true)}
               onClose={() => setOpen(false)}
               open={open}
+              {...props}
              />
           </MuiPickersUtilsProvider>
         }
@@ -252,13 +259,15 @@ export function DtPickerField ({
   disabled = false,
   name,
   label,
-}: StyledCheckboxProps) {
+  ...props
+}: StyledDatePickerProps) {
   return (
     <Field
       name={name}
       component={DtPicker}
       label={label}
       disabled={disabled}
+      {...props}
     />
   )
 }

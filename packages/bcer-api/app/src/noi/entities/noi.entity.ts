@@ -49,6 +49,7 @@ export class NoiEntity {
       businessId: this.business?.id,
       created_at: this.created_at,
       updated_at: this.updated_at,
+      renewed_at: this.renewed_at,
       status: assignStatus(this.created_at, this.renewed_at),
     };
   }

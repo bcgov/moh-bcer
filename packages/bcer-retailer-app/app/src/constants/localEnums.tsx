@@ -153,3 +153,8 @@ export enum LocationStatus {
   Closed = 'closed',
   Deleted = 'deleted',
 }
+
+export enum LocationClosingWindow {
+  Max = '09-30',
+  Min = '10-01'
+}

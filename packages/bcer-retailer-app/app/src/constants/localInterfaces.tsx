@@ -56,6 +56,8 @@ export interface BusinessLocation {
   noi?: {
     created_at: Date;
     status: NoiStatus;
+    renewed_at: Date;
+    updated_at: Date;
   };
   products?: Array<Products>;
   productsCount: number;

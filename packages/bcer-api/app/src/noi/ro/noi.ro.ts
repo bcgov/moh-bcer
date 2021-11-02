@@ -19,4 +19,7 @@ export class NoiRO {
 
   @ApiProperty()
   status: NoiStatus;
+
+  @ApiProperty()
+  renewed_at: Date;
 }

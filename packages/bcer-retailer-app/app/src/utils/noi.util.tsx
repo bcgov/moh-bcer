@@ -42,6 +42,11 @@ export class NoiUtil {
     return `${l.doingBusinessAs}`;
   }
 
+  static renderRenewalOrSubmissionDate(l: BusinessLocation): string {
+    let updated = l.noi?.renewed_at ?? l.noi?.created_at;
+    return updated ? moment(updated).format('MMM DD, YYYY'): '';
+  }
+
   static renderStatus(l: BusinessLocation) {
     const {noi, status} = l;
     let statusDetails = {text: '', color: ''};

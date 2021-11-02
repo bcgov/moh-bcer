@@ -33,4 +33,6 @@ export interface StyledDialogActionProps {
 
 export interface StyledConfirmDateDialogProps extends StyledConfirmDialogProps {
   dateLabel: string;
+  maxDate?: Date;
+  minDate?: Date;
 }

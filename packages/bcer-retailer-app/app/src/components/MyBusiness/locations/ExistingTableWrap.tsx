@@ -12,6 +12,7 @@ import Loader from '@/components/Sales/Loader';
 import { StyledConfirmDateDialog, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import FullScreen from '@/components/generic/FullScreen';
 import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
+import { LocationUtil } from '@/utils/location.util';
 
 const useStyles = makeStyles({
   noiSubmittedBox: {
@@ -161,8 +162,10 @@ export default function ExistingTableWrap() {
           confirmHandler={handleCloseConfirm}
           dialogTitle="Confirm Your Closing Location"
           setOpen={() => setLocationId(null)}
-          dialogMessage="You are going to close this location. Please provide the following information below."
-          checkboxLabel="I confirm that I wish to close this location. I understand that I will still be required to submit a Sales Report for this location for sales that occurred prior to closing."
+          dialogMessage="You are about to close this location. Please provide the Closing Date."
+          checkboxLabel="I confirm that I wish to close this location. I understand that I will still be required to submit a Sales Report for this sales that occurred prior to closing."
+          maxDate={LocationUtil.getLocationCloseWindow().max}
+          minDate={LocationUtil.getLocationCloseWindow().min}
         />
         <Loader
           open={deleteLoading}
@@ -207,8 +210,7 @@ export default function ExistingTableWrap() {
               <Grid item xs={12}>
                 <Typography variant="body1">
                   Please note that this feature should only be used for locations that were added in error. 
-                  This feature should not be used for closing locations.
-                  If you have closed a location, you must wait until you renew your Notice of Intent to identify the location as "closed" in the BCER.
+                  If you wish to close this location, you can use the Closing Location button instead.
                 </Typography>
               </Grid>
             </Grid>
@@ -224,7 +226,7 @@ export default function ExistingTableWrap() {
           maxWidth='sm'
           dialogTitle="Confirm Your Submission"
           checkboxLabel='I agree that the location information entered is correct.'
-          dialogMessage='You are about to submit for the selected businesses retail locations'
+          dialogMessage='You are about to submit an update for the selected retail location.'
           setOpen={() => setOpenEditConfirm(false)}
           confirmHandler={handleEditConfirm}
           acceptButtonText={'Submit'}
