@@ -1,6 +1,6 @@
 #!make
 
-include .env
+-include .env
 -include app/.env
 
 export $(shell sed 's/=.*//' .env)
