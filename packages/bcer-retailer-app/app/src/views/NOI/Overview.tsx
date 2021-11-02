@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAxiosGet } from '@/hooks/axios';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Box, makeStyles, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { AppGlobalContext } from '@/contexts/AppGlobal';
@@ -87,7 +87,10 @@ export default function NoiOverview() {
           <Typography variant='body1'>
             The business owner must submit the Notice of Intent a minimum of 6 weeks before an e-substance is first sold from the sales premises. The Notice of Intent must also be submitted prior to January 15 of each year that a retailer intends to continue sales.
           </Typography>
-          <Typography variant='h6'>[TODO: Add info]</Typography>
+          <Box mb={2} />
+          <Typography variant='body1'>
+            Retailers can update business information and location details before an NOI has been submitted/renewed. Once the NOI has been submitted for a location, the location details cannot be edited.
+          </Typography>
         </>
         <FullScreen 
           fullScreenProp={outstandingFullscreenState}

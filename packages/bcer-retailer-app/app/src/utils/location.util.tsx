@@ -7,11 +7,13 @@ import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined'
 
 import {
   BusinessLocationHeaders,
+  LocationClosingWindow,
   LocationStatus,
   NoiStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
+import moment from 'moment';
 
 export class LocationUtil {
   static isClosed(l: BusinessLocation): boolean {
@@ -69,7 +71,7 @@ export class LocationUtil {
       const isEditDisabled: boolean = LocationUtil.isClosed(l) || l?.noi?.status === NoiStatus.Submitted;
       return (
         <>
-          <Tooltip title="Editing Location" placement="top">
+          <Tooltip title="Edit Location" placement="top">
             <IconButton
               style={{
                 color: isEditDisabled ? disabledColor : '#0053A5',
@@ -82,7 +84,7 @@ export class LocationUtil {
               <CreateIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Closing Location" placement="top">
+          <Tooltip title="Close Location" placement="top">
             <IconButton
               style={{
                 color: LocationUtil.isClosed(l) ? disabledColor : '#F5A623',
@@ -95,7 +97,7 @@ export class LocationUtil {
               <NoMeetingRoomOutlinedIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Deleting Location" placement="top">
+          <Tooltip title="Delete Location" placement="top">
             <IconButton
               style={{
                 color: LocationUtil.isClosed(l) ? disabledColor : '#FE6B63',
@@ -174,5 +176,24 @@ export class LocationUtil {
       headers: Object.keys(BusinessLocationHeaders),
       filename,
     };
+  }
+
+  /**
+   * function to calculate the location closing window for the current year
+   * use case example:
+   * Current date = October 2nd, 2021. Component should allow me to choose date between Oct 1st, 2021 and Sept 30, 2022
+   * Current date = August 25th, 2022. Component should allow me to choose date between Oct 1st, 2021 and Sept 30, 2022
+   * @returns {min: least date when location can be closed, max: max date when location can be closed}
+   */
+
+  static getLocationCloseWindow(): {max: Date, min: Date} {
+    let minYear = new Date().getFullYear();
+    if(new Date().getMonth() < 8){
+      minYear -= 1;
+    }
+    return ({
+      max: moment(`${minYear+1}-${LocationClosingWindow.Max}`, 'YYYY-MM-DD').toDate(),
+      min: moment(`${minYear}-${LocationClosingWindow.Min}`, 'YYYY-MM-DD').toDate(),
+    })
   }
 }

@@ -1,6 +1,6 @@
 import TableWrapper from '@/components/generic/TableWrapper';
 import NoiTable from '@/components/Noi/NoiTable';
-import { BusinessLocationHeaders } from '@/constants/localEnums';
+import { BusinessLocationHeaders, NoiStatus } from '@/constants/localEnums';
 import {
   BusinessLocation,
   GenericTableProp,
@@ -89,13 +89,7 @@ export function SubmittedNoiTable({
     >
       <NoiTable
         data={data}
-        actions={[
-          {
-            icon: tableAction,
-            onClick: (event: any, rowData: any) =>
-              history.push(`/view-location/${rowData.id}`),
-          },
-        ]}
+        type={NoiStatus.Submitted}
       />
     </TableWrapper>
   );

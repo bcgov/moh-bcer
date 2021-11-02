@@ -24,30 +24,37 @@ function LocationTable({
         fixedColumns: {
           right: 1,
         },
+        sorting: true,
       }}
       columns={[
         {
           title: 'Address Line 1',
           render: LocationUtil.renderAddressLine1,
+          sorting: false
         },
         {
           title: 'City',
-          render: LocationUtil.renderCity,
+          field: 'city',
+          defaultSort: 'DESC'
         },
         {
           title: 'Postal Code',
           render: LocationUtil.renderPostalCode,
+          sorting: false,
         },
         {
           title: 'Doing Business As',
           render: LocationUtil.renderDoingBusinessAs,
+          sorting: false,
         },
         {
           title: 'Status',
+          field: 'status',
           render: LocationUtil.renderStatus,
         },
         {
           render: LocationUtil.renderActions(handleAction),
+          sorting: false,
         },
       ]}
       data={data}

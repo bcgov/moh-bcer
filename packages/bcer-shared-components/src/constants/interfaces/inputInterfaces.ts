@@ -73,6 +73,11 @@ export interface StyledCheckboxProps {
   disabled?: boolean;
 }
 
+export interface StyledDatePickerProps extends StyledCheckboxProps {
+  maxDate?: Date;
+  minDate?: Date;
+}
+
 export interface StyledHeaderMapperProps {
   requiredHeaders: any;
   providedHeaders: Array<string>;
@@ -92,4 +97,6 @@ export interface DtPickerProps {
   label: string;
   props: DatePickerProps;
   disabled?: boolean;
+  minDate?: Date,
+  maxDate?: Date,
 }
