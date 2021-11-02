@@ -398,7 +398,7 @@ export class LocationService {
    * This is a soft-delete by manipulating the location status.
    * @param locationIds 
    */
-     async deleteLocation(locationIds: string[]): Promise<UpdateResult> {
+     async deleteLocation(locationIds: string[]){
       const result = await this.locationRepository.softDelete({id: In(locationIds)});
     }
 
