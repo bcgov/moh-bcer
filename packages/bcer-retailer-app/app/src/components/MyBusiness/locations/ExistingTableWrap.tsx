@@ -163,7 +163,7 @@ export default function ExistingTableWrap() {
           dialogTitle="Confirm Your Closing Location"
           setOpen={() => setLocationId(null)}
           dialogMessage="You are about to close this location. Please provide the Closing Date."
-          checkboxLabel="I confirm that I wish to close this location. I understand that I will still be required to submit a Sales Report for this sales that occurred prior to closing."
+          checkboxLabel="I confirm that I wish to close this location. I understand that I will still be required to submit a Sales Report for the sales that occurred prior to closing."
           maxDate={LocationUtil.getLocationCloseWindow().max}
           minDate={LocationUtil.getLocationCloseWindow().min}
         />
