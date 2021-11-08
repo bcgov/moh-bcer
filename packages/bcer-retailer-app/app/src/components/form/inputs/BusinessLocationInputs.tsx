@@ -3,6 +3,7 @@ import { useFormikContext } from 'formik';
 import { Grid, makeStyles } from '@material-ui/core';
 import { StyledTextField, StyledRadioGroup } from 'vaping-regulation-shared-components';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
+import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 
 const useStyles = makeStyles({
   groupHeader: {
@@ -42,31 +43,31 @@ function BusinessLocationInputs() {
 
         <Grid item xs={12} md={6} className={classes.gridItemLeft}>
           <StyledTextField
+            label={<RequiredFieldLabel label="Business address line 1"/>}
             name="addressLine1"
-            label="Business address line 1"
             fullWidth
           />
         </Grid>
         
         <Grid item xs={12} md={6} className={classes.gridItemRight}>
           <StyledTextField
-            name="addressLine2"
             label="Business address line 2"
+            name="addressLine2"
             fullWidth
           />
         </Grid>
 
         <Grid item xs={12} md={6} className={classes.gridItemLeft}>
           <StyledTextField
+            label={<RequiredFieldLabel label="Postal Code"/>}
             name="postal"
-            label="Postal Code"
             fullWidth
           />
         </Grid>
         <Grid item xs={12} md={6} className={classes.gridItemRight}>
           <StyledTextField
+            label={<RequiredFieldLabel label="City"/>}
             name="city"
-            label="City"
             fullWidth
           />
         </Grid>
@@ -77,24 +78,24 @@ function BusinessLocationInputs() {
 
         <Grid item xs={12} md={6} className={classes.gridItemLeft}>
           <StyledTextField
+            label={<RequiredFieldLabel label="Business Email"/>}
             name="email"
-            label="Business Email"
             fullWidth
           />
         </Grid>
 
         <Grid item xs={12} md={6} className={classes.gridItemRight}>
           <StyledTextField
+            label={<RequiredFieldLabel label="Business Phone Number"/>}
             name="phone"
-            label="Business Phone Number"
             fullWidth
           />
         </Grid>
 
         <Grid item xs={12} md={6} className={classes.gridItemRight}>
           <StyledTextField
-            name="doingBusinessAs"
             label="The name this location is doing business as"
+            name="doingBusinessAs"
             fullWidth
           />
         </Grid>
@@ -102,7 +103,7 @@ function BusinessLocationInputs() {
       </Grid>
 
       <div className={classes.groupHeader} >
-        Please state if persons under 19 years of age are permitted on the sales premises (required)
+        Please state if persons under 19 years of age are permitted on the sales premises <span style={{color: 'red'}}>*</span>
         <div className={classes.headerDescription} >
           If your retail location has unique circumstances surrounding age-restriction, please select "other" and describe in the comment box below.
         </div>
@@ -127,6 +128,7 @@ function BusinessLocationInputs() {
       <div className={classes.groupHeader}>
         Which regional health authority is the sales premises located in? A map of the regional health authorities can be found at the&nbsp;
         <a href="https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries" target="_blank" rel="noopener noreferrer">following link</a>
+        <span style={{color: 'red'}}> *</span>
       </div>
       <StyledRadioGroup
         name="health_authority"
@@ -140,7 +142,7 @@ function BusinessLocationInputs() {
       />
 
       <div className={classes.groupHeader}>
-        Do you produce, formulate, package, repackage or prepare restricted e-substances for sale from this sales premises?
+        Do you produce, formulate, package, repackage or prepare restricted e-substances for sale from this sales premises? <span style={{color: 'red'}}>*</span>
       </div>
       <StyledRadioGroup
       defaultValue="none"

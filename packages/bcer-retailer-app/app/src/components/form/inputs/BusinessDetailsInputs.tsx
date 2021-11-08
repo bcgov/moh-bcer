@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography, styled } from '@material-ui/core';
 import { StyledTextField } from 'vaping-regulation-shared-components'
+import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 
 const FormBorderGrid = styled(Grid)({
   padding: '25px 20px 15px 20px',
@@ -25,7 +26,7 @@ function BusinessDetailsInputs() {
       </Grid>
       <Grid item xs={12} md={6}>
         <StyledTextField
-          label="Business legal name"
+          label={<RequiredFieldLabel label="Business legal name"/>}
           name="legalName"
           fullWidth
         />
@@ -33,7 +34,7 @@ function BusinessDetailsInputs() {
 
       <Grid item xs={12} md={6}>
         <StyledTextField
-          label="Name under which business is conducted"
+          label={<RequiredFieldLabel label="Name under which business is conducted"/>}
           name="businessName"
           fullWidth
         />
@@ -41,7 +42,7 @@ function BusinessDetailsInputs() {
 
       <Grid item xs={12} md={6}>
         <StyledTextField
-          label="Business address line 1"
+          label={<RequiredFieldLabel label="Business address line 1"/>}
           name="addressLine1"
           fullWidth
         />
@@ -57,7 +58,7 @@ function BusinessDetailsInputs() {
 
       <Grid item xs={12} md={6}>
         <StyledTextField
-          label="City"
+          label={<RequiredFieldLabel label="City"/>}
           name="city"
           fullWidth
         />
@@ -65,7 +66,7 @@ function BusinessDetailsInputs() {
 
       <Grid item xs={12} md={6}>
         <StyledTextField
-          label="Postal code"
+          label={<RequiredFieldLabel label="Postal code"/>}
           name="postal"
           fullWidth
         />
@@ -73,14 +74,14 @@ function BusinessDetailsInputs() {
 
       <Grid item xs={12} md={6}>
         <StyledTextField
-          label="Business phone number"
+          label={<RequiredFieldLabel label="Business phone number"/>}
           name="phone"
           fullWidth
         />
       </Grid>
       <Grid item xs={12} md={6}>
         <StyledTextField
-          label="Business email"
+          label={<RequiredFieldLabel label="Business email"/>}
           name="email"
           fullWidth
         />
