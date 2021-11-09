@@ -51,6 +51,7 @@ export class NoiEntity {
       updated_at: this.updated_at,
       renewed_at: this.renewed_at,
       status: assignStatus(this.created_at, this.renewed_at),
+      expiry_date: CronConfig.assignNextExpairyDate(this.renewed_at ?? this.created_at),
     };
   }
 }

@@ -158,3 +158,8 @@ export enum LocationClosingWindow {
   Max = '09-30',
   Min = '10-01'
 }
+
+export enum DateFormat {
+  MMM_DD_YYYY = 'MMM DD, YYYY',
+  MMMM_DD_YYYY = 'MMMM DD, YYYY',
+}

@@ -29,6 +29,17 @@ export class CronConfig {
       }
       return expiryDate;
     }
+
+    /**
+     * Finds out next expiry date for a NOI
+     */
+    static assignNextExpairyDate(renewedDate : Date): Date {
+      const expiryDate = this.getNoiExpiryDate();
+      if(moment(renewedDate).isAfter(expiryDate)){
+        return expiryDate.add(1, 'year').toDate();
+      }
+      return expiryDate.toDate();
+    }
   }
 
   export interface TimeZone {

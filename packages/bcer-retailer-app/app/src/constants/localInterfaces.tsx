@@ -49,6 +49,7 @@ export interface BusinessLocation {
   phone: string;
   email: string;
   underage: string;
+  underage_other: string;
   health_authority: HealthAuthority;
   doingBusinessAs: string;
   manufacturing: string;
@@ -58,6 +59,7 @@ export interface BusinessLocation {
     status: NoiStatus;
     renewed_at: Date;
     updated_at: Date;
+    expiry_date: Date;
   };
   products?: Array<Products>;
   productsCount: number;
