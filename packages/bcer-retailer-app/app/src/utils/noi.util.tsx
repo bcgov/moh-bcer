@@ -153,11 +153,11 @@ export class NoiPdfUtil {
     legalName: string,
     classes: ClassNameMap
   ) {
-    this.CalculateTotalCharacters(location, legalName);
+    this.calculateTotalCharacters(location, legalName);
     this.assignVersion(classes);
   }
 
-  private CalculateTotalCharacters(data: BusinessLocation, legalName: string) {
+  private calculateTotalCharacters(data: BusinessLocation, legalName: string) {
     this.totalCharacters += data.addressLine1?.length || 0;
     this.totalCharacters += data.addressLine2?.length || 0;
     this.totalCharacters += data.city?.length || 0;
