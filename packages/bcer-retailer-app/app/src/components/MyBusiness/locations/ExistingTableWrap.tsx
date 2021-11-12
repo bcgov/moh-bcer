@@ -13,6 +13,7 @@ import { StyledConfirmDateDialog, StyledConfirmDialog } from 'vaping-regulation-
 import FullScreen from '@/components/generic/FullScreen';
 import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
 import { LocationUtil } from '@/utils/location.util';
+import { editLocationFormatting } from '@/utils/formatting';
 
 const useStyles = makeStyles({
   noiSubmittedBox: {
@@ -217,10 +218,14 @@ export default function ExistingTableWrap() {
           }
           checkboxLabel="I understand that this location will be removed permanently from the database and that this action cannot be undone."
         />
-         <LocationsEditForm
-          rowData={targetRow}
-          openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit, isAddNew: false, toggleEditConfirmOpen: setOpenEditConfirm, setConfirmTarget: setTargetConfirmRow }}
-        />
+        {
+          targetRow
+           &&
+          <LocationsEditForm
+            rowData={editLocationFormatting(targetRow)}
+            openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit, isAddNew: false, toggleEditConfirmOpen: setOpenEditConfirm, setConfirmTarget: setTargetConfirmRow }}
+          />
+        }
         <StyledConfirmDialog
           open={isEditConfirmOpen}
           maxWidth='sm'

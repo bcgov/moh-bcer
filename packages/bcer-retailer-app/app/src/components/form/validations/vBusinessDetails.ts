@@ -27,12 +27,12 @@ export const Initial = {
 
 export const Validation = yup.object({
   email: yup.string().email('Invalid email').required('Email is a required field'),
-  webpage: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).optional(),
-  legalName: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The legal name of your business is required'),
-  businessName: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The name of your business is required'),
+  webpage: yup.string().test('length', 'The URL must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
+  legalName: yup.string().test('length', 'The business legal name must be less than 100 characters.', val => val?.length <= 100).required('The legal name of your business is required'),
+  businessName: yup.string().test('length', 'The business name must be less than 100 characters.', val => val?.length <= 100).required('The name of your business is required'),
   addressLine1: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The address of your place of business is required'),
-  addressLine2: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).optional(),
-  city: yup.string().test('length', 'The address must be less than 50 characters.', val => val?.length <= 50).required('City is a required field'),
+  addressLine2: yup.string().test('length', 'The address must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
+  city: yup.string().test('length', 'The city must be less than 50 characters.', val => val?.length <= 50).required('City is a required field'),
   postal: yup.string()
     .matches(
       /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/,

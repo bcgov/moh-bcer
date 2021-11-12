@@ -1,19 +1,27 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { makeStyles } from '@material-ui/core';
+import SaveAltIcon from '@material-ui/icons/SaveAlt'
 import { StyledButton, StyledTable, StyledConfirmDialog } from 'vaping-regulation-shared-components';
+
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
-import { LocationUtil } from '@/utils/location.util';
-
 import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
+import { useCsvValidator } from '@/hooks/useCsvValidator';
+import { BusinessCsvValidation } from '@/components/form/validations/CsvSchemas/vBusinessLocationsCsv';
+import { editLocationFormatting } from '@/utils/formatting';
+import { LocationUtil } from '@/utils/location.util';
 
 const useStyles = makeStyles({
   buttonIcon: {
     paddingRight: '5px',
     color: '#285CBC',
+    fontSize: '20px',
+  },
+  buttonIconLight: {
+    paddingRight: '5px',
+    color: '#fff',
     fontSize: '20px',
   },
   csvLink: {
@@ -56,9 +64,18 @@ export default function ConfirmLocations () {
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
+  const {errors: uploadErrors, validatedData, validateCSV} = useCsvValidator();
 
   const newLocations = businessInfo.locations.filter((l: any) => !l.id);
 
+  useEffect(() => {
+    validateCSV(BusinessCsvValidation, newLocations)
+
+  }, [businessInfo.locations])
+
+  useEffect(() => {
+    setBusinessInfo({...businessInfo, uploadErrors: uploadErrors})
+  }, [uploadErrors])
 
   const confirmDelete = () => {
     const remainder = newLocations.filter((element: IBusinessLocationValues) =>{
@@ -93,6 +110,17 @@ export default function ConfirmLocations () {
           <div className={classes.actionsWrapper} >
             You have {newLocations?.length ? newLocations.length : '0'} retail locations.
             <CSVLink
+              headers={['Row', 'Field', 'Message']}
+              data={uploadErrors ? uploadErrors?.map(error => {
+                return [error.row, error.field, error.message];
+              }) : []}
+              filename={'location_errors.csv'} className={classes.csvLink} target='_blank'>
+              <StyledButton variant='contained' disabled={uploadErrors?.length === 0}>
+                <SaveAltIcon className={classes.buttonIconLight} />
+                Download Errors CSV
+              </StyledButton>
+            </CSVLink>
+            <CSVLink
               headers={Object.keys(BusinessLocationHeaders)}
               data={newLocations?.map((l: any) => {
                 return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
@@ -126,14 +154,21 @@ export default function ConfirmLocations () {
                 {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
                 {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete }), width: 100}
               ]}
-              data={newLocations}
+              data={validatedData}
               editHandler={(rowData: IBusinessLocationValues) => handleEdit(rowData)}
               deleteHandler={(rowData: IBusinessLocationValues) => handleDelete(rowData)}
             />
           : null
         }
       </div>
-      <LocationsEditForm rowData={targetRow} openProps={{isOpen: isEditOpen, toggleOpen: setOpenEdit}} />
+      {
+        targetRow
+          &&
+        <LocationsEditForm rowData={editLocationFormatting(targetRow)} 
+          openProps={{isOpen: isEditOpen, toggleOpen: setOpenEdit}} 
+        />
+      }
+
       {
         isDeleteOpen
           &&
