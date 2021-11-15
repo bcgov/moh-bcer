@@ -142,3 +142,9 @@ export interface GenericTableProp {
   handleActionButton?: Function;
   handleSelection?: Function;
 }
+
+export type TableColumn = {
+  title?: string;
+  sorting?: string;
+  defaultSort?: string;
+} & ({field: string} | {render: Function})

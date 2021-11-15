@@ -98,9 +98,7 @@ export class NoiUtil {
             style={{
               color: '#0053A5',
             }}
-            onClick={() => {
-              handleDownload(l);
-            }}
+            onClick={() => handleDownload(l)}
           >
             <CloudDownloadIcon />
           </IconButton>

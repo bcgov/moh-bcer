@@ -1,5 +1,5 @@
 import { NoiStatus } from '@/constants/localEnums';
-import { BusinessLocation } from '@/constants/localInterfaces';
+import { BusinessLocation, TableColumn } from '@/constants/localInterfaces';
 import { NoiUtil } from '@/utils/noi.util';
 import React from 'react';
 import { StyledTable } from 'vaping-regulation-shared-components';
@@ -11,8 +11,9 @@ interface NoiTableProps {
   [s: string]: unknown;
 }
 
+
 function NoiTable({ data, type, ...props }: NoiTableProps): JSX.Element {
-  let columns :any = [
+  let columns: Array<TableColumn> = [
     {
       title: 'Address Line 1',
       render: NoiUtil.renderAddressLine1,
