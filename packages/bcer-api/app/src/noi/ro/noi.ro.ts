@@ -22,4 +22,7 @@ export class NoiRO {
 
   @ApiProperty()
   renewed_at: Date;
+
+  @ApiProperty()
+  expiry_date: Date;
 }

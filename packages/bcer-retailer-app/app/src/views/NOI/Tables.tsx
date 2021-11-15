@@ -34,7 +34,11 @@ interface OutstandingNoiTableProp extends TableProp {
 }
 
 interface SubmitNoiTableProp extends TableProp {
-    handleSelection: Function;
+    handleSelection: Function; 
+}
+
+interface SubmittedNoiTableProp extends TableProp {
+    downloadAction: Function;
 }
 
 export function OutstandingNoiTable({
@@ -68,16 +72,10 @@ export function OutstandingNoiTable({
 export function SubmittedNoiTable({
   data,
   fullScreenProp,
+  downloadAction,
   ...prop
-}: TableProp) {
-  const classes = useStyles();
-  const history = useHistory();
+}: SubmittedNoiTableProp) {
 
-  const tableAction = () => (
-    <Typography variant="body1" className={classes.actionLink}>
-      View
-    </Typography>
-  );
   return (
     <TableWrapper
       data={data}
@@ -90,6 +88,12 @@ export function SubmittedNoiTable({
       <NoiTable
         data={data}
         type={NoiStatus.Submitted}
+        downloadAction={downloadAction}
+        options={{
+          fixedColumns: {
+            right: 1,
+          },
+        }}
       />
     </TableWrapper>
   );

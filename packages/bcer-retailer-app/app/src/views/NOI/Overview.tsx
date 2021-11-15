@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
+import ReactDOMServer from "react-dom/server";
 import { useHistory } from 'react-router-dom';
 import { useAxiosGet } from '@/hooks/axios';
 import { Box, makeStyles, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { BusinessLocation } from '@/constants/localInterfaces';
+import { Business, BusinessLocation } from '@/constants/localInterfaces';
 import { formatError } from '@/utils/formatting';
 import NoiSubmission from '@/components/Noi/NoiSubmission';
 import { NoiUtil } from '@/utils/noi.util';
 import { OutstandingNoiTable, SubmittedNoiTable } from './Tables';
 import FullScreen from '@/components/generic/FullScreen';
+import jsPDF from 'jspdf';
+import Pdf from './Pdf';
 
 const useStyles = makeStyles({
   title: {
@@ -27,6 +30,7 @@ const useStyles = makeStyles({
 export default function NoiOverview() {
   const classes = useStyles();
   const history = useHistory();
+  const [{ data: businessData, loading: businessLoading, error: businessError }] = useAxiosGet(`/business`);
   const [outstanding, setOutstanding] = useState<Array<BusinessLocation>>([]);
   const outstandingFullscreenState = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<Array<BusinessLocation>>([]);
@@ -56,6 +60,12 @@ export default function NoiOverview() {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error]);
+
+  async function printDocument( location: BusinessLocation) {
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    await pdf.html(ReactDOMServer.renderToStaticMarkup(<Pdf location={location} legalName={businessData?.legalName}/>))
+    pdf.save(`NOI-${location.doingBusinessAs}-${location.city}`)
+  }
 
   return loading ? <CircularProgress /> : (
     <>
@@ -107,6 +117,7 @@ export default function NoiOverview() {
           <SubmittedNoiTable 
             data={submitted}
             fullScreenProp={submittedFullscreenState}
+            downloadAction={printDocument}
           />
         </FullScreen>
       </div>
