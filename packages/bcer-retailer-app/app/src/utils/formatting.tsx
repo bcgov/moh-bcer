@@ -48,7 +48,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
   if (underageMatchString.includes('yes')) {
     formattedLocation.underage = 'Yes';
   } else if (underageMatchString.includes('no')) {
-    formattedLocation.underage = 'Yes';
+    formattedLocation.underage = 'No';
   } else {
     formattedLocation.underage = 'other';
     formattedLocation.underage_other = location.underage_other;
