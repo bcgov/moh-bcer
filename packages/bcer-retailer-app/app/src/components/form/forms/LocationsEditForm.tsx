@@ -82,6 +82,7 @@ export default function LocationsEditForm(
         ? 
           <Formik
             initialValues={isAddNew ? Initial : rowData}
+            enableReinitialize={true}
             validationSchema={Validation}
             onSubmit={(values: IBusinessLocationValues) => {
               isAddNew

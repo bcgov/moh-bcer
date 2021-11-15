@@ -87,6 +87,12 @@ const steps = [
     path: '/business/map',
     component: <Route key='map' exact path='/business/map' component={ConfirmLocations} />,
     helpText: 'Confirm the details of the business locations that you have added on the previous page. You will be able to update this information at any time. Upon completion of this section you will be able to complete a Notice of Intent to sell E-substances and submit Product and Manufacturing Reports for each location you have listed.',
+    canAdvanceChecks: [
+      {
+        property: 'uploadErrors',
+        validate: (val: Array<any>) => !val?.length,
+      }
+    ],
     onAdvance: [{
       endpoint: process.env.BASE_URL + '/submission',
       method: 'PATCH' as Method,

@@ -12,6 +12,7 @@ export interface BIContext {
   entry: string;
   currentPage: number;
   fileData?: any;
+  uploadErrors?: Array<{row: string, field: string, message: string}>
 }
 
 const Context = createContext<[BIContext, Function]>([{
@@ -34,7 +35,8 @@ const Context = createContext<[BIContext, Function]>([{
   notificationsValid: false,
   entry: '',
   currentPage: 0,
-  fileData: undefined
+  fileData: undefined,
+  uploadErrors: undefined
 }, () => {}]);
 
 export const BusinessInfoContext = Context;

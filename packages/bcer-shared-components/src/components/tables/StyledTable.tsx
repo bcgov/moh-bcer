@@ -78,6 +78,10 @@ const rowStyle = (rowData: any): CSSProperties => {
     cssProperty.backgroundColor = '#fafafa'
   }
 
+  if (rowData.error === true) {
+    cssProperty.backgroundColor = 'rgba(255, 0, 0, 0.2)'
+  }
+
   return cssProperty
 }
 
