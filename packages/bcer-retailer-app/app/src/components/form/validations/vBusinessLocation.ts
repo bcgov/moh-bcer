@@ -11,6 +11,7 @@ export interface IBusinessLocationValues {
   underage: string;
   underage_other?: string;
   health_authority: string;
+  health_authority_other?: string;
   doingBusinessAs: string;
   manufacturing: string;
   tableData?: {
@@ -57,5 +58,9 @@ export const Validation = yup.object({
   }),
   doingBusinessAs: yup.string().test('length', 'The business name must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
   health_authority: yup.string().required('Please select your Health Authority'),
+  health_authority_other: yup.string().when('health_authority', {
+    is: 'other',
+    then: yup.string().required('Please provide details')
+  }),
   manufacturing: yup.string().required('This is a required field'),
 });

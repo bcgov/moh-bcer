@@ -38,6 +38,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     underage: '',
     underage_other: '',
     health_authority: '',
+    health_authority_other: '',
     doingBusinessAs: location.doingBusinessAs ? location.doingBusinessAs : '',
     manufacturing: '',
     tableData: location.tableData ? location.tableData : {id: undefined},
@@ -51,7 +52,11 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     formattedLocation.underage = 'No';
   } else {
     formattedLocation.underage = 'other';
-    formattedLocation.underage_other = location.underage_other;
+    if (location.underage_other) {
+      formattedLocation.underage_other = location.underage_other;
+    } else {
+      formattedLocation.underage_other = location.underage;
+    }
   } 
 
   const healthAuthorityMatchString = location.health_authority.toLowerCase();
@@ -68,8 +73,12 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     formattedLocation.health_authority = 'northern';
   } else {
     //TODO: for now just put the location.health_authority value back into the formatted object. Eventually once the 'other' option is ready
-    // set formattedLocation.health_authority = 'other' and formattedLocation.health_authority_other = location.health_authority
-    formattedLocation.health_authority = location.health_authority;
+    formattedLocation.health_authority = 'other';
+    if (location.health_authority_other) {
+      formattedLocation.health_authority_other = location.health_authority_other;
+    } else {
+      formattedLocation.health_authority_other = location.health_authority;
+    }
   }
 
   const manufacturingMatchString = location.manufacturing.toLowerCase();
