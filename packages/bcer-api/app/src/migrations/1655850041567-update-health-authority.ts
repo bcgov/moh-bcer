@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class AddLocationDeletedTime1655850031566 implements MigrationInterface {
+export class AddHealthAuthorityOther1655850031567 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TYPE location_health_authority_enum ADD VALUE 'other'`);
