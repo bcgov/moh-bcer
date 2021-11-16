@@ -30,6 +30,7 @@ export const Initial = {
   underage: '',
   underage_other: '',
   health_authority: '',
+  health_authority_other: '',
   doingBusinessAs: '',
   manufacturing: '',
 };
