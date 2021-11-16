@@ -4,6 +4,7 @@ export enum HealthAuthority {
   INTERIOR = 'interior',
   ISLAND = 'island',
   NORTHERN = 'northern',
+  OTHER = 'other',
 }
 
 const COASTAL_OPTIONS = new Set(['coastal', 'vch']);
@@ -23,4 +24,5 @@ export const haTranslation = (ha: string): HealthAuthority => {
   if (healthAuthorityWords.some((w) => INTERIOR_OPTIONS.has(w))) return HealthAuthority.INTERIOR;
   if (healthAuthorityWords.some((w) => ISLAND_OPTIONS.has(w))) return HealthAuthority.ISLAND;
   if (healthAuthorityWords.some((w) => NORTHERN_OPTIONS.has(w))) return HealthAuthority.NORTHERN;
+  return HealthAuthority.OTHER;
 }

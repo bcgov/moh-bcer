@@ -61,6 +61,12 @@ export class LocationEntity {
   })
   ha: HealthAuthority;
 
+  @Column('varchar', {
+    nullable: true,
+    name: 'health_authority_other'
+  })
+  ha_other: string;
+
   @Column('varchar', { nullable: true })
   doingBusinessAs: string;
 
@@ -134,6 +140,7 @@ export class LocationEntity {
       underage: ['yes','no'].includes(this.underage) ? this.underage : 'other',
       underage_other: !['yes','no'].includes(this.underage) ? this.underage : '',
       health_authority: this.ha,
+      health_authority_other: this.ha_other,
       doingBusinessAs: this.doingBusinessAs,
       manufacturing: this.manufacturing ? 'yes' : 'no',
       products: this.products?.map((product: ProductEntity) => product.toResponseObject()),
