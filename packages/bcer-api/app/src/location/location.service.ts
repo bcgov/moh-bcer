@@ -173,7 +173,7 @@ export class LocationService {
       }
       entity.manufacturing = manufacturingLocationTranslation(l.manufacturing.toLowerCase());
       entity.ha = haTranslation(l.health_authority);
-      entity.ha_other = entity.ha === HealthAuthority.OTHER ? l.health_authority : null;
+      entity.ha_other = l.health_authority_other;
       entity.business = business;
       entity.doingBusinessAs = doingBusinessAs?.length > 0 ? doingBusinessAs : business.businessName;
       return entity;
@@ -419,11 +419,10 @@ export class LocationService {
       doingBusinessAs: payload.doingBusinessAs,
       underage: payload.underage,
       ha: haTranslation(payload.health_authority),
-      ha_other: null,
+      ha_other: payload.health_authority_other,
       manufacturing: payload.manufacturing === "yes" ? true : false
     }
     payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
-    updateValue.ha === HealthAuthority.OTHER ? updateValue.ha_other = payload.health_authority : null;
 
     const result = await this.locationRepository.update({id: locationId}, {...updateValue});
   }
