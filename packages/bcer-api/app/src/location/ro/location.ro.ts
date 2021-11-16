@@ -49,6 +49,9 @@ export class LocationRO {
   health_authority: HealthAuthority;
 
   @ApiProperty()
+  health_authority_other?: string;
+
+  @ApiProperty()
   doingBusinessAs: string;
 
   @ApiProperty()

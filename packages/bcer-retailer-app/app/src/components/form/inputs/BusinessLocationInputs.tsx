@@ -130,17 +130,24 @@ function BusinessLocationInputs() {
         <a href="https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries" target="_blank" rel="noopener noreferrer">following link</a>
         <span style={{color: 'red'}}> *</span>
       </div>
-      <StyledRadioGroup
-        name="health_authority"
-        options={[
-          {label: 'Fraser Health', value: 'fraser'},
-          {label: 'Interior Health', value: 'interior'},
-          {label: 'Island Health', value: 'island'},
-          {label: 'Northern Health', value: 'northern'},
-          {label: 'Vancouver Coastal Health', value: 'coastal'},
-        ]}
-      />
-
+      <div className={classes.optionalWrapper} >
+        <div className={classes.radioWrapper}>
+          <StyledRadioGroup
+            name="health_authority"
+            options={[
+              {label: 'Fraser Health', value: 'fraser'},
+              {label: 'Interior Health', value: 'interior'},
+              {label: 'Island Health', value: 'island'},
+              {label: 'Northern Health', value: 'northern'},
+              {label: 'Vancouver Coastal Health', value: 'coastal'},
+              {label: 'Other', value: 'other'},
+            ]}
+          />
+          </div>
+          <div className={classes.optionalField}>
+            {values.health_authority === 'other' && <StyledTextField name="health_authority_other" placeholder="Please Specify" fullWidth={false}/>}
+          </div>
+        </div>
       <div className={classes.groupHeader}>
         Do you produce, formulate, package, repackage or prepare restricted e-substances for sale from this sales premises? <span style={{color: 'red'}}>*</span>
       </div>

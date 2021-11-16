@@ -97,6 +97,10 @@ export class LocationDTO {
   @IsNotEmpty()
   health_authority: string;
 
+  @ApiProperty()
+  @IsOptional()
+  health_authority_other: string;
+
   @ApiProperty({
     description: 'The name the store is doing business as',
     example: 'EZ Vape Oven'
