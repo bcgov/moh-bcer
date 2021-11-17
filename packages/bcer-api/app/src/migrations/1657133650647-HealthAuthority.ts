@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class HealthAuthority1637133650647 implements MigrationInterface {
-    name = 'HealthAuthority1637133650647'
+export class HealthAuthority1657133650647 implements MigrationInterface {
+    name = 'HealthAuthority1657133650647'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "location" ADD "health_authority_other" character varying`);
