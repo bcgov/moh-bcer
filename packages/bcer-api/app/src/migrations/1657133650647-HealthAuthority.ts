@@ -7,7 +7,7 @@ export class HealthAuthority1657133650647 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "location" ADD "health_authority_other" character varying`);
         await queryRunner.query(`COMMENT ON COLUMN "noi"."renewed_at" IS NULL`);
         await queryRunner.query(`ALTER TABLE "noi" ALTER COLUMN "renewed_at" SET DEFAULT null`);
-        await queryRunner.query(`ALTER TYPE "public"."location_health_authority_enum" RENAME TO "location_health_authority_enum_old"`);
+        await queryRunner.query(`ALTER TYPE "bcer"."location_health_authority_enum" RENAME TO "location_health_authority_enum_old"`);
         await queryRunner.query(`CREATE TYPE "location_health_authority_enum" AS ENUM('coastal', 'fraser', 'interior', 'island', 'northern', 'other')`);
         await queryRunner.query(`ALTER TABLE "location" ALTER COLUMN "health_authority" DROP DEFAULT`);
         await queryRunner.query(`ALTER TABLE "location" ALTER COLUMN "health_authority" TYPE "location_health_authority_enum" USING "health_authority"::"text"::"location_health_authority_enum"`);
