@@ -39,7 +39,7 @@ jobs:
         status: custom
         custom_payload: |
           {
-            text: `New development release ready: ${process.env.VERSION}`,
+            text: `New ${ process.env.ENVIRONMENT } release ready: ${process.env.VERSION}`,
             attachments: [{
               "author_name": "Github",
               fallback: "fallback",
@@ -58,7 +58,7 @@ jobs:
               },
               {
                 title: "Environment",
-                value: "development",
+                value: process.env.ENVIRONMENT,
                 short: false
               },
               {
