@@ -43,8 +43,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     zIndex: 100,
     top: '212px',
-    left: '120px',
-    width: '355px',
+    left: '110px',
+    width: '375px',
     paddingTop: '15px',
   },
   bodyWrapperV2: {
@@ -112,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#002C71',
   },
   date: {
-    fontSize: '14px',
+    fontSize: '12px',
     lineHeight: '19px',
     textAlign: 'center',
     fontWeight: 'bold',
@@ -203,7 +203,7 @@ function Pdf({ location, legalName }: PdfProps) {
         <Box className={responsiveClass.bottomTextWrapper}>
           <Typography className={classes.bottomText}>
             This e-substance retailer has submitted their Notice of Intent and
-            is eligible to sell e-substances.
+            is eligible to sell e-substances 6 weeks after the submission date.
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between">
@@ -215,6 +215,16 @@ function Pdf({ location, legalName }: PdfProps) {
               Date Submitted
             </Typography>
           </Box>
+          {!!formattedData.renewalDate && (
+            <Box>
+              <Typography className={classes.date}>
+                {formattedData.renewalDate}
+              </Typography>
+              <Typography className={classes.dateLabel}>
+                Date Renewed
+              </Typography>
+            </Box>
+          )}
           <Box>
             <Typography className={classes.date}>
               {formattedData.expiryDate}

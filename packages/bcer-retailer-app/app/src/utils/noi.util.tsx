@@ -92,13 +92,15 @@ export class NoiUtil {
 
   static renderAction(handleDownload: Function) {
     return function (l: BusinessLocation) {
+      const disabled = l?.status === LocationStatus.Closed;
       return (
         <Tooltip title="Download PDF" placement="top">
           <IconButton
             style={{
-              color: '#0053A5',
+              color: disabled ? '#ccc' : '#0053A5',
             }}
             onClick={() => handleDownload(l)}
+            disabled={disabled}
           >
             <CloudDownloadIcon />
           </IconButton>
@@ -145,7 +147,7 @@ interface ResponsiveClass {
 export class NoiPdfUtil {
   private totalCharacters: number = 0;
   private responsiveClass: ResponsiveClass;
-  
+
   constructor(
     location: BusinessLocation,
     legalName: string,
@@ -223,7 +225,8 @@ export class NoiPdfUtil {
       ageRestricted: this.findAgeRestricted(location),
       manufacturing: GeneralUtil.upperCaseFirstLetter(location.manufacturing),
       submissionDate: this.formatSubmissionDate(location),
-      expiryDate: this.formatExpairyDate(location),
+      renewalDate: this.formatRenewalDate(location),
+      expiryDate: this.formatExpiryDate(location),
     };
   }
 
@@ -245,12 +248,22 @@ export class NoiPdfUtil {
 
   static formatSubmissionDate(location: BusinessLocation): string {
     return GeneralUtil.getFormattedDate(
-      location.noi?.renewed_at ?? location.noi?.created_at,
+      location.noi?.created_at,
       DateFormat.MMMM_DD_YYYY
     );
   }
 
-  static formatExpairyDate(location: BusinessLocation): string {
-    return GeneralUtil.getFormattedDate(location.noi?.expiry_date, DateFormat.MMMM_DD_YYYY);
+  static formatRenewalDate(location: BusinessLocation): string {
+    return GeneralUtil.getFormattedDate(
+      location.noi?.renewed_at,
+      DateFormat.MMMM_DD_YYYY
+    );
+  }
+
+  static formatExpiryDate(location: BusinessLocation): string {
+    return GeneralUtil.getFormattedDate(
+      location.noi?.expiry_date,
+      DateFormat.MMMM_DD_YYYY
+    );
   }
 }
