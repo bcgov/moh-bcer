@@ -140,7 +140,7 @@ function BusinessLocationInputs() {
               {label: 'Island Health', value: 'island'},
               {label: 'Northern Health', value: 'northern'},
               {label: 'Vancouver Coastal Health', value: 'coastal'},
-              {label: 'Other', value: 'other'},
+              {label: 'Other (e.g. Out of Province)', value: 'other'},
             ]}
           />
           </div>
