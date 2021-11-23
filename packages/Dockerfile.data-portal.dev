@@ -1,0 +1,17 @@
+FROM node:14.16.1
+
+MAINTAINER FreshWorks <web@freshworks.io>
+
+ENV PATH $PATH:/usr/src/app/node_modules/.bin
+
+WORKDIR /usr/src/app
+
+COPY ./bcer-data-portal/app/package*.json ./bcer-data-portal/app/
+COPY ./bcer-shared-components/package*.json ./bcer-shared-components/
+
+# Install dependencies
+RUN cd ./bcer-data-portal/app && npm i && cd ../
+
+EXPOSE 3000
+
+CMD [ "npm", "--prefix", "./bcer-data-portal/app/", "run", "start" ]
