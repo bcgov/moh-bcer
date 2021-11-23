@@ -12,3 +12,10 @@ export const getDurationInMilliseconds = (start: [number, number]): string => {
  * @returns 
  */
 export const convertNullToEmptyString = (str: string | null) => str == null ? '' : str;
+
+export class GeneralUtil {
+  static getRawPhoneNumber(phoneNumber: string){
+    let rawPhoneNumber = phoneNumber ? phoneNumber.replace(/\D+/g, '') : '';
+    return rawPhoneNumber.substring(rawPhoneNumber.length - 10);
+  }
+}

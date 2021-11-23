@@ -8,11 +8,30 @@ services:
       context: ./packages
       dockerfile: Dockerfile.retailer-app.dev
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ./packages/bcer-retailer-app:/usr/src/app/bcer-retailer-app
       - ./packages/bcer-shared-components:/usr/src/app/bcer-shared-components
       - /usr/src/app/bcer-retailer-app/app/node_modules
+      - /usr/src/app/bcer-shared-components/node_modules
+    depends_on:
+      - postgres
+      - application
+    networks:
+      - backend
+    
+  data-portal:
+    image: bcer-data-portal:dev
+    container_name: bcer-data-portal
+    build:
+      context: ./packages
+      dockerfile: Dockerfile.data-portal.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/bcer-data-portal:/usr/src/app/bcer-data-portal
+      - ./packages/bcer-shared-components:/usr/src/app/bcer-shared-components
+      - /usr/src/app/bcer-data-portal/app/node_modules
       - /usr/src/app/bcer-shared-components/node_modules
     depends_on:
       - postgres

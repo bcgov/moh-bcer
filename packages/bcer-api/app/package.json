@@ -56,6 +56,7 @@
     "nest-csv-parser": "2.0.4",
     "nest-keycloak-connect": "1.2.1",
     "nest-winston": "1.4.0",
+    "notifications-node-client": "5.1.0",
     "pg": "8.3.0",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
