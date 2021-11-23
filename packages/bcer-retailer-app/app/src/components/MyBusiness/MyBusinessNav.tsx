@@ -90,7 +90,7 @@ const steps = [
     canAdvanceChecks: [
       {
         property: 'uploadErrors',
-        validate: (val: Array<any>) => !val?.length,
+        validate: (val: Array<any>) => val?.length === 0,
       }
     ],
     onAdvance: [{
