@@ -20,7 +20,7 @@ export const useCsvValidator = () => {
         } catch (validationError) {
           //@ts-ignore
           // needed to access validationError.inner
-          validationError.inner.map((error: any) => errorArray.push({row: index + 1, field: error.path, message: error.message})) as any
+          validationError.inner.map((error: any) => errorArray.push({row: index + 2, field: error.path, message: error.message})) as any
           element.error = true;
           validatedDataArray.push(element)
         }

@@ -74,7 +74,9 @@ export default function ConfirmLocations () {
   }, [businessInfo.locations])
 
   useEffect(() => {
-    setBusinessInfo({...businessInfo, uploadErrors: uploadErrors})
+    if (uploadErrors !== undefined) {
+      setBusinessInfo({...businessInfo, uploadErrors: uploadErrors})
+    }
   }, [uploadErrors])
 
   const confirmDelete = () => {
@@ -109,28 +111,33 @@ export default function ConfirmLocations () {
         <div className={classes.tableWrapperSubheader}>
           <div className={classes.actionsWrapper} >
             You have {newLocations?.length ? newLocations.length : '0'} retail locations.
-            <CSVLink
-              headers={['Row', 'Field', 'Message']}
-              data={uploadErrors ? uploadErrors?.map(error => {
-                return [error.row, error.field, error.message];
-              }) : []}
-              filename={'location_errors.csv'} className={classes.csvLink} target='_blank'>
-              <StyledButton variant='contained' disabled={uploadErrors?.length === 0}>
-                <SaveAltIcon className={classes.buttonIconLight} />
-                Download Errors CSV
-              </StyledButton>
-            </CSVLink>
-            <CSVLink
-              headers={Object.keys(BusinessLocationHeaders)}
-              data={newLocations?.map((l: any) => {
-                return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-              })}
-              filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-              <StyledButton variant='outlined'>
-                <SaveAltIcon className={classes.buttonIcon} />
-                Download CSV
-              </StyledButton>
-            </CSVLink>
+            {
+              uploadErrors 
+                ?
+              <CSVLink
+                headers={['Row', 'Field', 'Message']}
+                data={uploadErrors?.map(error => {
+                  return [error.row, error.field, error.message];
+                })}
+                filename={'location_errors.csv'} className={classes.csvLink} target='_blank'>
+                <StyledButton variant='contained' disabled={uploadErrors?.length === 0}>
+                  <SaveAltIcon className={classes.buttonIconLight} />
+                  Download Errors CSV
+                </StyledButton>
+              </CSVLink>
+                :
+              <CSVLink
+                headers={Object.keys(BusinessLocationHeaders)}
+                data={newLocations?.map((l: any) => {
+                  return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+                })}
+                filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
+                <StyledButton variant='outlined'>
+                  <SaveAltIcon className={classes.buttonIcon} />
+                  Download CSV
+                </StyledButton>
+              </CSVLink>
+            }
           </div>
         </div>
         {
