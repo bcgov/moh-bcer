@@ -94,17 +94,19 @@ export class NoiUtil {
     return function (l: BusinessLocation) {
       const disabled = l?.status === LocationStatus.Closed;
       return (
-        <Tooltip title="Download PDF" placement="top">
-          <IconButton
-            style={{
-              color: disabled ? '#ccc' : '#0053A5',
-            }}
-            onClick={() => handleDownload(l)}
-            disabled={disabled}
-          >
-            <CloudDownloadIcon />
-          </IconButton>
-        </Tooltip>
+        <Box display='flex' justifyContent='center'>
+          <Tooltip title="Download/Print PDF" placement="top">
+            <IconButton
+              style={{
+                color: disabled ? '#ccc' : '#0053A5',
+              }}
+              onClick={() => handleDownload(l)}
+              disabled={disabled}
+            >
+              <CloudDownloadIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       );
     };
   }
@@ -161,7 +163,7 @@ export class NoiPdfUtil {
     this.totalCharacters += data.addressLine1?.length || 0;
     this.totalCharacters += data.addressLine2?.length || 0;
     this.totalCharacters += data.city?.length || 0;
-    this.totalCharacters += data.doingBusinessAs?.length || 0;
+    this.totalCharacters += data.doingBusinessAs?.length || legalName?.length || 0;
     this.totalCharacters += data.postal?.length || 0;
     this.totalCharacters += data.underage_other?.length || 0;
     this.totalCharacters += legalName?.length || 0;
@@ -218,7 +220,7 @@ export class NoiPdfUtil {
 
   static formatNoiData(location: BusinessLocation, legalName: string) {
     return {
-      businessName: location.doingBusinessAs,
+      businessName: location.doingBusinessAs || legalName,
       legalName,
       address: this.formatAddress(location),
       postal: location.postal?.toLocaleUpperCase(),
