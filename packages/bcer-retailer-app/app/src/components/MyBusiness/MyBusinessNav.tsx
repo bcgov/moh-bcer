@@ -136,6 +136,7 @@ export default function MyBusinessNav () {
     notificationsValid: true,
     currentStep: 0,
     entry: '',
+    uploadErrors: []
   })
 
   const stepperOptions = steps.map(element => ({ path: element.path, icon: element.icon, label: element.label }))
