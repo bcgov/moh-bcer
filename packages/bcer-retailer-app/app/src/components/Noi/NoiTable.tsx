@@ -17,22 +17,27 @@ function NoiTable({ data, type, ...props }: NoiTableProps): JSX.Element {
     {
       title: 'Address Line 1',
       render: NoiUtil.renderAddressLine1,
+      width: 200,
     },
     {
       title: 'City',
       render: NoiUtil.renderCity,
+      width: 150,
     },
     {
       title: 'Postal Code',
       render: NoiUtil.renderPostalCode,
+      width: 120,
     },
     {
       title: 'Doing Business As',
       render: NoiUtil.renderDoingBusinessAs,
+      width: 200,
     },
     {
       title: 'Status',
       render: NoiUtil.renderStatus,
+      width: 150,
     },
   ];
   if (type === NoiStatus.Submitted) {
@@ -41,9 +46,12 @@ function NoiTable({ data, type, ...props }: NoiTableProps): JSX.Element {
       {
         title: 'Submission/Renewal Date',
         render: NoiUtil.renderRenewalOrSubmissionDate,
+        width: 200,
       },
       {
+        title: 'Download/Print NOI',
         render: NoiUtil.renderAction(props?.downloadAction),
+        width: 200,
       },
     ];
   }

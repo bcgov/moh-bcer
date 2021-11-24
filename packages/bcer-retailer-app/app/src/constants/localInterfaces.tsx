@@ -147,4 +147,5 @@ export type TableColumn = {
   title?: string;
   sorting?: string;
   defaultSort?: string;
+  width?: number;
 } & ({field: string} | {render: Function})
