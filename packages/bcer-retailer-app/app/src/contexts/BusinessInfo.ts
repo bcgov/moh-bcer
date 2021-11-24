@@ -36,7 +36,7 @@ const Context = createContext<[BIContext, Function]>([{
   entry: '',
   currentPage: 0,
   fileData: undefined,
-  uploadErrors: undefined
+  uploadErrors: []
 }, () => {}]);
 
 export const BusinessInfoContext = Context;
