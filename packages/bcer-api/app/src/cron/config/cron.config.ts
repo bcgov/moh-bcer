@@ -39,7 +39,7 @@ export class CronConfig {
      * 
      * Function should be updated further to account for expired NOIs.
      */
-    static getNoiVaildTill(): Moment {
+    static getNoiValidTill(): Moment {
       let validTill = moment(`${moment().year()}-${this.noiValidTill}`).add(1, 'year');
       return validTill;
     }
@@ -49,10 +49,10 @@ export class CronConfig {
      * 
      */
     static assignNextExpiryDate(renewedDate : Date): Date {
-      let validTill = this.getNoiVaildTill();
+      let validTill = this.getNoiValidTill();
       const expiryDate = this.getNoiExpiryDate();
-      const [expiryMonth, expiryDay] = this.noiExpiryDate.split('-');
-      if(moment().month() >= +expiryMonth && moment().day() >= +expiryDay && moment(renewedDate).isAfter(expiryDate)){
+      const thisYearExpiryDate = moment(`${moment().year()}-${this.noiExpiryDate}`);
+      if(moment().isSameOrAfter(thisYearExpiryDate) && moment(renewedDate).isSameOrAfter(expiryDate)){
         validTill = validTill.add(1, 'year');
       }
       return validTill.toDate();
