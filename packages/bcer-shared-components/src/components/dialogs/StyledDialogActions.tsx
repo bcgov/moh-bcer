@@ -11,7 +11,6 @@ import { StyledDialogActionProps } from '@/constants/interfaces/dialogInterfaces
  * @returns A Material-UI ReactElement with specified styles
  */
 const StyledActions = styled(DialogActions)({
-  justifyContent: "space-between",
   padding: '16px 0px 24px 0px',
   margin: '0px 24px 0px 24px',
   borderTop: '1px solid #CCCCCC'
@@ -46,7 +45,7 @@ export function StyledDialogActions ({
   }
   
   return (
-      <StyledActions >
+      <StyledActions style={{justifyContent: !acceptHandler || !cancelHandler ? 'flex-end' : 'space-between' }}>
         <StyledButton 
           variant="dialog-cancel"
           onClick={cancelHandler}
@@ -63,13 +62,16 @@ export function StyledDialogActions ({
               >
                 {acceptButtonText}
               </StyledButton>
-            : <StyledButton 
-                variant="dialog-accept"
-                onClick={acceptHandler}
-                disabled={acceptDisabled}
-              >
-                {acceptButtonText}
-              </StyledButton>
+            : 
+              acceptHandler 
+                ? <StyledButton 
+                    variant="dialog-accept"
+                    onClick={acceptHandler}
+                    disabled={acceptDisabled}
+                  >
+                    {acceptButtonText}
+                  </StyledButton>
+                : null
         }
       </StyledActions>
   );
