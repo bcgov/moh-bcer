@@ -112,3 +112,10 @@ export enum SuccessStepEnum {
   product = 'product',
   manufacturing = 'manufacturing'
 }
+
+export enum UserStatus {
+    ACTIVE = 1,
+    INACTIVE,
+    PENDING,
+    BLOCKED,
+}

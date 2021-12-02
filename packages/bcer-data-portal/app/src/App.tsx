@@ -7,6 +7,7 @@ import Locations from './views/Locations';
 import GetHelp from './views/GetHelp';
 import UserManagement from './views/UserManagement/Overview';
 import Navigator from './components/Navigator';
+import { routes } from './constants/routes';
 
 const useStyles = makeStyles({
   root: {
@@ -31,18 +32,17 @@ const App = () => {
       <div>
       <Header />
       <div className={classes.nav}>
-
-      <Navigator />
+        <Navigator />
       </div>
       </div>
       <div className={classes.appBody}>
         <Switch>
-          <Route exact path='/' component={Locations} />
-          <Route exact path='/getHelp' component={GetHelp} />
-          <Route exact path='/user' component={UserManagement} />
+          <Route exact path={routes.root} component={Locations} />
+          <Route exact path={routes.getHelp} component={GetHelp} />
+          <Route exact path={routes.userManagement} component={UserManagement} />
         </Switch>
       </div>
-    // </div>
+    </div>
   );
 };
 

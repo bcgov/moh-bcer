@@ -81,7 +81,7 @@ export function SubmittedNoiTable({
       data={data}
       blockHeader={'Submitted Notice of Intent'}
       tableHeader={'Business Locations'}
-      tableSubHeader={`You have ${data.length} retail locations`}
+      tableSubHeader={`You have ${data.length} retail locations. You can download/print the Notice of Intent for your Active locations.`}
       csvProps={NoiUtil.getCsvProp(data, 'business_locations.csv')}
       fullScreenProp={fullScreenProp}
     >

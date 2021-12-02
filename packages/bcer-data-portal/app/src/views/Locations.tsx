@@ -45,7 +45,7 @@ const useStyles = makeStyles({
   content: {
     maxWidth: '1440px',
     width: '95%',
-    padding: '30px',
+    padding: '20px 30px',
   },
   helpTextWrapper: {
     display: 'flex',
@@ -66,7 +66,7 @@ const useStyles = makeStyles({
     padding: '1.4rem',
   },
   title: {
-    padding: '20px 0px',
+    padding: '10px 0px',
     color: '#002C71',
   },
   highlighted: {
@@ -345,11 +345,6 @@ export default function Locations() {
               <Typography className={classes.title} variant="h5">
                 Submitted Locations
               </Typography>
-              <div className={classes.buttonWrapper}>
-                <StyledButton variant="outlined" onClick={logout}>
-                  Log Out
-                </StyledButton>
-              </div>
             </div>
             <div className={classes.helpTextWrapper}>
               <GetAppIcon className={classes.helperIcon} />

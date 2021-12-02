@@ -42,4 +42,10 @@ export class ProductSoldService {
   async remove(existingProductSolds: ProductSoldEntity[]) {
     this.productSoldRepository.remove(existingProductSolds, { chunk: 100 });
   }
+
+  async assignProductSoldToNewBusiness(currentBusinessId: string, newBusinessId: string){
+    const result = await this.productSoldRepository
+    .query(`UPDATE product_sold SET "businessId" = $1 WHERE "businessId" = $2`, [newBusinessId, currentBusinessId])
+    return result;
+  }
 }

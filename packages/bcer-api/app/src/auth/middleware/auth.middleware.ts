@@ -14,8 +14,13 @@ export class AuthMiddleware implements NestMiddleware {
     const authorization = req.headers['authorization'];
     const path = req.originalUrl;
     // Because the middleware `excludes` doesn't work for a wildcard
-    if (path.includes('data/location')) { next(); }
-    else if (authorization) {
+    if (
+      path.includes('data/location') || 
+      path.includes('data/user') || 
+      path.includes('data/business')
+      ) { 
+        next(); 
+    } else if (authorization) {
       try {
         const start = process.hrtime();
         const profile = await this.authService.getProfile(authorization);

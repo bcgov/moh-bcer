@@ -111,3 +111,22 @@ export interface ManufacturingReport {
   productName: string;
   created_at: number | string;
 }
+
+export interface UserDetails extends UserProfile {
+  firstName: string;
+  lastName: string;
+  business: Business;
+}
+
+export interface UserSearchFields {
+  search: string;
+  type: string;
+}
+
+export interface UserUpdateFields {
+  active: boolean,
+  selectedBusiness: Business,
+  confirmed: boolean,
+  mergeData: boolean,
+  user: UserDetails,
+}

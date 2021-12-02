@@ -14,4 +14,4 @@ RUN cd ./bcer-data-portal/app && npm i && cd ../
 
 EXPOSE 3000
 
-CMD [ "npm", "--prefix", "./bcer-data-portal/app/", "run", "start" ] 
+CMD [ "npm", "--prefix", "./bcer-data-portal/app/", "run", "start" ]

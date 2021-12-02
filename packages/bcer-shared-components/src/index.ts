@@ -6,3 +6,4 @@ export * from './components/tables';
 export * from './components/steppers';
 export * from './components/custom';
 export * from './utils';
+export * from './components/generic';

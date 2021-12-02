@@ -1,3 +1,4 @@
+import { routes } from '@/constants/routes';
 import {
   AppBar,
   Box,
@@ -9,20 +10,30 @@ import {
 } from '@material-ui/core';
 import { TabPanel } from '@material-ui/lab';
 import { withStyles } from '@material-ui/styles';
+import { useKeycloak } from '@react-keycloak/web';
 import React from 'react';
 import { useHistory } from 'react-router';
+import { StyledButton } from 'vaping-regulation-shared-components';
+import { StyledTab, StyledTabs } from './generic';
+import store from 'store';
+
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: '#F1F1F1',
     boxShadow: 'none',
     width: '100%',
+    padding: '10px 30px',
   },
-  indicator:{
-      '& .MuiTabs-indicator:selected':{
-          backgroundColor: '#fff'
-      }
-  }
+  indicator: {
+    '& .MuiTabs-indicator:selected': {
+      backgroundColor: '#fff',
+    },
+  },
+  buttonWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
 }));
 
 function a11yProps(index: any) {
@@ -32,40 +43,54 @@ function a11yProps(index: any) {
   };
 }
 
-const AntTabs = withStyles({
-    indicator: {
-        backgroundColor: '#fff',
-      },
-})(Tabs);
-
 function Navigator() {
   const classes = useStyles();
   const history = useHistory();
-  const [value, setValue] = React.useState(0);
+  const [keycloak] = useKeycloak();
+  const [value, setValue] = React.useState(history.location.pathname);
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
     history.push(newValue);
   };
+
+  const logout = () => {
+    store.clearAll();
+    keycloak.logout();
+    history.push(routes.root);
+  };
+
   return (
     <div>
       <AppBar position="static" className={classes.appBar}>
-        <Box display="flex">
-          <Box>
-            <AntTabs
-            className= {classes.indicator}
+        <Box display="flex" justifyContent="space-between">
+          <Box display="flex">
+            <StyledTabs
+              className={classes.indicator}
               value={value}
               onChange={handleChange}
               textColor="primary"
               aria-label="icon tabs example"
             >
-              <Tab disableRipple label={<div style={{color: 'red'}}>Hello world</div>} {...a11yProps(0)} value='/user'/>
-              <Tab disableRipple label="Item Two" {...a11yProps(1)} value='/'/>
-            </AntTabs>
+              <StyledTab
+                disableRipple
+                label="Submitted Locations"
+                {...a11yProps(0)}
+                value={routes.root}
+              />
+              <StyledTab
+                disableRipple
+                label="User Management"
+                {...a11yProps(1)}
+                value={routes.userManagement}
+              />
+            </StyledTabs>
           </Box>
-          <Box>
-              <Typography>Log out</Typography>
-            </Box>
+          <Box className={classes.buttonWrapper}>
+            <StyledButton variant="dialog-cancel" onClick={logout}>
+              Log Out
+            </StyledButton>
+          </Box>
         </Box>
       </AppBar>
     </div>
