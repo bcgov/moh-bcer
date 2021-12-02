@@ -43,7 +43,8 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     doingBusinessAs: location.doingBusinessAs ? location.doingBusinessAs : '',
     manufacturing: '',
     tableData: location.tableData ? location.tableData : {id: undefined},
-    error: location.error ? location.error : undefined
+    error: location.error ? location.error : undefined,
+    noi: location.noi ? location.noi : undefined
   }
 
   const underageMatchString = location.underage.toLowerCase();

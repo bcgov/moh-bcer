@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { NoiStatus } from '@/constants/localEnums';
 
 export interface IBusinessLocationValues {
   id?: string;
@@ -17,6 +18,13 @@ export interface IBusinessLocationValues {
   tableData?: {
     id: number
   },
+  noi?: {
+    created_at: Date;
+    status: NoiStatus;
+    renewed_at: Date;
+    updated_at: Date;
+    expiry_date: Date;
+  }
   error?: boolean;
 }
 

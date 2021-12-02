@@ -8,6 +8,7 @@ import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { IBusinessLocationValues, Validation } from '@/components/form/validations/vBusinessLocation';
 import { Initial } from '@/components/form/validations/vBusinessLocation';
 import BusinessLocationInputs from '@/components/form/inputs/BusinessLocationInputs';
+import ViewLocation from '@/components/MyBusiness/locations/ViewLocation';
 
 const useStyles = makeStyles({
   addIcon: {
@@ -99,8 +100,9 @@ export default function LocationsEditForm(
           null
       }
       {
-        (rowData || isAddNew) && isOpen
+        (rowData || isAddNew) && isOpen && !rowData?.noi?.created_at 
         ? 
+          
           <Formik
             initialValues={isAddNew ? Initial : rowData}
             validationSchema={Validation}
@@ -130,7 +132,20 @@ export default function LocationsEditForm(
               </StyledDialog>
             </Form>
           </Formik>
-        : null
+        : rowData?.noi?.created_at && isOpen && !isAddNew
+          ?
+            <StyledDialog
+            open={openProps.isOpen}
+            title={'View Business Location'}
+            scroll='body'
+            maxWidth="xl"
+            cancelButtonText="Close"
+            cancelHandler={()=>openProps.toggleOpen(false)}
+          >
+            <ViewLocation rowData={rowData} />
+          </StyledDialog>
+          :
+            null
       }
     </div>
   )
