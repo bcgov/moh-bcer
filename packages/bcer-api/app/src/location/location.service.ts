@@ -445,4 +445,13 @@ export class LocationService {
     return await this.locationRepository.find({ businessId });
 
   }
+
+  async assignLocationsToNewBusiness(currentBusinessId: string, newBusinessId: string){
+    const result = await this.locationRepository
+    .createQueryBuilder()
+    .update()
+    .set({businessId: newBusinessId})
+    .where('businessId = :currentBusinessId', {currentBusinessId})
+    .execute();
+  }
 }

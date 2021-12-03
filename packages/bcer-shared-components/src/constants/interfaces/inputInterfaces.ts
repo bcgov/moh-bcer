@@ -1,12 +1,14 @@
 import { FormikProps, FieldAttributes } from "formik";
 import { TextFieldProps, RadioGroupProps, CheckboxProps} from "@material-ui/core";
 import { DatePickerProps } from '@material-ui/pickers';
-import { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 export interface TextInputProps {
   field: FieldAttributes<TextFieldProps>;
   form: FormikProps<FormData>;
   label: string;
+  variant?: 'outlined' | 'filled' | undefined;
+  placeholder?: string;
   props: TextFieldProps;
 }
 
@@ -15,6 +17,14 @@ export interface StyledTextProps {
   label: string;
   isDisabled?: boolean;
   fullWidth?: boolean | undefined;
+  [s: string]: unknown;
+}
+
+export interface SelectOptionProps {
+  options : Array<{
+    value: string;
+    label: string;
+  }>;
 }
 
 export interface SelectInputProps extends TextInputProps {
@@ -33,6 +43,7 @@ export interface StyledSelectProps {
   }>
   isDisabled?: boolean;
   fullWidth?: boolean | undefined;
+  variant?: 'outlined' | 'filled' | undefined;
 }
 
 export interface RadioGroupInputProps {

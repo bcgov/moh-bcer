@@ -101,4 +101,10 @@ export class ManufacturingService {
     await this.manufacturingRepository.delete({})
     return;
   }
+
+  async assignManufacturingToNewBusiness(currentBusinessId: string, newBusinessId: string){
+    const result = await this.manufacturingRepository
+    .query(`UPDATE manufacturing SET "businessId" = $1 WHERE "businessId" = $2`, [newBusinessId, currentBusinessId])
+    return result;
+  }
 }

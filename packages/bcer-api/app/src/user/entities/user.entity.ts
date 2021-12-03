@@ -91,6 +91,7 @@ export class UserEntity {
       created_at: this.created_at,
       updated_at: this.updated_at,
       businessId: this.businessId,
+      business: this.business,
     };
   }
 }

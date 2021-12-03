@@ -163,4 +163,10 @@ export class ProductsService {
     const products = await this.productRepository.softDelete({ business: { id: businessId }, productUploadId });
     return;
   }
+
+  async assignProductsToNewBusiness(currentBusinessId: string, newBusinessId: string){
+    const result = await this.productRepository
+    .query(`UPDATE product SET "businessId" = $1 WHERE "businessId" = $2`, [newBusinessId, currentBusinessId])
+    return result;
+  }
 }

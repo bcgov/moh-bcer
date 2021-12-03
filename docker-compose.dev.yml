@@ -19,6 +19,7 @@ services:
       - application
     networks:
       - backend
+      
   data-portal:
     image: bcer-data-portal:dev
     container_name: bcer-data-portal
