@@ -16,6 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14.17.6'
     - name: Package App
       run: VERSION=${{ github.event.inputs.version }} ENVIRONMENT=${{ github.event.inputs.environment }} make package-build
     - name: Create Github Release
