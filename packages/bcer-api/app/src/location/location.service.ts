@@ -446,11 +446,11 @@ export class LocationService {
 
   }
 
-  async assignLocationsToNewBusiness(currentBusinessId: string, newBusinssId: string){
+  async assignLocationsToNewBusiness(currentBusinessId: string, newBusinessId: string){
     const result = await this.locationRepository
     .createQueryBuilder()
     .update()
-    .set({businessId: newBusinssId})
+    .set({businessId: newBusinessId})
     .where('businessId = :currentBusinessId', {currentBusinessId})
     .execute();
   }
