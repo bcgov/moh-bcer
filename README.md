@@ -1,3 +1,5 @@
+![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)
+
 # B.C. E-Substance Reporting
 
 The BCER application includes 4 packages.
