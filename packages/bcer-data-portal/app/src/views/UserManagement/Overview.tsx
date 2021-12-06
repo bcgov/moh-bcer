@@ -55,7 +55,7 @@ function UserManagement() {
                 <StyledTextField
                   variant="outlined"
                   name="search"
-                  placeholder="Search (Address, Business Name, Legal Name, Doing Business As)"
+                  placeholder="Search (User Name, Business Name, Address, Email Address)"
                   style={{ paddingLeft: '20px' }}
                 />
               </Box>
