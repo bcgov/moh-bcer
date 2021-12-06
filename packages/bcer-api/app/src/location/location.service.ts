@@ -88,7 +88,16 @@ export class LocationService {
     qb.where('location.noi IS NOT NULL');
 
     if (query.search) {
-      qb.andWhere('(LOWER(location.addressLine1) LIKE :search OR LOWER(location.doingBusinessAs) LIKE :search OR LOWER(business.legalName) LIKE :search OR LOWER(business.businessName) LIKE :search)', { search: `%${query.search.toLowerCase()}%` });
+      qb.andWhere(`
+        (
+          LOWER(location.addressLine1) LIKE :search OR
+          LOWER(location.doingBusinessAs) LIKE :search OR
+          LOWER(location.city) LIKE :search OR
+          REPLACE(LOWER(location.postal), ' ', '') LIKE REPLACE(:search, ' ', '') OR
+          LOWER(business.legalName) LIKE :search OR
+          LOWER(business.businessName) LIKE :search
+        )
+      `, { search: `%${query.search.toLowerCase()}%` });
     }
     if (query.authority) {
       qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
@@ -435,5 +444,14 @@ export class LocationService {
   async getLocationsWithBusinessId(businessId: string){
     return await this.locationRepository.find({ businessId });
 
+  }
+
+  async assignLocationsToNewBusiness(currentBusinessId: string, newBusinessId: string){
+    const result = await this.locationRepository
+    .createQueryBuilder()
+    .update()
+    .set({businessId: newBusinessId})
+    .where('businessId = :currentBusinessId', {currentBusinessId})
+    .execute();
   }
 }

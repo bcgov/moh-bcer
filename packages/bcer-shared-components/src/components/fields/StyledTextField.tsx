@@ -1,14 +1,22 @@
 
 import React, { ReactElement, Fragment } from 'react';
 import { Field, ErrorMessage } from 'formik'
-import { TextField, makeStyles, styled } from '@material-ui/core';
-
+import { TextField, makeStyles, styled, Box, IconButton } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
 import { InputFieldLabel, InputFieldError } from '@/components/generic';
 import { TextInputProps, StyledTextProps } from '@/constants/interfaces/inputInterfaces';
 
 const useStyles = makeStyles({
   emptyHelper: {
     height: '22px'
+  },
+  iconWrapper: {
+    marginRight: '-37px',
+    marginLeft: '5px',
+    zIndex: 1000,
+  },
+  icon: {
+    padding: '2px',
   }
 })
 
@@ -30,6 +38,19 @@ export const StyledTextInput = styled(TextField)({
   }
 });
 
+export const StyledOutlinedInput = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    backgroundColor: '#FAFAFA',
+    borderRadius: '3px',
+    
+  },
+  '& .MuiOutlinedInput-input':{
+    padding: '12px 10px 12px 14px',
+    fontSize: '14px',
+    lineHeight: '19px',
+  },
+})
+
 /**
  * Applies Formik implicit props to a Material-UI TextField
  * 
@@ -42,24 +63,35 @@ function TextInput ({
   field: { value, ...fieldRest },
   form,
   label,
+  variant,
+  placeholder,
   ...props
 }: TextInputProps):ReactElement {
   const classes = useStyles();
 
   const touched = form.touched[fieldRest.name];
   const error = form.errors[fieldRest.name];
-  
   return (
     <Fragment>
       {label && <InputFieldLabel label={label} />}
-      <StyledTextInput
+      {variant === 'outlined' ? 
+        <StyledOutlinedInput 
+          variant='outlined'
+          placeholder={placeholder || ''}
+          fullWidth
+          error={touched && !!error}
+          value={value || ''}
+          {...fieldRest}
+          {...props}
+        />
+      :<StyledTextInput
         variant="filled"
         fullWidth
         error={touched && !!error}
         value={value || ''}
         {...fieldRest}
         {...props}
-      />
+      />}
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
@@ -83,7 +115,9 @@ export function StyledTextField ({
   isDisabled = false,
   name,
   label,
-  fullWidth = true
+  fullWidth = true,
+  variant,
+  placeholder,
 }: StyledTextProps) {
   return (
     <Field
@@ -92,6 +126,8 @@ export function StyledTextField ({
       label={label}
       fullWidth={fullWidth}
       disabled={isDisabled}
+      variant={variant}
+      placeholder={placeholder}
     />
   );
 }

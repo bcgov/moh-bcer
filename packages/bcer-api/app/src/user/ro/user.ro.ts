@@ -12,6 +12,7 @@ export class UserRO {
   created_at: Date;
   updated_at: Date;
   businessId?: string;
+  business?: BusinessRO
 }
 
 export class ProfileRO {

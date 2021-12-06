@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@material-ui/core';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
+import { ApiOperation } from '@/constants/localEnums';
 
 export function formatError (error: any) {
   const data = error?.response?.data;
@@ -42,7 +43,8 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     doingBusinessAs: location.doingBusinessAs ? location.doingBusinessAs : '',
     manufacturing: '',
     tableData: location.tableData ? location.tableData : {id: undefined},
-    error: location.error ? location.error : undefined
+    error: location.error ? location.error : undefined,
+    noi: location.noi ? location.noi : undefined
   }
 
   const underageMatchString = location.underage.toLowerCase();
@@ -89,4 +91,17 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
   }
 
   return formattedLocation
+}
+
+export class ErrorMessageFormat {
+  static salesError(error: any, generationPoint?: ApiOperation): JSX.Element {
+    const data = error?.response?.data;
+    if (
+      data.message?.includes('UQ_9b83599a9b9049d48be7ffaab45')
+    ) {
+      data.message =
+        'The UPC field must be unique for each product in your Sales Report. If UPC not available, then leave the field blank.';
+    }
+    return formatError(error);
+  }
 }

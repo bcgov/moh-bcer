@@ -3,6 +3,7 @@ import { Box, IconButton, Tooltip } from '@material-ui/core';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import CreateIcon from '@material-ui/icons/Create';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined';
 
 import {
@@ -71,19 +72,35 @@ export class LocationUtil {
       const isEditDisabled: boolean = LocationUtil.isClosed(l) || l?.noi?.status === NoiStatus.Submitted;
       return (
         <>
-          <Tooltip title="Edit Location" placement="top">
+        {
+          isEditDisabled
+            ?
+          <Tooltip title="View Location" placement="top">
             <IconButton
               style={{
-                color: isEditDisabled ? disabledColor : '#0053A5',
+                color: '#0053A5',
               }}
               onClick={() => {
                 handleAction.handleEdit(l);
               }}
-              disabled={isEditDisabled}
+            >
+              <VisibilityIcon />
+            </IconButton>
+          </Tooltip>
+            :
+          <Tooltip title="Edit Location" placement="top">
+            <IconButton
+              style={{
+                color: '#0053A5',
+              }}
+              onClick={() => {
+                handleAction.handleEdit(l);
+              }}
             >
               <CreateIcon />
             </IconButton>
           </Tooltip>
+        }
           <Tooltip title="Close Location" placement="top">
             <IconButton
               style={{

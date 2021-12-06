@@ -19,6 +19,11 @@ export const theme = createMuiTheme({
       fontSize: '17px',
       fontWeight: 600
     },
+    subtitle2: {
+      fontSize: '14px',
+      color: '#333333',
+      fontWeight: 600
+    },
     body1: {
       fontSize: '16px',
     },

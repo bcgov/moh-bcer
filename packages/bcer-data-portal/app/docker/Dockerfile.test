@@ -1,7 +1,6 @@
 # Create test build
 
-FROM node:10.20.1
-
+FROM node:14.17.6
 MAINTAINER FreshWorks <web@freshworks.io>
 
 ENV PATH $PATH:/app/node_modules/.bin

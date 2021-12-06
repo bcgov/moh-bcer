@@ -8,11 +8,12 @@ import {
   StyledConfirmDialog,
 } from 'vaping-regulation-shared-components';
 import { SalesReportContext } from '@/contexts/SalesReport';
-import { formatError } from '@/utils/formatting';
+import { ErrorMessageFormat, formatError } from '@/utils/formatting';
 import { useAxiosPost } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { getSalesReportYear } from '@/utils/time';
 import Loader from './Loader';
+import { ApiOperation } from '@/constants/localEnums';
 
 interface IProps {
   isAction?: boolean | Function;
@@ -71,7 +72,7 @@ export default function withNav<P>({
         if (postError) {
           setAppGlobal({
             ...appGlobal,
-            networkErrorMessage: formatError(postError),
+            networkErrorMessage: ErrorMessageFormat.salesError(postError),
           });
         }
       }, [postError]);

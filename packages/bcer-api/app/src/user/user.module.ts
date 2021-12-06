@@ -8,6 +8,7 @@ import { UserController } from './user.controller';
 import { UserEntity } from './entities/user.entity';
 import { UserMiddleware } from 'src/user/middleware/user.middleware';
 import { UserService } from './user.service';
+import { UserDataPortalController } from './userDataPortal.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { UserService } from './user.service';
     forwardRef(() => BusinessModule),
     forwardRef(() => LocationModule),
   ],
-  controllers: [UserController],
+  controllers: [UserController, UserDataPortalController],
   providers: [AuthService, UserService],
   exports: [UserService]
 })

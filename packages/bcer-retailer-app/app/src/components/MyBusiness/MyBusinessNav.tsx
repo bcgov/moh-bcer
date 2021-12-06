@@ -90,7 +90,7 @@ const steps = [
     canAdvanceChecks: [
       {
         property: 'uploadErrors',
-        validate: (val: Array<any>) => !val?.length,
+        validate: (val: Array<any>) => val?.length === 0,
       }
     ],
     onAdvance: [{
@@ -136,6 +136,7 @@ export default function MyBusinessNav () {
     notificationsValid: true,
     currentStep: 0,
     entry: '',
+    uploadErrors: []
   })
 
   const stepperOptions = steps.map(element => ({ path: element.path, icon: element.icon, label: element.label }))

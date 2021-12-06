@@ -15,6 +15,8 @@ import '@/App.scss';
 import '@bcgov/bc-sans/css/BCSans.css';
 import keycloak from './keycloak';
 import store from 'store';
+import { ToastProvider } from './contexts/Toast';
+import Toast from './components/generic/Toast';
 
 const Login = lazy(() => import('./views/Login'));
 const KeycloackRedirect = lazy(() => import('./views/Keycloak'));
@@ -25,8 +27,12 @@ const PrivateRoute: React.FC<any> = ({ component: Component, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={props =>
-        keycloak.authenticated && !keycloak.loginRequired ? <Component {...props} /> : <Redirect to='/login' />
+      render={(props) =>
+        keycloak.authenticated && !keycloak.loginRequired ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to="/login" />
+        )
       }
     />
   );
@@ -37,40 +43,45 @@ const PublicRoute: React.FC<any> = ({ component: Component, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={props =>
-        !keycloak.authenticated ? <Component {...props} /> : <Redirect to='/' />
+      render={(props) =>
+        !keycloak.authenticated ? <Component {...props} /> : <Redirect to="/" />
       }
     />
   );
 };
 
 const Loader = () => (
-  <LinearProgress style={{ borderRadius: '5%', height: '5px', width: '100vw' }} />
-)
+  <LinearProgress
+    style={{ borderRadius: '5%', height: '5px', width: '100vw' }}
+  />
+);
 
 const Routes = () => {
   const [appGlobal, setAppGlobal] = useState<AppGlobalContext>({
-    networkErrorMessage: ''
-  })
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
+    networkErrorMessage: '',
+  });
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     if (appGlobal.networkErrorMessage) {
-      setSnackbarOpen(true)
+      setSnackbarOpen(true);
     }
-  }, [appGlobal.networkErrorMessage])
+  }, [appGlobal.networkErrorMessage]);
 
   return (
     <HashRouter>
       <ThemeProvider theme={theme}>
         <AppGlobalProvider value={[appGlobal, setAppGlobal]}>
-          <Suspense fallback={<Loader />}>
-            <Switch>
-              <PublicRoute path='/login' component={Login} />
-              <Route path='/keycloak' component={KeycloackRedirect} />
-              <PrivateRoute path='/' component={App} />
-            </Switch>
-          </Suspense>
+          <ToastProvider>
+            <Suspense fallback={<Loader />}>
+              <Switch>
+                <PublicRoute path="/login" component={Login} />
+                <Route path="/keycloak" component={KeycloackRedirect} />
+                <PrivateRoute path="/" component={App} />
+              </Switch>
+            </Suspense>
+            <Toast />
+          </ToastProvider>
         </AppGlobalProvider>
       </ThemeProvider>
       <Snackbar
@@ -79,13 +90,13 @@ const Routes = () => {
         message={appGlobal.networkErrorMessage}
         autoHideDuration={6000}
         key={appGlobal.networkErrorMessage}
-        ClickAwayListenerProps={{mouseEvent: false,touchEvent: false}}
+        ClickAwayListenerProps={{ mouseEvent: false, touchEvent: false }}
       />
     </HashRouter>
   );
 };
 
-render((
+render(
   <KeycloakProvider
     keycloak={keycloakConfig}
     autoRefreshToken={true}
@@ -94,9 +105,10 @@ render((
     }}
     onTokens={() => {
       store.set('TOKEN', keycloak.token);
-     }}
+    }}
     LoadingComponent={<Loader />}
   >
     <Routes />
-  </KeycloakProvider>
-), document.getElementById('root'));
+  </KeycloakProvider>,
+  document.getElementById('root')
+);

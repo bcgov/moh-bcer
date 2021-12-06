@@ -59,4 +59,10 @@ export class NoiService {
       .getMany();
     return nois;
   }
+
+  async assignNoisToNewBusiness(currentBusinessId: string, newBusinessId: string){
+    const result = await this.noiRepository
+    .query(`UPDATE noi SET "businessId" = $1 WHERE "businessId" = $2`, [newBusinessId, currentBusinessId])
+    return result;
+  }
 }

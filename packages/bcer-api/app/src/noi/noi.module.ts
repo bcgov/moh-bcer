@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { forwardRef, MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NoiEntity } from 'src/noi/entities/noi.entity'
@@ -12,9 +12,9 @@ import { UserModule } from 'src/user/user.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([NoiEntity]),
-    BusinessModule,
-    LocationModule,
-    UserModule,
+    forwardRef(() => BusinessModule),
+    forwardRef(() => LocationModule),
+    forwardRef(() => UserModule),
   ],
   providers: [NoiService],
   exports: [NoiService],

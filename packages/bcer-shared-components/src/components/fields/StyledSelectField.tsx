@@ -4,7 +4,7 @@ import { Field } from 'formik'
 import { TextField, MenuItem, styled } from '@material-ui/core';
 
 import { InputFieldLabel } from '@/components/generic';
-import { SelectInputProps, StyledSelectProps } from '@/constants/interfaces/inputInterfaces';
+import { SelectInputProps, SelectOptionProps, StyledSelectProps } from '@/constants/interfaces/inputInterfaces';
 
 /**
  * Uses react styled() to apply styles to the text field component
@@ -20,6 +20,22 @@ const StyledSelect = styled(TextField)({
 
   }
 });
+
+const StyledOutlinedSelect = styled(TextField)({
+  '& .MuiSelect-root': {
+    padding: '11px',
+    fontSize: '14px',
+    color: '#333333',
+    backgroundColor: '#CDCED2',
+    
+  },
+  '& .MuiOutlinedInput-root': {
+    borderTopLeftRadius: '3px',
+    borderBottomLeftRadius: '3px',
+    borderTopRightRadius: '0px',
+    borderBottomRightRadius: '0px',
+  }
+})
 
 /**
  * Uses react styled() to apply styles to the MenuItem component
@@ -42,6 +58,7 @@ function SelectInput ({
   form,
   label,
   options,
+  variant,
   ...props
 }: SelectInputProps):ReactElement {
 
@@ -51,26 +68,59 @@ function SelectInput ({
   return (
     <Fragment>
       {label && <InputFieldLabel label={label} />}
-      <StyledSelect
-        select
-        variant="filled"
-        fullWidth
-        error={!!error && submitCount > 0}
-        helperText={ error &&  submitCount > 0 ? error : ' '}
-        inputProps={{ displayEmpty: true }}
-        value={value || ''}
-        {...fieldRest}
-        {...props}
-      >
-        <StyledMenuItem value="" disabled>Please Select</StyledMenuItem>
+      {variant === 'outlined' ? 
+        <StyledOutlinedSelect
+          select
+          variant="outlined"
+          fullWidth
+          error={!!error && submitCount > 0}
+          helperText={ error &&  submitCount > 0 ? error : ' '}
+          inputProps={{ displayEmpty: true }}
+          value={value || ''}
+          {...fieldRest}
+          {...props}
+        >
+          <StyledMenuItem value="" disabled>Please Select</StyledMenuItem>
+          {
+            options.map((element: {value: string, label: string}, index: number) => (
+              <StyledMenuItem key={index} value={element.value}>{element.label}</StyledMenuItem>
+            ))
+          }
+        </StyledOutlinedSelect>
+      : <StyledSelect
+          select
+          variant="filled"
+          fullWidth
+          error={!!error && submitCount > 0}
+          helperText={ error &&  submitCount > 0 ? error : ' '}
+          inputProps={{ displayEmpty: true }}
+          value={value || ''}
+          {...fieldRest}
+          {...props}
+        >
+          <StyledMenuItem value="" disabled>Please Select</StyledMenuItem>
+          {
+            options.map((element: {value: string, label: string}, index: number) => (
+              <StyledMenuItem key={index} value={element.value}>{element.label}</StyledMenuItem>
+            ))
+          }
+        </StyledSelect>
+      }
+    </Fragment>
+  );
+}
+
+function SelectItems({options}: SelectOptionProps) {
+  return (
+    <Fragment>
+      <StyledMenuItem value="" disabled>Please Select</StyledMenuItem>
         {
           options.map((element: {value: string, label: string}, index: number) => (
             <StyledMenuItem key={index} value={element.value}>{element.label}</StyledMenuItem>
           ))
         }
-      </StyledSelect>
     </Fragment>
-  );
+  )
 }
 
 /**
@@ -92,6 +142,7 @@ export function StyledSelectField ({
   label,
   fullWidth = true,
   options,
+  variant,
 }: StyledSelectProps) {
   return (
     <Field
@@ -101,6 +152,7 @@ export function StyledSelectField ({
       options={options}
       fullWidth={fullWidth}
       disabled={isDisabled}
+      variant={variant}
     />
   );
 }

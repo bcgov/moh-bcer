@@ -163,3 +163,10 @@ export enum DateFormat {
   MMM_DD_YYYY = 'MMM DD, YYYY',
   MMMM_DD_YYYY = 'MMMM DD, YYYY',
 }
+
+export enum ApiOperation {
+  GetSubmission = 'Get Submission',
+  CreateSubmission = 'Create Submission',
+  UploadData = 'Upload Data',
+  ConfirmSubmission = 'Confirm Submission',
+}
