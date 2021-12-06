@@ -66,11 +66,11 @@ function EditDialog({
             acceptHandler={() => helpers.submitForm()}
             cancelHandler={() => setOpen(false)}
             title="Edit Info"
-            acceptDisabled={buttonLoading}
+            acceptDisabled={buttonLoading || !values.confirmed || !values.selectedBusiness}
           >
             <Box className={classes.root}>
               <Box display="flex" alignItems="center" marginY={2}>
-                <Typography>User name</Typography>
+                <Typography>Retailer Name:</Typography>
                 <Box marginX={2} />
                 <Typography className={classes.boldText}>
                   {`${targetUser?.firstName || ''} ${
@@ -82,8 +82,8 @@ function EditDialog({
                 Business Name
               </Typography>
               <Typography className={classes.helperText}>
-                Select other Business Name in the field below if you want to
-                move this user to other business.
+                You can select a different value in the dropdown below if you
+                wish to move this user to a new Business.
               </Typography>
               <StyledAutocomplete
                 options={
@@ -92,6 +92,7 @@ function EditDialog({
                   ) || []
                 }
                 getOptionLabel={(b: Business) => b.businessName || b.legalName}
+                defaultValue={targetUser.business}
                 onChange={(e: any, newValue: Business) => {
                   helpers.setFieldValue('selectedBusiness', newValue);
                 }}
@@ -104,7 +105,7 @@ function EditDialog({
               {values.selectedBusiness && (
                 <Box>
                   <StyledWarning
-                    text={`User can have all the access to ${
+                    text={`The user will be able to access and update all the data from ${
                       values.selectedBusiness?.businessName ||
                       values.selectedBusiness?.legalName
                     }`}
@@ -112,15 +113,14 @@ function EditDialog({
                   <Box className={classes.mergeContainer}>
                     <Box mt={2}>
                       <StyledRadioGroup
-                        label={`Do you you want to merge all data from "${
+                        label={`Do you also want to merge all data from ${
                           targetUser?.business?.businessName ||
                           targetUser?.business?.legalName
-                        }"
-                        business to "${
+                        }
+                        to ${
                           values.selectedBusiness.businessName ||
                           values.selectedBusiness.legalName
-                        }". All the data including Users,
-                        Business name, Address and Email address.`}
+                        }? This includes: locations, NOIs, product reports, manufacturing reports and sales reports.`}
                         name="mergeData"
                         options={[
                           { label: 'Yes', value: true },
@@ -135,8 +135,7 @@ function EditDialog({
 
               <StyledCheckbox
                 name="confirmed"
-                label={`I understand that I will be required to wait for 6 weeks 
-                  from the time that I file or update my product report before I can sell my product.`}
+                label={`I understand this action is irreversible and I will notify the retailer that their account has been merged.`}
               />
             </Box>
           </StyledDialog>
