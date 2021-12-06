@@ -41,7 +41,6 @@ export default function LocationsEditForm(
   const [initialTouched, setInitialTouched] = useState<FormikTouched<IBusinessLocationValues>>()
 
   useEffect(() => {
-    console.log(rowData)
     if (rowData) {
       try {
         Validation.validateSync(rowData, { abortEarly: false });
