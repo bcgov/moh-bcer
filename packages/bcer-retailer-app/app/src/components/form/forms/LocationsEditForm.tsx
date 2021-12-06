@@ -9,6 +9,7 @@ import { IBusinessLocationValues, Validation } from '@/components/form/validatio
 import { Initial } from '@/components/form/validations/vBusinessLocation';
 import BusinessLocationInputs from '@/components/form/inputs/BusinessLocationInputs';
 import ViewLocation from '@/components/MyBusiness/locations/ViewLocation';
+import { NoiStatus } from '@/constants/localEnums';
 
 const useStyles = makeStyles({
   addIcon: {
@@ -40,6 +41,7 @@ export default function LocationsEditForm(
   const [initialTouched, setInitialTouched] = useState<FormikTouched<IBusinessLocationValues>>()
 
   useEffect(() => {
+    console.log(rowData)
     if (rowData) {
       try {
         Validation.validateSync(rowData, { abortEarly: false });
@@ -100,7 +102,7 @@ export default function LocationsEditForm(
           null
       }
       {
-        (rowData || isAddNew) && isOpen && !rowData?.noi?.created_at 
+        (rowData || isAddNew) && isOpen && (rowData?.noi?.status !== NoiStatus.Submitted)
         ? 
           
           <Formik
@@ -132,7 +134,7 @@ export default function LocationsEditForm(
               </StyledDialog>
             </Form>
           </Formik>
-        : rowData?.noi?.created_at && isOpen && !isAddNew
+        : (rowData?.noi?.status === NoiStatus.Submitted) && isOpen && !isAddNew
           ?
             <StyledDialog
             open={openProps.isOpen}
