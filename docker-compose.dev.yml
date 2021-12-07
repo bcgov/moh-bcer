@@ -8,7 +8,7 @@ services:
       context: ./packages
       dockerfile: Dockerfile.retailer-app.dev
     ports:
-      - "3001:3000"
+      - "3000:3000"
     volumes:
       - ./packages/bcer-retailer-app:/usr/src/app/bcer-retailer-app
       - ./packages/bcer-shared-components:/usr/src/app/bcer-shared-components
