@@ -37,6 +37,10 @@ export class UserManagementUtil {
         render: this.renderName,
       },
       {
+        title: 'BCeID',
+        field: 'bceid',
+      },
+      {
         title: 'Business Name',
         render: this.renderBusinessName,
       },

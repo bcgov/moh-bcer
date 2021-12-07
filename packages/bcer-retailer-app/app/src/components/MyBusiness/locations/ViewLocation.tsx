@@ -40,7 +40,9 @@ export default function ViewLocation({rowData}: {rowData: IBusinessLocationValue
   return (
     <Grid container spacing={3}>
       <Grid item container spacing={1} xs={12}>
-        <Typography variant="subtitle1">Address of sales premises from which restricted e-substances are sold</Typography>
+        <Grid item xs={12}>
+          <Typography variant="subtitle1">Address of sales premises from which restricted e-substances are sold</Typography>
+        </Grid>
         <Grid item xs={6}>
           <Typography variant="subtitle2">Address 1</Typography>
           <Typography variant="body1">{rowData.addressLine1}</Typography>
@@ -59,7 +61,9 @@ export default function ViewLocation({rowData}: {rowData: IBusinessLocationValue
         </Grid>
       </Grid>
       <Grid item container spacing={1} xs={12}>
-        <Typography variant="subtitle1">Business Contact Info of sales premises from which restricted e-substances are sold</Typography>
+        <Grid item xs={12}>
+          <Typography variant="subtitle1">Business Contact Info of sales premises from which restricted e-substances are sold</Typography>
+        </Grid>
         <Grid item xs={6}>
           <Typography variant="subtitle2">Business Email Address</Typography>
           <Typography variant="body1">{rowData.email}</Typography>
@@ -70,7 +74,9 @@ export default function ViewLocation({rowData}: {rowData: IBusinessLocationValue
         </Grid>
       </Grid>
       <Grid item container spacing={1} xs={12}>
-        <Typography variant="subtitle1">Please state if persons under 19 years of age are permitted on the sales premises</Typography>
+        <Grid item xs={12}>
+          <Typography variant="subtitle1">Please state if persons under 19 years of age are permitted on the sales premises</Typography>
+        </Grid>
         <Grid item xs={6}>
           <Typography variant="subtitle2">Underage Allowed</Typography>
           <Typography variant="body1">{rowData.underage}</Typography>
@@ -87,7 +93,9 @@ export default function ViewLocation({rowData}: {rowData: IBusinessLocationValue
         }
       </Grid>
       <Grid item container spacing={1} xs={12}>
-        <Typography variant="subtitle1">Which Regional Health Authority is the sales premises located in</Typography>
+        <Grid item xs={12}>
+          <Typography variant="subtitle1">Which Regional Health Authority is the sales premises located in</Typography>
+        </Grid>
         <Grid item xs={6}>
           <Typography variant="subtitle2">Health Authority</Typography>
           <Typography variant="body1">{rowData.health_authority}</Typography>
@@ -104,7 +112,9 @@ export default function ViewLocation({rowData}: {rowData: IBusinessLocationValue
         }
       </Grid>
       <Grid item container spacing={1} xs={12}>
-        <Typography variant="subtitle1">Do you produce, formulate, package, repackage, or prepare restricted e-substances for sale from this sales premises?</Typography>
+        <Grid item xs={12}>
+          <Typography variant="subtitle1">Do you produce, formulate, package, repackage, or prepare restricted e-substances for sale from this sales premises?</Typography>
+        </Grid>
         <Grid item xs={6}>
           <Typography variant="subtitle2">Manufacturing Location</Typography>
           <Typography variant="body1">{rowData.manufacturing}</Typography>

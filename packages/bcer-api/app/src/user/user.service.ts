@@ -68,8 +68,8 @@ export class UserService {
         // May be we could use ILIKE instead of like after confirming the postgres version?
         case UserSearchTypes.UserName:
           queryBuilder.andWhere(
-            'LOWER(user.firstName) LIKE :search OR LOWER(user.lastName) LIKE :search',
-            { search },
+            `REGEXP_REPLACE(LOWER(CONCAT(user.firstName, user.lastName)), '\s+$', '') LIKE :search`,
+            { search: search.replace(/ /g, '') },
           );
           break;
         case UserSearchTypes.BusinessName:
