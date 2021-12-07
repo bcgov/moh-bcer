@@ -1,6 +1,8 @@
 import { NotAcceptableException } from '@nestjs/common';
 import { NotifyClient } from 'notifications-node-client';
-import { GeneralUtil } from 'src/utils/util';
+import { GeneralUtil, sleep } from 'src/utils/util';
+import { NotificationReportDTO } from './dto/notification-report.dto';
+import { NotificationDTO } from './dto/notification.dto';
 
 export class TextService {
   private readonly apiEndpoint =
@@ -19,7 +21,7 @@ export class TextService {
   private async send(message: string, phoneNumber: string) {
     const response = await this.messageClient.sendSms(
       this.templateId,
-      `+1${phoneNumber}`,
+      `${phoneNumber}`,
       {
         personalisation: {
           message,
@@ -29,15 +31,47 @@ export class TextService {
     );
   }
 
-  async sendMessage(message: string, phoneNumbers: Array<string>) {
+  async sendMessage(
+    data: NotificationDTO,
+    phoneNumbers: Array<string>,
+  ): Promise<NotificationReportDTO> {
+    const { message, title } = data;
     if (message?.length > 612) throw NotAcceptableException;
     const result = await (Promise as any).allSettled(
-      phoneNumbers.map(async (phoneNumber) => {
-        const formattedPhoneNumber = GeneralUtil.getRawPhoneNumber(phoneNumber);
-        await this.send(message, formattedPhoneNumber);
+      phoneNumbers.map(async (phoneNumber, i) => {
+        /**
+         * Limiting the api request to a maximum of 1000 per second.
+         */
+        await sleep(Math.floor(i + 1) / 1000);
+
+        return this.send(message, phoneNumber);
       }),
     );
 
-    console.log(result[0].reason.response.data.errors);
+    return this.formatResult(result);
+  }
+
+  private formatResult(result: any[]): NotificationReportDTO {
+    const formattedResult: NotificationReportDTO = {
+      success: 0,
+      fail: 0,
+      errorData: [],
+    };
+    result.forEach(r => {
+      if (r.status === 'fulfilled') {
+        formattedResult.success++;
+      } else {
+        formattedResult.fail++;
+        if (r.reason?.config?.data) {
+          let config = JSON.parse(r.reason.config.data);
+          formattedResult.errorData.push({
+            recipient: config.phone_number,
+            message: r.reason.response?.data?.errors[0]?.message,
+          });
+        }
+      }
+    });
+
+    return formattedResult;
   }
 }
