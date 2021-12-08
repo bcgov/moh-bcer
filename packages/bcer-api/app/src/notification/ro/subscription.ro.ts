@@ -5,7 +5,7 @@ export class SubscriptionRO {
     id: string;
 
     @ApiProperty()
-    businessId: string;
+    businessId?: string;
 
     @ApiProperty()
     createdAt: Date;

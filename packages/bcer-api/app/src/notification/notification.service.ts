@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -10,11 +10,14 @@ import { SubscriptionDTO } from './dto/subscription.dto';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { NotificationEntity } from './entities/notification.entity';
 import { TextService } from './textService';
+import { BusinessService } from 'src/business/business.service';
+import { RecipientType } from './enum/recipient.enum';
 
 @Injectable()
 export class NotificationService {
   constructor(
     private textService: TextService,
+    private businessService: BusinessService,
     @InjectRepository(NotificationEntity)
     private notificationRepository: Repository<NotificationEntity>,
     @InjectRepository(SubscriptionEntity)
@@ -67,28 +70,39 @@ export class NotificationService {
 
   async createOrUpdateSubscription(
     payload: SubscriptionDTO,
+    businessId: string,
   ): Promise<SubscriptionEntity> {
-    const existing = await this.findSubscription(payload.businessId);
+    const existing = await this.findSubscriptionByBusinessId(businessId);
     if (existing?.id) {
-      return await this.updateSubscription(payload);
+      return await this.updateSubscription(existing.id, payload);
     }
+    const business = await this.businessService.getBusinessById(businessId);
 
-    const subscription = this.subscriptionRepository.create({ ...payload });
+    const subscription = this.subscriptionRepository.create({
+      ...payload,
+      business,
+    });
     await this.subscriptionRepository.save(subscription);
-    return this.findSubscription(payload.businessId);
+    return this.findSubscriptionById(subscription.id);
   }
 
-  async updateSubscription({
-    id,
-    businessId,
-    ...rest
-  }: SubscriptionDTO): Promise<SubscriptionEntity> {
-    await this.subscriptionRepository.update({ businessId }, { ...rest });
-    return await this.findSubscription(businessId);
+  async updateSubscription(
+    id: string,
+    payload: SubscriptionDTO,
+  ): Promise<SubscriptionEntity> {
+    await this.subscriptionRepository.update({ id }, payload);
+    return await this.findSubscriptionById(id);
   }
 
-  async findSubscription(businessId: string): Promise<SubscriptionEntity> {
-    return await this.subscriptionRepository.findOne({ businessId });
+  async findSubscriptionByBusinessId(
+    businessId: string,
+  ): Promise<SubscriptionEntity> {
+    const business = await this.businessService.getBusinessById(businessId);
+    return await this.subscriptionRepository.findOne({ business });
+  }
+
+  async findSubscriptionById(id: string): Promise<SubscriptionEntity> {
+    return await this.subscriptionRepository.findOne({ id });
   }
 
   async findAllActiveSubscription(): Promise<SubscriptionEntity[]> {
@@ -109,11 +123,33 @@ export class NotificationService {
 
   getErroredPhoneNumber(notification: NotificationEntity): string[] {
     const errorData: ErrorDataType[] = notification.errorData;
-    const phoneNumbers: string[] = [];
-    if (!errorData) return null;
-    errorData.forEach(entry => {
-      phoneNumbers.push(entry.recipient);
-    });
-    return phoneNumbers;
+    if (!errorData) return [];
+    return errorData.map(e => e.recipient);
+  }
+
+  async resendText(notification: NotificationEntity, recipient: RecipientType) {
+    let phoneNumbers: string[] = [];
+    if (recipient === RecipientType.ErrorOnly) {
+      phoneNumbers = this.getErroredPhoneNumber(notification);
+    } else if (recipient === RecipientType.All) {
+      phoneNumbers = await this.getSubscribedPhoneNumbers();
+    }
+
+    if (phoneNumbers.length === 0) {
+      throw new HttpException(
+        'No Phone Numbers Found',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const data: NotificationDTO = {
+      message: notification.message,
+      title: notification.title,
+    };
+
+    const result = await this.sendText(data, phoneNumbers);
+    result.success += notification.success;
+
+    return await this.updateNotification(notification.id, result, true);
   }
 }

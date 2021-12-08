@@ -40,11 +40,8 @@ export class SubscriptionController {
     @Request() req: RequestWithUser,
     @Body() payload: SubscriptionDTO,
   ): Promise<SubscriptionRO> {
-    if (req.ctx.businessId !== payload.businessId) {
-      throw new ForbiddenException(null, 'user does not have permission to update this business');
-    }
     const subscription = await this.notificationService.createOrUpdateSubscription(
-      payload,
+      payload, req.ctx.businessId
     );
     return subscription.toResponseObject();
   }
@@ -60,9 +57,9 @@ export class SubscriptionController {
   async getSubscription(
     @Request() req: RequestWithUser,
   ): Promise<SubscriptionRO> {
-    const subscription = await this.notificationService.findSubscription(
+    const subscription = await this.notificationService.findSubscriptionByBusinessId(
       req.ctx.businessId,
     );
-    return subscription.toResponseObject();
+    return subscription?.toResponseObject();
   }
 }

@@ -17,10 +17,3 @@ export const convertNullToEmptyString = (str: string | null) =>
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-export class GeneralUtil {
-  static getRawPhoneNumber(phoneNumber: string) {
-    let rawPhoneNumber = phoneNumber ? phoneNumber.replace(/\D+/g, '') : '';
-    return rawPhoneNumber.substring(rawPhoneNumber.length - 10);
-  }
-}

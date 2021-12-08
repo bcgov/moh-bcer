@@ -8,11 +8,13 @@ import { SubscriptionEntity } from './entities/subscription.entity';
 import { SubscriptionController } from './subscription.controller';
 import { UserMiddleware } from 'src/user/middleware/user.middleware';
 import { UserModule } from 'src/user/user.module';
+import { BusinessModule } from 'src/business/business.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([NotificationEntity, SubscriptionEntity]),
     UserModule,
+    BusinessModule,
   ],
   controllers: [NotificationDataPortalController, SubscriptionController],
   providers: [NotificationService, TextService],

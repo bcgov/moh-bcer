@@ -71,7 +71,7 @@ export class NotificationDataPortalController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
   @Get()
-  async getNotifications() {
+  async getNotifications(): Promise<NotificationRO[]> {
     const notifications = await this.notificationService.getNotifications();
     return notifications.map(n => n.toResponseObject());
   }
@@ -80,45 +80,23 @@ export class NotificationDataPortalController {
   @ApiResponse({ status: HttpStatus.OK, type: NotificationRO })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
-  @Patch()
-  async resendText(@Body() payload: ResendNotificationDTO) {
+  @Patch('resend')
+  async resendText(
+    @Body() payload: ResendNotificationDTO,
+  ): Promise<NotificationRO> {
     const { id, recipient = RecipientType.ErrorOnly } = payload;
-    let notification = await this.notificationService.findOneNotification(id);
+    const notification = await this.notificationService.findOneNotification(id);
     if (!notification) {
       throw new HttpException(
         'Notification with given id not found',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    let phoneNumbers: string[] = [];
-    if (recipient === RecipientType.ErrorOnly) {
-      phoneNumbers = this.notificationService.getErroredPhoneNumber(
-        notification,
-      );
-    } else if (recipient === RecipientType.All) {
-      phoneNumbers = await this.notificationService.getSubscribedPhoneNumbers();
-    }
 
-    if (phoneNumbers.length === 0) {
-      throw new HttpException(
-        'No Phone Numbers Found',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    const data: NotificationDTO = {
-      message: notification.message,
-      title: notification.title,
-    };
-
-    const result = await this.notificationService.sendText(data, phoneNumbers);
-    result.success += notification.success;
-
-    notification = await this.notificationService.updateNotification(
-      id,
-      result,
-      true,
+    const result = await this.notificationService.resendText(
+      notification,
+      recipient,
     );
-    return notification.toResponseObject();
+    return result.toResponseObject();
   }
 }
