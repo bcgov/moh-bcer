@@ -9,6 +9,7 @@ interface LocationTableProps {
     handleEdit: Function;
     handleClose: Function;
     handleDelete: Function;
+    handleView: Function;
   };
   [s: string]: unknown;
 }
@@ -16,6 +17,7 @@ interface LocationTableProps {
 function LocationTable({
   data,
   handleAction,
+  handleView,
   ...props
 }: LocationTableProps): JSX.Element {
   return (

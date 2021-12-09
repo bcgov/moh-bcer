@@ -30,12 +30,13 @@ export default function LocationsEditForm(
       toggleOpen: Dispatch<SetStateAction<boolean>>, 
       isAddNew?: boolean
       toggleEditConfirmOpen?: Dispatch<SetStateAction<boolean>>
-      setConfirmTarget?: Dispatch<SetStateAction<any>>
+      setConfirmTarget?: Dispatch<SetStateAction<any>>,
+      isViewOnly?: boolean
     }
   }
 ) {
   const classes = useStyles();
-  const { isOpen, toggleOpen, isAddNew } = openProps;
+  const { isOpen, toggleOpen, isAddNew, isViewOnly } = openProps;
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
   const [initialErrors, setInitialErrors] = useState<FormikErrors<IBusinessLocationValues>>()
   const [initialTouched, setInitialTouched] = useState<FormikTouched<IBusinessLocationValues>>()
@@ -101,7 +102,7 @@ export default function LocationsEditForm(
           null
       }
       {
-        (rowData || isAddNew) && isOpen && (rowData?.noi?.status !== NoiStatus.Submitted)
+        (rowData || isAddNew) && isOpen && (rowData?.noi?.status !== NoiStatus.Submitted) && !isViewOnly
         ? 
           
           <Formik
@@ -133,7 +134,7 @@ export default function LocationsEditForm(
               </StyledDialog>
             </Form>
           </Formik>
-        : (rowData?.noi?.status === NoiStatus.Submitted) && isOpen && !isAddNew
+        : ((rowData?.noi?.status === NoiStatus.Submitted) && isOpen && !isAddNew) || openProps.isViewOnly
           ?
             <StyledDialog
             open={openProps.isOpen}

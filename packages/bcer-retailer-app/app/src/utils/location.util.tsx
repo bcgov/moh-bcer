@@ -66,6 +66,7 @@ export class LocationUtil {
     handleEdit: Function;
     handleClose: Function;
     handleDelete: Function;
+    handleView: Function;
   }) {
     return function (l: BusinessLocation) {
       const disabledColor = '#CDCED2';
@@ -81,7 +82,7 @@ export class LocationUtil {
                 color: '#0053A5',
               }}
               onClick={() => {
-                handleAction.handleEdit(l);
+                handleAction.handleView(l);
               }}
             >
               <VisibilityIcon />
