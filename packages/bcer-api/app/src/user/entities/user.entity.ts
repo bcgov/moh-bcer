@@ -83,6 +83,7 @@ export class UserEntity {
     return {
       id: this.id,
       bceid: this.bceid,
+      bceidUser: this.bceidUser,
       user_status_id: this.user_status_id,
       type: this.type,
       email: this.email,

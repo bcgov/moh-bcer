@@ -43,6 +43,7 @@ export default function ExistingTableWrap() {
   const [targetRow, setTargetRow] = useState<BusinessLocation>(null);
   const [targetConfirmRow, setTargetConfirmRow] = useState<BusinessLocation>(null);
   const [isEditOpen, setOpenEdit] = useState<boolean>();
+  const [isViewOnly, setViewOnly] = useState<boolean>();
   const [isEditConfirmOpen, setOpenEditConfirm] = useState<boolean>();
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -78,10 +79,17 @@ export default function ExistingTableWrap() {
   /**
    * icon button actions
    */
-  const handleEdit = (l: BusinessLocation) => {
+   const handleEdit = (l: BusinessLocation) => {
     setOpenEdit(true);
     setTargetRow(l);
+    setViewOnly(false);
   };
+
+   const handleView = (l: BusinessLocation) => {
+    handleEdit(l);
+    setViewOnly(true);
+  };
+
   const handleEditConfirm = async () => {
     const newExistingLocations = existingLocations.map((element: BusinessLocation) => {
       if (element.id === targetConfirmRow.id) {
@@ -98,6 +106,7 @@ export default function ExistingTableWrap() {
     setBusinessInfo(newBusinessInfo);
     setOpenEditConfirm(false);
     setOpenEdit(false);
+    setViewOnly(false);
     setTargetRow(null);
     setTargetConfirmRow(null);
   }
@@ -143,6 +152,7 @@ export default function ExistingTableWrap() {
           handleActionButton={() => {}}
           handleAction={{
             handleEdit,
+            handleView,
             handleClose: handleCloseDialog,
             handleDelete: handleOpenDelete,
           }}
@@ -223,7 +233,7 @@ export default function ExistingTableWrap() {
            &&
           <LocationsEditForm
             rowData={editLocationFormatting(targetRow)}
-            openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit, isAddNew: false, toggleEditConfirmOpen: setOpenEditConfirm, setConfirmTarget: setTargetConfirmRow }}
+            openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit, isAddNew: false, toggleEditConfirmOpen: setOpenEditConfirm, setConfirmTarget: setTargetConfirmRow, isViewOnly }}
           />
         }
         <StyledConfirmDialog
