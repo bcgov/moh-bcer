@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 
 import { BusinessRO } from 'src/business/ro/business.ro';
@@ -17,6 +18,7 @@ import { ManufacturingEntity } from 'src/manufacturing/entities/manufacturing.en
 import { ProductEntity } from 'src/products/entities/product.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
+import { SubscriptionEntity } from 'src/notification/entities/subscription.entity';
 
 @Entity('business')
 export class BusinessEntity {
@@ -71,6 +73,9 @@ export class BusinessEntity {
 
   @OneToMany(() => SubmissionEntity, (submission) => submission.business)
   submissions: []
+
+  @OneToOne(() => SubscriptionEntity, (subscription: SubscriptionEntity) => subscription.business, { nullable: true })
+  subscription: SubscriptionEntity;
 
   @Column('json', { nullable: true })
   notificationPreferences: any;

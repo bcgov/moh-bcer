@@ -8,7 +8,12 @@ export const getDurationInMilliseconds = (start: [number, number]): string => {
 
 /**
  * Converting null, undefined value to "", used in csv
- * @param str 
- * @returns 
+ * @param str
+ * @returns
  */
-export const convertNullToEmptyString = (str: string | null) => str == null ? '' : str;
+export const convertNullToEmptyString = (str: string | null) =>
+  str == null ? '' : str;
+
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
