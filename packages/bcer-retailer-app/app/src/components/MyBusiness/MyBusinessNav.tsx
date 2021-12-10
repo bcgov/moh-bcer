@@ -24,6 +24,7 @@ import ConfirmAndSubmit from './MyBusinessComponents/ConfirmAndSubmit';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { formatError } from '@/utils/formatting';
+import Subscription from '../Subscription/Subscription';
 
 const useStyles = makeStyles({
     stepTitle: {
@@ -64,6 +65,7 @@ const steps = [
     helpText: <p>Please confirm the business details that were entered when registering for your BCeID.
                If you sell e-substances from this location, please add it as a location in the <b>"Add Business Locations"</b> section.
                You must also add any additional locations from which you sell e-substances.</p>,
+    showSubscription: true,
     canAdvanceChecks: [
       {
         property: 'locations',
@@ -227,6 +229,7 @@ export default function MyBusinessNav () {
   return (
     <BusinessInfoProvider value={[businessInfo, setBusinessInfo]}>
       <Top steps={stepperOptions} currentStep={currentStep} />
+      {steps[currentStep].showSubscription && <Subscription />}
       <div className={classes.stepTitle} >{steps[currentStep].title}</div>
       {
         steps[currentStep].helpText
