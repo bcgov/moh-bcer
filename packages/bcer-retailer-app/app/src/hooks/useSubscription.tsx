@@ -7,12 +7,19 @@ import { formatError } from '@/utils/formatting';
 import { GeneralUtil } from '@/utils/util';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAxiosGet, useAxiosPatch } from './axios';
+import { useToast } from './useToast';
 
 export function useSubscription() {
+  const { openToast } = useToast();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openSubscribe, setOpenSubscribe] = useState<boolean>(false);
+  const [openUnsubscribe, setOpenUnsubscribe] = useState<boolean>(false);
   const [
-    { data: subscriptionData, error: subscriptionError },
+    {
+      data: subscriptionData,
+      loading: subscriptionLoading,
+      error: subscriptionError,
+    },
     getSubscription,
   ] = useAxiosGet<Subscription>('/subscription', { manual: true });
 
@@ -25,7 +32,16 @@ export function useSubscription() {
     getSubscription();
   }, []);
 
-  const updateSubscription = async (data: SubscriptionFormData) => {
+  const updateSubscription = async (
+    data: SubscriptionFormData,
+    type: 'subscribe' | 'unsubscribe'
+  ) => {
+    const successMessage =
+      type === 'subscribe'
+        ? 'Successfully Subscribed to SMS Notification'
+        : 'Successfully Unsubscribed from SMS Notification';
+    setOpenUnsubscribe(false);
+    setOpenSubscribe(false);
     try {
       await patchSubscription({
         data: {
@@ -34,15 +50,23 @@ export function useSubscription() {
           confirmed: data.confirmed,
         },
       });
-      setOpenDialog(false);
+      openToast({
+        successMessages: [successMessage],
+        type: 'success',
+      });
       await getSubscription();
     } catch (err) {
-      setOpenDialog(false);
       setAppGlobalContext({
         ...appGlobal,
         networkErrorMessage: formatError(err),
       });
     }
+  };
+
+  const unSubscribe = async () => {
+    const data = getInitialFormData();
+    data.confirmed = false;
+    await updateSubscription(data, 'unsubscribe');
   };
 
   const getInitialFormData = (): SubscriptionFormData => {
@@ -53,18 +77,22 @@ export function useSubscription() {
       phoneNumber2: subscriptionData?.phoneNumber2
         ? GeneralUtil.formatPhoneNumber(subscriptionData.phoneNumber2.slice(2))
         : '',
-      confirmed: true, // Should be updated if we decide to add a confirm checkbox in the field
+      confirmed: subscriptionData?.confirmed ?? false,
     };
   };
-  
+
   return {
     subscriptionData,
+    subscriptionLoading,
     subscriptionError,
     subscriptionPatchLoading,
     subscriptionPatchError,
     updateSubscription,
-    openDialog,
-    setOpenDialog,
+    openSubscribe,
+    setOpenSubscribe,
+    openUnsubscribe,
+    setOpenUnsubscribe,
     getInitialFormData,
+    unSubscribe,
   };
 }

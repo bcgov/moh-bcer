@@ -1,23 +1,32 @@
 import { subscriptionValidationSchema } from '@/components/form/validations/vSubscription';
-import { Subscription, SubscriptionFormData } from '@/constants/localInterfaces';
+import {
+  Subscription,
+  SubscriptionFormData,
+} from '@/constants/localInterfaces';
 import { GeneralUtil } from '@/utils/util';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import {
+  StyledCheckbox,
   StyledDialog,
   StyledTextField,
   StyledTextInput,
 } from 'vaping-regulation-shared-components';
 
 interface SubscriptionDialogProps {
-    open: boolean,
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    onSubmit: (data: SubscriptionFormData) => void,
-    data: Subscription,
-    getInitialFormData: () => SubscriptionFormData,
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onSubmit: (data: SubscriptionFormData, type: 'subscribe' | 'unsubscribe') => void;
+  data: Subscription;
+  getInitialFormData: () => SubscriptionFormData;
 }
 
-function SubscriptionDialog({ open, setOpen, onSubmit, getInitialFormData }: SubscriptionDialogProps) {
+function SubscriptionDialog({
+  open,
+  setOpen,
+  onSubmit,
+  getInitialFormData,
+}: SubscriptionDialogProps) {
   function formatPhoneNumber(event: any, setFieldValue: any) {
     setFieldValue(
       event.target.name,
@@ -28,7 +37,7 @@ function SubscriptionDialog({ open, setOpen, onSubmit, getInitialFormData }: Sub
   return (
     <Formik
       initialValues={getInitialFormData()}
-      onSubmit={onSubmit}
+      onSubmit={(values)=>onSubmit(values, 'subscribe')}
       validationSchema={subscriptionValidationSchema}
     >
       {({ values, ...helpers }) => (
@@ -58,6 +67,10 @@ function SubscriptionDialog({ open, setOpen, onSubmit, getInitialFormData }: Sub
               name="phoneNumber2"
               fullWidth
               variant="filled"
+            />
+            <StyledCheckbox
+              name="confirmed"
+              label="I give permission to the Ministry of Health to send me notifications and reminders on the provided phone numbers"
             />
           </StyledDialog>
         </Form>
