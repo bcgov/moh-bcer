@@ -40,7 +40,7 @@ export class ProductSoldEntity {
   @Column('varchar', { nullable: true })
   flavour: string;
 
-  @Column('varchar', { nullable: true, unique: true })
+  @Column('varchar', { nullable: true })
   upc: string;
 
   @OneToOne(

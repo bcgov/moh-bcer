@@ -38,7 +38,7 @@ export class UserManagementUtil {
       },
       {
         title: 'BCeID',
-        field: 'bceid',
+        field: 'bceidUser',
       },
       {
         title: 'Business Name',

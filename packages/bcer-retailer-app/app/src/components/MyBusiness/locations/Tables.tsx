@@ -30,6 +30,7 @@ interface ExistingTableProp extends TableProp {
     handleEdit: Function;
     handleClose: Function;
     handleDelete: Function;
+    handleView: Function;
   };
 }
 

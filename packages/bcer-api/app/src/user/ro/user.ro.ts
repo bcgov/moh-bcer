@@ -4,6 +4,7 @@ import { BusinessRO } from 'src/business/ro/business.ro';
 export class UserRO {
   id: string;
   bceid: string;
+  bceidUser?: string;
   user_status_id: number;
   type: UserTypeEnum;
   email: string;
