@@ -1,4 +1,9 @@
-import { UserType, HealthAuthority, NoiStatus, LocationStatus } from '@/constants/localEnums';
+import {
+  UserType,
+  HealthAuthority,
+  NoiStatus,
+  LocationStatus,
+} from '@/constants/localEnums';
 
 export interface UserProfile {
   id: string;
@@ -138,7 +143,7 @@ export interface SalesReport {
 
 export interface GenericTableProp {
   data: Array<any>;
-  fullScreenProp?: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
+  fullScreenProp?: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
   handleActionButton?: Function;
   handleSelection?: Function;
 }
@@ -147,4 +152,19 @@ export type TableColumn = {
   title?: string;
   sorting?: string;
   defaultSort?: string;
-} & ({field: string} | {render: Function})
+} & ({ field: string } | { render: Function });
+
+export interface SubscriptionFormData {
+  phoneNumber1: string;
+  phoneNumber2: string;
+  confirmed: boolean;
+}
+
+export interface Subscription {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  phoneNumber1: string;
+  phoneNumber2: string;
+  confirmed: boolean;
+}

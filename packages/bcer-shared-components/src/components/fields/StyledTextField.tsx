@@ -118,6 +118,7 @@ export function StyledTextField ({
   fullWidth = true,
   variant,
   placeholder,
+  ...props
 }: StyledTextProps) {
   return (
     <Field
@@ -128,6 +129,7 @@ export function StyledTextField ({
       disabled={isDisabled}
       variant={variant}
       placeholder={placeholder}
+      {...props}
     />
   );
 }
