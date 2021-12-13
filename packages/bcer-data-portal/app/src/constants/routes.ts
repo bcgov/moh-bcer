@@ -1,5 +1,6 @@
 export const routes = Object.freeze({
     root: '/',
     userManagement: '/user-management',
-    getHelp: '/getHelp'
+    getHelp: '/getHelp',
+    sendNotification: '/sendNotification'
 });

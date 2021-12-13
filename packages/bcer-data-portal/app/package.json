@@ -16,7 +16,7 @@
     "moment": "2.27.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
-    "react-csv": "^2.0.3",
+    "react-csv": "2.0.3",
     "react-dom": "^16.13.1",
     "react-dropzone": "11.1.0",
     "react-error-boundary": "^2.2.1",

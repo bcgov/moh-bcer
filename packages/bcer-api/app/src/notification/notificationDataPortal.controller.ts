@@ -24,6 +24,7 @@ import { ResendNotificationDTO } from './dto/resend-notification.dto';
 import { RecipientType } from './enum/recipient.enum';
 import { NotificationService } from './notification.service';
 import { NotificationRO } from './ro/notification.ro';
+import { SubscriptionRO } from './ro/subscription.ro';
 
 @ApiBearerAuth()
 @UseGuards(AuthDataGuard)
@@ -74,6 +75,16 @@ export class NotificationDataPortalController {
   async getNotifications(): Promise<NotificationRO[]> {
     const notifications = await this.notificationService.getNotifications();
     return notifications.map(n => n.toResponseObject());
+  }
+
+  @ApiOperation({ summary: 'Get all the Notifications from database' })
+  @ApiResponse({ status: HttpStatus.OK, type: NotificationRO })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Get('subscribers')
+  async getSubscribers(): Promise<SubscriptionRO[]> {
+    const subscribers = await this.notificationService.getSubscriptions();
+    return subscribers.map(s => s.toResponseObject());
   }
 
   @ApiOperation({ summary: 'Resend an existing message' })
