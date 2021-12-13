@@ -1,6 +1,6 @@
 import { NotAcceptableException } from '@nestjs/common';
 import { NotifyClient } from 'notifications-node-client';
-import { GeneralUtil, sleep } from 'src/utils/util';
+import { sleep } from 'src/utils/util';
 import { NotificationReportDTO } from './dto/notification-report.dto';
 import { NotificationDTO } from './dto/notification.dto';
 
