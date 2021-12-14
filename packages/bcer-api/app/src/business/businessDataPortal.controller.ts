@@ -15,6 +15,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/auth.module';
+import { ROLES } from 'src/auth/constants';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { LocationService } from 'src/location/location.service';
@@ -29,6 +31,7 @@ import { BusinessRO } from './ro/business.ro';
 @ApiBearerAuth()
 @ApiTags('Business')
 @UseGuards(AuthDataGuard)
+@Roles(ROLES.MOH_ADMIN)
 @Controller('data/business')
 export class BusinessDataPortalController {
   constructor(

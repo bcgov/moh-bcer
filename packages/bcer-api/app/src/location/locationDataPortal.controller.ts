@@ -30,10 +30,13 @@ import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { ProductsService } from 'src/products/products.service';
 import { SalesReportService } from 'src/sales/sales.service';
+import { Roles } from 'nest-keycloak-connect/decorators/roles.decorator';
+import { ROLES } from 'src/auth/constants';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
 @UseGuards(AuthDataGuard)
+@Roles(ROLES.MOH_ADMIN)
 @Controller('data/location')
 export class LocationDataPortalController {
   constructor(

@@ -16,6 +16,7 @@ import { useHistory } from 'react-router';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { StyledTab, StyledTabs } from './generic';
 import store from 'store';
+import { hasPermission, PERMISSIONS } from '@/constants/permissions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,18 +73,22 @@ function Navigator() {
               textColor="primary"
               aria-label="icon tabs example"
             >
-              <StyledTab
-                disableRipple
-                label="Submitted Locations"
-                {...a11yProps(0)}
-                value={routes.root}
-              />
-              <StyledTab
-                disableRipple
-                label="User Management"
-                {...a11yProps(1)}
-                value={routes.userManagement}
-              />
+              {hasPermission(keycloak, PERMISSIONS.MANAGE_LOCATIONS) && (
+                <StyledTab
+                  disableRipple
+                  label="Submitted Locations"
+                  {...a11yProps(0)}
+                  value={routes.root}
+                />
+              )}
+              {hasPermission(keycloak, PERMISSIONS.MANAGE_USERS) && (
+                <StyledTab
+                  disableRipple
+                  label="User Management"
+                  {...a11yProps(1)}
+                  value={routes.userManagement}
+                />
+              )}
             </StyledTabs>
           </Box>
           <Box className={classes.buttonWrapper}>
