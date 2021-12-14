@@ -13,7 +13,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 
-import { HealthAuthority } from 'src/business/enums/health-authority.enum'
+import { HealthAuthority } from 'src/business/enums/health-authority.enum';
 import { LocationRO } from 'src/location/ro/location.ro';
 
 import { BusinessEntity } from 'src/business/entities/business.entity';
@@ -63,7 +63,7 @@ export class LocationEntity {
 
   @Column('varchar', {
     nullable: true,
-    name: 'health_authority_other'
+    name: 'health_authority_other',
   })
   ha_other: string;
 
@@ -79,32 +79,51 @@ export class LocationEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @DeleteDateColumn({name: 'deleted_at'})
-  deletedAt : Date;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
 
-  @ManyToOne(() => BusinessEntity, (business: BusinessEntity) => business.locations)
+  @ManyToOne(
+    () => BusinessEntity,
+    (business: BusinessEntity) => business.locations,
+  )
   @JoinColumn()
   business: BusinessEntity;
 
   @Column('varchar')
   businessId?: string;
 
-  @OneToOne(() => NoiEntity, (noi: NoiEntity) => noi.location, { nullable: true })
+  @OneToOne(
+    () => NoiEntity,
+    (noi: NoiEntity) => noi.location,
+    { nullable: true },
+  )
   @JoinColumn()
   noi: NoiEntity;
 
-  @ManyToMany(() => ProductEntity, (product: ProductEntity) => product.locations)
+  @ManyToMany(
+    () => ProductEntity,
+    (product: ProductEntity) => product.locations,
+  )
   @JoinTable()
   products: ProductEntity[];
 
-  @OneToMany(() => ProductSoldEntity, (productSold: ProductSoldEntity) => productSold.location)
+  @OneToMany(
+    () => ProductSoldEntity,
+    (productSold: ProductSoldEntity) => productSold.location,
+  )
   @JoinTable()
   productSolds: ProductSoldEntity[];
 
-  @OneToMany(() => SalesReportEntity, (sales: SalesReportEntity) => sales.location)
+  @OneToMany(
+    () => SalesReportEntity,
+    (sales: SalesReportEntity) => sales.location,
+  )
   sales: SalesReportEntity[];
 
-  @ManyToMany(() => ManufacturingEntity, (manufacturing: ManufacturingEntity) => manufacturing.locations)
+  @ManyToMany(
+    () => ManufacturingEntity,
+    (manufacturing: ManufacturingEntity) => manufacturing.locations,
+  )
   @JoinTable()
   manufactures: ManufacturingEntity[];
 
@@ -113,13 +132,48 @@ export class LocationEntity {
     nullable: false,
     default: LocationStatus.Active,
   })
-  status: LocationStatus
+  status: LocationStatus;
 
-  @Column({ type: 'timestamp', nullable: true, default: null, name: 'closed_at' })
-  closedAt : Date;
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+    default: null,
+    name: 'closed_at',
+  })
+  closedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true, default: null, name: 'closed_time' })
-  closedTime : Date;
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+    default: null,
+    name: 'closed_time',
+  })
+  closedTime: Date;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default: null,
+    name: 'google_address',
+  })
+  geoAddress: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default: null,
+    name: 'google_address_id',
+  })
+  geoAddressId: string;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  longitude: string;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  latitude: string;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  geoAddressConfidence: string;
 
   productsCount?: number;
   manufacturesCount?: number;
@@ -137,15 +191,24 @@ export class LocationEntity {
       city: this.city,
       postal: this.postal,
       phone: this.phone,
-      underage: ['yes','no'].includes(this.underage) ? this.underage : 'other',
-      underage_other: !['yes','no'].includes(this.underage) ? this.underage : '',
+      underage: ['yes', 'no'].includes(this.underage) ? this.underage : 'other',
+      underage_other: !['yes', 'no'].includes(this.underage)
+        ? this.underage
+        : '',
       health_authority: this.ha,
       health_authority_other: this.ha_other,
       doingBusinessAs: this.doingBusinessAs,
       manufacturing: this.manufacturing ? 'yes' : 'no',
-      products: this.products?.map((product: ProductEntity) => product.toResponseObject()),
-      sales: this.sales?.map((sale: SalesReportEntity) => sale.toResponseObject()),
-      manufactures: this.manufactures?.map((manufacturing: ManufacturingEntity) => manufacturing.toResponseObject()),
+      products: this.products?.map((product: ProductEntity) =>
+        product.toResponseObject(),
+      ),
+      sales: this.sales?.map((sale: SalesReportEntity) =>
+        sale.toResponseObject(),
+      ),
+      manufactures: this.manufactures?.map(
+        (manufacturing: ManufacturingEntity) =>
+          manufacturing.toResponseObject(),
+      ),
       productsCount: this.productsCount,
       manufacturesCount: this.manufacturesCount,
       salesCount: this.salesCount,
