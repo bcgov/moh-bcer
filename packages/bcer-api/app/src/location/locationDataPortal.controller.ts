@@ -33,7 +33,7 @@ import { SalesReportService } from 'src/sales/sales.service';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
-// @UseGuards(AuthDataGuard)  ****************************** For Easier testing MUST UNCOMMENT 
+@UseGuards(AuthDataGuard)
 @Controller('data/location')
 export class LocationDataPortalController {
   constructor(
@@ -217,15 +217,5 @@ export class LocationDataPortalController {
       location.manufactures = locationsWithManufactures[location.id];
     });
     return this.service.packageAsZip(locations);
-  }
-
-
-  /**
-   * 
-   * Testing route. Delete once done
-   */
-  @Post()
-  async updateLocationGeoCode(){
-    return await this.service.updateGeoCodeForExistingLocations();
   }
 }

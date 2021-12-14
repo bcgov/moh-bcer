@@ -92,4 +92,19 @@ export class LocationRO {
 
   @ApiProperty()
   deletedAt: Date;
+
+  @ApiProperty()
+  geoAddress: string;
+
+  @ApiProperty()
+  geoAddressId: string;
+
+  @ApiProperty()
+  latitude: string;
+
+  @ApiProperty()
+  longitude: string;
+
+  @ApiProperty()
+  geoAddressConfidence: string;
 }

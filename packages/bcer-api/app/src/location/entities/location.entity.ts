@@ -154,7 +154,7 @@ export class LocationEntity {
     type: 'varchar',
     nullable: true,
     default: null,
-    name: 'google_address',
+    name: 'geo_address',
   })
   geoAddress: string;
 
@@ -162,7 +162,7 @@ export class LocationEntity {
     type: 'varchar',
     nullable: true,
     default: null,
-    name: 'google_address_id',
+    name: 'geo_address_id',
   })
   geoAddressId: string;
 
@@ -172,7 +172,7 @@ export class LocationEntity {
   @Column({ type: 'varchar', nullable: true, default: null })
   latitude: string;
 
-  @Column({ type: 'varchar', nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null, name: 'geo_confidence' })
   geoAddressConfidence: string;
 
   productsCount?: number;
@@ -218,6 +218,11 @@ export class LocationEntity {
       closedAt: this.closedAt,
       closedTime: this.closedTime,
       deletedAt: this.deletedAt,
+      geoAddress: this.geoAddress,
+      geoAddressId: this.geoAddressId,
+      geoAddressConfidence: this.geoAddressConfidence,
+      latitude: this.latitude,
+      longitude: this.longitude,
     };
   }
 }

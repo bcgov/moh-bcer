@@ -12,7 +12,7 @@ import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
 import { getSalesReportYear } from 'src/common/common.utils';
-import { convertNullToEmptyString } from 'src/utils/util';
+import { convertNullToEmptyString, sleep } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { NoiStatus } from 'src/noi/enums/status.enum';
 import { CronConfig } from 'src/cron/config/cron.config';
@@ -487,7 +487,10 @@ export class LocationService {
 
   async updateGeoCodeForExistingLocations() {
     const locations = await this.getLocationsWithoutGeoCode();
-    const result = await (Promise as any).allSettled(locations.map(async (location) => {
+    const result = await (Promise as any).allSettled(locations.map(async (location, index) => {
+      // To maintain the api limit of 50 requests per second
+      await sleep(Math.floor(index / 50) * 1000);
+      
       const geoCode = await this.getLocationGeoCode(location.id, location);
       return this.updateLocationGeoCode(location.id, geoCode);
     }));
