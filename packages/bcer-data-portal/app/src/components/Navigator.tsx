@@ -84,6 +84,12 @@ function Navigator() {
                 {...a11yProps(1)}
                 value={routes.userManagement}
               />
+              <StyledTab
+                disableRipple
+                label="Send Notification"
+                {...a11yProps(2)}
+                value={routes.sendNotification}
+              />
             </StyledTabs>
           </Box>
           <Box className={classes.buttonWrapper}>

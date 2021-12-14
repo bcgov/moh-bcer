@@ -12,6 +12,7 @@ import { NotificationEntity } from './entities/notification.entity';
 import { TextService } from './textService';
 import { BusinessService } from 'src/business/business.service';
 import { RecipientType } from './enum/recipient.enum';
+import { SubscriptionRO } from './ro/subscription.ro';
 
 @Injectable()
 export class NotificationService {
@@ -43,6 +44,10 @@ export class NotificationService {
 
   async getNotifications(): Promise<NotificationEntity[]> {
     return await this.notificationRepository.find();
+  }
+
+  async getSubscriptions(): Promise<SubscriptionRO[]> {
+    return await this.subscriptionRepository.find();
   }
 
   async sendText(
