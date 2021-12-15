@@ -72,10 +72,13 @@ close-local:
 	@echo "+\n++ Make Closing local containers"
 	@docker-compose -f docker-compose.dev.yml down
 
-local-client-exec:
-	@docker exec -it bcer-retailer-app sh
+local-retailer-workspace:
+	@docker exec -it bcer-retailer-app /bin/bash
 
-local-server-exec:
+local-data-workspace:
+	@docker exec -it bcer-data-portal /bin/bash
+
+local-api-workspace:
 	@docker exec -it vape-nest-api sh
 
 build-local:

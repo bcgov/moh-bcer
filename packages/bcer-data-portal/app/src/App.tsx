@@ -8,6 +8,7 @@ import GetHelp from './views/GetHelp';
 import UserManagement from './views/UserManagement/Overview';
 import Navigator from './components/Navigator';
 import { routes } from './constants/routes';
+import Map from './views/Map/Overview';
 
 const useStyles = makeStyles({
   root: {
@@ -40,6 +41,7 @@ const App = () => {
           <Route exact path={routes.root} component={Locations} />
           <Route exact path={routes.getHelp} component={GetHelp} />
           <Route exact path={routes.userManagement} component={UserManagement} />
+          <Route exact path={routes.map} component={Map} />
         </Switch>
       </div>
     </div>
