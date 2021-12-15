@@ -49,6 +49,7 @@ function Navigator() {
   const history = useHistory();
   const [keycloak] = useKeycloak();
   const [value, setValue] = React.useState(history.location.pathname);
+  const { config } = useContext(ConfigContex);
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);

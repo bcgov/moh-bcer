@@ -11,4 +11,5 @@ export interface RequestWithUser extends Request {
     businessId?: string;
     bceid?: string;
   }
+  user?: any,
 }

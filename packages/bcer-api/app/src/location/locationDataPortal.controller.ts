@@ -32,6 +32,7 @@ import { ProductsService } from 'src/products/products.service';
 import { SalesReportService } from 'src/sales/sales.service';
 import { Roles } from 'nest-keycloak-connect/decorators/roles.decorator';
 import { ROLES } from 'src/auth/constants';
+import { AllowAnyRole } from 'nest-keycloak-connect';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -85,6 +86,8 @@ export class LocationDataPortalController {
   })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Get()
   async getCommonLocations(
     @Query() query: LocationSearchDTO,

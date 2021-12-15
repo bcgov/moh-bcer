@@ -27,3 +27,5 @@ export class StatusRO {
   productReportComplete: boolean;
   manufacturingReportComplete: boolean;
 }
+
+export type PermissionRO = {[key: string]: any};

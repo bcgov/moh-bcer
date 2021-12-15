@@ -1,9 +1,10 @@
 import * as jwt from 'jsonwebtoken';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 const Keycloak = require('keycloak-connect');
-import { KEYCLOAK_INSTANCE } from './constants';
+import { KEYCLOAK_INSTANCE, ROLES } from './constants';
 
-import { UserRO } from 'src/user/ro/user.ro'
+import { PermissionRO, UserRO } from 'src/user/ro/user.ro'
+import { RequestWithUser } from './interface/requestWithUser.interface';
 
 /**
  * AuthService
@@ -33,6 +34,7 @@ export class AuthService {
    */
   // TODO NF: Flesh out once we know what to return
   private async getUserData(token: string): Promise<any> {
+    console.log(await this.keycloak.grantManager.userInfo(token))
     return this.keycloak.grantManager.userInfo(token);
   }
 
@@ -58,5 +60,22 @@ export class AuthService {
     if (jwt)
       return await this.getUserData(jwt);
     throw new UnauthorizedException('No token provided');
+  }
+
+  getPermissions(req: RequestWithUser): PermissionRO {
+    const permissions = {
+      MANAGE_LOCATIONS: [ROLES.HA_ADMIN],
+      MANAGE_USERS: [ROLES.MOH_ADMIN],
+      SEND_TEXT_MESSAGES: [ROLES.MOH_ADMIN],
+      PLAN_ROUTES: [ROLES.HA_ADMIN, ROLES.MOH_ADMIN],
+    };
+    
+    const userRoles = req.user?.roles || [];
+
+    return Object.entries(permissions).reduce((acc, [permissionName, roles]) => {
+      const hasPermission = roles.some(role => userRoles.includes(role));
+      return { ...acc, [permissionName]: hasPermission };
+    }, {});
+
   }
 }

@@ -39,7 +39,7 @@ export class UserController {
     if (!validatedUser) {
       const user = await this.userService.create({
         bceid: bceidGuid,
-        bceidUser,
+        bceidUser, 
         email,
         firstName,
         lastName,
