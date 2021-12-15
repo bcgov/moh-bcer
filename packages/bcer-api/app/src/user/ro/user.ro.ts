@@ -28,4 +28,7 @@ export class StatusRO {
   manufacturingReportComplete: boolean;
 }
 
-export type PermissionRO = {[key: string]: any};
+export class PermissionRO {
+  permissions: {[key: string]: boolean};
+  featureFlags: {[key: string]: boolean};
+}

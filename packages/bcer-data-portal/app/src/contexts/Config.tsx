@@ -1,24 +1,31 @@
 import { useAxiosGet } from '@/hooks/axios';
 import React, { useState, createContext, useEffect, Provider } from 'react';
 
+interface Permissions {
+    permissions: {[key: string]: boolean};
+    featureFlags: {[key: string]: boolean};
+}
 export interface IConfigContext {
-    config: {[key: string]: string}
+    config: Permissions;
 }
   
 export const ConfigContext = createContext<IConfigContext>({
-    config: {}
+    config: {
+        permissions: {},
+        featureFlags: {}
+    }
 });
 
 export const ConfigProvider = ({ children }: {children: React.ReactNode})  => {
     const [{ data: config }, getConfig] =
-        useAxiosGet<{[key: string]: string}>('/data/user/permissions');
+        useAxiosGet<Permissions>('/data/user/permissions');
 
     useEffect(() => {
         getConfig();
     }, []);
 
     return (
-        <ConfigContext.Provider value={{config: config || {}}}>
+        <ConfigContext.Provider value={{config: config || {permissions: {}, featureFlags: {}}}}>
           {children}
         </ConfigContext.Provider>
     );

@@ -30,14 +30,12 @@ import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { ProductsService } from 'src/products/products.service';
 import { SalesReportService } from 'src/sales/sales.service';
-import { Roles } from 'nest-keycloak-connect/decorators/roles.decorator';
 import { ROLES } from 'src/auth/constants';
-import { AllowAnyRole } from 'nest-keycloak-connect';
+import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
-@UseGuards(AuthDataGuard)
-@Roles(ROLES.MOH_ADMIN)
+@UseGuards(AuthDataGuard, RoleGuard)
 @Controller('data/location')
 export class LocationDataPortalController {
   constructor(
@@ -103,7 +101,8 @@ export class LocationDataPortalController {
   @ApiOperation({ summary: 'Download locations reports' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Post('reportsFile')
   @ApiQuery({
     name: 'getAll',

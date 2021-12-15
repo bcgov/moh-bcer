@@ -34,7 +34,6 @@ export class AuthService {
    */
   // TODO NF: Flesh out once we know what to return
   private async getUserData(token: string): Promise<any> {
-    console.log(await this.keycloak.grantManager.userInfo(token))
     return this.keycloak.grantManager.userInfo(token);
   }
 
@@ -63,19 +62,27 @@ export class AuthService {
   }
 
   getPermissions(req: RequestWithUser): PermissionRO {
-    const permissions = {
-      MANAGE_LOCATIONS: [ROLES.HA_ADMIN],
+    const rolePermissions = {
+      MANAGE_LOCATIONS: [ROLES.HA_ADMIN, ROLES.MOH_ADMIN],
       MANAGE_USERS: [ROLES.MOH_ADMIN],
       SEND_TEXT_MESSAGES: [ROLES.MOH_ADMIN],
       PLAN_ROUTES: [ROLES.HA_ADMIN, ROLES.MOH_ADMIN],
     };
+
+    const featureFlags = {
+      TEXT_MESSAGES: process.env.ENABLE_TEXT_MESSAGES === 'true'
+    };
     
     const userRoles = req.user?.roles || [];
 
-    return Object.entries(permissions).reduce((acc, [permissionName, roles]) => {
+    const permissions: {[key: string]: boolean} = Object.entries(rolePermissions).reduce((acc, [permissionName, roles]) => {
       const hasPermission = roles.some(role => userRoles.includes(role));
       return { ...acc, [permissionName]: hasPermission };
     }, {});
 
+    return {
+      permissions,
+      featureFlags
+    };
   }
 }

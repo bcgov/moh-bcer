@@ -19,8 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Roles } from 'nest-keycloak-connect';
-import { AllowAnyRole, RoleGuard } from 'src/auth/auth.module';
+import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 import { ROLES } from 'src/auth/constants';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
@@ -64,9 +63,9 @@ export class UserDataPortalController {
   @ApiOperation({ summary: 'Retrive permissions for the current user' })
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK })
-  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
   @AllowAnyRole()
-  @Get()
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @Get('permissions')
   async getPermissions(@Request() req: RequestWithUser): Promise<PermissionRO> {
     return this.authService.getPermissions(req);
   }

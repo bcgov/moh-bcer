@@ -19,7 +19,6 @@ import store from 'store';
 import { hasPermission, PERMISSIONS } from '@/constants/permissions';
 import { ConfigContext } from '@/contexts/Config';
 
-
 const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: '#F1F1F1',
@@ -50,7 +49,7 @@ function Navigator() {
   const history = useHistory();
   const [keycloak] = useKeycloak();
   const [value, setValue] = React.useState(history.location.pathname);
-  const { config } = useContext(ConfigContex);
+  const { config } = useContext(ConfigContext);
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
@@ -75,7 +74,7 @@ function Navigator() {
               textColor="primary"
               aria-label="icon tabs example"
             >
-              {config.MANAGE_LOCATIONS && (
+              {config.permissions.MANAGE_LOCATIONS && (
                 <StyledTab
                   disableRipple
                   label="Submitted Locations"
@@ -83,7 +82,7 @@ function Navigator() {
                   value={routes.root}
                 />
               )}
-              {config.MANAGE_USERS && (
+              {config.permissions.MANAGE_USERS && (
                 <StyledTab
                   disableRipple
                   label="User Management"
