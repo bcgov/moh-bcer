@@ -17,6 +17,7 @@ import keycloak from './keycloak';
 import store from 'store';
 import { ToastProvider } from './contexts/Toast';
 import Toast from './components/generic/Toast';
+import { ConfigProvider } from './contexts/Config';
 
 const Login = lazy(() => import('./views/Login'));
 const KeycloackRedirect = lazy(() => import('./views/Keycloak'));
@@ -72,16 +73,18 @@ const Routes = () => {
     <HashRouter>
       <ThemeProvider theme={theme}>
         <AppGlobalProvider value={[appGlobal, setAppGlobal]}>
-          <ToastProvider>
-            <Suspense fallback={<Loader />}>
-              <Switch>
-                <PublicRoute path="/login" component={Login} />
-                <Route path="/keycloak" component={KeycloackRedirect} />
-                <PrivateRoute path="/" component={App} />
-              </Switch>
-            </Suspense>
-            <Toast />
-          </ToastProvider>
+          <ConfigProvider>
+            <ToastProvider>
+              <Suspense fallback={<Loader />}>
+                <Switch>
+                  <PublicRoute path="/login" component={Login} />
+                  <Route path="/keycloak" component={KeycloackRedirect} />
+                  <PrivateRoute path="/" component={App} />
+                </Switch>
+              </Suspense>
+              <Toast />
+            </ToastProvider>
+            </ConfigProvider>
         </AppGlobalProvider>
       </ThemeProvider>
       <Snackbar

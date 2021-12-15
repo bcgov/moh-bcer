@@ -11,12 +11,13 @@ import {
 import { TabPanel } from '@material-ui/lab';
 import { withStyles } from '@material-ui/styles';
 import { useKeycloak } from '@react-keycloak/web';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useHistory } from 'react-router';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { StyledTab, StyledTabs } from './generic';
 import store from 'store';
 import { hasPermission, PERMISSIONS } from '@/constants/permissions';
+import { ConfigContext } from '@/contexts/Config';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +75,7 @@ function Navigator() {
               textColor="primary"
               aria-label="icon tabs example"
             >
-              {hasPermission(keycloak, PERMISSIONS.MANAGE_LOCATIONS) && (
+              {config.MANAGE_LOCATIONS && (
                 <StyledTab
                   disableRipple
                   label="Submitted Locations"
@@ -82,7 +83,7 @@ function Navigator() {
                   value={routes.root}
                 />
               )}
-              {hasPermission(keycloak, PERMISSIONS.MANAGE_USERS) && (
+              {config.MANAGE_USERS && (
                 <StyledTab
                   disableRipple
                   label="User Management"
