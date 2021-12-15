@@ -26,7 +26,7 @@ export class AuthDataGuard implements CanActivate {
       if (verified['azp'] !== process.env.KEYCLOAK_DATA_CLIENT) {
         throw new UnauthorizedException('Token has invalid authorized party');
       }
-      console.log(verified);
+
       if (!verified['resource_access'] ||
           !verified['resource_access'][process.env.KEYCLOAK_DATA_CLIENT] ||
           !verified['resource_access'][process.env.KEYCLOAK_DATA_CLIENT].roles?.some(r => [ROLES.HA_ADMIN, ROLES.MOH_ADMIN].includes(r))) {
