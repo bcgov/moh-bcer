@@ -202,7 +202,7 @@ export default function ConfirmLocations () {
               <CSVLink
                 headers={Object.keys(BusinessLocationHeaders)}
                 data={newLocations?.map((l: any) => {
-                  return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+                  return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
                 })}
                 filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
                 <StyledButton variant='outlined'>
@@ -214,7 +214,7 @@ export default function ConfirmLocations () {
           </div>
         </div>
         {
-          newLocations?.length ?
+          (validatedData?.length) ?
             <StyledTable
               options={{
                 fixedColumns: {
@@ -223,7 +223,6 @@ export default function ConfirmLocations () {
               }}
               columns={[
                 {title: 'Address 1', field: 'addressLine1', width: 150},
-                {title: 'Address 2', field: 'addressLine2', width: 150},
                 {title: 'Postal Code', field: 'postal', width: 150},
                 {title: 'City', field: 'city', width: 150},
                 {title: 'Business Phone', field: 'phone', width: 150},

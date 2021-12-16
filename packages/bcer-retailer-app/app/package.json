@@ -23,6 +23,8 @@
     "react-dom": "^16.13.1",
     "react-dropzone": "11.1.0",
     "react-error-boundary": "^2.2.1",
+    "react-google-autocomplete": "2.6.1",
+    "react-google-places-autocomplete": "3.3.2",
     "react-jss": "^10.3.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",

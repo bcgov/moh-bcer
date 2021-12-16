@@ -179,7 +179,6 @@ export class LocationUtil {
       data: data.reduce((dataList: Array<any>, l: BusinessLocation) => {
         dataList.push([
           l.addressLine1,
-          l.addressLine2,
           l.postal,
           l.city,
           l.email,

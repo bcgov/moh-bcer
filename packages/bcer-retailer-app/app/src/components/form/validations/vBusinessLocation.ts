@@ -4,7 +4,6 @@ import { NoiStatus } from '@/constants/localEnums';
 export interface IBusinessLocationValues {
   id?: string;
   addressLine1: string;
-  addressLine2: string;
   postal: string;
   city: string;
   phone: string;
@@ -30,7 +29,6 @@ export interface IBusinessLocationValues {
 
 export const Initial = {
   addressLine1: '',
-  addressLine2: '',
   postal: '',
   city: '',
   phone: '',

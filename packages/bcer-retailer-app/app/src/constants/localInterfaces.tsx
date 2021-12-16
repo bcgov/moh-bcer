@@ -43,7 +43,7 @@ export interface BusinessDetails {
 export interface BusinessLocation {
   id?: string;
   addressLine1: string;
-  addressLine2: string;
+  locationId: string;
   postal: string;
   city: string;
   phone: string;
