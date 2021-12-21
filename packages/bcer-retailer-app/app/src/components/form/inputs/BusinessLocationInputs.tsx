@@ -10,6 +10,8 @@ import HelpIcon from '@material-ui/icons/Help';
 
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
+import { useAxiosGet } from '@/hooks/axios';
+import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 
 const useStyles = makeStyles({
   groupHeader: {
@@ -57,47 +59,42 @@ const useStyles = makeStyles({
 function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: IBusinessLocationValues, formikHelpers: FormikHelpers<IBusinessLocationValues>}) {
   const classes = useStyles();
   const { values } = useFormikContext<IBusinessLocationValues>();
-  const [ predictions, setPredictions ] = useState([]);
-  const {
-    placesService,
-    placePredictions,
-    getPlacePredictions,
-    isPlacePredictionsLoading, 
-  } = usePlacesService({
-    apiKey: process.env.GOOGLE_MAPS_API_KEY
-  })
+  const [ predictions, setPredictions ] = useState<Array<BCGeocoderAutocompleteData>>([]);
+  const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
+  const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
+  // const {
+  //   placesService,
+  //   placePredictions,
+  //   getPlacePredictions,
+  //   isPlacePredictionsLoading, 
+  // } = usePlacesService({
+  //   apiKey: process.env.GOOGLE_MAPS_API_KEY
+  // })
 
   useEffect(() => {
-    if (placePredictions.length > 0) {
-      setPredictions(placePredictions.map(e => e.description))
+    if (data && data.features?.length > 0) {
+      console.log(data.features)
+      setPredictions(data.features)
+      setAutocompleteOptions(data.features.map((e: BCGeocoderAutocompleteData) => e.properties.fullAddress))
     }
-  }, [placePredictions])
+  }, [data])
 
   const handleAutocompleteSelect = ( value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
-    const fullLocation = placePredictions.find(e => e.description === value)
-    geocodeByPlaceId(fullLocation.place_id)
-      .then(results => {
-        if (results) {
-          const city = results[0].address_components.map(e => {
-            if (e.types.includes('locality')) {
-              formikHelpers.setFieldValue('city', e.long_name)
-            }
-            if (e.types.includes('postal_code')) {
-              formikHelpers.setFieldValue('postal', e.long_name)
-            }
-          })
-        }
-      })
-      .catch(error => console.error(error));
-    formikHelpers.setFieldValue('addressLine1', value ? value : '')
-    formikHelpers.setFieldValue('locationId', fullLocation.place_id)
+    const fullLocation = predictions.find(e => e.properties.fullAddress === value)
+    formikHelpers.setFieldValue('addressLine1', fullLocation ? fullLocation.properties.fullAddress : '')
+    formikHelpers.setFieldValue('precision', fullLocation.properties.precisionPoints)
+    formikHelpers.setFieldValue('city', fullLocation.properties.localityName)
   }
   
+  const getAutocomplete = (e: any) => {
+    getSuggestions({url: `https://geocoder.api.gov.bc.ca/addresses.json?minScore=50&maxResults=5&echo=false&autoComplete=true&brief=false&matchPrecision=occupant,unit,site,civic_number,block&addressString=${e.target.value}`})
+  }
+
   const resetFieldsOnChange = () => {
     formikHelpers.setFieldValue('addressLine1', '')
     formikHelpers.setFieldValue('city', '')
     formikHelpers.setFieldValue('postal', '')
-    formikHelpers.setFieldValue('locationId', '')
+    formikHelpers.setFieldValue('precision', '')
   }
 
   return (
@@ -112,7 +109,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         <Grid item xs={12} md={12} className={classes.gridItemLeft}>
         <Autocomplete             
           classes={{root: classes.autocompleteField}}
-          options={predictions} 
+          options={autocompleteOptions} 
           freeSolo
           value={values.addressLine1}
           onChange={(e: ChangeEvent<{}>, value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any> ) => handleAutocompleteSelect(value, reason, details)}
@@ -132,7 +129,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
               autoComplete='off'
               onChange={(e: any) => {
                 resetFieldsOnChange()
-                getPlacePredictions({ input: e.target.value })
+                getAutocomplete(e)
               }}
               name="addressLine1"
               fullWidth 
@@ -174,7 +171,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
             label={<RequiredFieldLabel label="Postal Code"/>}
             name="postal"
             fullWidth
-            disabled={true}
           />
         </Grid>
 

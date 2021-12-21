@@ -31,6 +31,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
   let formattedLocation = {
     id: location.id ? location.id : '',
     addressLine1: location.addressLine1 ? location.addressLine1 : '' ,
+    precision: location.precision ? location.precision : '' ,
     postal: location.postal ? location.postal : '',
     city: location.city ? location.city : '',
     phone: location.phone ? location.phone : '',
