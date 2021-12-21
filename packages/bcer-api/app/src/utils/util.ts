@@ -12,3 +12,7 @@ export const getDurationInMilliseconds = (start: [number, number]): string => {
  * @returns 
  */
 export const convertNullToEmptyString = (str: string | null) => str == null ? '' : str;
+
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

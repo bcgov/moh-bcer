@@ -12,11 +12,13 @@ import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
 import { getSalesReportYear } from 'src/common/common.utils';
-import { convertNullToEmptyString } from 'src/utils/util';
+import { convertNullToEmptyString, sleep } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { NoiStatus } from 'src/noi/enums/status.enum';
 import { CronConfig } from 'src/cron/config/cron.config';
 import { LocationStatus } from './enums/location-status.enum';
+import { GeoCodeService } from './geoCode.service';
+import { GoogleGeoCodeRO } from './ro/googleGeoCode.ro';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -41,6 +43,7 @@ export class LocationService {
     private readonly locationRepository: Repository<LocationEntity>,
     @InjectRepository(BusinessEntity)
     private readonly businessRepository: Repository<BusinessEntity>,
+    private geoCodeService: GeoCodeService,
   ) { }
 
   async createLocations(dto: [LocationDTO], businessId: string) {
@@ -453,5 +456,55 @@ export class LocationService {
     .set({businessId: newBusinessId})
     .where('businessId = :currentBusinessId', {currentBusinessId})
     .execute();
+  }
+
+  async updateLocationGeoCode(locationId: string, payload: GoogleGeoCodeRO){
+    await this.locationRepository
+      .createQueryBuilder()
+      .update()
+      .set({ ...payload })
+      .where('id = :locationId', { locationId })
+      .execute();
+
+    return await this.getLocation(locationId);
+  }
+
+  async getLocationGeoCode(locationId: string, location?: LocationEntity): Promise<GoogleGeoCodeRO> {
+    if(!location){
+      location = await this.getLocation(locationId);
+    }
+    const formattedAddress = this.formatFullAddress(location);
+    return await this.geoCodeService.getGeoCode(formattedAddress);
+  }
+
+  formatFullAddress(location: LocationEntity){
+    return location ? `${location.addressLine1}, ${location.city}, ${location.postal || ''}` : '';
+  }
+
+  async getLocationsWithoutGeoCode(): Promise<LocationEntity[]> {
+    return await this.locationRepository.find({ geoAddressConfidence: null });
+  }
+
+  async updateGeoCodeForExistingLocations() {
+    const locations = await this.getLocationsWithoutGeoCode();
+    const result = await (Promise as any).allSettled(locations.map(async (location, index) => {
+      // To maintain the api limit of 50 requests per second
+      await sleep(Math.floor(index / 50) * 1000);
+      
+      const geoCode = await this.getLocationGeoCode(location.id, location);
+      return this.updateLocationGeoCode(location.id, geoCode);
+    }));
+
+    const report = {
+      total: locations.length,
+      success: 0,
+      fail: 0
+    }
+
+    result?.forEach((r) => {
+      if(r?.status === 'fulfilled') report.success++;
+      else report.fail++
+    })
+    return report;
   }
 }
