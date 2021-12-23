@@ -13,7 +13,6 @@ import {
 import EditDialog from './EditDialog';
 import UserTable from './UserTable';
 import SearchIcon from '@material-ui/icons/Search';
-import GoogleMap from '@/components/GoogleMap';
 
 function UserManagement() {
   const {
@@ -83,7 +82,6 @@ function UserManagement() {
           />
         )}
       </>
-      <GoogleMap />
     </Page>
   );
 }

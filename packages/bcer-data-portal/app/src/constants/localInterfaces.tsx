@@ -65,6 +65,11 @@ export interface BusinessLocation {
   }
   products?: Array<Products>;
   created_at?: Date;
+  latitude?: string;
+  longitude?: string;
+  geoAddressConfidence?: string;
+  geoAddress?: string;
+  geoAddressId?: string;
 }
 
 export interface LocationFileUploadRO {
@@ -124,9 +129,115 @@ export interface UserSearchFields {
 }
 
 export interface UserUpdateFields {
-  active: boolean,
-  selectedBusiness: Business,
-  confirmed: boolean,
-  mergeData: boolean,
-  user: UserDetails,
+  active: boolean;
+  selectedBusiness: Business;
+  confirmed: boolean;
+  mergeData: boolean;
+  user: UserDetails;
+}
+
+export interface DragAndDropItem {
+  id: string;
+  [s: string]: unknown;
+}
+
+export interface RouteOptions {
+  option: 'fastest' | 'shortest';
+  roundTrip: boolean;
+  optimizeOrder: boolean;
+  ferrySchedule: boolean;
+  timeDependent: boolean;
+  traffic: boolean;
+  turnRestriction: boolean;
+  events: boolean;
+  crossingCost: boolean;
+  globalDistortionField: boolean;
+  turnCost: boolean;
+  localDistortionField: boolean;
+}
+
+export interface DirectionNotification {
+  type: string;
+  message: string;
+}
+
+export interface DirectionEntity {
+  type: string;
+  name: string;
+  distance: number;
+  time: number;
+  text: string;
+  point: [number, number];
+  notifications?: DirectionNotification[];
+}
+
+export type BCLngLatPoint = [number, number];
+
+export interface BCDirectionData {
+  routeDescription: string;
+  searchTimestamp: string;
+  executionTime: number;
+  version: string;
+  criteria: string;
+  enable: string;
+  distanceUnit: string;
+  points: BCLngLatPoint[];
+  routeFound: boolean;
+  distance: number;
+  time: number;
+  timeText: string;
+  route: BCLngLatPoint[];
+  notifications: any[];
+  directions: DirectionEntity[];
+  visitOrder?: number[];
+}
+
+export type BCGeocoderAutocompleteData = {
+  geometry: {
+    type: string;
+    coordinates: Array<number>;
+    crs: {type: string; properties: {code: string;}};
+  };
+  properties: {
+    accessNotes: string;
+    blockID: string;
+    changeDate: string;
+    civicNumber: string;
+    civicNumberSuffix: string;
+    electoralArea: string;
+    faults: Array<{element: string; fault: string; penalty: number; value: number;}>
+    fullAddress: string;
+    fullSiteDescriptor: string;
+    isOfficial: string;
+    isStreetDirectionPrefix: string;
+    isStreetTypePrefix: string;
+    localityName: string;
+    localityType: string;
+    locationDescriptor: string;
+    locationPositionalAccuracy: string;
+    matchPrecision: string;
+    precisionPoints: string;
+    provinceCode: string;
+    score: string;
+    siteID: string;
+    siteName: string;
+    siteRetireDate: string;
+    siteStatus: string;
+    streetDirection: string;
+    streetName: string;
+    streetQualifier: string;
+    streetType: string;
+    unitDesignator: string;
+    unitNumber: string;
+    unitNumberSuffix: string;
+  };
+  type: string;
+}
+
+export interface LocationConfig {
+  bcDirectionApiKey: string;
+  mapBoxAccessToken: string;
+  mapBoxTileLayer: string;
+  mapBoxAttribution: string;
+  mapBoxId: string;
 }

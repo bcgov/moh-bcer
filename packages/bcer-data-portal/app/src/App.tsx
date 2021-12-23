@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core';
 
 import Header from '@/components/Header';
@@ -19,28 +20,35 @@ const useStyles = makeStyles({
     flex: '1',
     maxWidth: '100%',
   },
-  appBody :{
+  appBody: {
     display: 'flex',
     flex: '1',
     maxWidth: '100%',
-  }
+  },
 });
 
 const App = () => {
   const classes = useStyles();
+  const history = useHistory();
   return (
     <div className={classes.root}>
       <div>
-      <Header />
-      <div className={classes.nav}>
-        <Navigator />
-      </div>
+        <Header />
+        {history.location.pathname != routes.map && (
+          <div className={classes.nav}>
+            <Navigator />
+          </div>
+        )}
       </div>
       <div className={classes.appBody}>
         <Switch>
           <Route exact path={routes.root} component={Locations} />
           <Route exact path={routes.getHelp} component={GetHelp} />
-          <Route exact path={routes.userManagement} component={UserManagement} />
+          <Route
+            exact
+            path={routes.userManagement}
+            component={UserManagement}
+          />
           <Route exact path={routes.map} component={Map} />
         </Switch>
       </div>

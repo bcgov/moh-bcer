@@ -1,0 +1,90 @@
+import { BusinessLocation } from '@/constants/localInterfaces';
+import { routes } from '@/constants/routes';
+import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/util/formatting';
+import React, { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
+import { useAxiosGet } from './axios';
+
+function useLocation(locationIds?: string) {
+  const history = useHistory();
+  const [selectedLocations, setSelectedLocations] = useState<
+    BusinessLocation[]
+  >([]);
+
+  const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
+  /**
+   * Fetching location data based on the given locationIds
+   */
+  const [{ data: locationWithId, error, loading }, getLocationWithIds] =
+    useAxiosGet(`/data/location/ids/${locationIds}`, { manual: true });
+
+  useEffect(() => {
+    getLocationWithIds();
+  }, []);
+
+  useEffect(() => {
+    if (locationWithId?.length) {
+      setSelectedLocations(locationWithId);
+    }
+  }, [locationWithId]);
+
+  useEffect(() => {
+    if (error) {
+      setAppGlobalContext({
+        ...appGlobal,
+        networkErrorMessage: formatError(error),
+      });
+    }
+  }, [error]);
+
+  /**
+   * Removes a location from the selected locations array
+   * @param l
+   */
+  const removeSelectedLocationHandler = (l: BusinessLocation) => {
+    const temp = selectedLocations?.filter((loc) => loc.id != l.id);
+    setSelectedLocations(temp);
+    const ids = getLocationIds(temp);
+    setRouteParam(ids);
+  };
+
+  /**
+   * Adds a new location to the selected location array
+   * @param l
+   */
+  const addLocationToSelectedHandler = (l: BusinessLocation) => {
+    setSelectedLocations([...selectedLocations, l]);
+    const ids = getLocationIds(selectedLocations, [l.id]);
+    setRouteParam(ids);
+  };
+
+  /**
+   * Updates the route parameters
+   * @param ids
+   */
+  const setRouteParam = (ids: string[]) => {
+    history.push(`${routes.map}?locations=${ids.join(',')}`);
+  };
+
+  /**
+   *
+   * @param loc
+   * @param initial
+   * @returns an array of location ids
+   */
+  const getLocationIds = (
+    loc: BusinessLocation[] = [],
+    initial: string[] = []
+  ): string[] => {
+    return loc.reduce((prev, current) => [...prev, current?.id], initial);
+  };
+  return {
+    selectedLocations,
+    setSelectedLocations,
+    removeSelectedLocationHandler,
+    addLocationToSelectedHandler,
+  };
+}
+
+export default useLocation;

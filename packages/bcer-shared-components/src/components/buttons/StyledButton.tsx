@@ -44,6 +44,24 @@ const StyledOutlinedButton = styled(Button)({
  * Uses react styled() to apply styles to the button component
  * @returns A Material-UI ReactElement with specified styles
  */
+const StyledSmallOutlinedButton = styled(Button)({
+  minWidth: '100px',
+  color: '#234075',
+  textTransform: 'none',
+  border: '1px solid #234075',
+  fontSize: '13px',
+  fontWeight: 600,
+  boxShadow: 'none',
+  '&:hover': {
+    backgroundColor: '#e6efff',
+    boxShadow: 'none',
+  }
+})
+
+/**
+ * Uses react styled() to apply styles to the button component
+ * @returns A Material-UI ReactElement with specified styles
+ */
 const StyledTextButton = styled(Button)({
   color: '#234075',
   textTransform: 'none',
@@ -147,7 +165,13 @@ export function StyledButton ({ variant, ...props }: StyledButtonProps):ReactEle
               variant="text"
               {...props}
             />
-        : <StyledTextButton
+        : variant === 'small-outlined'
+          ? <StyledSmallOutlinedButton 
+              variant="outlined"
+              size='small'
+              {...props}
+          /> 
+        :<StyledTextButton
           variant="text"
             {...props}
           />
