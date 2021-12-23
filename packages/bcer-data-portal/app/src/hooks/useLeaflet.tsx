@@ -36,6 +36,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   const [map, setMap] = useState<L.Map>();
   const [markers, setMarkers] = useState<L.Marker[]>([]);
+  const [geoJsonData, setGeoJsonData] = useState<L.GeoJSON>();
   const [startingLocation, setStartingLocation] =
     useState<BCGeocoderAutocompleteData>();
 
@@ -260,9 +261,17 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     if (map && routeData) {
       const geoJSON = (GeoJSON as any).parse(routeData, { LineString: 'route' });
       const geoJsonLayer = L.geoJSON(geoJSON);
+      setGeoJsonData(geoJsonLayer);
       geoJsonLayer.addTo(map);
     }
   };
+
+  const removeRouteOnMap = () => {
+    if(map && geoJsonData){
+      map.removeLayer(geoJsonData);
+      geoJsonData.remove();
+    }
+  }
 
   /**
    * If there is a change in locations or options it reinitialize all the markers and
@@ -270,12 +279,14 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
    */
   useEffect(() => {
     removeAllMarkers();
+    removeRouteOnMap();
     drawAllMarkers();
     getDirectionData();
   }, [selectedLocations, startingLocation, routeOptions]);
 
   useEffect(() => {
     if (routeData) {
+      removeRouteOnMap();
       drawRouteOnMap();
     }
     // TODO: Should be removed. keeping this to see the data from Direction API in dev
@@ -284,6 +295,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   useEffect(() => {
     if (directionError) {
+      removeRouteOnMap();
       showMapError('Error: Could not get direction data from API');
     }
   }, [directionError]);
