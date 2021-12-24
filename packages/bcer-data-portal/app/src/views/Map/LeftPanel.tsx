@@ -19,6 +19,7 @@ import { useHistory } from 'react-router';
 import { routes } from '@/constants/routes';
 import RouteStatics from './RouteStatics';
 import { AxiosError } from 'axios';
+import OptimizedOrder from './OptimizedOrder';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 interface LeftPanelProps {
   locations: BusinessLocation[];
   setLocations: React.Dispatch<SetStateAction<BusinessLocation[]>>;
+  startingLocation: BCGeocoderAutocompleteData;
   setStartingLocation: React.Dispatch<
     SetStateAction<BCGeocoderAutocompleteData>
   >;
@@ -61,6 +63,7 @@ interface LeftPanelProps {
 function LeftPanel({
   locations,
   setLocations,
+  startingLocation,
   setStartingLocation,
   addLocationToSelectedHandler,
   showOnMapHandler,
@@ -134,7 +137,14 @@ function LeftPanel({
         initialRoutingOptions={initialRoutingOptions}
         setRouteOptions={setRouteOptions}
       />
-      <Itinerary directionData={routeData} />
+      {routeData?.visitOrder && locations && (
+        <OptimizedOrder
+          routeData={routeData}
+          selectedLocations={locations}
+          startingLocation={startingLocation}
+        />
+      )}
+      {routeData && <Itinerary directionData={routeData} />}
     </Box>
   );
 }

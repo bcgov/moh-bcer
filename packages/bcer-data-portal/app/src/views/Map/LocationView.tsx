@@ -62,7 +62,7 @@ function LocationView({
   removeLocationHandler,
 }: LocationViewProps) {
   const classes = useStyles();
-  const address = `${content.addressLine1}, ${
+  const address = content?.geoAddress || `${content.addressLine1}, ${
     content.addressLine2 ? `${content.addressLine2},` : ''
   } ${content.city}, ${content.postal}`;
 

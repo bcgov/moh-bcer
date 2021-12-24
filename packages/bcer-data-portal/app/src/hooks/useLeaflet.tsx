@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import L from 'leaflet';
 import GeoJSON from 'geojson';
 
-import * as jsonData from '../views/Map/data.json';
 import {
+  BCDirectionData,
   BCGeocoderAutocompleteData,
   BusinessLocation,
   LocationConfig,
@@ -12,20 +12,13 @@ import {
 import useLocation from './useLocation';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { BcRouteLinkBuilder } from '@/util/bcRouteLink.util';
-import { useAxiosGet } from './axios';
 import { GoogleMapLinkBuilder } from '@/util/googleMapLink.util';
-import { formatError } from '@/util/formatting';
 
 function useLeaflet(locationIds: string, config: LocationConfig) {
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
 
-  /**
-   * Api to Get Direction Data from BC Direction Service
-   */
-  const [
-    { data: routeData, error: directionError, loading: directionLoading },
-    getDirection,
-  ] = useAxiosGet('', { manual: true });
+  const [routeData, setRouteData] = useState<BCDirectionData>();
+  const [directionError, setDirectionError] = useState<any>();
 
   const {
     selectedLocations,
@@ -226,7 +219,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
    * Get's the direction data based on locations and options selected
    * @returns
    */
-  const getDirectionData = () => {
+  const getDirectionData = async () => {
     let count = 0;
     if (startingLocation?.geometry) {
       count++;
@@ -242,9 +235,29 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       .addOptions(routeOptions)
       .build();
 
-    getDirection({
-      url: encodeURI(url),
-    });
+    await fetchDirection(encodeURI(url));
+  };
+
+  /**
+   * To Fetch direction data from bc government service
+   * AxiosGet adds the Authorization header by default and
+   * that was causing the request to fail so using fetch instead
+   * @param url URI encoded link
+   */
+  const fetchDirection = async (url: string) => {
+    setRouteData(null);
+    setDirectionError(null);
+    try {
+      const data = await fetch(encodeURI(url), {
+        headers: {
+          apiKey: config.bcDirectionApiKey,
+        },
+      });
+      const res = await data.json();
+      setRouteData(res);
+    } catch (e) {
+      setDirectionError(e);
+    }
   };
 
   const createGoogleLink = () => {
@@ -259,7 +272,9 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
    */
   const drawRouteOnMap = () => {
     if (map && routeData) {
-      const geoJSON = (GeoJSON as any).parse(routeData, { LineString: 'route' });
+      const geoJSON = (GeoJSON as any).parse(routeData, {
+        LineString: 'route',
+      });
       const geoJsonLayer = L.geoJSON(geoJSON);
       setGeoJsonData(geoJsonLayer);
       geoJsonLayer.addTo(map);
@@ -267,11 +282,11 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   };
 
   const removeRouteOnMap = () => {
-    if(map && geoJsonData){
+    if (map && geoJsonData) {
       map.removeLayer(geoJsonData);
       geoJsonData.remove();
     }
-  }
+  };
 
   /**
    * If there is a change in locations or options it reinitialize all the markers and
@@ -289,14 +304,14 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       removeRouteOnMap();
       drawRouteOnMap();
     }
-    // TODO: Should be removed. keeping this to see the data from Direction API in dev
-    console.log(routeData);
   }, [routeData]);
 
   useEffect(() => {
     if (directionError) {
       removeRouteOnMap();
-      showMapError('Error: Could not get direction data from API');
+      showMapError(
+        directionError.message ?? 'Error: Could not get direction data from API'
+      );
     }
   }, [directionError]);
 
@@ -312,7 +327,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     initialRoutingOptions,
     resetMapSize,
     showOnMapHandler,
-    routeData, //: jsonData as any,  // For local dev testing
+    routeData,
     createGoogleLink,
     routeOptions,
     setRouteOptions,

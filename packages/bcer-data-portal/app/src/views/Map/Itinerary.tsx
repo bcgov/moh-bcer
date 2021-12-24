@@ -5,7 +5,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const useStyles = makeStyles(() => ({
@@ -63,6 +63,7 @@ function Itinerary({ directionData }: ItineraryProps) {
   const [current, setCurrent] = useState(
     directions.slice(count.prev, count.next)
   );
+  
   const getMoreData = () => {
     if (current.length === directions.length) {
       setHasMore(false);
@@ -82,7 +83,7 @@ function Itinerary({ directionData }: ItineraryProps) {
   return (
     <Box mt={2}>
       {!!directions?.length && (
-        <Box my={2}>
+        <Box my={1}>
           <Typography className={classes.label}>Direction</Typography>
         </Box>
       )}

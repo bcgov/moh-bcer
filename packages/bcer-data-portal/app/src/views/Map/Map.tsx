@@ -51,6 +51,7 @@ function Map({config}: MapProps) {
           <LeftPanel
             locations={selectedLocations}
             setLocations={setSelectedLocations}
+            startingLocation={startingLocation}
             setStartingLocation={setStartingLocation}
             addLocationToSelectedHandler={addLocationToSelectedHandler}
             showOnMapHandler={showOnMapHandler}

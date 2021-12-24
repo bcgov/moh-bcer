@@ -36,7 +36,7 @@ function MapControl({
   setRouteOptions,
 }: {
   initialRoutingOptions: RouteOptions;
-  setRouteOptions: React.Dispatch<SetStateAction<RouteOptions>>
+  setRouteOptions: React.Dispatch<SetStateAction<RouteOptions>>;
 }) {
   const classes = useStyles();
   return (
@@ -86,9 +86,6 @@ function MapControl({
                 <Box>
                   <StyledCheckboxInput name="traffic" label="Traffic" />
                 </Box>
-                <Box>
-                  <StyledCheckboxInput name="events" label="Events" />
-                </Box>
                 {/* Not needed for now */}
                 {/* <Box>
                   <StyledCheckboxInput
@@ -105,15 +102,20 @@ function MapControl({
               </Box>
               <Box flex={0.5}>
                 <Box>
-                  <StyledCheckboxInput
-                    name="timeDependent"
-                    label="Time Dependent"
-                  />
+                  <StyledCheckboxInput name="events" label="Events" />
                 </Box>
+
                 <Box>
                   <StyledCheckboxInput
                     name="turnRestriction"
                     label="Turn Restriction"
+                  />
+                </Box>
+                {/* Not needed for now. */}
+                {/* <Box>
+                  <StyledCheckboxInput
+                    name="timeDependent"
+                    label="Time Dependent"
                   />
                 </Box>
                 <Box>
@@ -124,7 +126,7 @@ function MapControl({
                 </Box>
                 <Box>
                   <StyledCheckboxInput name="turnCost" label="Turn Cost" />
-                </Box>
+                </Box> */}
               </Box>
             </Box>
             <AutoSubmitFormik values={values} submitForm={helpers.submitForm} />
