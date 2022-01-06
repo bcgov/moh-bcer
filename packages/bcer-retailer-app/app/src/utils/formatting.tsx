@@ -31,7 +31,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
   let formattedLocation = {
     id: location.id ? location.id : '',
     addressLine1: location.addressLine1 ? location.addressLine1 : '' ,
-    addressLine2: location.addressLine2 ? location.addressLine2 : '',
+    geoAddressConfidence: location.geoAddressConfidence ? location.geoAddressConfidence : '' ,
     postal: location.postal ? location.postal : '',
     city: location.city ? location.city : '',
     phone: location.phone ? location.phone : '',
@@ -42,6 +42,8 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     health_authority_other: '',
     doingBusinessAs: location.doingBusinessAs ? location.doingBusinessAs : '',
     manufacturing: '',
+    latitude: location.latitude ? location.latitude : '',
+    longitude: location.longitude ? location.longitude : '',
     tableData: location.tableData ? location.tableData : {id: undefined},
     error: location.error ? location.error : undefined,
     noi: location.noi ? location.noi : undefined

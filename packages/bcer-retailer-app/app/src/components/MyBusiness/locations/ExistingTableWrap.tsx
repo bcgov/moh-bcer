@@ -207,9 +207,6 @@ export default function ExistingTableWrap() {
                 <Typography variant="subtitle1">Address line 1: {locationContext?.addressLine1}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="subtitle1">Address line 2: {locationContext?.addressLine2}</Typography>
-              </Grid>
-              <Grid item xs={12}>
                 <Typography variant="subtitle1">City: {locationContext?.city}</Typography>
               </Grid>
               <Grid item xs={12}>
