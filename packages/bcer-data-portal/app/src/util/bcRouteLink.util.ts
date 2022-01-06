@@ -5,7 +5,6 @@ import {
 } from '@/constants/localInterfaces';
 
 export class BcRouteLinkBuilder {
-  readonly baseLink = 'https://router.api.gov.bc.ca';
   readonly directionBaseRoute = '/directions.json?';
   readonly optimalDirectionBaseRoute = '/optimalDirections.json?';
 
@@ -100,8 +99,8 @@ export class BcRouteLinkBuilder {
 
   build() {
     if (this.optimalRoute) {
-      return `${this.baseLink}${this.optimalDirectionBaseRoute}${this.params}`;
+      return `${this.optimalDirectionBaseRoute}${this.params}`;
     }
-    return `${this.baseLink}${this.directionBaseRoute}${this.params}`;
+    return `${this.directionBaseRoute}${this.params}`;
   }
 }
