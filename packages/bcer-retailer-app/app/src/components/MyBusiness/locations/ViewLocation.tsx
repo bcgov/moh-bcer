@@ -16,10 +16,6 @@ export default function ViewLocation({rowData}: {rowData: IBusinessLocationValue
           <Typography variant="body1">{rowData.addressLine1}</Typography>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="subtitle2">Address 2</Typography>
-          <Typography variant="body2">{rowData.addressLine2}</Typography>
-        </Grid>
-        <Grid item xs={6}>
           <Typography variant="subtitle2">City</Typography>
           <Typography variant="body1">{rowData.city}</Typography>
         </Grid>

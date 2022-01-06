@@ -22,7 +22,6 @@ export enum HealthAuthorities {
 
 export enum BusinessLocationHeaders {
   'Address' = 'Business Address',
-  'Address 2' = 'Business Address 2',
   'Postal Code' = 'Postal Code',
   'City' = 'City',
   'Buiness Email' = 'Business Email Address',
@@ -35,7 +34,6 @@ export enum BusinessLocationHeaders {
 
 export enum BusinessLocationDTOHeaders {
   addressLine1 = 'Address',
-  addressLine2 = 'Address 2',
   postal = 'Postal Code',
   city = 'City',
   email = 'Buiness Email',

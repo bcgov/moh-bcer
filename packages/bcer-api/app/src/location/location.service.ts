@@ -19,6 +19,7 @@ import { CronConfig } from 'src/cron/config/cron.config';
 import { LocationStatus } from './enums/location-status.enum';
 import { GeoCodeService } from './geoCode.service';
 import { GoogleGeoCodeRO } from './ro/googleGeoCode.ro';
+import Axios from 'axios';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -506,5 +507,15 @@ export class LocationService {
       else report.fail++
     })
     return report;
+  }
+
+  async getDirection(uri: string) {
+    const baseLink = 'https://router.api.gov.bc.ca';
+    const { data } = await Axios.get(`${baseLink}${decodeURIComponent(uri)}`, {
+      headers: {
+        apiKey: process.env.BC_DIRECTION_API_KEY,
+      },
+    });
+    return data;
   }
 }

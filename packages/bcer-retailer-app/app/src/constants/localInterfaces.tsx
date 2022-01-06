@@ -43,7 +43,7 @@ export interface BusinessDetails {
 export interface BusinessLocation {
   id?: string;
   addressLine1: string;
-  addressLine2: string;
+  geoAddressConfidence: string;
   postal: string;
   city: string;
   phone: string;
@@ -54,6 +54,8 @@ export interface BusinessLocation {
   doingBusinessAs: string;
   manufacturing: string;
   manufactures: Array<ManufacturingReport>;
+  latitude: string;
+  longitude: string;
   noi?: {
     created_at: Date;
     status: NoiStatus;
@@ -148,3 +150,45 @@ export type TableColumn = {
   sorting?: string;
   defaultSort?: string;
 } & ({field: string} | {render: Function})
+
+export type BCGeocoderAutocompleteData = {
+  geometry: {
+    type: string;
+    coordinates: Array<number>;
+    crs: {type: string; properties: {code: string;}};
+  };
+  properties: {
+    accessNotes: string;
+    blockID: string;
+    changeDate: string;
+    civicNumber: string;
+    civicNumberSuffix: string;
+    electoralArea: string;
+    faults: Array<{element: string; fault: string; penalty: number; value: number;}>
+    fullAddress: string;
+    fullSiteDescriptor: string;
+    isOfficial: string;
+    isStreetDirectionPrefix: string;
+    isStreetTypePrefix: string;
+    localityName: string;
+    localityType: string;
+    locationDescriptor: string;
+    locationPositionalAccuracy: string;
+    matchPrecision: string;
+    precisionPoints: string;
+    provinceCode: string;
+    score: string;
+    siteID: string;
+    siteName: string;
+    siteRetireDate: string;
+    siteStatus: string;
+    streetDirection: string;
+    streetName: string;
+    streetQualifier: string;
+    streetType: string;
+    unitDesignator: string;
+    unitNumber: string;
+    unitNumberSuffix: string;
+  };
+  type: string;
+}

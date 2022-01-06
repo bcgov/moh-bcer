@@ -10,6 +10,9 @@ import {
   UsePipes,
   ValidationPipe,
   Res,
+  Param,
+  NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import {
   ApiParam,
@@ -30,6 +33,7 @@ import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { ProductsService } from 'src/products/products.service';
 import { SalesReportService } from 'src/sales/sales.service';
+import { LocationConfig } from './config/dataLocation.config';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -217,5 +221,34 @@ export class LocationDataPortalController {
       location.manufactures = locationsWithManufactures[location.id];
     });
     return this.service.packageAsZip(locations);
+  }
+
+  @ApiOperation({ summary: 'gets all the location provided as a csv in the route' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Get('/ids/:ids')
+  async getLocationWithIds(@Param('ids') ids: string){
+    if(!ids) throw NotFoundException;
+    const locations = await this.service.getLocationWithIds(ids.split(','));
+    return locations.map(l => l.toResponseObject());
+  }
+
+  @ApiOperation({ summary: 'gets all the config data for data portal map' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationConfig })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Get('/config')
+  async config(){
+    return new LocationConfig();
+  }
+
+  @ApiOperation({ summary: 'gets the direction data between given locations' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Get('/direction/:uri')
+  async getDirection(@Param('uri') uri: string){
+    if(!uri) throw UnprocessableEntityException;
+    return await this.service.getDirection(uri);
   }
 }
