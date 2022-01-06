@@ -235,7 +235,6 @@ export type BCGeocoderAutocompleteData = {
 }
 
 export interface LocationConfig {
-  bcDirectionApiKey: string;
   mapBoxAccessToken: string;
   mapBoxTileLayer: string;
   mapBoxAttribution: string;

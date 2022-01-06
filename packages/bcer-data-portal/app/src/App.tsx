@@ -44,11 +44,7 @@ const App = () => {
         <Switch>
           <Route exact path={routes.root} component={Locations} />
           <Route exact path={routes.getHelp} component={GetHelp} />
-          <Route
-            exact
-            path={routes.userManagement}
-            component={UserManagement}
-          />
+          <Route exact path={routes.userManagement} component={UserManagement} />
           <Route exact path={routes.map} component={Map} />
         </Switch>
       </div>

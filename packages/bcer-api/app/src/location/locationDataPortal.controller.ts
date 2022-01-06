@@ -12,6 +12,7 @@ import {
   Res,
   Param,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import {
   ApiParam,
@@ -240,5 +241,14 @@ export class LocationDataPortalController {
   @Get('/config')
   async config(){
     return new LocationConfig();
+  }
+
+  @ApiOperation({ summary: 'gets the direction data between given locations' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Get('/direction/:uri')
+  async getDirection(@Param('uri') uri: string){
+    if(!uri) throw UnprocessableEntityException;
+    return await this.service.getDirection(uri);
   }
 }

@@ -6,8 +6,10 @@ interface AutoSubmitFormikProps {
 }
 /**
  * Automatically Submits Formik forms on change
- * @param param0 
- * @returns 
+ * @param {Object} param0 contains formik values and submitForm 
+ * @param {Object} param0.values contains the values from a formik form
+ * @param {Function} param0.submitForm formik submitForm method
+ * @returns a React Node
  */
 function AutoSubmitFormik({ values, submitForm }: AutoSubmitFormikProps) {
   useEffect(() => {

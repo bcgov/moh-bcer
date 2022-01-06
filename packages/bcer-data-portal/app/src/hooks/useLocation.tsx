@@ -8,9 +8,7 @@ import { useAxiosGet } from './axios';
 
 function useLocation(locationIds?: string) {
   const history = useHistory();
-  const [selectedLocations, setSelectedLocations] = useState<
-    BusinessLocation[]
-  >([]);
+  const [selectedLocations, setSelectedLocations] = useState<BusinessLocation[]>([]);
 
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   /**
@@ -40,7 +38,7 @@ function useLocation(locationIds?: string) {
 
   /**
    * Removes a location from the selected locations array
-   * @param l
+   * @param {BusinessLocation} l location to remove from selected location array
    */
   const removeSelectedLocationHandler = (l: BusinessLocation) => {
     const temp = selectedLocations?.filter((loc) => loc.id != l.id);
@@ -51,7 +49,7 @@ function useLocation(locationIds?: string) {
 
   /**
    * Adds a new location to the selected location array
-   * @param l
+   * @param {BusinessLocation} l location to add in the selected location array 
    */
   const addLocationToSelectedHandler = (l: BusinessLocation) => {
     setSelectedLocations([...selectedLocations, l]);
@@ -61,16 +59,16 @@ function useLocation(locationIds?: string) {
 
   /**
    * Updates the route parameters
-   * @param ids
+   * @param {string} ids location ids to be set in the route query
    */
   const setRouteParam = (ids: string[]) => {
     history.push(`${routes.map}?locations=${ids.join(',')}`);
   };
 
   /**
-   *
-   * @param loc
-   * @param initial
+   * 
+   * @param {BusinessLocation[]} loc array of business locations
+   * @param {string[]} initial array containing initial address id
    * @returns an array of location ids
    */
   const getLocationIds = (

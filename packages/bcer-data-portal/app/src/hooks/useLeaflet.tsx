@@ -13,12 +13,18 @@ import useLocation from './useLocation';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { BcRouteLinkBuilder } from '@/util/bcRouteLink.util';
 import { GoogleMapLinkBuilder } from '@/util/googleMapLink.util';
+import redMarker from '@/assets/images/marker-icon-2x-red.png';
+import markerShadow from '@/assets/images/marker-shadow.png'
+import { useAxiosGet } from './axios';
+import sanitizeHtml from 'sanitize-html';
 
 function useLeaflet(locationIds: string, config: LocationConfig) {
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
 
   const [routeData, setRouteData] = useState<BCDirectionData>();
   const [directionError, setDirectionError] = useState<any>();
+
+  const [{}, getDirection] = useAxiosGet<BCDirectionData>('location/direction', { manual: true });
 
   const {
     selectedLocations,
@@ -87,7 +93,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   /**
    * Appropriately zooms the map to show all markers
-   * @param mkrs
+   * @param {L.Marker} mkrs array of leaflet markers
    */
   const setMapBound = (mkrs: L.Marker[]) => {
     if (map && mkrs?.length) {
@@ -98,15 +104,13 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   /**
    * Draws a unique marker for the starting location
-   * @returns
+   * @returns An array of Leaflet markers or empty array
    */
   const drawStartingMarker = (): L.Marker[] => {
     if (startingLocation?.geometry?.coordinates && map) {
       var startingIcon = new L.Icon({
-        iconUrl:
-          'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl:
-          'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconUrl: redMarker,
+        shadowUrl: markerShadow,
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         shadowSize: [41, 41],
@@ -128,8 +132,8 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   /**
    * Makes toolTip content from retail location markers
-   * @param l
-   * @returns
+   * @param {BusinessLocation} l Business location to make marker tooltip 
+   * @returns Marker tooltip as html
    */
   const makeMarkerToolTip = (l: BusinessLocation): string => {
     return `<div style="text-align:center;"><b>${safeGuardHtmlString(
@@ -139,13 +143,14 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   /**
    * Tool tip string is injected as html. This function makes sure to safe guard against user input.
-   * @param text
-   * @returns
+   * @param {string} text Unsafe string to be injected as html
+   * @returns html-sanitized string
    */
   const safeGuardHtmlString = (text: string) => {
-    return (
-      text?.replace(/[`~!@#$%^&*()_|+\=?;:'",.<>\{\}\[\]\\\/]/gi, '') ?? ''
-    );
+    return sanitizeHtml(text, {
+      allowedTags: [],
+      allowedAttributes: {}
+    })
   };
 
   /**
@@ -162,8 +167,8 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   };
 
   /**
-   * @param m map
    * Adds Tile style to map
+   * @param m Leaflet map where tiles needs to be added
    */
   const addTileLayer = (m: L.Map) => {
     L.tileLayer(
@@ -185,7 +190,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   /**
    * When user click on a location, map zooms on that location
-   * @param l
+   * @param {BusinessLocation} l location on which map will zoom in
    */
   const showOnMapHandler = (l: BusinessLocation) => {
     const { latitude, longitude } = l;
@@ -204,9 +209,8 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   };
 
   /**
-   *
-   * @param message
    * Displays error toast to the user
+   * @param {string} message Error message to display 
    */
   const showMapError = (message?: string) => {
     setAppGlobalContext({
@@ -217,7 +221,6 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   /**
    * Get's the direction data based on locations and options selected
-   * @returns
    */
   const getDirectionData = async () => {
     let count = 0;
@@ -230,36 +233,36 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       return;
     }
 
-    const url = new BcRouteLinkBuilder(config.bcDirectionApiKey)
+    const url = new BcRouteLinkBuilder()
       .addPoints(startingLocation, selectedLocations)
       .addOptions(routeOptions)
       .build();
 
-    await fetchDirection(encodeURI(url));
+    await fetchDirection(encodeURIComponent(url));
   };
 
   /**
-   * To Fetch direction data from bc government service
-   * AxiosGet adds the Authorization header by default and
-   * that was causing the request to fail so using fetch instead
-   * @param url URI encoded link
+   * Fetches direction data from api
+   * @param {string} url URI encoded link
    */
   const fetchDirection = async (url: string) => {
     setRouteData(null);
     setDirectionError(null);
     try {
-      const data = await fetch(encodeURI(url), {
-        headers: {
-          apiKey: config.bcDirectionApiKey,
-        },
+      const { data } = await getDirection({
+        url: `/data/location/direction/${url}`
       });
-      const res = await data.json();
-      setRouteData(res);
+      if(!data) throw 'Could not get route from api';
+      setRouteData(data);
     } catch (e) {
       setDirectionError(e);
     }
   };
 
+  /**
+   * Creates google map link based on selected and starting locations
+   * @returns google map uri
+   */
   const createGoogleLink = () => {
     return new GoogleMapLinkBuilder()
       .addStartingPoint(startingLocation)
@@ -281,6 +284,9 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   };
 
+  /**
+   * Removes any drawn route from map
+   */
   const removeRouteOnMap = () => {
     if (map && geoJsonData) {
       map.removeLayer(geoJsonData);

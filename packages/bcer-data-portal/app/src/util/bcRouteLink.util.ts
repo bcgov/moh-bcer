@@ -10,11 +10,7 @@ export class BcRouteLinkBuilder {
   readonly optimalDirectionBaseRoute = '/optimalDirections.json?';
 
   optimalRoute = false;
-  params: string = 'apikey=';
-
-  constructor(apikey: string) {
-    this.params = this.params + apikey;
-  }
+  params: string = '';
 
   /**
    * Adds points in the query parameters
@@ -41,7 +37,7 @@ export class BcRouteLinkBuilder {
     );
 
     if (points.length) {
-      this.params += `&points=${points.join(',')}`;
+      this.params += `points=${points.join(',')}`;
     }
     return this;
   }
@@ -49,8 +45,8 @@ export class BcRouteLinkBuilder {
   /**
    * Adds optional query parameters
    * 
-   * @param options 
-   * @returns 
+   * @param {RouteOptions} options BCDirection route options 
+   * @returns this
    */
   addOptions(options: RouteOptions) {
     // setting return type for future

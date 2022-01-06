@@ -52,9 +52,7 @@ const useStyles = makeStyles({
 function SearchLocation({ setSelect }: any) {
   const classes = useStyles();
   const [tOut, setTOut] = useState<any>();
-  const [predictions, setPredictions] = useState<
-    Array<BCGeocoderAutocompleteData>
-  >([]);
+  const [predictions, setPredictions] = useState<Array<BCGeocoderAutocompleteData>>([]);
 
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', {
     manual: true,
