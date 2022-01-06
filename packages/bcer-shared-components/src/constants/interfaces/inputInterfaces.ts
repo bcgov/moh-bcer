@@ -76,12 +76,14 @@ export interface CheckboxInputProps {
   label: string;
   props: CheckboxProps;
   disabled?: boolean;
+  showError?: boolean;
 }
 
 export interface StyledCheckboxProps {
   name: string;
   label: string;
   disabled?: boolean;
+  showError?: boolean;
 }
 
 export interface StyledDatePickerProps extends StyledCheckboxProps {

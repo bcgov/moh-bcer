@@ -19,13 +19,14 @@ type Props<T> = {
  */
 export function StyledAutocomplete
 (props: Props<any>  ) {
+  const { placeholder } = props;
   return (
     <Autocomplete 
       {...props}
       fullWidth
       renderInput={(params) => (
         <div ref={params.InputProps.ref}>
-          <StyledTextInput {...params.inputProps} variant='filled' fullWidth/>
+          <StyledTextInput {...params.inputProps} placeholder={placeholder} variant='filled' fullWidth/>
         </div>
       )}
     />
