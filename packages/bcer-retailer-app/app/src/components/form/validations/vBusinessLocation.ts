@@ -4,7 +4,7 @@ import { NoiStatus } from '@/constants/localEnums';
 export interface IBusinessLocationValues {
   id?: string;
   addressLine1: string;
-  precision: string;
+  geoAddressConfidence: string;
   postal: string;
   city: string;
   phone: string;
@@ -15,6 +15,8 @@ export interface IBusinessLocationValues {
   health_authority_other?: string;
   doingBusinessAs: string;
   manufacturing: string;
+  latitude: string;
+  longitude: string;
   tableData?: {
     id: number
   },
@@ -30,7 +32,7 @@ export interface IBusinessLocationValues {
 
 export const Initial = {
   addressLine1: '',
-  precision: '',
+  geoAddressConfidence: '',
   postal: '',
   city: '',
   phone: '',
@@ -41,6 +43,8 @@ export const Initial = {
   health_authority_other: '',
   doingBusinessAs: '',
   manufacturing: '',
+  latitude: '',
+  longitude: '',
 };
 
 export const Validation = yup.object({

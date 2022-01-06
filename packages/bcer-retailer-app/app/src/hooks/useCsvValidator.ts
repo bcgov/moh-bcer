@@ -28,13 +28,20 @@ export const useCsvValidator = () => {
             if (data.features.length === 0 || data.features[0]?.properties.precisionPoints < 70) {
               errorArray.push({row: index + 2, field: 'Geocoder Error', message: 'Google was unable to find a match. please edit the location and select the location address'})
               element.error = true;
+            } else {
+              // Set the element's confidence interval, latitude, and longitude props from the retured geocoder data
+              element.geoAddressConfidence = data.features[0].properties.precisionPoints
+              element.latitude = data.features[0].geometry.coordinates[0]
+              element.longitude = data.features[0].geometry.coordinates[1]
             }
           } catch (requestError) {
             console.log(requestError)
           }
 
+
           validatedDataArray.push(element);
         } catch (validationError) {
+          console.log(validationError)
           //@ts-ignore
           // needed to access validationError.inner
           validationError.inner.map((error: any) => errorArray.push({row: index + 2, field: error.path, message: error.message})) as any

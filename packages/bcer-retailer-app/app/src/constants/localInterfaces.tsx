@@ -43,7 +43,7 @@ export interface BusinessDetails {
 export interface BusinessLocation {
   id?: string;
   addressLine1: string;
-  precision: string;
+  geoAddressConfidence: string;
   postal: string;
   city: string;
   phone: string;
@@ -54,6 +54,8 @@ export interface BusinessLocation {
   doingBusinessAs: string;
   manufacturing: string;
   manufactures: Array<ManufacturingReport>;
+  latitude: string;
+  longitude: string;
   noi?: {
     created_at: Date;
     status: NoiStatus;

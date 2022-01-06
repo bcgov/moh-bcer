@@ -3,9 +3,7 @@ import { FormikHelpers, useFormikContext } from 'formik';
 import { Grid, InputAdornment, makeStyles, Tooltip } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { StyledTextField, StyledRadioGroup } from 'vaping-regulation-shared-components';
-import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocompleteService";
 import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason } from '@material-ui/lab';
-import { geocodeByPlaceId } from 'react-google-places-autocomplete';
 import HelpIcon from '@material-ui/icons/Help';
 
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
@@ -62,18 +60,9 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const [ predictions, setPredictions ] = useState<Array<BCGeocoderAutocompleteData>>([]);
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
-  // const {
-  //   placesService,
-  //   placePredictions,
-  //   getPlacePredictions,
-  //   isPlacePredictionsLoading, 
-  // } = usePlacesService({
-  //   apiKey: process.env.GOOGLE_MAPS_API_KEY
-  // })
 
   useEffect(() => {
     if (data && data.features?.length > 0) {
-      console.log(data.features)
       setPredictions(data.features)
       setAutocompleteOptions(data.features.map((e: BCGeocoderAutocompleteData) => e.properties.fullAddress))
     }
@@ -82,8 +71,10 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const handleAutocompleteSelect = ( value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
     const fullLocation = predictions.find(e => e.properties.fullAddress === value)
     formikHelpers.setFieldValue('addressLine1', fullLocation ? fullLocation.properties.fullAddress : '')
-    formikHelpers.setFieldValue('precision', fullLocation.properties.precisionPoints)
+    formikHelpers.setFieldValue('geoAddressConfidence', fullLocation.properties.precisionPoints)
     formikHelpers.setFieldValue('city', fullLocation.properties.localityName)
+    formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[0])
+    formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[1])
   }
   
   const getAutocomplete = (e: any) => {
@@ -94,7 +85,9 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     formikHelpers.setFieldValue('addressLine1', '')
     formikHelpers.setFieldValue('city', '')
     formikHelpers.setFieldValue('postal', '')
-    formikHelpers.setFieldValue('precision', '')
+    formikHelpers.setFieldValue('geoAddressConfidence', '')
+    formikHelpers.setFieldValue('latitude', '')
+    formikHelpers.setFieldValue('longitude', '')
   }
 
   return (
