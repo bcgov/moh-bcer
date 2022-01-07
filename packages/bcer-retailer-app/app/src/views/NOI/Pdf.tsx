@@ -203,7 +203,7 @@ function Pdf({ location, legalName }: PdfProps) {
         <Box className={responsiveClass.bottomTextWrapper}>
           <Typography className={classes.bottomText}>
             This e-substance retailer has submitted their Notice of Intent and
-            is eligible to sell e-substances 6 weeks after the submission date.
+            is eligible to sell e-substances 6 weeks after the first submission date.
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between">

@@ -84,7 +84,7 @@ export class UserController {
       myBusinessComplete: Boolean(business.legalName && business.email),
       noiComplete: locations.length > 0 ? locations.every(l => l.noi) : false,
       productReportComplete: locations.length > 0 ? locations.every(l => l.products?.length || l.productsCount > 0) : false,
-      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) : false,
+      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) || locations.every(l => !l.manufacturing) : false,
     };
 
     Logger.log(`Time to process status request after middleware ${getDurationInMilliseconds(start)} ms`);

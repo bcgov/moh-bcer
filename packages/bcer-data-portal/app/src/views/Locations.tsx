@@ -10,6 +10,7 @@ import {
   IconButton,
   SnackbarContent,
   Tooltip,
+  MenuItemProps,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Form, Formik } from 'formik';
@@ -26,6 +27,8 @@ import {
   StyledSelectField,
   StyledTable,
   StyledTextField,
+  StyledMenus,
+  StyledMenuItems,
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
@@ -321,6 +324,43 @@ export default function Locations() {
     }
   }, [error]);
 
+  const menuOptions: StyledMenuItems[] = [
+    {
+      icon: <SaveAltIcon />,
+      text: 'Download All NOIs',
+      handler: () => getReportsFile('NOI'),
+      disabled: zipLoading,
+    },
+    {
+      icon: <SaveAltIcon />,
+      text: 'Download Selected',
+      handler: () => getReportsFile('selected'),
+      disabled: !selectedRows.length || zipLoading,
+    },
+    {
+      icon: <SaveAltIcon />,
+      text: 'Download Selected Sales Report(s)',
+      handler: () => getReportsFile('SELECTED_SALESREPORT'),
+      disabled: !selectedRows.length || zipLoading,
+    },
+    {
+      icon: <SaveAltIcon />,
+      text: 'Download All Locations',
+      handler: () => getReportsFile('all'),
+      disabled: zipLoading || totalRowCount > 400,
+      tooltip: totalRowCount > 1
+      ? 'Must be less than 400 locations to download'
+      : ''
+    }
+  ];
+
+  const openMap = () => {
+    if(selectedRows?.length){
+      const ids: string[] = selectedRows.reduce((prev, current) => [...prev, current?.id], []);
+      history.push(`/map?locations=${ids.join(",")}`)
+    }
+  }
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -414,51 +454,21 @@ export default function Locations() {
                   {totalRowCount} retail locations have submitted a Notice of
                   Intent
                 </Typography>
-                <div className={classes.groupButtons}>
-                  <StyledButton
-                    variant="outlined"
-                    onClick={() => getReportsFile('NOI')}
-                    disabled={zipLoading}
-                  >
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download All NOIs
-                  </StyledButton>
-                  <StyledButton
-                    variant="outlined"
-                    onClick={() => getReportsFile('selected')}
-                    disabled={!selectedRows.length || zipLoading}
-                  >
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download Selected
-                  </StyledButton>
-                  <StyledButton
-                    variant="outlined"
-                    onClick={() => getReportsFile('SELECTED_SALESREPORT')}
-                    disabled={!selectedRows.length || zipLoading}
-                  >
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download Selected Sales Report(s)
-                  </StyledButton>
-                  <Tooltip
-                    title={
-                      totalRowCount > 400
-                        ? 'Must be less than 400 locations to download'
-                        : ''
-                    }
-                    placement="top"
-                  >
-                    <div>
-                      <StyledButton
-                        variant="contained"
-                        onClick={() => getReportsFile('all')}
-                        disabled={zipLoading || totalRowCount > 400}
+                <Box display ='flex' justifyContent='flex-end' my={2}>
+                  <Tooltip title={selectedRows.length > 8 ? "Can't open map with more than 8 locations at a time" : ''}>
+                    <Box>
+                      <StyledButton 
+                        variant="small-outlined" 
+                        disabled={!selectedRows?.length || selectedRows.length >8}
+                        onClick={openMap}
                       >
-                        <SaveAltIcon className={classes.buttonIconAlt} />
-                        Download All Locations
+                        Show on Map
                       </StyledButton>
-                    </div>
+                    </Box>
                   </Tooltip>
-                </div>
+                  <Box mx={2}/>
+                  <StyledMenus items={menuOptions} buttonComponent="Download"/>
+                </Box>
               </div>
               <div className={'tableDiv'}>
                 <StyledTable

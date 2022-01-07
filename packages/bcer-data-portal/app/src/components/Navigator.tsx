@@ -16,7 +16,6 @@ import { useHistory } from 'react-router';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { StyledTab, StyledTabs } from './generic';
 import store from 'store';
-import { hasPermission, PERMISSIONS } from '@/constants/permissions';
 import { ConfigContext } from '@/contexts/Config';
 
 const useStyles = makeStyles((theme) => ({

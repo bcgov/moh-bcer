@@ -9,7 +9,7 @@ import logo from '@/assets/images/logo-banner.svg';
 const useStyles = makeStyles({
   header: {
     position: 'fixed',
-    zIndex: 11,
+    zIndex: 1500,
     alignItems: 'center',
     backgroundColor: '#036',
     width: '100%',

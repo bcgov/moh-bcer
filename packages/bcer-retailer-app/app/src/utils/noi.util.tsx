@@ -119,7 +119,6 @@ export class NoiUtil {
       data: data.reduce((dataList: Array<any>, l: BusinessLocation) => {
         dataList.push([
           l.addressLine1,
-          l.addressLine2,
           l.postal,
           l.city,
           l.email,
@@ -161,7 +160,6 @@ export class NoiPdfUtil {
 
   private calculateTotalCharacters(data: BusinessLocation, legalName: string) {
     this.totalCharacters += data.addressLine1?.length || 0;
-    this.totalCharacters += data.addressLine2?.length || 0;
     this.totalCharacters += data.city?.length || 0;
     this.totalCharacters += data.doingBusinessAs?.length || legalName?.length || 0;
     this.totalCharacters += data.postal?.length || 0;
@@ -235,9 +233,6 @@ export class NoiPdfUtil {
   static formatAddress(location: BusinessLocation): string {
     let formattedAddress = '';
     formattedAddress += `${location.addressLine1}, `;
-    formattedAddress += location.addressLine2
-      ? `${location.addressLine2}, `
-      : '';
     formattedAddress += `${location.city}, `;
     return formattedAddress;
   }

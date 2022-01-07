@@ -290,7 +290,7 @@ export default function ProductOverview() {
                 <CSVLink
                   headers={Object.keys(BusinessLocationHeaders)}
                   data={withoutProducts.map((l: BusinessLocation) => {
-                    return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
                   })}
                   filename={'business_locations_productless.csv'} className={classes.csvLink} target='_blank'>
                   <StyledButton variant='outlined'>
@@ -333,7 +333,7 @@ export default function ProductOverview() {
                 <CSVLink
                   headers={Object.keys(BusinessLocationHeaders)}
                   data={withProducts.map((l: BusinessLocation) => {
-                    return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
                   })}
                   filename={'business_locations_with_products.csv'} className={classes.csvLink} target='_blank'>
                   <StyledButton variant='outlined'>
