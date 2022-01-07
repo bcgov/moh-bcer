@@ -34,6 +34,7 @@ import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { ProductsService } from 'src/products/products.service';
 import { SalesReportService } from 'src/sales/sales.service';
 import { LocationConfig } from './config/dataLocation.config';
+import { DirectionDto } from './dto/direction.dto';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -246,9 +247,9 @@ export class LocationDataPortalController {
   @ApiOperation({ summary: 'gets the direction data between given locations' })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
-  @Get('/direction/:uri')
-  async getDirection(@Param('uri') uri: string){
-    if(!uri) throw UnprocessableEntityException;
-    return await this.service.getDirection(uri);
+  @Post('/direction')
+  async getDirection(@Body() payload: DirectionDto){
+    if(!payload?.uri) throw UnprocessableEntityException;
+    return await this.service.getDirection(payload.uri);
   }
 }
