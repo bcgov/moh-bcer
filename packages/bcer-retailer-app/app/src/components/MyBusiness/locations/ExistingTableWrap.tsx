@@ -7,13 +7,14 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { ExistingTable } from './Tables';
 import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { BusinessLocation } from '@/constants/localInterfaces';
-import { useAxiosPatch, useAxiosPost } from '@/hooks/axios';
+import { useAxiosGet, useAxiosPatch, useAxiosPost } from '@/hooks/axios';
 import Loader from '@/components/Sales/Loader';
 import { StyledConfirmDateDialog, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import FullScreen from '@/components/generic/FullScreen';
 import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
 import { LocationUtil } from '@/utils/location.util';
 import { editLocationFormatting } from '@/utils/formatting';
+import { AppGlobalContext } from '@/contexts/AppGlobal';
 
 const useStyles = makeStyles({
   noiSubmittedBox: {
@@ -50,7 +51,7 @@ export default function ExistingTableWrap() {
   const [locationContext, setLocationContext] = useState<BusinessLocation>(null);
   const existingLocations = locations?.filter((l) => !!l.id);
   const addedLocations = businessInfo.locations.filter((l: any) => !l.id);
-
+  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   /**
    * api request
    * */
@@ -72,6 +73,18 @@ export default function ExistingTableWrap() {
     '/users/profile',
     { manual: true }
   );
+
+  //get status
+  const [{ data: status, error: statusError }, getStatus] = useAxiosGet(`/users/status`, {manual: true});
+
+  useEffect(() => {
+    if (status && !statusError) {
+      setAppGlobal({
+        ...appGlobal,
+        ...status,
+      })
+    }
+  }, [status]);
 
   // update locations
   const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/edit`, { manual: true });
@@ -102,7 +115,7 @@ export default function ExistingTableWrap() {
     if (newBusinessInfo?.submissionId) {
       await patch({ url: `/location/edit/${targetConfirmRow.id}`, data: targetConfirmRow });
     }
-    
+    getStatus();
     setBusinessInfo(newBusinessInfo);
     setOpenEditConfirm(false);
     setOpenEdit(false);

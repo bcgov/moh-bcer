@@ -112,6 +112,17 @@ export default function MyBusinessSubmission (props: any) {
   const [locations, setlocations] = useState<Array<IBusinessLocationValues>>();
   const [appGlobal, setAppGlobalContext ] = useContext(AppGlobalContext);
 
+  const [{ data: status, error: statusError }] = useAxiosGet(`/users/status`);
+
+  useEffect(() => {
+    if (status && !statusError) {
+      setAppGlobalContext({
+        ...appGlobal,
+        ...status,
+      })
+    }
+  }, [status]);
+
   useEffect(() => {
     if (submission) {
       (async()=> {
