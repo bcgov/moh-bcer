@@ -36,6 +36,7 @@ import { SalesReportService } from 'src/sales/sales.service';
 import { ROLES } from 'src/auth/constants';
 import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
 import { LocationConfig } from './config/dataLocation.config';
+import { DirectionDto } from './dto/direction.dto';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -233,6 +234,7 @@ export class LocationDataPortalController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Get('/ids/:ids')
   async getLocationWithIds(@Param('ids') ids: string){
     if(!ids) throw NotFoundException;
@@ -245,6 +247,7 @@ export class LocationDataPortalController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Get('/config')
   async config(){
     return new LocationConfig();
@@ -254,9 +257,10 @@ export class LocationDataPortalController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
-  @Get('/direction/:uri')
-  async getDirection(@Param('uri') uri: string){
-    if(!uri) throw UnprocessableEntityException;
-    return await this.service.getDirection(uri);
+  @AllowAnyRole()
+  @Post('/direction')
+  async getDirection(@Body() payload: DirectionDto){
+    if(!payload?.uri) throw UnprocessableEntityException;
+    return await this.service.getDirection(payload.uri);
   }
 }

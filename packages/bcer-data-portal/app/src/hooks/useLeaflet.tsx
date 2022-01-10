@@ -15,7 +15,7 @@ import { BcRouteLinkBuilder } from '@/util/bcRouteLink.util';
 import { GoogleMapLinkBuilder } from '@/util/googleMapLink.util';
 import redMarker from '@/assets/images/marker-icon-2x-red.png';
 import markerShadow from '@/assets/images/marker-shadow.png'
-import { useAxiosGet } from './axios';
+import { useAxiosPost } from './axios';
 import sanitizeHtml from 'sanitize-html';
 
 function useLeaflet(locationIds: string, config: LocationConfig) {
@@ -24,7 +24,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   const [routeData, setRouteData] = useState<BCDirectionData>();
   const [directionError, setDirectionError] = useState<any>();
 
-  const [{}, getDirection] = useAxiosGet<BCDirectionData>('location/direction', { manual: true });
+  const [{}, getDirection] = useAxiosPost<BCDirectionData>('/data/location/direction', { manual: true });
 
   const {
     selectedLocations,
@@ -238,19 +238,22 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       .addOptions(routeOptions)
       .build();
 
-    await fetchDirection(encodeURIComponent(url));
+    await fetchDirection(url);
   };
 
   /**
    * Fetches direction data from api
-   * @param {string} url URI encoded link
+   * @param {string} url BC routing link parameters
    */
   const fetchDirection = async (url: string) => {
     setRouteData(null);
     setDirectionError(null);
     try {
       const { data } = await getDirection({
-        url: `/data/location/direction/${url}`
+        url: `/data/location/direction`,
+        data: {
+          uri: url,
+        }
       });
       if(!data) throw 'Could not get route from api';
       setRouteData(data);
