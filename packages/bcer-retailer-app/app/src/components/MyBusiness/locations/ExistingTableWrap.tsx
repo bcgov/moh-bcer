@@ -132,6 +132,7 @@ export default function ExistingTableWrap() {
       url: `/location/close/${locationId}?closedTime=${moment(date).unix()}`,
     });
     await postProfile();
+    getStatus();
     setLocationId(null);
   };
   useEffect(() => {
@@ -153,6 +154,7 @@ export default function ExistingTableWrap() {
       url: `/location/delete/${locationContext?.id}`,
     })
     await postProfile()
+    getStatus();
     setDeleteOpen(false)
   };
 
