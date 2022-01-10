@@ -15,6 +15,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
+import { ROLES } from 'src/auth/constants';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { LocationService } from 'src/location/location.service';
@@ -28,7 +30,7 @@ import { BusinessRO } from './ro/business.ro';
 
 @ApiBearerAuth()
 @ApiTags('Business')
-@UseGuards(AuthDataGuard)
+@UseGuards(AuthDataGuard, RoleGuard)
 @Controller('data/business')
 export class BusinessDataPortalController {
   constructor(
@@ -42,7 +44,7 @@ export class BusinessDataPortalController {
   @ApiOperation({ summary: 'Retrieve all businesses' })
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, type: BusinessRO })
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN)
   @Get()
   async getUsers(@Request() req: RequestWithUser): Promise<BusinessRO[]> {
     const payload = {
@@ -55,7 +57,7 @@ export class BusinessDataPortalController {
   @ApiOperation({ summary: 'Merges 2 business data together' })
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, type: String })
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN)
   @Patch('merge')
   async mergeBusiness(@Body() payload: BusinessMergeDTO) {
     const {sourceBusinessId, targetBusinessId} = payload;

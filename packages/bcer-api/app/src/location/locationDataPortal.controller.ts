@@ -33,12 +33,14 @@ import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { ProductsService } from 'src/products/products.service';
 import { SalesReportService } from 'src/sales/sales.service';
+import { ROLES } from 'src/auth/constants';
+import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
 import { LocationConfig } from './config/dataLocation.config';
 import { DirectionDto } from './dto/direction.dto';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
-@UseGuards(AuthDataGuard)
+@UseGuards(AuthDataGuard, RoleGuard)
 @Controller('data/location')
 export class LocationDataPortalController {
   constructor(
@@ -87,6 +89,8 @@ export class LocationDataPortalController {
   })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Get()
   async getCommonLocations(
     @Query() query: LocationSearchDTO,
@@ -102,7 +106,8 @@ export class LocationDataPortalController {
   @ApiOperation({ summary: 'Download locations reports' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Post('reportsFile')
   @ApiQuery({
     name: 'getAll',
@@ -228,6 +233,8 @@ export class LocationDataPortalController {
   @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Get('/ids/:ids')
   async getLocationWithIds(@Param('ids') ids: string){
     if(!ids) throw NotFoundException;
@@ -239,6 +246,8 @@ export class LocationDataPortalController {
   @ApiResponse({ status: HttpStatus.OK, type: LocationConfig })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Get('/config')
   async config(){
     return new LocationConfig();
@@ -247,6 +256,8 @@ export class LocationDataPortalController {
   @ApiOperation({ summary: 'gets the direction data between given locations' })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Post('/direction')
   async getDirection(@Body() payload: DirectionDto){
     if(!payload?.uri) throw UnprocessableEntityException;

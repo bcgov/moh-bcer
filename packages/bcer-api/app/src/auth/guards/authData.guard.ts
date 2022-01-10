@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
 import jwksRsa from 'jwks-rsa';
+import { ROLES } from '../constants';
 
 @Injectable()
 export class AuthDataGuard implements CanActivate {
@@ -25,9 +26,10 @@ export class AuthDataGuard implements CanActivate {
       if (verified['azp'] !== process.env.KEYCLOAK_DATA_CLIENT) {
         throw new UnauthorizedException('Token has invalid authorized party');
       }
+
       if (!verified['resource_access'] ||
           !verified['resource_access'][process.env.KEYCLOAK_DATA_CLIENT] ||
-          !verified['resource_access'][process.env.KEYCLOAK_DATA_CLIENT].roles?.includes('bcer_admin')) {
+          !verified['resource_access'][process.env.KEYCLOAK_DATA_CLIENT].roles?.some(r => [ROLES.HA_ADMIN, ROLES.MOH_ADMIN].includes(r))) {
         throw new UnauthorizedException('User does not have bcer_admin role for this realm');
       }
       // Attach user info object
@@ -36,7 +38,8 @@ export class AuthDataGuard implements CanActivate {
         email: verified['email'],
         firstName: verified['given_name'],
         lastName: verified['family_name'],
-      }
+        roles: verified['resource_access'][process.env.KEYCLOAK_DATA_CLIENT].roles
+      };
       // Attach raw access token JWT extracted from bearer/cookie
       request.accessTokenJWT = token;
       return true;

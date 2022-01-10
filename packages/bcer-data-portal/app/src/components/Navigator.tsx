@@ -11,12 +11,12 @@ import {
 import { TabPanel } from '@material-ui/lab';
 import { withStyles } from '@material-ui/styles';
 import { useKeycloak } from '@react-keycloak/web';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useHistory } from 'react-router';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { StyledTab, StyledTabs } from './generic';
 import store from 'store';
-
+import { ConfigContext } from '@/contexts/Config';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -48,6 +48,7 @@ function Navigator() {
   const history = useHistory();
   const [keycloak] = useKeycloak();
   const [value, setValue] = React.useState(history.location.pathname);
+  const { config } = useContext(ConfigContext);
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
@@ -72,18 +73,22 @@ function Navigator() {
               textColor="primary"
               aria-label="icon tabs example"
             >
-              <StyledTab
-                disableRipple
-                label="Submitted Locations"
-                {...a11yProps(0)}
-                value={routes.root}
-              />
-              <StyledTab
-                disableRipple
-                label="User Management"
-                {...a11yProps(1)}
-                value={routes.userManagement}
-              />
+              {config.permissions.MANAGE_LOCATIONS && (
+                <StyledTab
+                  disableRipple
+                  label="Submitted Locations"
+                  {...a11yProps(0)}
+                  value={routes.root}
+                />
+              )}
+              {config.permissions.MANAGE_USERS && (
+                <StyledTab
+                  disableRipple
+                  label="User Management"
+                  {...a11yProps(1)}
+                  value={routes.userManagement}
+                />
+              )}
             </StyledTabs>
           </Box>
           <Box className={classes.buttonWrapper}>

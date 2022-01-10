@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Keycloak, Token } from 'keycloak-connect';
-import { KEYCLOAK_INSTANCE } from '../constants';
+import { KEYCLOAK_INSTANCE, ROLES } from '../constants';
 import { META_ALLOW_ANY_ROLE } from '../decorators/allowAnyRole.decorator';
 import { META_ROLES } from '../decorators/roles.decorator';
   
@@ -17,48 +17,40 @@ import { META_ROLES } from '../decorators/roles.decorator';
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor(
-    @Inject(KEYCLOAK_INSTANCE)
-    private keycloak: Keycloak,
     private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    return true;
+    const roles = this.reflector.get<string[]>(
+      META_ROLES,
+      context.getHandler(),
+    );
+    const allowAnyRole = this.reflector.get<boolean>(
+      META_ALLOW_ANY_ROLE,
+      context.getHandler(),
+    );
 
-  //   const roles = this.reflector.get<string[]>(
-  //     META_ROLES,
-  //     context.getHandler(),
-  //   );
-  //   const allowAnyRole = this.reflector.get<boolean>(
-  //     META_ALLOW_ANY_ROLE,
-  //     context.getHandler(),
-  //   );
+    // No roles given, since we are permissive, allow
+    if (!roles || !roles.some(role => [ROLES.HA_ADMIN, ROLES.MOH_ADMIN].includes(role))) {
+      return true;
+    }
 
-  //   // No roles given, since we are permissive, allow
-  //   if (!roles) {
-  //     return true;
-  //   }
+    const request = context.switchToHttp().getRequest();
+    const { user } = request;
 
-  //   const request = context.switchToHttp().getRequest();
-  //   const { accessTokenJWT } = request;
+    if (!user) {
+      // No user attached, auth guard should have attached the necessary user
+      throw new UnauthorizedException(
+        'No user received from auth guard',
+      );
+    }
 
-  //   if (!accessTokenJWT) {
-  //     // No access token attached, auth guard should have attached the necessary token
-  //     throw new UnauthorizedException(
-  //       'No access token received from auth guard',
-  //     );
-  //   }
+    const userRoles = request.user?.roles || [];
 
-  //   // Create grant
-  //   const grant = await this.keycloak.grantManager.createGrant({
-  //     access_token: accessTokenJWT,
-  //   });
-  //   // Grab access token from grant
-  //   const accessToken: Token = grant.access_token as any;
-  //   const isInRole = allowAnyRole
-  //     ? roles.some(r => accessToken.hasRole(r))
-  //     : roles.every(r => accessToken.hasRole(r));
+    const isInRole = allowAnyRole
+      ? roles.some(r => userRoles.includes(r))
+      : roles.every(r => userRoles.includes(r));
 
-  //   return isInRole;
+    return isInRole;
   }
 }
