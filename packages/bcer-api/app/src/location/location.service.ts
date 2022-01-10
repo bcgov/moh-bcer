@@ -511,7 +511,7 @@ export class LocationService {
 
   async getDirection(uri: string) {
     const baseLink = 'https://router.api.gov.bc.ca';
-    const { data } = await Axios.get(`${baseLink}${decodeURIComponent(uri)}`, {
+    const { data } = await Axios.get(`${baseLink}${uri}`, {
       headers: {
         apiKey: process.env.BC_DIRECTION_API_KEY,
       },
