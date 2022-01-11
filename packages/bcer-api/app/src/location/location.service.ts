@@ -47,8 +47,14 @@ export class LocationService {
     private geoCodeService: GeoCodeService,
   ) { }
 
-  async createLocations(dto: [LocationDTO], businessId: string) {
+  async createLocations(dto: LocationDTO[], businessId: string) {
     const business = await this.businessRepository.findOne(businessId);
+    dto = dto.map(d => {
+      if(!(d as any).id){
+        delete (d as any).id;
+      }
+      return d;
+    })
     const locationEntities = this.locationRepository.create(this.mapLocationDTOs(dto, business));
     await this.locationRepository.save(locationEntities);
     const locations = await this.locationRepository.createQueryBuilder('location')
