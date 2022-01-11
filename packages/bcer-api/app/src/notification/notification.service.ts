@@ -46,7 +46,7 @@ export class NotificationService {
     return await this.notificationRepository.find();
   }
 
-  async getSubscriptions(): Promise<SubscriptionRO[]> {
+  async getSubscriptions(): Promise<SubscriptionEntity[]> {
     return await this.subscriptionRepository.find();
   }
 

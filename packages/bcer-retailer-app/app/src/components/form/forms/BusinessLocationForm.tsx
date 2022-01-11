@@ -124,6 +124,7 @@ function BusinessLocationForm({ entry }: { entry: string }) {
             toggleManualEntryForm(false);
           }}
         >
+        {({ values, ...helpers }) => (
           <Form>
             <StyledDialog
               open={showManualEntryForm}
@@ -136,9 +137,10 @@ function BusinessLocationForm({ entry }: { entry: string }) {
               cancelHandler={() => toggleManualEntryForm(false)}
               acceptHandler="submit"
             >
-              <BusinessLocationInputs />
+              <BusinessLocationInputs formikValues={values} formikHelpers={helpers} />
             </StyledDialog>
           </Form>
+        )}
         </Formik>
       ) : null}
       <LocationsEditForm

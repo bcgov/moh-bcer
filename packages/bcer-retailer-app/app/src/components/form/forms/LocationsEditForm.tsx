@@ -119,6 +119,7 @@ export default function LocationsEditForm(
                   editLocation(values)
             }}
           >
+          {({ values, ...helpers }) => (
             <Form>
               <StyledDialog
                 open={openProps.isOpen}
@@ -130,9 +131,10 @@ export default function LocationsEditForm(
                 cancelHandler={()=>openProps.toggleOpen(false)}
                 acceptHandler="submit"
               >
-                <BusinessLocationInputs />
+                <BusinessLocationInputs formikValues={values} formikHelpers={helpers}/>
               </StyledDialog>
             </Form>
+          )}
           </Formik>
         : ((rowData?.noi?.status === NoiStatus.Submitted) && isOpen && !isAddNew) || openProps.isViewOnly
           ?

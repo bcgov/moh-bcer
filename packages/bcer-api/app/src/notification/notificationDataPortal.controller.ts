@@ -17,7 +17,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard, RoleGuard } from 'src/auth/auth.module';
+import { AuthGuard, RoleGuard, Roles } from 'src/auth/auth.module';
+import { ROLES } from 'src/auth/constants';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
 import { NotificationDTO } from './dto/notification.dto';
 import { ResendNotificationDTO } from './dto/resend-notification.dto';
@@ -27,7 +28,7 @@ import { NotificationRO } from './ro/notification.ro';
 import { SubscriptionRO } from './ro/subscription.ro';
 
 @ApiBearerAuth()
-@UseGuards(AuthDataGuard)
+@UseGuards(AuthDataGuard, RoleGuard)
 @ApiTags('Notifications')
 @Controller('data/notification')
 export class NotificationDataPortalController {
@@ -38,7 +39,7 @@ export class NotificationDataPortalController {
   })
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, type: NotificationRO })
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN)
   @Post()
   async sendMessage(
     @Req() req: any,
@@ -70,7 +71,7 @@ export class NotificationDataPortalController {
   @ApiOperation({ summary: 'Get all the Notifications from database' })
   @ApiResponse({ status: HttpStatus.OK, type: NotificationRO })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN)
   @Get()
   async getNotifications(): Promise<NotificationRO[]> {
     const notifications = await this.notificationService.getNotifications();
@@ -80,7 +81,7 @@ export class NotificationDataPortalController {
   @ApiOperation({ summary: 'Get all the Notifications from database' })
   @ApiResponse({ status: HttpStatus.OK, type: NotificationRO })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN)
   @Get('subscribers')
   async getSubscribers(): Promise<SubscriptionRO[]> {
     const subscribers = await this.notificationService.getSubscriptions();
@@ -90,7 +91,7 @@ export class NotificationDataPortalController {
   @ApiOperation({ summary: 'Resend an existing message' })
   @ApiResponse({ status: HttpStatus.OK, type: NotificationRO })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN)
   @Patch('resend')
   async resendText(
     @Body() payload: ResendNotificationDTO,

@@ -105,4 +105,10 @@ export class UserService {
   async assignBusinessToUser(userId: string, businessId){
     await this.update({id: userId, businessId});
   }
+
+  getConfig(){
+    return {
+      enableSubscription: process.env.ENABLE_SUBSCRIPTION,
+    }
+  }
 }

@@ -2,7 +2,6 @@ import * as yup from 'yup';
 
 export const BusinessCsvValidation = yup.object({
   addressLine1: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The address of your place of business is required'),
-  addressLine2: yup.string().test('length', 'The address must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
   postal: yup.string()
     .matches(
       /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/,

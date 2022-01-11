@@ -246,7 +246,7 @@ export default function MyBusinessSubmission (props: any) {
                 <CSVLink
                   headers={Object.keys(BusinessLocationHeaders)}
                   data={locations.map((l) => {
-                    return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
                   })}
                   filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
                   <StyledButton variant='outlined'>

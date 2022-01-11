@@ -10,6 +10,9 @@ import {
   UsePipes,
   ValidationPipe,
   Res,
+  Param,
+  NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import {
   ApiParam,
@@ -30,10 +33,14 @@ import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { ProductsService } from 'src/products/products.service';
 import { SalesReportService } from 'src/sales/sales.service';
+import { ROLES } from 'src/auth/constants';
+import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
+import { LocationConfig } from './config/dataLocation.config';
+import { DirectionDto } from './dto/direction.dto';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
-@UseGuards(AuthDataGuard)
+@UseGuards(AuthDataGuard, RoleGuard)
 @Controller('data/location')
 export class LocationDataPortalController {
   constructor(
@@ -82,6 +89,8 @@ export class LocationDataPortalController {
   })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Get()
   async getCommonLocations(
     @Query() query: LocationSearchDTO,
@@ -97,7 +106,8 @@ export class LocationDataPortalController {
   @ApiOperation({ summary: 'Download locations reports' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
   @Post('reportsFile')
   @ApiQuery({
     name: 'getAll',
@@ -217,5 +227,40 @@ export class LocationDataPortalController {
       location.manufactures = locationsWithManufactures[location.id];
     });
     return this.service.packageAsZip(locations);
+  }
+
+  @ApiOperation({ summary: 'gets all the location provided as a csv in the route' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Get('/ids/:ids')
+  async getLocationWithIds(@Param('ids') ids: string){
+    if(!ids) throw NotFoundException;
+    const locations = await this.service.getLocationWithIds(ids.split(','));
+    return locations.map(l => l.toResponseObject());
+  }
+
+  @ApiOperation({ summary: 'gets all the config data for data portal map' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationConfig })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Get('/config')
+  async config(){
+    return new LocationConfig();
+  }
+
+  @ApiOperation({ summary: 'gets the direction data between given locations' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Post('/direction')
+  async getDirection(@Body() payload: DirectionDto){
+    if(!payload?.uri) throw UnprocessableEntityException;
+    return await this.service.getDirection(payload.uri);
   }
 }

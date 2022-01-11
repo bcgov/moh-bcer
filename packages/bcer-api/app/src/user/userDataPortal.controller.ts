@@ -19,22 +19,26 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
+import { AuthService } from 'src/auth/auth.service';
+import { ROLES } from 'src/auth/constants';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { LocationService } from 'src/location/location.service';
 import { NoiService } from 'src/noi/noi.service';
 import { UserSearchDTO } from './dto/user-search.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
-import { UserRO } from './ro/user.ro';
+import { PermissionRO, UserRO } from './ro/user.ro';
 import { UserService } from './user.service';
 
 @ApiBearerAuth()
 @ApiTags('Users')
-@UseGuards(AuthDataGuard)
+@UseGuards(AuthDataGuard, RoleGuard)
 @Controller('data/user')
 export class UserDataPortalController {
   constructor(
     private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) {}
   @ApiOperation({ summary: 'Retrive all users' })
   @HttpCode(HttpStatus.OK)
@@ -49,17 +53,28 @@ export class UserDataPortalController {
     type: String,
     required: false,
   })
-  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN)
   @Get()
   async getUsers(@Query() query: UserSearchDTO): Promise<UserRO[]> {
     const users = await this.userService.getUsersWithBusinessData(query);
     return users.map(u => u.toResponseObject());
   }
 
+  @ApiOperation({ summary: 'Retrive permissions for the current user' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK })
+  @AllowAnyRole()
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @Get('permissions')
+  async getPermissions(@Request() req: RequestWithUser): Promise<PermissionRO> {
+    return this.authService.getPermissions(req);
+  }
+
+
   @ApiOperation({ description: 'Update user' })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthDataGuard)
   @ApiResponse({ status: HttpStatus.OK, type: String })
+  @Roles(ROLES.MOH_ADMIN)
   @Patch('update')
   async updateUser(
     @Body() userUpdate: UserUpdateDto,

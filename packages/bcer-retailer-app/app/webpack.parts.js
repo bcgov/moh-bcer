@@ -231,7 +231,8 @@ exports.setEnvironmentVariable = (nodeEnv, dotEnv, assetPath) => ({
         ASSET_PATH: JSON.stringify(assetPath),
         BASE_KEYCLOAK_URL: JSON.stringify(dotEnv.BASE_KEYCLOAK_URL),
         KEYCLOAK_REALM: JSON.stringify(dotEnv.KEYCLOAK_REALM),
-        KEYCLOAK_CLIENTID: JSON.stringify(dotEnv.KEYCLOAK_CLIENTID)
+        KEYCLOAK_CLIENTID: JSON.stringify(dotEnv.KEYCLOAK_CLIENTID),
+        GOOGLE_MAPS_API_KEY: JSON.stringify(dotEnv.GOOGLE_MAPS_API_KEY)
       },
     }),
   ],

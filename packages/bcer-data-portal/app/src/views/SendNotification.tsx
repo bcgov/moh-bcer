@@ -11,6 +11,7 @@ import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
 import { Notifications, Subscribers } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
+import { useToast } from '@/hooks/useToast';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -73,16 +74,31 @@ const useStyles = makeStyles({
 
 export default function SendNotification() {
   const classes = useStyles();
+  const { openToast } = useToast();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
 
   const [{ loading: postLoading, error: postError, data: postData, response: postResponse }, postMessage] = useAxiosPost('/data/notification', { manual: true });
   const [{ loading: loadingActivities, error: activitiesError, response: activitiesResponse, data: activityLog }, getActivityLog] = useAxiosGet('/data/notification', { manual: false });
   const [{ loading: loadingSubscribers, error: subscribersError, response: subscribersResponse, data: subscribers }, getSubscribers] = useAxiosGet('/data/notification/subscribers', { manual: false });
 
-  const submitMessage = async(values: {title: string, message: string}) => {
-    await postMessage({
-      data: values
-    })
+  const submitMessage = async(values: {title: string, message: string}, resetForm: Function) => {
+    try{
+      await postMessage({
+        data: values
+      })
+      openToast({
+        successMessages: ['Message Sent!'],
+        type: 'success'
+      })
+      resetForm();
+    }catch(e){
+      openToast({
+        errorMessages: ['Could not send message!'],
+        type: 'error'
+      })
+    }finally{
+      getActivityLog()
+    }
   }
 
   useEffect(() => {
@@ -129,7 +145,8 @@ export default function SendNotification() {
             <Box padding={4} className={classes.contentBox}>
               <Formik
                 initialValues={{title: '', message: ''}}
-                onSubmit={(values) => submitMessage(values)}
+                onSubmit={(values, { resetForm }) => submitMessage(values, resetForm)}
+                enableReinitialize
               >
                 {({values, handleSubmit}) => (
                 <Form>
@@ -147,7 +164,7 @@ export default function SendNotification() {
                     InputProps={{ endAdornment: <InputAdornment className={classes.endAdornment} position="end">{values.message.length}/612</InputAdornment>
                     }}
                   />
-                  <StyledButton onClick={handleSubmit} variant="contained" size="medium">
+                  <StyledButton onClick={handleSubmit} variant="contained" size="medium" disable={postLoading}>
                   <img src={SendIcon} className={classes.sendIcon} />
                     Send Notification
                   </StyledButton>

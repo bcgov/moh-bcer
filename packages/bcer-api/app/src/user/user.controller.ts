@@ -10,6 +10,7 @@ import { UserService } from 'src/user/user.service';
 import { BusinessService } from 'src/business/business.service';
 import { LocationService } from 'src/location/location.service';
 import { getDurationInMilliseconds } from '../utils/util';
+import { ROLES } from 'src/auth/constants';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -39,7 +40,7 @@ export class UserController {
     if (!validatedUser) {
       const user = await this.userService.create({
         bceid: bceidGuid,
-        bceidUser,
+        bceidUser, 
         email,
         firstName,
         lastName,
@@ -84,10 +85,19 @@ export class UserController {
       myBusinessComplete: Boolean(business.legalName && business.email),
       noiComplete: locations.length > 0 ? locations.every(l => l.noi) : false,
       productReportComplete: locations.length > 0 ? locations.every(l => l.products?.length || l.productsCount > 0) : false,
-      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) : false,
+      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) || locations.every(l => !l.manufacturing) : false,
     };
 
     Logger.log(`Time to process status request after middleware ${getDurationInMilliseconds(start)} ms`);
     return statusObject;
+  }
+
+  @ApiOperation({ summary: 'Retrive config for users' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK })
+  @Roles(ROLES.USER)
+  @Get('permissions')
+  async getPermissions(@Request() req: RequestWithUser) {
+    return this.userService.getConfig();
   }
 }
