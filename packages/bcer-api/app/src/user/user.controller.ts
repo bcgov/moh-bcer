@@ -10,6 +10,7 @@ import { UserService } from 'src/user/user.service';
 import { BusinessService } from 'src/business/business.service';
 import { LocationService } from 'src/location/location.service';
 import { getDurationInMilliseconds } from '../utils/util';
+import { LocationStatus } from 'src/location/enums/location-status.enum';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -84,7 +85,7 @@ export class UserController {
       myBusinessComplete: Boolean(business.legalName && business.email),
       noiComplete: locations.length > 0 ? locations.every(l => l.noi) : false,
       productReportComplete: locations.length > 0 ? locations.every(l => l.products?.length || l.productsCount > 0) : false,
-      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) || locations.every(l => !l.manufacturing) : false,
+      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) || locations.every(l => !l.manufacturing || l.status === LocationStatus.Closed) : false,
     };
 
     Logger.log(`Time to process status request after middleware ${getDurationInMilliseconds(start)} ms`);
