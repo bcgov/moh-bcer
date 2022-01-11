@@ -26,13 +26,13 @@ export const useCsvValidator = () => {
             // Features prop will only ever have length 0 or 1
 
             if (data.features.length === 0 || data.features[0]?.properties.precisionPoints < 70) {
-              errorArray.push({row: index + 2, field: 'Geocoder Error', message: 'Google was unable to find a match. please edit the location and select the location address'})
+              errorArray.push({row: index + 2, field: 'Geocoder Error', message: 'We were unable to find a matching address. Please edit the location details.'})
               element.error = true;
             } else {
               // Set the element's confidence interval, latitude, and longitude props from the retured geocoder data
               element.geoAddressConfidence = data.features[0].properties.precisionPoints
-              element.latitude = data.features[0].geometry.coordinates[0]
-              element.longitude = data.features[0].geometry.coordinates[1]
+              element.longitude = data.features[0].geometry.coordinates[0]
+              element.latitude = data.features[0].geometry.coordinates[1]
             }
           } catch (requestError) {
             console.log(requestError)

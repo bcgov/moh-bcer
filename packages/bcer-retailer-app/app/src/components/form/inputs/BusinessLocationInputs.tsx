@@ -73,8 +73,8 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     formikHelpers.setFieldValue('addressLine1', fullLocation ? fullLocation.properties.fullAddress : '')
     formikHelpers.setFieldValue('geoAddressConfidence', fullLocation.properties.precisionPoints)
     formikHelpers.setFieldValue('city', fullLocation.properties.localityName)
-    formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[0])
-    formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[1])
+    formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[0])
+    formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[1])
   }
   
   const getAutocomplete = (e: any) => {
