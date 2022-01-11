@@ -1,13 +1,19 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core'
+import { Grid, makeStyles, Typography } from '@material-ui/core'
 
 import clockIcon from '@/assets/images/clock.png';
 import sendIcon from '@/assets/images/send.png';
 
 const useStyles = makeStyles({
-  parent: {
-    padding: '1rem 2rem',
-    overflowY: 'auto',
+  contentWrapper: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+  },
+  content: {
+    maxWidth: '1440px',
+    width: '95%',
+    padding: '20px 30px',
   },
   failureTextContainer: {
     background: 'rgba(255,83,74,0.1)',
@@ -42,26 +48,51 @@ export default function GetHelp() {
   const classes = useStyles();
 
   return (
-    <div className={classes.parent} >
-      <Typography variant="h5">Important Dates To Be Aware Of</Typography>
-      <Typography variant="body1">
-        For any business that sells or intends to sell E-substances on September 15, 2020, you must complete this
-        form and submit Product Reports or Manufacturing Reports at least 6 weeks prior September 15, 2020.
-        This document will provide you with information on submitting your Product Reports or Manufacturing Reports.<br /><br />
-        By completing the following information, you will be submitting your Notice of Intent to sell e-substances in British Columbia.<br /><br />
-        Upon completion of the Notice of Intent to sell restricted e-substances, you will have the option to print a copy of the Notice for your records.<br /><br />
-      </Typography>
-      <div className={classes.failureTextContainer}>
-        Business owners that fail to submit their Notice of Intent and that fail to comply with the new reporting requirements may be subject to offences under the Public Health Act.
+    <div className={classes.contentWrapper} >
+      <div className={classes.content} >
+        <Grid item container xs={8}>
+          <Typography variant="subtitle2">
+            The E-Substances Regulation requires all businesses who sell E-substances or intend to sell E-substances in British Columbia 
+            to notify the Ministry of Health of their intent to sell E-substances and to provide annual sales reports for each location of your business.  
+            There are date sensitive requirements related to both your Notice of Intent and Sales Reports.
+          </Typography>
+        </Grid>
+        <Typography variant="h5">Important Dates To Be Aware Of</Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <Typography variant="body1">
+              <span style={{fontWeight: 600}}>Notice of Intent</span> - Business owners must notify the Ministry of Health of their intent to sell restricted 
+              E-substances by submitting a Notice of Intent to sell E-Substances to the Ministry of Health. The Notice of Intent to Sell E-Substances is 
+              required for each separate sales premises for your business and must be completed at least six (6) weeks before any sale of vapour products 
+              can occur. 
+            </Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <Typography variant="body1" >
+              <span style={{fontWeight: 600}}>Notice of Intent Renewal</span> - Each Notice of Intent must be renewed annually by January 15th.
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="body1">
+              <span style={{fontWeight: 600}}>Sales Report</span> - Prior to January 15 of each year, business owners must report the vapour 
+              product sales that have occurred between October 1 and September 30 each year.
+            </Typography>
+          </Grid>
+          <Grid item>
+            <div className={classes.failureTextContainer}>
+              Business owners that fail to submit their Notice of Intent and that fail to comply with the new reporting requirements may be subject to offences under the Public Health Act.
+            </div>
+          </Grid>
+        </Grid>
+        <Typography variant="h5">Technical support</Typography>
+        <Typography variant="body1">
+          For technical support please contact our support team:<br /><br />
+          <div className={classes.contactMethodContainer}>
+            <img src={sendIcon} className={classes.icon} />
+            Support Email: <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
+          </div>
+        </Typography>
       </div>
-      <Typography variant="h5">Technical support</Typography>
-      <Typography variant="body1">
-        For technical support please contact our support team:<br /><br />
-        <div className={classes.contactMethodContainer}>
-          <img src={sendIcon} className={classes.icon} />
-          Support Email: <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
-        </div>
-      </Typography>
     </div>
   )
 }
