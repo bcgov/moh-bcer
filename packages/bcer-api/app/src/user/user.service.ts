@@ -8,6 +8,7 @@ import { UserTypeEnum } from './enums/user-type.enum';
 import { BusinessEntity } from 'src/business/entities/business.entity';
 import { UserSearchDTO } from './dto/user-search.dto';
 import { UserSearchTypes } from './enums/user-search-type.enum';
+import { UserConfigRO } from './ro/user-config.ro';
 
 @Injectable()
 export class UserService {
@@ -107,8 +108,6 @@ export class UserService {
   }
 
   getConfig(){
-    return {
-      enableSubscription: process.env.ENABLE_SUBSCRIPTION,
-    }
+    return new UserConfigRO();
   }
 }

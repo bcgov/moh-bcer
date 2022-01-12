@@ -29,7 +29,7 @@ export function formatError (error: any) {
  */
 export function editLocationFormatting (location: IBusinessLocationValues):IBusinessLocationValues {
   let formattedLocation = {
-    id: location.id ? location.id : '',
+    id: location.id ? location.id : null,
     addressLine1: location.addressLine1 ? location.addressLine1 : '' ,
     geoAddressConfidence: location.geoAddressConfidence ? location.geoAddressConfidence : '' ,
     postal: location.postal ? location.postal : '',
@@ -47,6 +47,11 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     tableData: location.tableData ? location.tableData : {id: undefined},
     error: location.error ? location.error : undefined,
     noi: location.noi ? location.noi : undefined
+  }
+
+  // TS will not allow adding a prop after the fact, so this is the workaround if location.id is empty (i.e location is new and not from DB)
+  if (!location.id) {
+    delete formattedLocation.id;
   }
 
   const underageMatchString = location.underage.toLowerCase();

@@ -47,8 +47,14 @@ export class LocationService {
     private geoCodeService: GeoCodeService,
   ) { }
 
-  async createLocations(dto: [LocationDTO], businessId: string) {
+  async createLocations(dto: LocationDTO[], businessId: string) {
     const business = await this.businessRepository.findOne(businessId);
+    dto = dto.map(d => {
+      if(!(d as any).id){
+        delete (d as any).id;
+      }
+      return d;
+    })
     const locationEntities = this.locationRepository.create(this.mapLocationDTOs(dto, business));
     await this.locationRepository.save(locationEntities);
     const locations = await this.locationRepository.createQueryBuilder('location')
@@ -436,6 +442,9 @@ export class LocationService {
       manufacturing: payload.manufacturing === "yes" ? true : false
     }
     payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
+    payload.latitude ? updateValue['latitude'] = payload.latitude : null;
+    payload.longitude ? updateValue['longitude'] = payload.longitude : null;
+    payload.geoAddressConfidence ? updateValue['geoAddressConfidence'] = payload.geoAddressConfidence : null;
 
     const result = await this.locationRepository.update({id: locationId}, {...updateValue});
   }

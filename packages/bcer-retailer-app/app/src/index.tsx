@@ -65,6 +65,9 @@ const Routes = () => {
     productReportComplete: false,
     manufacturingReportComplete: false,
     networkErrorMessage: '',
+    config: {
+      enableSubscription: false,
+    }
   });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 

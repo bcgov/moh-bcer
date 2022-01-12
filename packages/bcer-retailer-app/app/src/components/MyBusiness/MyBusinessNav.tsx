@@ -229,7 +229,7 @@ export default function MyBusinessNav () {
   return (
     <BusinessInfoProvider value={[businessInfo, setBusinessInfo]}>
       <Top steps={stepperOptions} currentStep={currentStep} />
-      {steps[currentStep].showSubscription && <Subscription />}
+      {steps[currentStep].showSubscription && appGlobal.config?.enableSubscription && <Subscription />}
       <div className={classes.stepTitle} >{steps[currentStep].title}</div>
       {
         steps[currentStep].helpText
