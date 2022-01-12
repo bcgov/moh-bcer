@@ -186,7 +186,7 @@ function Pdf({ location, legalName }: PdfProps) {
         </Box>
         <Box className={responsiveClass.infoWrapper}>
           <Typography className={responsiveClass.infoLabel}>
-            Location Age Restricted:
+          Underage Allowed:
           </Typography>
           <Typography className={responsiveClass.infoData}>
             {formattedData.ageRestricted}
