@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import { NoiStatus } from '@/constants/localEnums';
+import Axios from 'axios';
 
 export interface IBusinessLocationValues {
   id?: string;
@@ -48,7 +49,19 @@ export const Initial = {
 };
 
 export const Validation = yup.object({
-  addressLine1: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The address of your place of business is required'),
+  addressLine1: yup.string().required('The address of your place of business is required')
+    .test('exists', `Address couldn't be found or is incorrect`,async (val) => {
+      try {
+        const {data} = await Axios.get(`https://geocoder.api.gov.bc.ca/addresses.json?minScore=70&maxResults=1&echo=false&autoComplete=false&brief=false&matchPrecision=occupant,unit,site,civic_number,block&addressString=${val}`)
+            // Features prop will only ever have length 0 or 1
+        if (data.features.length === 0 || data.features[0]?.properties.precisionPoints < 70) {
+          return false;
+        }
+        return true;
+      }catch(e){
+        return false;
+      }
+    }),
   addressLine2: yup.string().test('length', 'The address must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
   postal: yup.string()
     .matches(
