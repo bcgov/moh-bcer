@@ -78,8 +78,8 @@ export class NotificationDataPortalController {
     return notifications.map(n => n.toResponseObject());
   }
 
-  @ApiOperation({ summary: 'Get all the Notifications from database' })
-  @ApiResponse({ status: HttpStatus.OK, type: NotificationRO })
+  @ApiOperation({ summary: 'Get all the Subscribers from database' })
+  @ApiResponse({ status: HttpStatus.OK, type: SubscriptionRO })
   @HttpCode(HttpStatus.OK)
   @Roles(ROLES.MOH_ADMIN)
   @Get('subscribers')

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Grid, InputAdornment, makeStyles, Typography } from '@material-ui/core'
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import { Form, Formik } from 'formik';
@@ -76,6 +76,7 @@ export default function SendNotification() {
   const classes = useStyles();
   const { openToast } = useToast();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
+  const [activities, setActivities] = useState();
 
   const [{ loading: postLoading, error: postError, data: postData, response: postResponse }, postMessage] = useAxiosPost('/data/notification', { manual: true });
   const [{ loading: loadingActivities, error: activitiesError, response: activitiesResponse, data: activityLog }, getActivityLog] = useAxiosGet('/data/notification', { manual: false });
@@ -110,6 +111,12 @@ export default function SendNotification() {
       })
     }
   }, [activitiesError])
+
+  useEffect(() => {
+    if (postResponse) {
+      getActivityLog()
+    }
+  }, [postResponse])
 
   useEffect(() => {
     if (subscribersError) {
@@ -206,7 +213,7 @@ export default function SendNotification() {
                     {
                       activityLog?.length > 0
                         &&
-                      activityLog.map((a: Notifications) => (
+                      activityLog.reverse().map((a: Notifications) => (
                         <div> 
                           <div className={classes.activityRow}> 
                             <Typography variant="subtitle2">{a.title}</Typography>
