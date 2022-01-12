@@ -115,4 +115,22 @@ export class LocationDTO {
   })
   @IsOptional()
   manufacturing: string;
+
+  @ApiProperty({
+    description: 'Latitude of a location'
+  })
+  @IsOptional()
+  latitude?: string;
+
+  @ApiProperty({
+    description: 'Longitude of a location'
+  })
+  @IsOptional()
+  longitude?: string;
+
+  @ApiProperty({
+    description: 'Geo address confidence of a location'
+  })
+  @IsOptional()
+  geoAddressConfidence?: string;
 }

@@ -442,6 +442,9 @@ export class LocationService {
       manufacturing: payload.manufacturing === "yes" ? true : false
     }
     payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
+    payload.latitude ? updateValue['latitude'] = payload.latitude : null;
+    payload.longitude ? updateValue['longitude'] = payload.longitude : null;
+    payload.geoAddressConfidence ? updateValue['geoAddressConfidence'] = payload.geoAddressConfidence : null;
 
     const result = await this.locationRepository.update({id: locationId}, {...updateValue});
   }
