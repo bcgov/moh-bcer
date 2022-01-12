@@ -78,20 +78,7 @@ export default function GetHelp() {
               product sales that have occurred between October 1 and September 30 each year.
             </Typography>
           </Grid>
-          <Grid item>
-            <div className={classes.failureTextContainer}>
-              Business owners that fail to submit their Notice of Intent and that fail to comply with the new reporting requirements may be subject to offences under the Public Health Act.
-            </div>
-          </Grid>
         </Grid>
-        <Typography variant="h5">Technical support</Typography>
-        <Typography variant="body1">
-          For technical support please contact our support team:<br /><br />
-          <div className={classes.contactMethodContainer}>
-            <img src={sendIcon} className={classes.icon} />
-            Support Email: <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>
-          </div>
-        </Typography>
       </div>
     </div>
   )
