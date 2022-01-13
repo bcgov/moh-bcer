@@ -10,6 +10,7 @@ import { IBusinessLocationValues } from '@/components/form/validations/vBusiness
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 import { useAxiosGet } from '@/hooks/axios';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
+import { GeoCodeUtil } from '@/utils/geoCoder.util';
 
 const useStyles = makeStyles({
   groupHeader: {
@@ -78,7 +79,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   }
   
   const getAutocomplete = (e: any) => {
-    getSuggestions({url: `https://geocoder.api.gov.bc.ca/addresses.json?minScore=50&maxResults=5&echo=false&autoComplete=true&brief=false&matchPrecision=occupant,unit,site,civic_number,block&addressString=${e.target.value}`})
+    getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
   }
 
   const resetFieldsOnChange = () => {
