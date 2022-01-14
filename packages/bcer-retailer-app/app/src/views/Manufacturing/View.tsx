@@ -11,6 +11,7 @@ import { ManufacturingReport, BusinessLocation } from '@/constants/localInterfac
 import { HealthAuthorities } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import Delete from './Delete';
 
 const useStyles = makeStyles({
   box: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles({
 export default function ManufacturingReport() {
   const classes = useStyles();
   const history = useHistory();
-  const { reportId } = useParams();
+  const { reportId } = useParams<{reportId: string}>();
   const [{ data: report, loading, error }] = useAxiosGet(`/manufacturing/${reportId}`);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
@@ -87,7 +88,7 @@ export default function ManufacturingReport() {
           ]}
         />
         {report.locations.map((location: BusinessLocation) => (
-          <Paper className={classes.box} variant='outlined'>
+          <Paper className={classes.box} variant='outlined' key={location.id}>
             <Grid container alignItems='center' spacing={2}>
               <Grid item xs={12}>
                 <Typography className={classes.boxTitle} variant='h6'>Retailer Location</Typography>
@@ -131,6 +132,9 @@ export default function ManufacturingReport() {
             </Grid>
           </Paper>
         ))}
+        <Box mt={2} display='flex' justifyContent='flex-end'>
+          <Delete reportId={reportId}/>
+        </Box>
       </div>
     </>
   );
