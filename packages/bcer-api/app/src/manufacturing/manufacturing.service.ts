@@ -107,4 +107,8 @@ export class ManufacturingService {
     .query(`UPDATE manufacturing SET "businessId" = $1 WHERE "businessId" = $2`, [newBusinessId, currentBusinessId])
     return result;
   }
+
+  async softDeleteManufacturing(reportId: string){
+    await this.manufacturingRepository.softDelete({ id: reportId });
+  }
 }

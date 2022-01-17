@@ -32,6 +32,7 @@ import { ManufacturingDTO } from 'src/manufacturing/dto/manufacturing.dto';
 import { ManufacturingRO } from 'src/manufacturing/ro/manufacturing.ro';
 import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationRO } from 'src/location/ro/location.ro';
+import { ROLES } from 'src/auth/constants';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RoleGuard)
@@ -97,5 +98,23 @@ export class ManufacturingController {
       throw new ForbiddenException(`User does not have access to report ${reportId}`);
     }
     return manufacturing.toResponseObject();
+  }
+
+  @ApiOperation({ summary: 'Soft Delete Manufacturing Report by ID' })
+  @ApiResponse({ status: HttpStatus.OK, type: String })
+  @HttpCode(HttpStatus.OK)
+  @Roles(ROLES.USER)
+  @UseGuards(BusinessGuard)
+  @Delete('/:reportId')
+  async deleteManufacturingReportById(
+    @Request() req: RequestWithUser,
+    @Param('reportId') reportId: string
+  ): Promise<string> {
+    const manufacturing = await this.service.getManufacturingReportById(reportId);
+    if (manufacturing.business.id !== req.ctx.businessId) {
+      throw new ForbiddenException(`User does not have access to report ${reportId}`);
+    }
+    await this.service.softDeleteManufacturing(reportId);
+    return 'ok';
   }
 }

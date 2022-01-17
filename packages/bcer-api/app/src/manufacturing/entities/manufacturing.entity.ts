@@ -8,6 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
   JoinTable,
+  DeleteDateColumn,
 } from 'typeorm';
 
 import { ManufacturingRO } from 'src/manufacturing/ro/manufacturing.ro';
@@ -42,6 +43,9 @@ export class ManufacturingEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   toResponseObject(): ManufacturingRO {
     return {
