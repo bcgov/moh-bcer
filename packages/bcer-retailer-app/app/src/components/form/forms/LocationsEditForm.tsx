@@ -40,11 +40,12 @@ export default function LocationsEditForm(
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
   const [initialErrors, setInitialErrors] = useState<FormikErrors<IBusinessLocationValues>>()
   const [initialTouched, setInitialTouched] = useState<FormikTouched<IBusinessLocationValues>>()
-
-  useEffect(() => {
+  async function initialValidation(){
     if (rowData) {
+      setInitialTouched(null);
+      setInitialErrors(null);
       try {
-        Validation.validateSync(rowData, { abortEarly: false });
+        await Validation.validate(rowData, { abortEarly: false });
       } catch (e) {
         const errorTypeConversion = e as any;
         let errors: {[key: string]:string} = {};
@@ -58,6 +59,9 @@ export default function LocationsEditForm(
         setInitialTouched(touched)
       }
     }
+  }
+  useEffect(() => {
+    initialValidation()
   }, [rowData])
   
   const addLocation = (values: IBusinessLocationValues) => {

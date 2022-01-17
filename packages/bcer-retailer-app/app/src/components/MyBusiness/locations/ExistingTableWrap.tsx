@@ -248,16 +248,19 @@ export default function ExistingTableWrap() {
             openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit, isAddNew: false, toggleEditConfirmOpen: setOpenEditConfirm, setConfirmTarget: setTargetConfirmRow, isViewOnly }}
           />
         }
-        <StyledConfirmDialog
-          open={isEditConfirmOpen}
-          maxWidth='sm'
-          dialogTitle="Confirm Your Submission"
-          checkboxLabel='I agree that the location information entered is correct.'
-          dialogMessage='You are about to submit an update for the selected retail location.'
-          setOpen={() => setOpenEditConfirm(false)}
-          confirmHandler={handleEditConfirm}
-          acceptButtonText={'Submit'}
-        />
+        {
+          isEditConfirmOpen && 
+          <StyledConfirmDialog
+            open={isEditConfirmOpen}
+            maxWidth='sm'
+            dialogTitle="Confirm Your Submission"
+            checkboxLabel='I agree that the location information entered is correct.'
+            dialogMessage='You are about to submit an update for the selected retail location.'
+            setOpen={() => setOpenEditConfirm(false)}
+            confirmHandler={handleEditConfirm}
+            acceptButtonText={'Submit'}
+          />
+        }
       </>
     </div>
   );
