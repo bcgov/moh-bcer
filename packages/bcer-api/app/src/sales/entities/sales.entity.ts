@@ -68,6 +68,7 @@ export class SalesReportEntity {
       cartridges: this.cartridges,
       year: this.year,
       product: this.product?.toResponseObject(),
+      productSold: this.productSold?.toResponseObject(),
     };
   }
 }

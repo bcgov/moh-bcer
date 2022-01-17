@@ -74,7 +74,7 @@ export default function ConfirmProducts() {
   const history = useHistory();
   const { reportId }:{reportId:string} = useParams();
   const [sales, setSales] = useState<any>([]); // TODO: TYPING
-  const [{ data: location, loading, error }, getLocation] = useAxiosGet<BusinessLocation>(`/location/${reportId}?includes=products,manufactures,manufactures.ingredients,noi,sales,sales.product`, {manual: true});
+  const [{ data: location, loading, error }, getLocation] = useAxiosGet<BusinessLocation>(`/location/${reportId}?includes=products,manufactures,manufactures.ingredients,noi,sales,sales.productSold`, {manual: true});
   const [{ data: business, loading: businessLoading, error: businessError }, getBusiness] = useAxiosGet<BusinessDetails>(`/business`, {manual: true});
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
@@ -394,11 +394,10 @@ export default function ConfirmProducts() {
                       headers={Object.keys(SalesReportHeaders)}
                       data={location?.sales?.reduce((list: Array<string[]>, s: Sale) => {
                           list.push([
-                            s.product.brandName,
-                            s.product.productName, 
-                            s.product.type, 
-                            s.product.flavour, 
-                            s.product.concentration,
+                            s.productSold.brandName,
+                            s.productSold.productName, 
+                            s.productSold.flavour, 
+                            s.productSold.concentration,
                             s.containers, 
                             s.cartridges, 
                           ]);
@@ -421,11 +420,10 @@ export default function ConfirmProducts() {
                       <Typography variant='subtitle1'>{formatDate(year)}</Typography>
                       <StyledTable
                         columns={[
-                          {title: 'Brand name', field: 'product.brandName'},
-                          {title: 'Product name', field: 'product.productName'},
-                          {title: 'Type', field: 'product.type'},
-                          {title: "Flavour", field: 'product.flavour'},
-                          {title: "Volume", field: 'product.concentration'},
+                          {title: 'Brand name', field: 'productSold.brandName'},
+                          {title: 'Product name', field: 'productSold.productName'},
+                          {title: "Flavour", field: 'productSold.flavour'},
+                          {title: "Volume", field: 'productSold.concentration'},
                           {title: "Number of Containers Sold", field: 'containers'},
                           {title: "Number of Cartridges Sold", field: 'cartridges'},
                         ]}
