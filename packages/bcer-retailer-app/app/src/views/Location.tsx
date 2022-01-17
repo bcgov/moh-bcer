@@ -73,18 +73,10 @@ export default function ConfirmProducts() {
   const classes = useStyles();
   const history = useHistory();
   const { reportId }:{reportId:string} = useParams();
-  const [location, setLocation] = useState<BusinessLocation>();
-  const [business, setBusiness] = useState<BusinessDetails>();
   const [sales, setSales] = useState<any>([]); // TODO: TYPING
-  const [{ data: locationData, loading, error }] = useAxiosGet(`/location/${reportId}?includes=products,manufactures,manufactures.ingredients,noi,sales,sales.product`);
-  const [{ data: businessData, loading: businessLoading, error: businessError }] = useAxiosGet(`/business`);
+  const [{ data: location, loading, error }, getLocation] = useAxiosGet<BusinessLocation>(`/location/${reportId}?includes=products,manufactures,manufactures.ingredients,noi,sales,sales.product`, {manual: true});
+  const [{ data: business, loading: businessLoading, error: businessError }, getBusiness] = useAxiosGet<BusinessDetails>(`/business`, {manual: true});
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
-
-  useEffect(() => {
-    if(locationData && !error) {
-      setLocation(locationData);
-    }
-  }, [locationData]);
 
   useEffect(() => {
     if (error) {
@@ -93,16 +85,16 @@ export default function ConfirmProducts() {
   }, [error]);
 
   useEffect(() => {
-    if(businessData && !businessError) {
-      setBusiness(businessData);
-    }
-  }, [businessData]);
-
-  useEffect(() => {
     if (businessError) {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(businessError)});
     }
   }, [businessError]);
+
+  useEffect(() => {
+    getLocation()
+    getBusiness()
+  }, [])
+
 
   const formatDate = (year: string) => {
     const startDate = moment(`10-01-${year}`, 'MM-DD-YYYY').format('LL');
