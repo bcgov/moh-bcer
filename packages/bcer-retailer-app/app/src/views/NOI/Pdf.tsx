@@ -186,7 +186,7 @@ function Pdf({ location, legalName }: PdfProps) {
         </Box>
         <Box className={responsiveClass.infoWrapper}>
           <Typography className={responsiveClass.infoLabel}>
-            Location Age Restricted:
+            Location permits all ages:
           </Typography>
           <Typography className={responsiveClass.infoData}>
             {formattedData.ageRestricted}
@@ -202,8 +202,8 @@ function Pdf({ location, legalName }: PdfProps) {
         </Box>
         <Box className={responsiveClass.bottomTextWrapper}>
           <Typography className={classes.bottomText}>
-            This e-substance retailer has submitted their Notice of Intent and
-            is eligible to sell e-substances 6 weeks after the first submission date.
+            This e-substance retailer has submitted their Notice of Intent and is eligible to sell 
+            e-substances as of {formattedData.effectiveOperationDate}.
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between">

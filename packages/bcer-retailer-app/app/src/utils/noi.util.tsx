@@ -227,6 +227,7 @@ export class NoiPdfUtil {
       submissionDate: this.formatSubmissionDate(location),
       renewalDate: this.formatRenewalDate(location),
       expiryDate: this.formatExpiryDate(location),
+      effectiveOperationDate: this.formatEffectiveOperationDate(location),
     };
   }
 
@@ -238,9 +239,11 @@ export class NoiPdfUtil {
   }
 
   static findAgeRestricted(location: BusinessLocation): string {
-    return location.underage === 'other'
+    const underage = location.underage === 'other'
       ? location.underage_other
       : location.underage;
+
+    return underage === 'No' ? `${underage } (only 19+)` : underage;
   }
 
   static formatSubmissionDate(location: BusinessLocation): string {
@@ -262,5 +265,19 @@ export class NoiPdfUtil {
       location.noi?.expiry_date,
       DateFormat.MMMM_DD_YYYY
     );
+  }
+
+  /**
+   * A location can operate legally 6 weeks after the original NOI submission date
+   * This function calculates the effective date from when businesses can sell vape products at that location
+   * 
+   * @param {BusinessLocation} location - `BusinessLocation` Business Location Data
+   * @returns Formatted Date String.
+   */
+  static formatEffectiveOperationDate(location: BusinessLocation): string {
+    let submissionDate = moment(location.noi?.created_at);
+    submissionDate = submissionDate.add(42, 'days');
+    return GeneralUtil.getFormattedDate(submissionDate.toDate(), DateFormat.MMMM_DD_YYYY);
+
   }
 }
