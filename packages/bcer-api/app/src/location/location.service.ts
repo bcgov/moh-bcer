@@ -49,8 +49,14 @@ export class LocationService {
 
   async createLocations(dto: LocationDTO[], businessId: string) {
     const business = await this.businessRepository.findOne(businessId);
+    // Filtering out any existing location
+    dto = dto.filter(d => !(d as any).id);
+
+    // if an empty or null value was passed as id during submission 
+    // deleting the field to avoid uuid error in database.
+    // Validation should be added in submission route
     dto = dto.map(d => {
-      if(!(d as any).id){
+      if(Object.keys(d).includes('id')){
         delete (d as any).id;
       }
       return d;
