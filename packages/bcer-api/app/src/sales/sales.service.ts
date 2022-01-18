@@ -19,7 +19,7 @@ export class SalesReportService {
     private readonly locationRepository: Repository<LocationEntity>,
   ) {}
 
-  async createSalesReports(dto: SalesReportDTO): Promise<SalesReportRO[]> {
+  async createSalesReports(dto: SalesReportDTO): Promise<SalesReportEntity[]> {
     const sales = await this.salesReportRepository.create(
       dto.sales.map((sales: SaleDTO) => ({
         ...sales,
