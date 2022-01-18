@@ -431,6 +431,15 @@ export class LocationService {
       const result = await this.locationRepository.softDelete({id: In(locationIds)});
     }
 
+    /**
+   * Delete locations with ids,
+   * This is a soft-delete by manipulating the location status.
+   * @param locationIds 
+   */
+     async hardDeleteLocation(locationId: string){
+      await this.locationRepository.delete(locationId);
+    }
+
   /**
    * Update a location
    * @param locationId
