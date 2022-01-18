@@ -3,4 +3,5 @@ export const routes = Object.freeze({
     userManagement: '/user-management',
     getHelp: '/getHelp',
     map: '/map',
+    viewLocation: '/location'
 });

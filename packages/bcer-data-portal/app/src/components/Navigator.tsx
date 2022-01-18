@@ -43,11 +43,23 @@ function a11yProps(index: any) {
   };
 }
 
+function setInitial(path: string) {
+  switch (path) {
+    case '/':
+    //fallthrough
+      return '/';
+    case '/user-management':
+      return '/user-management';
+    default :
+      return '/';
+  }
+}
+
 function Navigator() {
   const classes = useStyles();
   const history = useHistory();
   const [keycloak] = useKeycloak();
-  const [value, setValue] = React.useState(history.location.pathname);
+  const [value, setValue] = React.useState(setInitial(history.location.pathname));
   const { config } = useContext(ConfigContext);
 
   const handleChange = (event: any, newValue: any) => {

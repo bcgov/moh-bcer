@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   HttpCode,
   HttpStatus,
   Query,
@@ -240,6 +241,32 @@ export class LocationDataPortalController {
     if(!ids) throw NotFoundException;
     const locations = await this.service.getLocationWithIds(ids.split(','));
     return locations.map(l => l.toResponseObject());
+  }
+
+  @ApiOperation({ summary: 'Gets all data associated with a single location by ID' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Get('/get-location/:id')
+  async getExtendedLocation(@Param('id') id: string){
+    if(!id) throw NotFoundException;
+    const location = await this.service.getLocation(id, 'business,business.users,noi,sales,sales.product,products,manufactures,manufactures.ingredients');
+    return location;
+  }
+
+  @ApiOperation({ summary: 'Deletes a location by id' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Patch('/delete-location/:id')
+  async deleteLocation(@Param('id') id: string){
+    if(!id) throw NotFoundException;
+    const location = await this.service.hardDeleteLocation(id);
+    return location;
   }
 
   @ApiOperation({ summary: 'gets all the config data for data portal map' })
