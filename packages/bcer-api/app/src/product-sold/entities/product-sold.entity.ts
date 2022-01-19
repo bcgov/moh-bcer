@@ -55,6 +55,7 @@ export class ProductSoldEntity {
   @ManyToOne(
     () => LocationEntity,
     (location: LocationEntity) => location.productSolds,
+    { onDelete: "CASCADE" }
   )
   location: LocationEntity;
 

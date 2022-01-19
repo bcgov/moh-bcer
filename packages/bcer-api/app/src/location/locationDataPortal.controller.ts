@@ -38,6 +38,7 @@ import { ROLES } from 'src/auth/constants';
 import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
 import { LocationConfig } from './config/dataLocation.config';
 import { DirectionDto } from './dto/direction.dto';
+import { DownloadSaleDTO } from 'src/sales/dto/download-sale.dto';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -290,4 +291,23 @@ export class LocationDataPortalController {
     if(!payload?.uri) throw UnprocessableEntityException;
     return await this.service.getDirection(payload.uri);
   }
+
+  /**
+   * Download Sales Report CSV
+   * @param query
+   * @param req
+   * @returns
+   */
+  @ApiOperation({ summary: 'Download Sales Report CSV' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Get('/download')
+   async getSaleReportDownload(
+     @Query() query: DownloadSaleDTO,
+   ) {
+     const { locationId, year } = query;
+     return this.service.getDownloadCSV(locationId, year);
+   }
 }

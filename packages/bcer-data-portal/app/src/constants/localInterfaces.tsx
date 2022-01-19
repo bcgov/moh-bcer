@@ -313,8 +313,17 @@ export type NoiRO = {
   renewed_at: string;
 }
 
-//TODO
-export type SalesRO = {}
+export type SalesRO = {
+  id: string;
+  productId: string;
+  locationId: string;
+  containers: string;
+  cartridges: string;
+  year: string;
+  created_at: string;
+  updated_at: string;
+  product: string;
+}
 
 export type ProductsRO = {
   id: string;
