@@ -1,4 +1,4 @@
-import { NotAcceptableException } from '@nestjs/common';
+import { Logger, NotAcceptableException } from '@nestjs/common';
 import { NotifyClient } from 'notifications-node-client';
 import { sleep } from 'src/utils/util';
 import { NotificationReportDTO } from './dto/notification-report.dto';
@@ -69,11 +69,14 @@ export class TextService {
         formattedResult.success++;
       } else {
         formattedResult.fail++;
+        const reason = (r.reason?.response?.data?.errors || [])[0]?.message || `${r.reason}`;
+        Logger.error(`Failed to send notification: ${reason}`)
+
         if (r.reason?.config?.data) {
           let config = JSON.parse(r.reason.config.data);
           formattedResult.errorData.push({
             recipient: config.phone_number,
-            message: r.reason.response?.data?.errors[0]?.message,
+            message: reason,
           });
         }
       }
