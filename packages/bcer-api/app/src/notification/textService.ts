@@ -20,7 +20,7 @@ export class TextService {
     if(process.env.TEXT_API_PROXY) {
       this.messageClient.setProxy({
         host: process.env.TEXT_API_PROXY,
-        port: parseInt(process.env.TEXT_API_PROXY_PORT) || 80,
+        port: parseInt(process.env.TEXT_API_PROXY_PORT || '80', 10),
       })
     }
   }
