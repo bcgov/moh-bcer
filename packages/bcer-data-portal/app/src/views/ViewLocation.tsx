@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Box, Dialog, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import { useHistory, useParams } from 'react-router-dom';
 import { Formik } from 'formik';
@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import { routes } from '@/constants/routes';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { LocationConfig, ManufacturesRO, UserRO } from '@/constants/localInterfaces';
+import { LocationConfig, ManufacturesRO, SalesRO, UserRO } from '@/constants/localInterfaces';
 import { 
   StyledButton,
   StyledTable, 
@@ -16,6 +16,7 @@ import {
 import Leaflet from '@/components/generic/Leaflet';
 import useLeaflet from '@/hooks/useLeaflet';
 import { ConfigContext } from '@/contexts/Config';
+import { CSVLink } from 'react-csv';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -85,7 +86,10 @@ const useStyles = makeStyles({
   },
   mapBox: {
     height: '540px',
-  }
+  },
+  csvLink: {
+    textDecoration: 'none',
+  },
 })
 
 export default function ViewLocations() {
@@ -98,6 +102,7 @@ export default function ViewLocations() {
   const [currentContent, setCurrentContent] = useState<string>('locationStatus');
   const { id } = useParams<{id: string}>();
   const { config: authConfig } = useContext(ConfigContext);
+  const csvRef = useRef(null);
 
   const [{ data, loading, error }, get] = useAxiosGet(`/data/location/get-location/${id}`, {
     manual: false,
@@ -112,9 +117,9 @@ export default function ViewLocations() {
     '/data/location/config'
   );
 
-  const {
-    onRender,
-  } = useLeaflet(id, config);
+  const [{ data: download = [], loading: downloadLoading, error: downloadError }, getDownload] = useAxiosGet(`/data/location/download/`, { manual: true });
+
+  const { onRender } = useLeaflet(id, config);
 
   useEffect(() => {
     if (data) {
@@ -133,24 +138,48 @@ export default function ViewLocations() {
     }
   }, [deleteData])
 
-  useEffect(() => {
-    if(authConfig) {
-      history.push('/')
-    }
-  }, [authConfig])
-
   const handleManufactureSelect = (manufactureReport: ManufacturesRO) => {
     setSelectedManufactureReport(manufactureReport)
     setViewOpen(true)
-    console.log(manufactureReport)
   }
 
+  const getOptions = () => {
+    const options = [
+      {
+        label: <Typography variant="body2">Location Status</Typography>, value: 'locationStatus'
+      },
+      {
+        label: <Typography variant="body2">Location Information</Typography>, value: 'locationInformation'
+      },
+      {
+        label: <Typography variant="body2">ProductReport</Typography>, value: 'productReport'
+      },
+      {
+        label: <Typography variant="body2">Manufacturing Report</Typography>, value: 'manufacturingReport'
+      }
+    ]
+    if (authConfig.permissions.VIEW_SALES) {
+      options.push(
+        {
+          label: <Typography variant="body2">Sales Report</Typography>, value: 'salesReport'
+        }
+      )
+    }
+    options.push(
+      {
+        label: <Typography variant="body2">Map</Typography>, value: 'mapBox'
+      }
+    )
+    return options
+  }
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
           <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.push(routes.root)}>Submitted Locations</span> / Location Details</Typography>
         {
           data
+            &&
+          authConfig
             &&
           <>
             <Typography variant="h5">{data.doingBusinessAs} </Typography>
@@ -167,26 +196,7 @@ export default function ViewLocations() {
                         return (
                           <StyledRadioGroup
                             name="content"
-                            options={[
-                              {
-                                label: <Typography variant="body2">Location Status</Typography>, value: 'locationStatus'
-                              },
-                              {
-                                label: <Typography variant="body2">Location Information</Typography>, value: 'locationInformation'
-                              },
-                              {
-                                label: <Typography variant="body2">ProductReport</Typography>, value: 'productReport'
-                              },
-                              {
-                                label: <Typography variant="body2">Manufacturing Report</Typography>, value: 'manufacturingReport'
-                              },
-                              {
-                                label: <Typography variant="body2">Sales Report</Typography>, value: 'salesReport'
-                              },
-                              {
-                                label: <Typography variant="body2">Map</Typography>, value: 'mapBox'
-                              },
-                            ]}
+                            options={getOptions()}
                         />
                         )
                       }}
@@ -343,26 +353,53 @@ export default function ViewLocations() {
                 </Grid>
 
                 {
-                  // TODO: restrict by user type
-                }
-                <Grid item xs={12} id="salesReport">
-                  <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
-                  <Paper className={classes.tableBox}>
-                    <Typography variant="body2" style={{paddingBottom: '8px'}}>{data.manufactures.length} manufacturing reports submitted</Typography>
-                    <StyledTable 
-                      data={data.manufactures}
-                      columns={[
-                        {
-                          title: 'Product', field: 'productName'
-                        },
-                        {
-                          title: '',
-                          render: (manufactureReport: ManufacturesRO) => <StyledButton variant="table" onClick={() => handleManufactureSelect(manufactureReport)}>View</StyledButton> 
-                        }
+                  authConfig.permissions.VIEW_SALES
+                    &&
+                  <Grid item xs={12} id="salesReport">
+                    <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
+                    <Paper className={classes.tableBox}>
+                      <Typography variant="body2" style={{paddingBottom: '8px'}}>{data.manufactures.length} manufacturing reports submitted</Typography>
+                      <StyledTable 
+                        data={data.sales}
+                        columns={[
+                          {
+                            title: 'Reporting Year', field: 'year'
+                          },
+                          {
+                            title: 'Submission Date', render: (salesReport: SalesRO) => <span>{moment(salesReport.created_at).format('YYYY-MM-DD')}</span>
+                          },
+                          {
+                            title: '',
+                            render: (salesReport: SalesRO) => <StyledButton variant="small-outlined" onClick={async() => {
+                              await getDownload({
+                                url: `/data/location/download?locationId=${data.id}&year=${salesReport.year}`,
+                              });
+                              csvRef.current.link.click();
+                            }}>Download</StyledButton> 
+                          }
+                        ]}
+                      />
+                    </Paper>
+                    <CSVLink
+                      ref={csvRef}
+                      headers={[
+                        'Brand Name',
+                        'Product Name',
+                        'Concentration (mg/mL) (optional)',
+                        'Container Capacity',
+                        'Cartridge Capacity',
+                        'Flavour',
+                        'UPC (optional)',
+                        'Number of Containers Sold',
+                        'Number of Cartridges Sold',
                       ]}
+                      data={download}
+                      filename={`sales_report_${data.doingBusinessAs}.csv`}
+                      className={classes.csvLink}
+                      target="_blank"
                     />
-                  </Paper>
-                </Grid>
+                  </Grid>
+                }
 
 
                 <Grid item xs={12} >
@@ -378,7 +415,7 @@ export default function ViewLocations() {
                 </Grid>
                 <Grid item xs={12} id="mapBox" >
                   <Box className={classes.mapBox}>
-                    {config && !configError && <Leaflet onRender={onRender} />}
+                    {config && !configError && onRender && <Leaflet onRender={onRender} />}
                   </Box>
                 </Grid>
 

@@ -44,6 +44,8 @@ export class LocationService {
     private readonly locationRepository: Repository<LocationEntity>,
     @InjectRepository(BusinessEntity)
     private readonly businessRepository: Repository<BusinessEntity>,
+    @InjectRepository(SalesReportEntity)
+    private readonly salesReportRepository: Repository<SalesReportEntity>,
     private geoCodeService: GeoCodeService,
   ) { }
 
@@ -541,5 +543,29 @@ export class LocationService {
       },
     });
     return data;
+  }
+
+  async getDownloadCSV(locationId: string, year: string) {
+    const salesReports = await this.salesReportRepository.find({
+      where: {
+        locationId,
+        year,
+      },
+      relations: ['productSold'],
+    });
+    return salesReports.map(s => {
+      const { productSold: p } = s;
+      return [
+        p.brandName,
+        p.productName,
+        p.concentration,
+        p.containerCapacity,
+        p.cartridgeCapacity,
+        p.flavour,
+        p.upc,
+        s.containers,
+        s.cartridges,
+      ];
+    });
   }
 }
