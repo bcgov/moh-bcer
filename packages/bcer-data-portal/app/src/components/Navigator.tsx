@@ -46,10 +46,11 @@ function a11yProps(index: any) {
 function setInitial(path: string) {
   switch (path) {
     case '/':
-    //fallthrough
       return '/';
     case '/user-management':
       return '/user-management';
+    case '/get-help':
+      return '/getHelp';
     default :
       return '/';
   }

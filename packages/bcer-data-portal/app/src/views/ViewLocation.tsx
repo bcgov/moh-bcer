@@ -13,10 +13,9 @@ import {
   StyledRadioGroup,
   StyledConfirmDialog 
 } from 'vaping-regulation-shared-components';
-import Leaflet from '@/components/generic/Leaflet';
-import useLeaflet from '@/hooks/useLeaflet';
 import { ConfigContext } from '@/contexts/Config';
 import { CSVLink } from 'react-csv';
+import LocationViewMap from './Map/LocationViewMap';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -118,8 +117,6 @@ export default function ViewLocations() {
   );
 
   const [{ data: download = [], loading: downloadLoading, error: downloadError }, getDownload] = useAxiosGet(`/data/location/download/`, { manual: true });
-
-  const { onRender } = useLeaflet(id, config);
 
   useEffect(() => {
     if (data) {
@@ -415,7 +412,7 @@ export default function ViewLocations() {
                 </Grid>
                 <Grid item xs={12} id="mapBox" >
                   <Box className={classes.mapBox}>
-                    {config && !configError && onRender && <Leaflet onRender={onRender} />}
+                    {config && !configError && <LocationViewMap id={id} config={config} />}
                   </Box>
                 </Grid>
 
