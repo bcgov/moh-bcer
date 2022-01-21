@@ -1,4 +1,4 @@
-import { NotAcceptableException } from '@nestjs/common';
+import { Logger, NotAcceptableException } from '@nestjs/common';
 import { NotifyClient } from 'notifications-node-client';
 import { sleep } from 'src/utils/util';
 import { NotificationReportDTO } from './dto/notification-report.dto';
@@ -16,6 +16,13 @@ export class TextService {
 
   constructor() {
     this.messageClient = new NotifyClient(this.apiEndpoint, this.apiKey);
+    
+    if(process.env.TEXT_API_PROXY) {
+      this.messageClient.setProxy({
+        host: process.env.TEXT_API_PROXY,
+        port: parseInt(process.env.TEXT_API_PROXY_PORT || '80', 10),
+      })
+    }
   }
 
   private async send(message: string, phoneNumber: string) {
@@ -62,11 +69,14 @@ export class TextService {
         formattedResult.success++;
       } else {
         formattedResult.fail++;
+        const reason = (r.reason?.response?.data?.errors || [])[0]?.message || `${r.reason}`;
+        Logger.error(`Failed to send notification: ${reason}`)
+
         if (r.reason?.config?.data) {
           let config = JSON.parse(r.reason.config.data);
           formattedResult.errorData.push({
             recipient: config.phone_number,
-            message: r.reason.response?.data?.errors[0]?.message,
+            message: reason,
           });
         }
       }
