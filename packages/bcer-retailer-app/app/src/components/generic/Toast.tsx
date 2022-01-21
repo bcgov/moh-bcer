@@ -9,11 +9,10 @@ function Toast() {
   return (
     <Snackbar
       open={state.isOpen}
-      autoHideDuration={10000}
+      autoHideDuration={6000}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       TransitionComponent={SlideTransition}
       onClose={closeToast}
-      style={{ zIndex: 2000 }}
     >
       <Box>
         <StyledToast

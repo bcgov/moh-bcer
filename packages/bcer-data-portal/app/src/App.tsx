@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core';
@@ -9,7 +9,9 @@ import GetHelp from './views/GetHelp';
 import UserManagement from './views/UserManagement/Overview';
 import Navigator from './components/Navigator';
 import { routes } from './constants/routes';
+import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
+import { ConfigContext } from './contexts/Config';
 
 const useStyles = makeStyles({
   root: {
@@ -30,6 +32,7 @@ const useStyles = makeStyles({
 const App = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { config } = useContext(ConfigContext);
   return (
     <div className={classes.root}>
       <div>
@@ -45,6 +48,7 @@ const App = () => {
           <Route exact path={routes.root} component={Locations} />
           <Route exact path={routes.getHelp} component={GetHelp} />
           <Route exact path={routes.userManagement} component={UserManagement} />
+          { config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
           <Route exact path={routes.map} component={Map} />
         </Switch>
       </div>

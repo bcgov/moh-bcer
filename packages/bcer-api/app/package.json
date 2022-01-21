@@ -58,6 +58,7 @@
     "moment": "2.29.1",
     "nest-csv-parser": "2.0.4",
     "nest-keycloak-connect": "1.2.1",
+    "notifications-node-client": "5.1.0",
     "nest-winston": "1.6.2",
     "pg": "8.7.1",
     "reflect-metadata": "0.1.13",

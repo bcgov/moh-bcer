@@ -120,6 +120,7 @@ export default function SideNav() {
   };
 
   const [{ data: status, error }] = useAxiosGet(`/users/status`);
+  const [{ data: config, error: configError }] = useAxiosGet('/users/config');
 
   useEffect(() => {
     if (status && !error) {
@@ -129,6 +130,15 @@ export default function SideNav() {
       })
     }
   }, [status]);
+
+  useEffect(() => {
+    if(config && !configError){
+      setAppGlobal({
+        ...appGlobal,
+        config,
+      })
+    }
+  }, [config])
   
   useEffect(() => {
     if (error) {
