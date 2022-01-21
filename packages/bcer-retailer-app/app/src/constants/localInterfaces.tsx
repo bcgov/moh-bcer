@@ -106,6 +106,19 @@ export interface Products {
   sales: Array<Sale>;
 }
 
+export interface ProductsSold {
+  id: string;
+  brandName: string;
+  productName: string;
+  concentration: string;
+  containerCapacity: string;
+  cartridgeCapacity: string;
+  flavour: string;
+  upc: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Ingredient {
   name: string;
   scientificName: string;
@@ -129,6 +142,7 @@ export interface Sale {
   cartridges: string;
   containers: string;
   year: string;
+  productSold: ProductsSold;
 }
 
 export interface SalesReport {

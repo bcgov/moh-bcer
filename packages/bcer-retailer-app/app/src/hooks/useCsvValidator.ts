@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as yup from 'yup';
 import { useAxiosGet } from './axios';
 import Axios  from 'axios'
+import { GeoCodeUtil } from '@/utils/geoCoder.util';
 
 export const useCsvValidator = () => {
   const [errors, setErrors] = useState<Array<{row: string, field: string, message: string}>>()
@@ -22,7 +23,7 @@ export const useCsvValidator = () => {
           const validatedDto = await validationSchema.validateSync(element, { abortEarly: false });
 
           try {
-            const {data} = await Axios.get(`https://geocoder.api.gov.bc.ca/addresses.json?minScore=70&maxResults=1&echo=false&autoComplete=false&brief=false&matchPrecision=occupant,unit,site,civic_number,block&addressString=${validatedDto.addressLine1}`)
+            const data = await GeoCodeUtil.geoCodeAddress(validatedDto.addressLine1);
             // Features prop will only ever have length 0 or 1
 
             if (data.features.length === 0 || data.features[0]?.properties.precisionPoints < 70) {

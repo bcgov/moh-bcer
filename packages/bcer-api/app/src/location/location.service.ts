@@ -11,7 +11,7 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
-import { getSalesReportYear } from 'src/common/common.utils';
+import { getSalesReportingPeriod, getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString, sleep } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { NoiStatus } from 'src/noi/enums/status.enum';
@@ -49,8 +49,14 @@ export class LocationService {
 
   async createLocations(dto: LocationDTO[], businessId: string) {
     const business = await this.businessRepository.findOne(businessId);
+    // Filtering out any existing location
+    dto = dto.filter(d => !(d as any).id);
+
+    // if an empty or null value was passed as id during submission 
+    // deleting the field to avoid uuid error in database.
+    // Validation should be added in submission route
     dto = dto.map(d => {
-      if(!(d as any).id){
+      if(Object.keys(d).includes('id')){
         delete (d as any).id;
       }
       return d;
@@ -356,13 +362,16 @@ export class LocationService {
    */
   async getLocationsSalesReportWithCurrentYear (businessId: string, query: QuerySaleDTO) {
     const saleReportYear = getSalesReportYear();
+    const {startReport, endReport} = getSalesReportingPeriod();
    
     const { isSubmitted } = query;
   
     const locations = await this.locationRepository.createQueryBuilder('location')
       .leftJoinAndSelect('location.business', 'business')
+      .leftJoin('location.noi', 'noi')
       .where('business.id = :businessId', { businessId })
       .andWhere('location.noiId IS NOT NULL')
+      .andWhere('noi.created_at NOT BETWEEN :start AND :end', {start: startReport, end: endReport})
       .andWhere(qb => {
         const subQuery = qb.subQuery()
         .select('sr.locationId')

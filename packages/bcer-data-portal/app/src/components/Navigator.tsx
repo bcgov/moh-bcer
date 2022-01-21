@@ -99,6 +99,12 @@ function Navigator() {
                   value={routes.sendNotification}
                 />
               )}
+                <StyledTab
+                  disableRipple
+                  label="Get Help"
+                  {...a11yProps(2)}
+                  value={routes.getHelp}
+                />
             </StyledTabs>
           </Box>
           <Box className={classes.buttonWrapper}>

@@ -1,5 +1,7 @@
 import * as yup from 'yup';
 import { NoiStatus } from '@/constants/localEnums';
+import Axios from 'axios';
+import { GeoCodeUtil } from '@/utils/geoCoder.util';
 
 export interface IBusinessLocationValues {
   id?: string;
@@ -48,7 +50,8 @@ export const Initial = {
 };
 
 export const Validation = yup.object({
-  addressLine1: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The address of your place of business is required'),
+  addressLine1: yup.string().required('The address of your place of business is required')
+    .test('exists', `Address couldn't be found or is incorrect`,async (val) => await GeoCodeUtil.isValidAddress(val)),
   addressLine2: yup.string().test('length', 'The address must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
   postal: yup.string()
     .matches(

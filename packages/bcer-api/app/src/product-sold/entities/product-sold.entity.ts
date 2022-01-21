@@ -16,6 +16,7 @@ import {
 import { BusinessEntity } from 'src/business/entities/business.entity';
 import { LocationEntity } from 'src/location/entities/location.entity';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
+import { ProductSoldRO } from '../ro/product-sold.ro';
 
 @Entity('product_sold')
 export class ProductSoldEntity {
@@ -72,4 +73,19 @@ export class ProductSoldEntity {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  toResponseObject(): ProductSoldRO {
+    return {
+      id: this.id,
+      brandName: this.brandName,
+      productName: this.productName,
+      concentration: this.concentration,
+      containerCapacity: this.containerCapacity,
+      cartridgeCapacity: this.cartridgeCapacity,
+      flavour: this.flavour,
+      upc: this.upc,
+      createdAt: this.created_at,
+      updatedAt: this.updated_at,
+    }
+  }
 }
