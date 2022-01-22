@@ -10,6 +10,7 @@ import { UserService } from 'src/user/user.service';
 import { BusinessService } from 'src/business/business.service';
 import { LocationService } from 'src/location/location.service';
 import { getDurationInMilliseconds } from '../utils/util';
+import { ROLES } from 'src/auth/constants';
 import { LocationStatus } from 'src/location/enums/location-status.enum';
 
 @ApiBearerAuth()
@@ -90,5 +91,14 @@ export class UserController {
 
     Logger.log(`Time to process status request after middleware ${getDurationInMilliseconds(start)} ms`);
     return statusObject;
+  }
+
+  @ApiOperation({ summary: 'Retrive config for users' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK })
+  @Roles(ROLES.USER)
+  @Get('config')
+  async getPermissions() {
+    return this.userService.getConfig();
   }
 }

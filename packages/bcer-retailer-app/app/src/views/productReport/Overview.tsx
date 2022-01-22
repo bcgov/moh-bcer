@@ -359,7 +359,7 @@ export default function ProductOverview() {
               actions={[
                 {
                   icon: tableAction,
-                  onClick: (event: any, rowData: any) => history.push(`/view-location/${rowData.id}`)
+                  onClick: (event: any, rowData: any) => history.push(`/products/location/${rowData.id}`)
                 }
               ]}
               data={withProducts}

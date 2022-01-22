@@ -61,6 +61,8 @@ function Navigator() {
     history.push(routes.root);
   };
 
+  console.log(config)
+
   return (
     <div>
       <AppBar position="static" className={classes.appBar}>
@@ -87,6 +89,14 @@ function Navigator() {
                   label="User Management"
                   {...a11yProps(1)}
                   value={routes.userManagement}
+                />
+              )}
+              {config.permissions.SEND_TEXT_MESSAGES && config.featureFlags.TEXT_MESSAGES && (
+                <StyledTab
+                  disableRipple
+                  label="Send Notification"
+                  {...a11yProps(2)}
+                  value={routes.sendNotification}
                 />
               )}
                 <StyledTab

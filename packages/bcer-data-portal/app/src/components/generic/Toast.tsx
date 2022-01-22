@@ -13,6 +13,7 @@ function Toast() {
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       TransitionComponent={SlideTransition}
       onClose={closeToast}
+      style={{ zIndex: 2000 }}
     >
       <Box>
         <StyledToast

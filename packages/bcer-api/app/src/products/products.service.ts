@@ -8,6 +8,7 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { ProductEntity } from './entities/product.entity';
 import { ProductsDTO } from './dto/products.dto';
 import { ProductUploadRO } from './ro/product-upload.ro';
+import { PaginatedProductQuery } from './dto/paginatedProductQuery.dto';
 
 @Injectable()
 export class ProductsService {
@@ -168,5 +169,20 @@ export class ProductsService {
     const result = await this.productRepository
     .query(`UPDATE product SET "businessId" = $1 WHERE "businessId" = $2`, [newBusinessId, currentBusinessId])
     return result;
+  }
+
+  async getPaginatedProductsForLocation(locationId: string, query: PaginatedProductQuery): Promise<[ProductEntity[], number]>{
+    const qb = this.productRepository.createQueryBuilder('product');
+
+    qb.leftJoin('product.locations', 'locations')
+    .where('locations.id = :locationId', { locationId })
+    .orderBy('product.created_at');
+
+    if(query?.perPage && query.page){
+      qb.offset((query.page - 1) * query.perPage);
+      qb.limit(query.perPage);
+    }
+
+    return await qb.getManyAndCount();
   }
 }

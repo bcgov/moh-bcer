@@ -12,6 +12,7 @@ import ConfirmProducts from '@/views/productReport/ConfirmProducts';
 import DeleteProductSubmissions from '@/views/productReport/DeleteProductSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import LocationProducts from '@/views/productReport/LocationProducts';
 
 export default function ProductRoutes(){
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
@@ -99,6 +100,7 @@ export default function ProductRoutes(){
           <Route exact path='/products/confirm-products' component={ConfirmProducts} />
           <Route exact path='/products/select-locations' component={SelectLocations} />
           <Route exact path='/products/submission/:submissionId' component={DeleteProductSubmissions} />
+          <Route exact path='/products/location/:locationId' component={LocationProducts} />
         </Switch>
       </ProductInfoProvider>
     </>

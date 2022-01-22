@@ -8,6 +8,7 @@ import { UserTypeEnum } from './enums/user-type.enum';
 import { BusinessEntity } from 'src/business/entities/business.entity';
 import { UserSearchDTO } from './dto/user-search.dto';
 import { UserSearchTypes } from './enums/user-search-type.enum';
+import { UserConfigRO } from './ro/user-config.ro';
 
 @Injectable()
 export class UserService {
@@ -104,5 +105,9 @@ export class UserService {
 
   async assignBusinessToUser(userId: string, businessId){
     await this.update({id: userId, businessId});
+  }
+
+  getConfig(){
+    return new UserConfigRO();
   }
 }
