@@ -16,6 +16,8 @@ import {
 import { ConfigContext } from '@/contexts/Config';
 import { CSVLink } from 'react-csv';
 import LocationViewMap from './Map/LocationViewMap';
+import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { formatError } from '@/util/formatting';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -50,7 +52,7 @@ const useStyles = makeStyles({
     display: 'block',
     position: 'fixed',
     height: '270px',
-    width: '17%',
+    width: '15%',
   },
   rowContent: {
     fontSize: '14px',
@@ -94,6 +96,7 @@ const useStyles = makeStyles({
 export default function ViewLocations() {
   const classes = useStyles();
   const history = useHistory();
+  const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [businessOwner, setBusinessOwner] = useState<UserRO>();
   const [selectedManufactureReport, setSelectedManufactureReport] = useState<ManufacturesRO>();
   const [viewOpen, setViewOpen] = useState<boolean>();
@@ -134,6 +137,15 @@ export default function ViewLocations() {
       history.push('/')
     }
   }, [deleteData])
+
+  useEffect(() => {
+    if (deleteError) {
+      setAppGlobalContext({
+        ...appGlobal,
+        networkErrorMessage: formatError(deleteError),
+      });
+    }
+  }, [deleteError])
 
   const handleManufactureSelect = (manufactureReport: ManufacturesRO) => {
     setSelectedManufactureReport(manufactureReport)

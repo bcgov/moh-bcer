@@ -95,7 +95,7 @@ export class LocationEntity {
   @OneToOne(
     () => NoiEntity,
     (noi: NoiEntity) => noi.location,
-    { nullable: true, onDelete: 'CASCADE' },
+    { nullable: true },
   )
   @JoinColumn()
   noi: NoiEntity;
@@ -103,7 +103,6 @@ export class LocationEntity {
   @ManyToMany(
     () => ProductEntity,
     (product: ProductEntity) => product.locations,
-    { onDelete: 'CASCADE' }
   )
   @JoinTable()
   products: ProductEntity[];
@@ -111,7 +110,6 @@ export class LocationEntity {
   @OneToMany(
     () => ProductSoldEntity,
     (productSold: ProductSoldEntity) => productSold.location,
-    { onDelete: 'CASCADE' }
   )
   @JoinTable()
   productSolds: ProductSoldEntity[];
@@ -119,14 +117,12 @@ export class LocationEntity {
   @OneToMany(
     () => SalesReportEntity,
     (sales: SalesReportEntity) => sales.location,
-    { onDelete: 'CASCADE' }
   )
   sales: SalesReportEntity[];
 
   @ManyToMany(
     () => ManufacturingEntity,
     (manufacturing: ManufacturingEntity) => manufacturing.locations,
-    { onDelete: 'CASCADE' }
   )
   @JoinTable()
   manufactures: ManufacturingEntity[];

@@ -258,7 +258,6 @@ export class LocationDataPortalController {
   }
 
   @ApiOperation({ summary: 'Deletes a location by id' })
-  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
@@ -266,8 +265,8 @@ export class LocationDataPortalController {
   @Patch('/delete-location/:id')
   async deleteLocation(@Param('id') id: string){
     if(!id) throw NotFoundException;
-    const location = await this.service.hardDeleteLocation(id);
-    return location;
+    await this.service.hardDeleteLocation(id);
+    return;
   }
 
   @ApiOperation({ summary: 'gets all the config data for data portal map' })

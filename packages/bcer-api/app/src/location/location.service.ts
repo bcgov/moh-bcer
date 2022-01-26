@@ -1,4 +1,4 @@
-import { Repository, In, Not, IsNull, SelectQueryBuilder, UpdateResult } from 'typeorm';
+import { Repository, In, Not, IsNull, SelectQueryBuilder, UpdateResult, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -432,11 +432,41 @@ export class LocationService {
 
     /**
    * Delete locations with ids,
-   * This is a soft-delete by manipulating the location status.
+   * This is a hard delete by location ID, fully removing the location and associated resources
    * @param locationIds 
    */
-     async hardDeleteLocation(locationId: string){
-      await this.locationRepository.delete(locationId);
+     async hardDeleteLocation(locationId: string): Promise<void>{
+      const connection = getConnection();
+      const queryRunner = connection.createQueryRunner();
+
+      const [location] = await queryRunner.query(`SELECT * FROM LOCATION WHERE "id"='${locationId}'`);
+      const noi = await queryRunner.query(`SELECT * FROM NOI WHERE "id"='${location.noiId}'`);
+      const locationManufacturesJoin = await queryRunner.query(`SELECT * FROM location_manufactures_manufacturing WHERE "locationId"='${locationId}'`);
+      const locationProductsJoin = await queryRunner.query(`SELECT * FROM LOCATION_PRODUCTS_PRODUCT WHERE "locationId"='${locationId}'`);
+      const productSold = await queryRunner.query(`SELECT * FROM PRODUCT_SOLD WHERE "locationId"='${locationId}'`);
+      const salesReport = await queryRunner.query(`SELECT * FROM SALESREPORT WHERE "locationId"='${locationId}'`);
+
+      await queryRunner.startTransaction();
+      try {
+
+        await Promise.all(locationManufacturesJoin.map(entity => queryRunner.manager.delete('location_manufactures_manufacturing', { manufacturingId: entity.productId })));
+        await Promise.all(locationProductsJoin.map(entity => queryRunner.manager.delete('location_products_product', { productId: entity.productId })));
+        await Promise.all(salesReport.map(entity => queryRunner.manager.delete('salesreport', { id: entity.id })));
+        await Promise.all(productSold.map(entity => queryRunner.manager.delete('product_sold', { id: entity.id })));
+        await queryRunner.manager.delete('location', { id: locationId });
+        await Promise.all(noi.map(entity => queryRunner.manager.delete('noi', { id: entity.id })));
+
+        await queryRunner.commitTransaction();
+      } catch (err) {
+        Logger.error(err)
+        // rollback transaction on error
+        await queryRunner.rollbackTransaction();
+        throw  `Cannot delete location ${location.doingBusinessAs} with id  ${locationId}`;
+      } finally {
+          
+          // release queryRunner
+          await queryRunner.release();
+      }
     }
 
   /**
