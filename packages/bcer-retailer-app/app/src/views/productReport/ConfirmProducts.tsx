@@ -178,7 +178,7 @@ export default function ConfirmProducts() {
                     data={uploadErrors?.map((error) => {
                       return [error.row, error.field, error.value, error.message];
                     })}
-                    filename={'location_errors.csv'}
+                    filename={'product_report_errors.csv'}
                     className={classes.csvLink}
                     target="_blank"
                   >

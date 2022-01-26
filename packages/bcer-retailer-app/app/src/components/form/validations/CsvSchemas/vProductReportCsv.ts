@@ -9,11 +9,7 @@ export const ProductReportCsvValidation = yup.object({
     .string()
     .nullable()
     .required('Type is required')
-    .test(
-      'length',
-      'Type must be less than 100 characters.',
-      lengthTest(100)
-    ),
+    .test('length', 'Type must be less than 100 characters.', lengthTest(100)),
   brandName: yup
     .string()
     .nullable()
@@ -41,10 +37,7 @@ export const ProductReportCsvValidation = yup.object({
       'Manufacturer Name must be less than 50 characters.',
       lengthTest(50)
     ),
-  manufacturerContact: yup
-    .string()
-    .nullable()
-    .max(50),
+  manufacturerContact: yup.string().nullable().max(50),
   manufacturerAddress: yup
     .string()
     .nullable()
@@ -58,21 +51,23 @@ export const ProductReportCsvValidation = yup.object({
     .string()
     .nullable()
     .required('Manufacturer Email is a required field')
-    .email('Invalid Manufacturer Email'),
+    .email(
+      'Please provide a valid Manufacturer Email (e.g. example@mail.com)'
+    ),
   manufacturerPhone: yup
     .string()
     .nullable()
     .required('Manufacturer Phone number is required')
     .matches(
       /(\+)?(1(-|\.)?(\()?\d{3}(\))?(-|\.)?\d{3}(-|\.)?\d{4})(:\d{1,4})?|(\d{3}(-|\.)?\d{3}(-|\.)?\d{4})(:\d{1,4})?$/,
-      'Please provide a valid Manufacturer phone number'
+      'Please provide a valid Manufacturer phone number (e.g. XXX-XXX-XXXX)'
     ),
   concentration: yup
     .string()
     .nullable()
     .required('Concentration is required')
     .matches(
-      /\d{1,3}(\.\d{0,2})?/,
+      /^\d{1,3}(\.\d{1,2})?$/,
       'Concentration must be a valid number upto 999 with max 2 digit floating points eg 10, 32.87 etc'
     ),
   containerCapacity: yup
@@ -80,18 +75,26 @@ export const ProductReportCsvValidation = yup.object({
     .nullable()
     .notRequired()
     .matches(
-      /\d{1,3}(\.\d{0,2})?/,
+      /^\d{1,3}(\.\d{1,2})?$/,
       'Container Capacity must be a valid number upto 999 with max 2 digit floating points eg 10, 32.87 etc'
     )
     .when('cartridgeCapacity', {
       is: (cartCap) => !cartCap?.length,
-      then: () => yup.string().nullable().required('Container Capacity (or Cartridge Capacity) is required')
+      then: () =>
+        yup
+          .string()
+          .nullable()
+          .required('Container Capacity (or Cartridge Capacity) is required')
+          .matches(
+            /^\d{1,3}(\.\d{1,2})?$/,
+            'Container Capacity must be a valid number upto 999 with max 2 digit floating points eg 10, 32.87 etc'
+          ),
     }),
   cartridgeCapacity: yup
     .string()
     .nullable()
     .matches(
-      /\d{1,3}(\.\d{0,2})?/,
+      /^\d{1,3}(\.\d{1,2})?$/,
       'Cartridge Capacity must be empty or a valid number upto 999 with max 2 digit floating points eg 10, 32.87 etc'
     )
     .optional(),
