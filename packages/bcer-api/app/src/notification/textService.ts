@@ -1,8 +1,8 @@
 import { Logger, NotAcceptableException } from '@nestjs/common';
-import { NotifyClient } from 'notifications-node-client';
 import { sleep } from 'src/utils/util';
 import { NotificationReportDTO } from './dto/notification-report.dto';
 import { NotificationDTO } from './dto/notification.dto';
+import { BCERNotifyClient } from './notification.client';
 
 export class TextService {
   private readonly apiEndpoint =
@@ -15,7 +15,7 @@ export class TextService {
   private messageClient: any;
 
   constructor() {
-    this.messageClient = new NotifyClient(this.apiEndpoint, this.apiKey);
+    this.messageClient = new BCERNotifyClient(this.apiEndpoint, this.apiKey);
     
     if(process.env.TEXT_API_PROXY) {
       this.messageClient.setProxy({
