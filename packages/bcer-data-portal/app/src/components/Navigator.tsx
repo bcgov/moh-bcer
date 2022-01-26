@@ -44,15 +44,10 @@ function a11yProps(index: any) {
 }
 
 function setInitial(path: string) {
-  switch (path) {
-    case '/':
-      return '/';
-    case '/user-management':
-      return '/user-management';
-    case '/get-help':
-      return '/getHelp';
-    default :
-      return '/';
+  if (Object.values(routes).includes(path)) {
+    return path;
+  } else {
+    return routes.root;
   }
 }
 

@@ -39,7 +39,6 @@ export class SalesReportEntity {
   @ManyToOne(
     () => LocationEntity,
     (location: LocationEntity) => location.sales,
-    { onDelete: "CASCADE" }
   )
   @JoinColumn()
   location: LocationEntity;
