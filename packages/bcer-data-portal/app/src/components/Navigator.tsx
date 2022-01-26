@@ -43,11 +43,19 @@ function a11yProps(index: any) {
   };
 }
 
+function setInitial(path: string) {
+  if (Object.values(routes).includes(path)) {
+    return path;
+  } else {
+    return routes.root;
+  }
+}
+
 function Navigator() {
   const classes = useStyles();
   const history = useHistory();
   const [keycloak] = useKeycloak();
-  const [value, setValue] = React.useState(history.location.pathname);
+  const [value, setValue] = React.useState(setInitial(history.location.pathname));
   const { config } = useContext(ConfigContext);
 
   const handleChange = (event: any, newValue: any) => {

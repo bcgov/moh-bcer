@@ -240,3 +240,126 @@ export interface LocationConfig {
   mapBoxAttribution: string;
   mapBoxId: string;
 }
+
+export type LocationRO = {
+  id: string;
+  email: string;
+  webpage: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  postal: string;
+  phone: string;
+  underage: string;
+  ha: string;
+  ha_other: string;
+  doingBusinessAs: string;
+  manufacturing: boolean;
+  created_at: string;
+  updated_at: string;
+  deletedAt: string;
+  businessId: string;
+  status: string;
+  closedAt: string;
+  closedTime: string;
+  geoAddress: string;
+  geoAddressId: string;
+  longitude: string;
+  latitude: string;
+  geoAddressConfidence: string;
+  business: BusinessRO;
+  noi: NoiRO;
+  sales: Array<SalesRO>;
+  products: Array<ProductsRO>;
+  manufactures: Array<ManufacturesRO>;
+}
+
+export type BusinessRO = {
+    id: string;
+    legalName: string;
+    businessName: string;
+    email: string;
+    webpage: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    postal: string;
+    phone: string;
+    notificationPreferences: string;
+    created_at: string;
+    updated_at: string;
+    users: Array<UserRO>
+}
+
+export type UserRO = {
+  id: string;
+  user_status_id: string;
+  type: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  bceid: string;
+  bceidUser: string;
+  lastLogin: string;
+  created_at: string;
+  updated_at: string;
+  businessId: string;
+}
+
+export type NoiRO = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  renewed_at: string;
+}
+
+export type SalesRO = {
+  id: string;
+  productId: string;
+  locationId: string;
+  containers: string;
+  cartridges: string;
+  year: string;
+  created_at: string;
+  updated_at: string;
+  product: string;
+}
+
+export type ProductsRO = {
+  id: string;
+  type: string;
+  brandName: string;
+  productName: string;
+  manufacturerName: string;
+  manufacturerAddress: string;
+  manufacturerPhone: string;
+  manufacturerEmail: string;
+  manufacturerContact: string;
+  concentration: string;
+  containerCapacity: string;
+  cartridgeCapacity: string;
+  ingredients: string;
+  flavour: string;
+  productUploadId: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+}
+
+export type ManufacturesRO = {
+  id: string;
+  productName: string;
+  created_at: string;
+  updated_at: string;
+  ingredients: Array<IngredientsRO>;
+}
+
+export type IngredientsRO = {
+  id: string;
+  name: string;
+  scientificName: string;
+  manufacturerName: string;
+  manufacturerAddress: string;
+  manufacturerPhone: string;
+  manufacturerEmail: string;
+}

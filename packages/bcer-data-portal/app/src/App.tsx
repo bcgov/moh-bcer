@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core';
 
 import Header from '@/components/Header';
 import Locations from './views/Locations';
+import ViewLocation from './views/ViewLocation';
 import GetHelp from './views/GetHelp';
 import UserManagement from './views/UserManagement/Overview';
 import Navigator from './components/Navigator';
@@ -46,6 +47,7 @@ const App = () => {
       <div className={classes.appBody}>
         <Switch>
           <Route exact path={routes.root} component={Locations} />
+          <Route exact path={`${routes.viewLocation}/:id`} component={ViewLocation} />
           <Route exact path={routes.getHelp} component={GetHelp} />
           <Route exact path={routes.userManagement} component={UserManagement} />
           { config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
