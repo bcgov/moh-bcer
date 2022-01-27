@@ -20,6 +20,7 @@ import {
 import { AuthGuard, RoleGuard, Roles } from 'src/auth/auth.module';
 import { ROLES } from 'src/auth/constants';
 import { AuthDataGuard } from 'src/auth/guards/authData.guard';
+import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { NotificationDTO } from './dto/notification.dto';
 import { ResendNotificationDTO } from './dto/resend-notification.dto';
 import { RecipientType } from './enum/recipient.enum';
@@ -46,10 +47,6 @@ export class NotificationDataPortalController {
     @Body() payload: NotificationDTO,
   ): Promise<NotificationRO> {
     const sender = `${req.user?.firstName || ''} ${req.user?.lastName || ''}`;
-    let notification = await this.notificationService.createNotification(
-      payload,
-      sender,
-    );
     const phoneNumbers = await this.notificationService.getSubscribedPhoneNumbers();
     if (phoneNumbers.length === 0) {
       throw new HttpException(
@@ -57,13 +54,10 @@ export class NotificationDataPortalController {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    const result = await this.notificationService.sendText(
+    let notification = await this.notificationService.createNotification(
       payload,
       phoneNumbers,
-    );
-    notification = await this.notificationService.updateNotification(
-      notification.id,
-      result,
+      sender,
     );
     return notification.toResponseObject();
   }
@@ -94,8 +88,11 @@ export class NotificationDataPortalController {
   @Roles(ROLES.MOH_ADMIN)
   @Patch('resend')
   async resendText(
+    @Req() req: RequestWithUser,
     @Body() payload: ResendNotificationDTO,
   ): Promise<NotificationRO> {
+    const sender = `${req.user?.firstName || ''} ${req.user?.lastName || ''}`;
+
     const { id, recipient = RecipientType.ErrorOnly } = payload;
     const notification = await this.notificationService.findOneNotification(id);
     if (!notification) {
@@ -108,6 +105,7 @@ export class NotificationDataPortalController {
     const result = await this.notificationService.resendText(
       notification,
       recipient,
+      sender,
     );
     return result.toResponseObject();
   }

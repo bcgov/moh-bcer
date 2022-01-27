@@ -47,11 +47,12 @@ export class TextService {
     const result = await (Promise as any).allSettled(
       phoneNumbers.map(async (phoneNumber, i) => {
         /**
-         * Limiting the api request to a maximum of 1000 per second.
+         * Limiting the api request to a maximum of 0.5 per second.
          */
-        await sleep(Math.floor(i + 1) / 1000);
-
-        return this.send(message, phoneNumber);
+        await sleep(Math.floor(i * 2000));
+        
+        //in this case we don't want concurrency and want to make api call sequentially.
+        return await this.send(message, phoneNumber);
       }),
     );
 
