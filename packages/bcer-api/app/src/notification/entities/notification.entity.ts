@@ -81,6 +81,8 @@ export class NotificationEntity {
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
             completed: this.completed,
+            pending: this.pending,
+            sent: this.sent,
         }
     }
 }

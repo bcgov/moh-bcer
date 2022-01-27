@@ -31,4 +31,10 @@ export class NotificationRO {
 
   @ApiProperty()
   sender: string;
+
+  @ApiProperty()
+  pending: string[];
+
+  @ApiProperty()
+  sent: string[];
 }
