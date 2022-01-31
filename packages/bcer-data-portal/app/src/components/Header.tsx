@@ -89,6 +89,12 @@ export default function Header() {
           BC E-Substances Regulation Data Portal
         </div>
       </div>
+      {
+        keycloak.authenticated &&
+        <div className={classes.help}>
+          Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>
+        </div>
+      }
     </div>
   );
 }
