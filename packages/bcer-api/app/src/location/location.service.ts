@@ -536,4 +536,15 @@ export class LocationService {
     });
     return data;
   }
+
+  async getLocationWithIdsForABusiness(locationIds: string[], businessId: string){
+    const locationsQb = this.locationRepository.createQueryBuilder('location');
+    locationsQb.leftJoinAndSelect('location.business', 'business')
+      .leftJoinAndSelect('location.noi', 'noi')
+      .andWhere('location.id IN (:...locationIds)', { locationIds })
+      .andWhere('location."noiId" IS NOT NULL')
+      .andWhere('business.id = :businessId', { businessId });
+
+    return await locationsQb.getMany();
+  }
 }
