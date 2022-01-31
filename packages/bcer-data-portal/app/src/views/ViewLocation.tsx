@@ -228,7 +228,7 @@ export default function ViewLocations() {
                         <Typography className={classes.rowContent}>{data.closedAt}</Typography>
                       </Box>
                     }
-                    <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanent Delete</StyledButton>
+                    <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
                   </Paper>
                 </Grid>
 
@@ -237,7 +237,7 @@ export default function ViewLocations() {
                   <Paper className={classes.box}>
                     <Box>
                       <Typography variant="body2">User Name</Typography>
-                      <Typography className={classes.rowContent}>{`${businessOwner?.firstName} ${businessOwner?.lastName}`}</Typography>
+                      <Typography className={classes.rowContent}>{`${businessOwner?.firstName} ${businessOwner?.lastName ?? ''}`}</Typography>
                     </Box>
                     <Box>
                       <Typography variant="body2">Email Address</Typography>
@@ -499,7 +499,7 @@ export default function ViewLocations() {
             maxWidth="xs"
             dialogTitle="Delete location"
             checkboxLabel="I understand that this location will be permanently removed from the database."
-            dialogMessage="If you delete this location it will be removed from the database. This action cannot be undone."
+            dialogMessage="If you delete this location it will be removed from the database along with its attached NOIs, Product reports, Manufacturing reports and Sales Reports. This action cannot be undone."
             setOpen={() => setConfirmDialogOpen(false)}
             confirmHandler={patch}
           />
