@@ -16,7 +16,6 @@ import {
   RouteOptions,
 } from '@/constants/localInterfaces';
 import { useHistory } from 'react-router';
-import { routes } from '@/constants/routes';
 import RouteStatics from './RouteStatics';
 import { AxiosError } from 'axios';
 import OptimizedOrder from './OptimizedOrder';
@@ -91,7 +90,7 @@ function LeftPanel({
           <StyledButton
             variant="small-outlined"
             size="small"
-            onClick={() => history.push(routes.root)}
+            onClick={() => history.goBack()}
           >
             Back
           </StyledButton>

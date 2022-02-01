@@ -323,6 +323,7 @@ export type SalesRO = {
   created_at: string;
   updated_at: string;
   product: string;
+  productSold: ProductSoldRO;
 }
 
 export type ProductsRO = {
@@ -346,6 +347,20 @@ export type ProductsRO = {
   deleted_at: string;
 }
 
+export type ProductSoldRO = {
+  id: string;
+  brandName: string;
+  productName: string;
+  concentration: string;
+  containerCapacity: string;
+  cartridgeCapacity: string;
+  flavour: string;
+  upc: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+}
+
 export type ManufacturesRO = {
   id: string;
   productName: string;
@@ -362,4 +377,10 @@ export type IngredientsRO = {
   manufacturerAddress: string;
   manufacturerPhone: string;
   manufacturerEmail: string;
+}
+
+export interface GroupedSalesRO {
+  year: string; 
+  submissionDate: string; 
+  reports: Array<SalesRO>
 }

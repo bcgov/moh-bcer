@@ -254,7 +254,7 @@ export class LocationDataPortalController {
   @Get('/get-location/:id')
   async getExtendedLocation(@Param('id') id: string){
     if(!id) throw NotFoundException;
-    const location = await this.service.getLocation(id, 'business,business.users,noi,sales,sales.product,products,manufactures,manufactures.ingredients');
+    const location = await this.service.getLocation(id, 'business,business.users,noi,sales,sales.product,sales.productSold,products,manufactures,manufactures.ingredients');
     return location;
   }
 

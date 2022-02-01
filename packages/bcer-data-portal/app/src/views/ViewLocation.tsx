@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import { routes } from '@/constants/routes';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { LocationConfig, ManufacturesRO, SalesRO, UserRO } from '@/constants/localInterfaces';
+import { GroupedSalesRO, LocationConfig, ManufacturesRO, SalesRO, UserRO } from '@/constants/localInterfaces';
 import { 
   StyledButton,
   StyledTable, 
@@ -99,6 +99,7 @@ export default function ViewLocations() {
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [businessOwner, setBusinessOwner] = useState<UserRO>();
   const [selectedManufactureReport, setSelectedManufactureReport] = useState<ManufacturesRO>();
+  const [selectedSalesReport, setSelectedSalesReport] = useState<GroupedSalesRO>();
   const [viewOpen, setViewOpen] = useState<boolean>();
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState<boolean>();
   const [currentContent, setCurrentContent] = useState<string>('locationStatus');
@@ -150,6 +151,25 @@ export default function ViewLocations() {
   const handleManufactureSelect = (manufactureReport: ManufacturesRO) => {
     setSelectedManufactureReport(manufactureReport)
     setViewOpen(true)
+  }
+
+  const handleSalesSelect = (salesReport: GroupedSalesRO) => {
+    setSelectedSalesReport(salesReport)
+    setViewOpen(true)
+  }
+
+
+  const yeildGroupedSalesArray = (salesReports: Array<any>) => {
+    const grouped =  salesReports.reduce((group, report) => {
+      const { year } = report;
+      const groupIndex = group.findIndex((element: any) => element.year === year)
+      groupIndex === -1 
+        ? group.push({year: report.year, submissionDate: moment(report.created_at).format('YYYY-MM-DD'), reports: [report]}) 
+        : group[groupIndex].reports.push(report)
+
+      return group
+    }, [])
+    return grouped
   }
 
   const getOptions = () => {
@@ -375,13 +395,13 @@ export default function ViewLocations() {
                           <Paper className={classes.tableBox}>
                             <Typography variant="body2" style={{paddingBottom: '8px'}}>{data.sales.length} sales reports submitted</Typography>
                             <StyledTable 
-                              data={data.sales}
+                              data={yeildGroupedSalesArray(data.sales)}
                               columns={[
                                 {
                                   title: 'Reporting Year', field: 'year'
                                 },
                                 {
-                                  title: 'Submission Date', render: (salesReport: SalesRO) => <span>{moment(salesReport.created_at).format('YYYY-MM-DD')}</span>
+                                  title: 'Submission Date', field: 'submissionDate'
                                 },
                                 {
                                   title: '',
@@ -391,6 +411,10 @@ export default function ViewLocations() {
                                     });
                                     csvRef.current.link.click();
                                   }}>Download</StyledButton> 
+                                },
+                                {
+                                  title: '',
+                                  render: (salesReport: GroupedSalesRO) => <StyledButton variant="table" onClick={() => handleSalesSelect(salesReport)}>View</StyledButton> 
                                 }
                               ]}
                             />
@@ -479,6 +503,68 @@ export default function ViewLocations() {
                             {
                               title: 'Manufacturer Name',
                               field: 'manufacturerName',
+                            },
+                          ]}
+                        />
+                      </div>
+                    </Paper>
+                    <div>
+                      <StyledButton
+                        variant="outlined"
+                        onClick={() => setViewOpen(false)}
+                        style={{ margin: '1rem 0' }}
+                      >
+                        Close
+                      </StyledButton>
+                    </div>
+                  </div>
+                </Dialog>
+              }
+
+              {
+                selectedSalesReport
+                  &&
+                <Dialog
+                  fullScreen
+                  open={viewOpen}
+                  onClose={() => {
+                    setSelectedSalesReport(null)
+                    setViewOpen((open) => !open)
+                  }}
+                >
+                  <div className={classes.dialogWrap}>
+                    <Paper variant="outlined" className={classes.tableBox}>
+                      <Typography className={classes.boxTitle} variant="subtitle1">
+                        Reports
+                      </Typography>
+                      <div className={classes.actionsWrapper}>
+                        <Typography style={{paddingBottom: '8px'}} variant="body2">
+                          There are {selectedSalesReport.reports.length} submitted reports
+                        </Typography>
+                      </div>
+                      <div>
+                        <StyledTable
+                          data={selectedSalesReport.reports}
+                          columns={[
+                            {
+                              title: 'Product Name',
+                              field: 'productSold.productName',
+                            },
+                            {
+                              title: 'Cartridges',
+                              field: 'cartridges',
+                            },
+                            {
+                              title: 'Containers',
+                              field: 'containers',
+                            },
+                            {
+                              title: 'Containers',
+                              field: 'containers',
+                            },
+                            {
+                              title: 'UPC',
+                              field: 'productSold.upc',
                             },
                           ]}
                         />

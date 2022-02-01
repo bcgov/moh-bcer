@@ -177,13 +177,13 @@ export default function Locations() {
   const tableColumns = [
     {
       title: 'Business Name',
-      render: (location: BusinessLocation) => <a onClick={() => history.push(`/location/${location.id}`)}>{location.business.businessName}</a>,
+      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => history.push(`/location/${location.id}`)}>{location.business.businessName}</span>,
       sorting: false,
     },
     {
       title: 'Business Legal Name',
       field: 'business.legalName',
-      render: (location: BusinessLocation) => <a onClick={() => history.push(`/location/${location.id}`)}>{location.business.legalName}</a>,
+      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => history.push(`/location/${location.id}`)}>{location.business.legalName}</span>,
     },
     {
       title: 'Doing Business As',
