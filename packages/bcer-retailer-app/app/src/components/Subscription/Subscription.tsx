@@ -85,7 +85,7 @@ function Subscription() {
       </Box>
       <Box flex={0.94}>
         <Typography className={classes.title}>
-          Subscribe To Our System Notification
+          Subscribe To Our Text System Notification
         </Typography>
         <Typography className={classes.helperText}>
           Get SMS Notification from BC E-substances Reporting. Please click on
