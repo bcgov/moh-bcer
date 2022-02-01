@@ -1,4 +1,4 @@
-import { Repository, In, Not, IsNull, SelectQueryBuilder, UpdateResult } from 'typeorm';
+import { Repository, In, Not, IsNull, SelectQueryBuilder, UpdateResult, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -44,6 +44,8 @@ export class LocationService {
     private readonly locationRepository: Repository<LocationEntity>,
     @InjectRepository(BusinessEntity)
     private readonly businessRepository: Repository<BusinessEntity>,
+    @InjectRepository(SalesReportEntity)
+    private readonly salesReportRepository: Repository<SalesReportEntity>,
     private geoCodeService: GeoCodeService,
   ) { }
 
@@ -131,6 +133,15 @@ export class LocationService {
       relations = includes.split(',');
     }
     const location = await this.locationRepository.findOne(locationId, { relations });
+    return location;
+  }
+
+  async getLocationDespiteDeletion(locationId: string, includes?: string) {
+    let relations = [];
+    if (includes) {
+      relations = includes.split(',');
+    }
+    const location = await this.locationRepository.findOne(locationId, { relations, withDeleted: true });
     return location;
   }
 
@@ -431,6 +442,39 @@ export class LocationService {
       const result = await this.locationRepository.softDelete({id: In(locationIds)});
     }
 
+    /**
+   * Delete locations with ids,
+   * This is a hard delete by location ID, fully removing the location and associated resources
+   * @param locationIds 
+   */
+     async hardDeleteLocation(location: LocationEntity): Promise<void>{
+      const connection = getConnection();
+      const queryRunner = connection.createQueryRunner();
+      const locationId = location.id;
+
+      await queryRunner.startTransaction();
+      try {
+
+        await queryRunner.manager.delete('location_manufactures_manufacturing', { locationId });
+        await queryRunner.manager.delete('location_products_product', { locationId });
+        await queryRunner.manager.delete('salesreport', { locationId });
+        await queryRunner.manager.delete('product_sold', { locationId });
+        await queryRunner.manager.delete('location', { id: locationId });
+        await queryRunner.manager.delete('noi', { id: location.noi.id });
+
+        await queryRunner.commitTransaction();
+      } catch (err) {
+        Logger.error(err)
+        // rollback transaction on error
+        await queryRunner.rollbackTransaction();
+        throw  `Cannot delete location ${location.doingBusinessAs} with id  ${locationId}`;
+      } finally {
+          
+          // release queryRunner
+          await queryRunner.release();
+      }
+    }
+
   /**
    * Update a location
    * @param locationId
@@ -546,5 +590,28 @@ export class LocationService {
       .andWhere('business.id = :businessId', { businessId });
 
     return await locationsQb.getMany();
+  }
+  async getDownloadCSV(locationId: string, year: string) {
+    const salesReports = await this.salesReportRepository.find({
+      where: {
+        locationId,
+        year,
+      },
+      relations: ['productSold'],
+    });
+    return salesReports.map(s => {
+      const { productSold: p } = s;
+      return [
+        p.brandName,
+        p.productName,
+        p.concentration,
+        p.containerCapacity,
+        p.cartridgeCapacity,
+        p.flavour,
+        p.upc,
+        s.containers,
+        s.cartridges,
+      ];
+    });
   }
 }

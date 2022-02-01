@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   HttpCode,
   HttpStatus,
   Query,
@@ -13,6 +14,7 @@ import {
   Param,
   NotFoundException,
   UnprocessableEntityException,
+  ForbiddenException,
 } from '@nestjs/common';
 import {
   ApiParam,
@@ -37,6 +39,7 @@ import { ROLES } from 'src/auth/constants';
 import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
 import { LocationConfig } from './config/dataLocation.config';
 import { DirectionDto } from './dto/direction.dto';
+import { DownloadSaleDTO } from 'src/sales/dto/download-sale.dto';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -242,6 +245,34 @@ export class LocationDataPortalController {
     return locations.map(l => l.toResponseObject());
   }
 
+  @ApiOperation({ summary: 'Gets all data associated with a single location by ID' })
+  @ApiResponse({ status: HttpStatus.OK, type: LocationRO })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Get('/get-location/:id')
+  async getExtendedLocation(@Param('id') id: string){
+    if(!id) throw NotFoundException;
+    const location = await this.service.getLocation(id, 'business,business.users,noi,sales,sales.product,sales.productSold,products,manufactures,manufactures.ingredients');
+    return location;
+  }
+
+  @ApiOperation({ summary: 'Deletes a location by id' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Patch('/delete-location/:id')
+  async deleteLocation(@Param('id') id: string){
+    if(!id) throw NotFoundException;
+    const location = await this.service.getLocationDespiteDeletion(id, 'noi');
+    if (!location) throw NotFoundException;
+    if (!location.closedAt && !location.deletedAt) throw new ForbiddenException('Cannot delete a location that has not been closed, or deleted by the retailer')
+    await this.service.hardDeleteLocation(location);
+    return;
+  }
+
   @ApiOperation({ summary: 'gets all the config data for data portal map' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationConfig })
   @HttpCode(HttpStatus.OK)
@@ -263,4 +294,23 @@ export class LocationDataPortalController {
     if(!payload?.uri) throw UnprocessableEntityException;
     return await this.service.getDirection(payload.uri);
   }
+
+  /**
+   * Download Sales Report CSV
+   * @param query
+   * @param req
+   * @returns
+   */
+  @ApiOperation({ summary: 'Download Sales Report CSV' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Get('/download')
+   async getSaleReportDownload(
+     @Query() query: DownloadSaleDTO,
+   ) {
+     const { locationId, year } = query;
+     return this.service.getDownloadCSV(locationId, year);
+   }
 }

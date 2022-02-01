@@ -4,4 +4,5 @@ export const routes = Object.freeze({
     getHelp: '/getHelp',
     sendNotification: '/sendNotification',
     map: '/map',
+    viewLocation: '/location'
 });
