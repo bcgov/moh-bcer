@@ -362,6 +362,12 @@ export default function Locations() {
     }
   }
 
+  const viewLocation = () => {
+    if(selectedRows?.length === 1){
+      history.push(`/location/${selectedRows[0].id}`)
+    }
+  }
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>

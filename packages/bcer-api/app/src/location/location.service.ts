@@ -591,6 +591,7 @@ export class LocationService {
 
     return await locationsQb.getMany();
   }
+  
   async getDownloadCSV(locationId: string, year: string) {
     const salesReports = await this.salesReportRepository.find({
       where: {
