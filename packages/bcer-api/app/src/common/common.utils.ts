@@ -22,3 +22,17 @@ export const getSalesReportYear = () => {
   }
   return { year, isAbleToEdit };
 };
+
+export const getSalesReportingPeriod = () => {
+  const current = moment();
+  const currentYear = current.year();
+  const startReport = moment(`${currentYear - 1}-${ConfigDates.salesReportStart}`);
+  const endReport = moment(`${currentYear}-${ConfigDates.salesReportEnd}T23:59:59-07:00`);
+
+  if(current.isAfter(endReport)){
+    startReport.add(1, 'year');
+    endReport.add(1, 'year');
+  }
+
+  return { startReport, endReport};
+}

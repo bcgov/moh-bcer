@@ -11,7 +11,7 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
-import { getSalesReportYear } from 'src/common/common.utils';
+import { getSalesReportingPeriod, getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString, sleep } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { NoiStatus } from 'src/noi/enums/status.enum';
@@ -133,6 +133,15 @@ export class LocationService {
       relations = includes.split(',');
     }
     const location = await this.locationRepository.findOne(locationId, { relations });
+    return location;
+  }
+
+  async getLocationDespiteDeletion(locationId: string, includes?: string) {
+    let relations = [];
+    if (includes) {
+      relations = includes.split(',');
+    }
+    const location = await this.locationRepository.findOne(locationId, { relations, withDeleted: true });
     return location;
   }
 
@@ -364,13 +373,16 @@ export class LocationService {
    */
   async getLocationsSalesReportWithCurrentYear (businessId: string, query: QuerySaleDTO) {
     const saleReportYear = getSalesReportYear();
+    const {startReport, endReport} = getSalesReportingPeriod();
    
     const { isSubmitted } = query;
   
     const locations = await this.locationRepository.createQueryBuilder('location')
       .leftJoinAndSelect('location.business', 'business')
+      .leftJoin('location.noi', 'noi')
       .where('business.id = :businessId', { businessId })
       .andWhere('location.noiId IS NOT NULL')
+      .andWhere('noi.created_at NOT BETWEEN :start AND :end', {start: startReport, end: endReport})
       .andWhere(qb => {
         const subQuery = qb.subQuery()
         .select('sr.locationId')
@@ -435,26 +447,20 @@ export class LocationService {
    * This is a hard delete by location ID, fully removing the location and associated resources
    * @param locationIds 
    */
-     async hardDeleteLocation(locationId: string): Promise<void>{
+     async hardDeleteLocation(location: LocationEntity): Promise<void>{
       const connection = getConnection();
       const queryRunner = connection.createQueryRunner();
-
-      const [location] = await queryRunner.query(`SELECT * FROM LOCATION WHERE "id"='${locationId}'`);
-      const noi = await queryRunner.query(`SELECT * FROM NOI WHERE "id"='${location.noiId}'`);
-      const locationManufacturesJoin = await queryRunner.query(`SELECT * FROM location_manufactures_manufacturing WHERE "locationId"='${locationId}'`);
-      const locationProductsJoin = await queryRunner.query(`SELECT * FROM LOCATION_PRODUCTS_PRODUCT WHERE "locationId"='${locationId}'`);
-      const productSold = await queryRunner.query(`SELECT * FROM PRODUCT_SOLD WHERE "locationId"='${locationId}'`);
-      const salesReport = await queryRunner.query(`SELECT * FROM SALESREPORT WHERE "locationId"='${locationId}'`);
+      const locationId = location.id;
 
       await queryRunner.startTransaction();
       try {
 
-        await Promise.all(locationManufacturesJoin.map(entity => queryRunner.manager.delete('location_manufactures_manufacturing', { manufacturingId: entity.productId })));
-        await Promise.all(locationProductsJoin.map(entity => queryRunner.manager.delete('location_products_product', { productId: entity.productId })));
-        await Promise.all(salesReport.map(entity => queryRunner.manager.delete('salesreport', { id: entity.id })));
-        await Promise.all(productSold.map(entity => queryRunner.manager.delete('product_sold', { id: entity.id })));
+        await queryRunner.manager.delete('location_manufactures_manufacturing', { locationId });
+        await queryRunner.manager.delete('location_products_product', { locationId });
+        await queryRunner.manager.delete('salesreport', { locationId });
+        await queryRunner.manager.delete('product_sold', { locationId });
         await queryRunner.manager.delete('location', { id: locationId });
-        await Promise.all(noi.map(entity => queryRunner.manager.delete('noi', { id: entity.id })));
+        await queryRunner.manager.delete('noi', { id: location.noi.id });
 
         await queryRunner.commitTransaction();
       } catch (err) {
@@ -575,6 +581,17 @@ export class LocationService {
     return data;
   }
 
+  async getLocationWithIdsForABusiness(locationIds: string[], businessId: string){
+    const locationsQb = this.locationRepository.createQueryBuilder('location');
+    locationsQb.leftJoinAndSelect('location.business', 'business')
+      .leftJoinAndSelect('location.noi', 'noi')
+      .andWhere('location.id IN (:...locationIds)', { locationIds })
+      .andWhere('location."noiId" IS NOT NULL')
+      .andWhere('business.id = :businessId', { businessId });
+
+    return await locationsQb.getMany();
+  }
+  
   async getDownloadCSV(locationId: string, year: string) {
     const salesReports = await this.salesReportRepository.find({
       where: {

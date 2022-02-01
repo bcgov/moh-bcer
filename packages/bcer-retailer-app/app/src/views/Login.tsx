@@ -58,7 +58,7 @@ const useStyles = makeStyles({
   },
   buttonText: {
     height: '20px',
-    width: '300px',
+    width: '390px',
     margin: '32px 0px 0px 0px',
   },
   authArrow: {
@@ -124,11 +124,20 @@ const Login = () => {
                 <Typography variant='body1'>
                   This application utilizes BCeID for authentication.<br />
                 </Typography>
-                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid', redirectUri: location.origin + '/retailer/#/keycloak' })}>
+                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid_basic', redirectUri: location.origin + '/retailer/#/keycloak' })}>
                   <div className={classes.authButtonIcon}>
                     <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
                   </div>
-                  <div className={classes.buttonText}>Continue with BCeID</div>
+                  <div className={classes.buttonText}>Continue with Basic BCeID</div>
+                  <div className={classes.authArrow}>
+                    <img className={classes.arrowRight} src={arrowRight} alt="Login" />
+                  </div>
+                </div>
+                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid_business', redirectUri: location.origin + '/retailer/#/keycloak' })}>
+                  <div className={classes.authButtonIcon}>
+                    <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
+                  </div>
+                  <div className={classes.buttonText}>Continue with Business BCeID</div>
                   <div className={classes.authArrow}>
                     <img className={classes.arrowRight} src={arrowRight} alt="Login" />
                   </div>

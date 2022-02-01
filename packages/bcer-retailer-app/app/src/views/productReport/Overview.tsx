@@ -224,55 +224,55 @@ export default function ProductOverview() {
             <div className={classes.listGroup}>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Product Type
+                Product Type (100 characters limit)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Brand Name
+                Brand Name (40 characters limit)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Product Name
+                Product Name (100 characters limit)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Manufacturer Name
+                Manufacturer Name (50 characters limit)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Manufacturer Contact (contact person, if applicable)
+                Manufacturer Contact Person (Optional, 50 characters limit)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Manufaturer Address
+                Manufacturer Address (160 characters limit)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Manufacturer Phone
+                Manufacturer Phone (Extension should be written as follow XXX-XXX-XXXX:XXXX)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Manufacturer Email
+                Manufacturer Email (Valid email eg. example@email.com)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Concentration (mg/mL)
+                Concentration (mg/mL) (Valid number only, eg. 10, 32.22 etc.)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Container Capacity (Max 30 mL)
+                Container Capacity (Max 30 mL) (Valid number only, eg. 10, 28.22 etc.)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Cartridge Capacity (Max 2 mL)
+                Cartridge Capacity (Max 2 mL) (Valid number only, eg. 1, 1.3 etc.)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Ingredients
+                Ingredients (255 characters limit)
               </div>
               <div className={classes.listRow}>
                 <div className={classes.listBullet} />
-                Flavour
+                Flavour (100 characters limit)
               </div>
           <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
           <Typography variant='body1'><span className={classes.highlightedText}>Note:</span> If you are resubmitting a product report that was previously submitted before December 16, 2020, you are not required to wait 6 weeks before selling. You are only required to wait 6 weeks for any new products that you intend to sell and have not yet been reported.</Typography>
@@ -359,7 +359,7 @@ export default function ProductOverview() {
               actions={[
                 {
                   icon: tableAction,
-                  onClick: (event: any, rowData: any) => history.push(`/view-location/${rowData.id}`)
+                  onClick: (event: any, rowData: any) => history.push(`/products/location/${rowData.id}`)
                 }
               ]}
               data={withProducts}

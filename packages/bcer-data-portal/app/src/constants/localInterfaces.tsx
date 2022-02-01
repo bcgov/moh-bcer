@@ -323,6 +323,10 @@ export type SalesRO = {
   created_at: string;
   updated_at: string;
   product: string;
+<<<<<<< HEAD
+=======
+  productSold: ProductSoldRO;
+>>>>>>> 7347e51b92e7147035951e4dea829131105bc281
 }
 
 export type ProductsRO = {
@@ -346,6 +350,23 @@ export type ProductsRO = {
   deleted_at: string;
 }
 
+<<<<<<< HEAD
+=======
+export type ProductSoldRO = {
+  id: string;
+  brandName: string;
+  productName: string;
+  concentration: string;
+  containerCapacity: string;
+  cartridgeCapacity: string;
+  flavour: string;
+  upc: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+}
+
+>>>>>>> 7347e51b92e7147035951e4dea829131105bc281
 export type ManufacturesRO = {
   id: string;
   productName: string;
@@ -362,4 +383,13 @@ export type IngredientsRO = {
   manufacturerAddress: string;
   manufacturerPhone: string;
   manufacturerEmail: string;
+<<<<<<< HEAD
+=======
+}
+
+export interface GroupedSalesRO {
+  year: string; 
+  submissionDate: string; 
+  reports: Array<SalesRO>
+>>>>>>> 7347e51b92e7147035951e4dea829131105bc281
 }

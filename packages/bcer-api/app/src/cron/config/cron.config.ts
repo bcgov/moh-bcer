@@ -11,9 +11,21 @@ export class CronConfig {
     private static noiValidTill = process.env.NOI_VALID_TILL || '01-15'; // MM-DD
     private static runCronJobs: string = process.env.CRON_JOB_NAMES; //as csv eg. cronJob1,cronJob2 of type CronName.
     private static cronTimeZone: TimeZone = { timeZone: process.env.CRON_TIME_ZONE || 'America/Vancouver' };
+    
+    // Notification Cron time
+    private static sendNotificationCronTime = process.env.SEND_NOTIFICATION_CRON_TIME || '*/3 * * * *';
+    private static notificationBatchSize = +(process.env.NOTIFICATION_BATCH_SIZE || 50);
   
     static getCloseLocationCronTime(): string {
       return this.closeLocationCronTime;
+    }
+
+    static getSendNotificationCronTime(): string {
+      return this.sendNotificationCronTime;
+    }
+
+    static getNotificationBatchSize(): number {
+      return this.notificationBatchSize;
     }
   
     static getRunCronFlag(cronJob: CronName): boolean {

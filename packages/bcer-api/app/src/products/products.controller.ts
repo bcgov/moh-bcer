@@ -11,6 +11,9 @@ import {
   UseInterceptors,
   Query,
   Param,
+  UnprocessableEntityException,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -36,6 +39,8 @@ import { ProductRO } from 'src/products/ro/product.ro';
 import { ProductsLocationsRO } from './ro/products-locations.ro';
 import { ProductUploadRO } from './ro/product-upload.ro';
 import { LocationEntity } from 'src/location/entities/location.entity';
+import { ROLES } from 'src/auth/constants';
+import { PaginatedProductQuery } from './dto/paginatedProductQuery.dto';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -78,7 +83,7 @@ export class ProductsController {
     const products = await this.service.getProducts(req.ctx.businessId, submissionId);
     const productIds = products.map((product: ProductEntity) => product.id);
     const locationIds = await this.service.getLocationIdsForProducts(productIds);
-    const locations = await this.locationService.getLocationWithIds(locationIds);
+    const locations = await this.locationService.getLocationWithIdsForABusiness(locationIds, req.ctx.businessId);
     return {
       locations: locations.map((location: LocationEntity) => location.toResponseObject()),
       products: products.map((product: ProductEntity) => product.toResponseObject()),
@@ -123,5 +128,38 @@ export class ProductsController {
   ): Promise<void> {
     await this.service.deleteProductSubmissions(req.ctx.businessId, productUploadId);
     return;
+  }
+
+  @ApiOperation({ summary: 'Get paginated products for a location' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'numPerPage',
+    type: Number,
+    required: false,
+  })
+  @Roles(ROLES.USER)
+  @Get('/location/:locationId')
+  async getProductsForALocation(
+    @Query() query: PaginatedProductQuery,
+    @Param('locationId') locationId: string,
+    @Request() req: RequestWithUser,
+  ){
+    if(!locationId){
+      throw new UnprocessableEntityException();
+    }
+    const location = await this.locationService.getLocation(locationId, 'business');
+    if(!location){
+      throw new NotFoundException();
+    }
+    if(location?.businessId !== req.ctx.businessId){
+      throw new ForbiddenException();
+    }
+
+    return await this.service.getPaginatedProductsForLocation(locationId, query);
   }
 }

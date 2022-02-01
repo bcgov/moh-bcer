@@ -177,12 +177,13 @@ export default function Locations() {
   const tableColumns = [
     {
       title: 'Business Name',
-      field: 'business.businessName',
+      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => history.push(`/location/${location.id}`)}>{location.business.businessName}</span>,
       sorting: false,
     },
     {
       title: 'Business Legal Name',
       field: 'business.legalName',
+      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => history.push(`/location/${location.id}`)}>{location.business.legalName}</span>,
     },
     {
       title: 'Doing Business As',
@@ -461,19 +462,8 @@ export default function Locations() {
                   Intent
                 </Typography>
                 <Box display ='flex' justifyContent='flex-end' my={2}>
-                  <Tooltip title={selectedRows.length > 1 ? "Can't view more than one location at a time" : ''}>
-                    <Box>
-                      <StyledButton 
-                        variant="small-outlined" 
-                        disabled={!selectedRows?.length || selectedRows.length >1}
-                        onClick={viewLocation}
-                      >
-                        View Fullscreen
-                      </StyledButton>
-                    </Box>
-                  </Tooltip>
                   <Box mx={2}/>
-                  <Tooltip title={selectedRows.length > 8 ? "Can't open map with more than 8 locations at a time" : ''}>
+                    <Tooltip title={selectedRows.length > 8 ? "Can't open map with more than 8 locations at a time" : ''}>
                     <Box>
                       <StyledButton 
                         variant="small-outlined" 

@@ -14,6 +14,7 @@ import {
   Param,
   NotFoundException,
   UnprocessableEntityException,
+  ForbiddenException,
 } from '@nestjs/common';
 import {
   ApiParam,
@@ -253,7 +254,7 @@ export class LocationDataPortalController {
   @Get('/get-location/:id')
   async getExtendedLocation(@Param('id') id: string){
     if(!id) throw NotFoundException;
-    const location = await this.service.getLocation(id, 'business,business.users,noi,sales,sales.product,products,manufactures,manufactures.ingredients');
+    const location = await this.service.getLocation(id, 'business,business.users,noi,sales,sales.product,sales.productSold,products,manufactures,manufactures.ingredients');
     return location;
   }
 
@@ -265,7 +266,10 @@ export class LocationDataPortalController {
   @Patch('/delete-location/:id')
   async deleteLocation(@Param('id') id: string){
     if(!id) throw NotFoundException;
-    await this.service.hardDeleteLocation(id);
+    const location = await this.service.getLocationDespiteDeletion(id, 'noi');
+    if (!location) throw NotFoundException;
+    if (!location.closedAt && !location.deletedAt) throw new ForbiddenException('Cannot delete a location that has not been closed, or deleted by the retailer')
+    await this.service.hardDeleteLocation(location);
     return;
   }
 
