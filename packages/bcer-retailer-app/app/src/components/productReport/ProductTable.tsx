@@ -4,6 +4,7 @@ import { StyledTable } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import { ProductUtil } from '@/utils/product.util';
 
 function ProductTable({ locationId }: { locationId: string }) {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
@@ -32,25 +33,11 @@ function ProductTable({ locationId }: { locationId: string }) {
     }
   }, [productError]);
 
-  const columns: Array<TableColumn> = [
-    { title: 'Type of product', field: 'type' },
-    { title: 'Brand name', field: 'brandName' },
-    { title: 'Product name', field: 'productName' },
-    { title: "Manufacturer's name", field: 'manufacturerName' },
-    { title: 'Manufacturer Contact', field: 'manufacturerContact' },
-    { title: "Manufacturer's address", field: 'manufacturerAddress' },
-    { title: "Manufacturer's phone", field: 'manufacturerPhone' },
-    { title: "Manufacturer's email", field: 'manufacturerEmail' },
-    { title: 'Concentration (mg/mL)', field: 'concentration' },
-    { title: 'Container capacity (ml)', field: 'containerCapacity' },
-    { title: 'Cartridge capacity (ml)', field: 'cartridgeCapacity' },
-    { title: 'Ingredients', field: 'ingredients' },
-    { title: 'Flavour', field: 'flavour' },
-  ];
+ 
   return (
     <StyledTable
       data={products ? products[0] : []}
-      columns={columns}
+      columns={ProductUtil.columns}
       totalCount={products ? products[1] : 0}
       page={query.page}
       onChangePage={(page: number) => {
