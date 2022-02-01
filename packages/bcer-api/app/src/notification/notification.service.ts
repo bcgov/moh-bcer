@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -27,11 +27,13 @@ export class NotificationService {
 
   async createNotification(
     data: Partial<NotificationEntity>,
+    pending: string[],
     sender?: string,
   ): Promise<NotificationEntity> {
     const notification = this.notificationRepository.create({
       ...data,
       completed: false,
+      pending,
       sender,
     });
     await this.notificationRepository.save(notification);
@@ -60,8 +62,8 @@ export class NotificationService {
 
   async updateNotification(
     id: string,
-    updateData: NotificationReportDTO,
-    completed = true,
+    updateData: Partial<NotificationEntity> = {},
+    completed: boolean,
   ): Promise<NotificationEntity> {
     await this.notificationRepository.update(
       { id },
@@ -132,7 +134,7 @@ export class NotificationService {
     return errorData.map(e => e.recipient);
   }
 
-  async resendText(notification: NotificationEntity, recipient: RecipientType) {
+  async resendText(notification: NotificationEntity, recipient: RecipientType, sender?: string): Promise<NotificationEntity> {
     let phoneNumbers: string[] = [];
     if (recipient === RecipientType.ErrorOnly) {
       phoneNumbers = this.getErroredPhoneNumber(notification);
@@ -147,14 +149,69 @@ export class NotificationService {
       );
     }
 
+    if (recipient === RecipientType.All && !notification?.completed){
+      throw new ForbiddenException('Can not resend to all recipients for a pending notification');
+    }
+
     const data: NotificationDTO = {
       message: notification.message,
       title: notification.title,
     };
 
-    const result = await this.sendText(data, phoneNumbers);
-    result.success += notification.success;
+    return await this.createNotification(data, phoneNumbers, sender);
+  }
 
-    return await this.updateNotification(notification.id, result, true);
+  /**
+   * Finds and returns all the Notification that are yet to be sent.
+   * 
+   * @returns {NotificationEntity[]} `NotificationEntity[]`
+   */
+  async findPendingNotifications(): Promise<NotificationEntity[]>{
+    const qb = this.notificationRepository.createQueryBuilder('notification')
+      .where('completed = :completed', { completed: false })
+      .orderBy('created_at', 'ASC');
+    
+    return await qb.getMany();
+  }
+
+  /**
+   * This method finds the earliest pending notification and sends text to 
+   * pending phone numbers.
+   * 
+   * @param {number} batch number specifying the batch quantity.
+   * @returns string
+   */
+  async sendNotificationBatch(batch = 50){
+    const pendingNotifications = await this.findPendingNotifications();
+    if (!pendingNotifications?.length){
+      throw new Error('Nothing to send!');
+    }
+    const notification = pendingNotifications[0];
+
+    if(!notification.pending?.length){
+      await this.updateNotification(notification.id, {}, true);
+      return;
+    }
+
+    const currentBatch = notification.pending.slice(0, batch);
+    const pending = notification.pending.slice(batch);
+    const completed = !pending.length;
+
+
+    const content: NotificationDTO = {
+      title: notification.title || '',
+      message: notification.message,
+    }
+    const result = await this.sendText(content, currentBatch);
+
+    const updateFields: Partial<NotificationEntity> = {
+      pending,
+      sent: notification.sent?.length ? [...notification.sent, ...currentBatch] : currentBatch,
+      success: notification.success ? notification.success + result.success : result.success,
+      fail: notification.fail ? notification.fail + result.fail : result.fail,
+      errorData: notification.errorData?.length ? [...notification.errorData, ...result.errorData] : result.errorData,
+    }
+
+    return await this.updateNotification(notification.id, updateFields, completed);
   }
 }

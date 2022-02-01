@@ -18,6 +18,7 @@ import { BusinessModule } from 'src/business/business.module';
   ],
   controllers: [NotificationDataPortalController, SubscriptionController],
   providers: [NotificationService, TextService],
+  exports: [NotificationService],
 })
 export class NotificationModule {
   async configure(consumer: MiddlewareConsumer) {

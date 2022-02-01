@@ -34,6 +34,18 @@ export class NotificationEntity {
     })
     updatedAt: Date;
 
+    @Column('json', {
+        default: [],
+        nullable: true,
+    })
+    pending: string[];
+
+    @Column('json', {
+        default: [],
+        nullable: true,
+    })
+    sent: string[];
+
     @Column('boolean', {
         nullable: false,
         default: false
@@ -69,6 +81,8 @@ export class NotificationEntity {
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
             completed: this.completed,
+            pending: this.pending,
+            sent: this.sent,
         }
     }
 }
