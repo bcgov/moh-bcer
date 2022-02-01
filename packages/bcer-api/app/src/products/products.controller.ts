@@ -83,7 +83,10 @@ export class ProductsController {
     const products = await this.service.getProducts(req.ctx.businessId, submissionId);
     const productIds = products.map((product: ProductEntity) => product.id);
     const locationIds = await this.service.getLocationIdsForProducts(productIds);
-    const locations = await this.locationService.getLocationWithIdsForABusiness(locationIds, req.ctx.businessId);
+    let locations: LocationEntity[] = [];
+    if(locationIds?.length){
+      locations = await this.locationService.getLocationWithIdsForABusiness(locationIds, req.ctx.businessId);
+    }
     return {
       locations: locations.map((location: LocationEntity) => location.toResponseObject()),
       products: products.map((product: ProductEntity) => product.toResponseObject()),
