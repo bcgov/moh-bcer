@@ -210,7 +210,7 @@ export default function ViewLocations() {
             <CircularProgress/>
           :
             <>
-              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.push(routes.root)}>Submitted Locations</span> / Location Details</Typography>
+              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.push(routes.submittedLocations)}>Submitted Locations</span> / Location Details</Typography>
               {
                 data
                   &&

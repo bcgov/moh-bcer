@@ -6,6 +6,7 @@ import {
   HttpStatus,
   NotFoundException,
   Patch,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -26,6 +27,8 @@ import { ProductSoldService } from 'src/product-sold/product-sold.service';
 import { ProductsService } from 'src/products/products.service';
 import { BusinessService } from './business.service';
 import { BusinessMergeDTO } from './dto/business-merge.dto';
+import { BusinessOverviewDto } from './dto/businessOverview.dto';
+import { SearchDto } from './dto/search.dto';
 import { BusinessRO } from './ro/business.ro';
 
 @ApiBearerAuth()
@@ -95,5 +98,39 @@ export class BusinessDataPortalController {
       //Add log in database.
       throw err;
     }
+  }
+
+  @ApiOperation({ summary: 'gets report/compliance overview' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK, type: String })
+  @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+  @AllowAnyRole()
+  @Get('/overview')
+  async getComplianceOverview (@Query() query: BusinessOverviewDto){
+     return await this.businessService.getComplianceOverview(query.type);
+  }
+
+  @ApiOperation({ summary: 'gets report/compliance overview' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK, type: String })
+  @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+  @AllowAnyRole()
+  @Get('businesses')
+  async listBusinesses(@Query() query: SearchDto): Promise<{data: BusinessRO[], count: number}>{
+    let businessIds: string[];
+    if(query?.healthAuthority){
+      businessIds = await this.businessService.getBusinessIdsForHA(query.healthAuthority);
+      if(!businessIds?.length){
+        return {data: [], count: 0};
+      }
+    }
+    const [businesses, count] = await this.businessService.listBusinesses(query, businessIds);
+
+    const data = businesses.map(b => {
+      b.reportingStatus = this.locationService.checkLocationReportComplete(b.locations || []);
+      b.locations = [];
+      return b.toResponseObject();
+    });
+    return { data, count}
   }
 }

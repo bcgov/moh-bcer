@@ -20,6 +20,10 @@ import { LocationStatus } from './enums/location-status.enum';
 import { GeoCodeService } from './geoCode.service';
 import { GoogleGeoCodeRO } from './ro/googleGeoCode.ro';
 import Axios from 'axios';
+import { BusinessReportingStatusRO } from 'src/business/ro/busunessReportingStatus.ro';
+import { LocationReportingStatus } from './helper/locationReportStatus';
+import { LocationComplianceStatus } from './helper/locationComplianceStatus';
+import { BusinessReportType } from 'src/business/enums/businessReportType.enum';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -162,7 +166,7 @@ export class LocationService {
           throw new ForbiddenException('Invalid count');
         }
         locationsQb.addSelect((subQuery) => this.buildCountSubquery(colToCount, subQuery), `${colToCount}Count`);
-        locationsQb.loadRelationCountAndMap('location.productsCount', 'location.products');
+        locationsQb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
       });
     }
     const locations = await locationsQb.getMany();
@@ -614,5 +618,21 @@ export class LocationService {
         s.cartridges,
       ];
     });
+  }
+
+  checkLocationReportComplete(
+    locations: LocationEntity[],
+    options?: { exitEarly?: boolean; type?: BusinessReportType },
+  ): BusinessReportingStatusRO {
+    const { exitEarly, type = BusinessReportType.Report } = options || {};
+
+    const status =
+      type === BusinessReportType.Report
+        ? new LocationReportingStatus(locations, exitEarly)
+        : new LocationComplianceStatus(locations, exitEarly);
+
+    return status
+      .check()
+      .build()
   }
 }

@@ -19,6 +19,7 @@ import { ProductEntity } from 'src/products/entities/product.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 import { SubscriptionEntity } from 'src/notification/entities/subscription.entity';
+import { BusinessReportingStatusRO } from '../ro/busunessReportingStatus.ro';
 
 @Entity('business')
 export class BusinessEntity {
@@ -57,7 +58,7 @@ export class BusinessEntity {
   users: []
 
   @OneToMany(() => LocationEntity, (location) => location.business)
-  locations: []
+  locations: LocationEntity[]
 
   @OneToMany(() => NoiEntity, (noi) => noi.business)
   nois: []
@@ -86,6 +87,10 @@ export class BusinessEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
+  reportingStatus?: BusinessReportingStatusRO;
+
+  complianceStatus?: BusinessReportingStatusRO;
+
   toResponseObject(): BusinessRO {
     return {
       id: this.id,
@@ -106,6 +111,8 @@ export class BusinessEntity {
       submissions: this.submissions?.map((s: SubmissionEntity) => s.id) || [],
       created_at: this.created_at,
       updated_at: this.updated_at,
+      reportingStatus: this.reportingStatus,
+      complianceStatus: this.complianceStatus,
     };
   }
 }

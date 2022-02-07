@@ -13,6 +13,7 @@ import { routes } from './constants/routes';
 import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
 import { ConfigContext } from './contexts/Config';
+import Dashboard from './views/Dashboard/Overview';
 
 const useStyles = makeStyles({
   root: {
@@ -46,7 +47,8 @@ const App = () => {
       </div>
       <div className={classes.appBody}>
         <Switch>
-          <Route exact path={routes.root} component={Locations} />
+          <Route exact path={routes.root} component={Dashboard} />
+          <Route exact path={routes.submittedLocations} component={Locations} />
           <Route exact path={`${routes.viewLocation}/:id`} component={ViewLocation} />
           <Route exact path={routes.getHelp} component={GetHelp} />
           <Route exact path={routes.userManagement} component={UserManagement} />
