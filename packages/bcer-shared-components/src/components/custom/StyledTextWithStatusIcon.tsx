@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function TextWithStatusIcon({
+export function StyledTextWithStatusIcon({
   text,
   success,
   textProps = {},
@@ -46,5 +46,3 @@ function TextWithStatusIcon({
     </Box>
   );
 }
-
-export default TextWithStatusIcon;

@@ -1,4 +1,4 @@
-import { UserType, HealthAuthority, HealthAuthorities } from '@/constants/localEnums';
+import { UserType, HealthAuthority, HealthAuthorities, ReportStatus } from '@/constants/localEnums';
 import { BusinessFilter } from '@/hooks/useBusiness';
 
 export interface UserProfile {
@@ -273,6 +273,7 @@ export type LocationRO = {
   sales: Array<SalesRO>;
   products: Array<ProductsRO>;
   manufactures: Array<ManufacturesRO>;
+  reportStatus?: LocationReportStatus;
 }
 
 export type BusinessRO = {
@@ -415,3 +416,10 @@ export interface BusinessReportStatus {
 export type BusinessList = {
   [key in BusinessFilter]: BusinessRO[];
 }&{total: number}
+
+export interface LocationReportStatus {
+  noi: ReportStatus;
+  manufacturingReport: ReportStatus;
+  productReport: ReportStatus;
+  salesReport: ReportStatus;
+}

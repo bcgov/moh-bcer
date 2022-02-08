@@ -331,13 +331,13 @@ export default function ViewLocations() {
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">NOI Original Submission Date</Typography>
-                                <Typography className={classes.rowContent}>{moment(data.noi.created_at).format('YYYY-MM-DD')}</Typography>
+                                <Typography className={classes.rowContent}>{data.noi ? moment(data.noi.created_at).format('YYYY-MM-DD') : 'N/A'}</Typography>
                               </Box>
                             </Grid>
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">NOI Renewal Date</Typography>
-                                <Typography className={classes.rowContent}>{data.noi.renewed_at ? moment(data.noi.renewed_at).format('YYYY-MM-DD') : 'Not Renewed'}</Typography>
+                                <Typography className={classes.rowContent}>{data.noi ? data.noi.renewed_at ? moment(data.noi.renewed_at).format('YYYY-MM-DD') : 'Not Renewed' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
                           </Grid>    

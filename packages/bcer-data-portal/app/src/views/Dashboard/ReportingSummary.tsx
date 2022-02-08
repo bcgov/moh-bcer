@@ -1,10 +1,10 @@
-import TextWithStatusIcon from '@/components/generic/TextWithStatusIcon';
 import { BusinessReportOverview } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
 import { Box, makeStyles, Typography } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
+import { StyledTextWithStatusIcon } from 'vaping-regulation-shared-components';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -38,11 +38,11 @@ function ReportingSummary() {
       <Box mt={1} />
       {reportOverview && (
         <Box>
-          <TextWithStatusIcon
+          <StyledTextWithStatusIcon
             text={<><b>{reportOverview.compliant ?? 0}</b> Business(es) with complete reports.</>}
             success={!!reportOverview.compliant}
           />
-          <TextWithStatusIcon
+          <StyledTextWithStatusIcon
             text={<><b>{reportOverview.nonCompliant ?? 0}</b> Business(es) with missing reports.</>}
             success={!reportOverview.nonCompliant}
           />

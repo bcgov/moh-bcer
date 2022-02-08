@@ -24,6 +24,8 @@ import { BusinessReportingStatusRO } from 'src/business/ro/busunessReportingStat
 import { LocationReportingStatus } from './helper/locationReportStatus';
 import { LocationComplianceStatus } from './helper/locationComplianceStatus';
 import { BusinessReportType } from 'src/business/enums/businessReportType.enum';
+import { SingleLocationComplianceStatus } from './helper/singleLocationComplianceStatus';
+import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -634,5 +636,17 @@ export class LocationService {
     return status
       .check()
       .build()
+  }
+
+  async getReportingStatus(businessId: string, type?: BusinessReportType){
+    const locations = await this.getBusinessLocations(businessId, 'noi', 'products,manufactures,sales');
+    const locationsRO = locations.map((l) => {
+      let status = (type === BusinessReportType.Compliance ? new SingleLocationComplianceStatus() : new SingleLocationReportStatus());
+      l.reportStatus = status.getStatus(l);
+      return l.toResponseObject();
+    })
+    const reportingOverview = this.checkLocationReportComplete(locations, {type: type});
+
+    return {locations: locationsRO, overview: reportingOverview}
   }
 }

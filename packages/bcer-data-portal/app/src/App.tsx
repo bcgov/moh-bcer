@@ -14,6 +14,7 @@ import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
 import { ConfigContext } from './contexts/Config';
 import Dashboard from './views/Dashboard/Overview';
+import BusinessDetails from './views/BusinessDetails/Overview';
 
 const useStyles = makeStyles({
   root: {
@@ -54,6 +55,7 @@ const App = () => {
           <Route exact path={routes.userManagement} component={UserManagement} />
           { config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
           <Route exact path={routes.map} component={Map} />
+          <Route exact path={`${routes.viewBusiness}/:id`} component={BusinessDetails} />
         </Switch>
       </div>
     </div>

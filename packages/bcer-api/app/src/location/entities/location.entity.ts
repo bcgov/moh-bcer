@@ -23,6 +23,7 @@ import { ManufacturingEntity } from 'src/manufacturing/entities/manufacturing.en
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 import { LocationStatus } from '../enums/location-status.enum';
+import { LocationReportingStatusRO } from '../ro/locationReportingStatus.ro';
 
 @Entity('location')
 export class LocationEntity {
@@ -179,6 +180,8 @@ export class LocationEntity {
   manufacturesCount?: number;
   salesCount?: number;
 
+  reportStatus?: LocationReportingStatusRO;
+
   toResponseObject(): LocationRO {
     return {
       id: this.id,
@@ -223,6 +226,7 @@ export class LocationEntity {
       geoAddressConfidence: this.geoAddressConfidence,
       latitude: this.latitude,
       longitude: this.longitude,
+      reportStatus: this.reportStatus,
     };
   }
 }
