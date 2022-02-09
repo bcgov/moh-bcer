@@ -13,6 +13,7 @@ import { routes } from './constants/routes';
 import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
 import { ConfigContext } from './contexts/Config';
+import { useAxiosPost } from './hooks/axios';
 
 const useStyles = makeStyles({
   root: {
@@ -34,6 +35,7 @@ const App = () => {
   const classes = useStyles();
   const history = useHistory();
   const { config } = useContext(ConfigContext);
+  const [{ error }] = useAxiosPost('/data/user/profile');
   return (
     <div className={classes.root}>
       <div>

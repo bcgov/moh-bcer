@@ -8,6 +8,7 @@ import {
   HttpStatus,
   NotFoundException,
   Patch,
+  Post,
   Query,
   Request,
   UseGuards,
@@ -28,6 +29,7 @@ import { LocationService } from 'src/location/location.service';
 import { NoiService } from 'src/noi/noi.service';
 import { UserSearchDTO } from './dto/user-search.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
+import { UserTypeEnum } from './enums/user-type.enum';
 import { PermissionRO, UserRO } from './ro/user.ro';
 import { UserService } from './user.service';
 
@@ -103,5 +105,35 @@ export class UserDataPortalController {
     }
     // [TODO] Add a update log to track updates and who made the updates.
     return 'ok';
+  }
+
+  @ApiOperation({ summary: 'Creates or retrieves a user' })
+  @ApiResponse({ status: HttpStatus.OK, type: UserRO })
+  @HttpCode(HttpStatus.OK)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Post('profile')
+  async profile(@Request() req: RequestWithUser): Promise<UserRO> {
+    const start = process.hrtime();
+    const { bceidGuid, bceidUser, email, firstName, lastName, roles } = req.user;
+    let validatedUser = await this.userService.findByBCeID(bceidGuid);
+    let type = roles?.includes(ROLES.HA_ADMIN) ? UserTypeEnum.HEALTH_AUTHORITY : UserTypeEnum.MINISTRY;
+    if (!validatedUser) {
+      const user = await this.userService.create({
+        bceid: bceidGuid,
+        bceidUser, 
+        email,
+        firstName,
+        lastName,
+        type,
+      });
+      validatedUser = user;
+    } else if (!validatedUser.bceidUser) {
+      await this.userService.update({
+        id: validatedUser.id,
+        bceidUser,
+      });
+    }
+    return validatedUser.toResponseObject();
   }
 }

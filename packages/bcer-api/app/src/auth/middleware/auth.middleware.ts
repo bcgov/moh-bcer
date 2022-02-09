@@ -18,7 +18,8 @@ export class AuthMiddleware implements NestMiddleware {
       path.includes('data/location') || 
       path.includes('data/user') || 
       path.includes('data/business') ||
-      path.includes('data/notification')
+      path.includes('data/notification') ||
+      path.includes('data/note')
       ) { 
         next(); 
     } else if (authorization) {
