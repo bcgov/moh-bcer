@@ -1,7 +1,15 @@
-import { BusinessEntity } from "src/business/entities/business.entity";
-import { LocationEntity } from "src/location/entities/location.entity"
-import { UserEntity } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BusinessEntity } from 'src/business/entities/business.entity';
+import { LocationEntity } from 'src/location/entities/location.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('note')
 export class NoteEntity {
@@ -14,21 +22,27 @@ export class NoteEntity {
   })
   content: string;
 
-  @ManyToOne(
-    () => BusinessEntity,
-    (business: BusinessEntity) => business.notes
-  )
+  @ManyToOne(() => BusinessEntity, (business: BusinessEntity) => business.notes)
   business: BusinessEntity;
 
-  @ManyToOne(
-    () => LocationEntity,
-    (location: LocationEntity) => location.notes
-  )
+  @ManyToOne(() => LocationEntity, (location: LocationEntity) => location.notes)
   location: LocationEntity;
 
-  @ManyToOne(
-    () => UserEntity,
-    (user: UserEntity) => user.notes
-  )
+  @ManyToOne(() => UserEntity, (user: UserEntity) => user.notes)
   user: UserEntity;
+
+  @CreateDateColumn({
+    name: 'created_at',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+  })
+  updatedAt: Date;
+
+  @DeleteDateColumn({
+    name: 'deleted_at',
+  })
+  deletedAt: Date;
 }
