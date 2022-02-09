@@ -151,7 +151,7 @@ export class BusinessService {
       .loadRelationCountAndMap('location.salesCount', 'location.sales')
       .loadRelationCountAndMap('location.productsCount', 'location.products')
       .loadRelationCountAndMap('location.manufacturesCount', 'location.manufactures')
-      .where('business.id IS NOT NULL')
+      .where("coalesce(business.legalName, '') != ''")
     
     if(search && Object.values(BusinessSearchCategory).includes(category) && category !== BusinessSearchCategory.Postal){
       qb.andWhere(`LOWER(business.${category}) LIKE :search`, {search: `%${search.toLowerCase()}%`})

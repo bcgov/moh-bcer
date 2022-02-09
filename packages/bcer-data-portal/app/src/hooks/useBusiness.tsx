@@ -25,8 +25,6 @@ function useBusiness() {
     search: '',
     category: '',
     healthAuthority: '',
-    page: 0,
-    pageSize: 20,
     additionalFilter: 'all',
   })
   const [{data: businessData, error: businessError, loading: businessLoading}, getBusinesses] = useAxiosGet<{data: BusinessRO[], count: number}>('/data/business/businesses', { manual: true });
@@ -40,13 +38,8 @@ function useBusiness() {
 
 
   useEffect(() => {
-    let temp = {...searchOptions};
-    //Business Filter is implemented in the frontend, so we can't use backend pagination for this
-    if(temp.additionalFilter !== BusinessFilter.All){
-      temp.page = null;
-      temp.pageSize = null;
-    }
-    const query = GeneralUtil.searchQueryBuilder(temp);
+    const query = GeneralUtil.searchQueryBuilder(searchOptions);
+    console.log(query)
     getBusinesses({ url: `/data/business/businesses?${query}`});
   }, [searchOptions])
 

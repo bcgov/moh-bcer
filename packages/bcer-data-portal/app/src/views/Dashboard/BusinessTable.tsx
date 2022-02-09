@@ -9,24 +9,13 @@ import Table from './Table';
 
 export interface BusinessTableProps {
   data: BusinessList;
-  onChangeSearch: (data: Partial<SearchQueryBuilder>) => void;
-  searchOptions: SearchQueryBuilder;
   loading: boolean;
 }
 
 function BusinessTable({
   data,
-  onChangeSearch,
-  searchOptions,
   loading
 }: BusinessTableProps) {
-
-  const paginatedTableProps = {
-    onChangePage: (page: number) => onChangeSearch({ page }),
-    onChangeRowsPerPage: (rowsPerPage: number) => onChangeSearch({ pageSize: rowsPerPage }),
-    totalCount: data.total,
-    page: searchOptions.page,
-  };
 
   const initialValues: { location: BusinessFilter } = {
     location: BusinessFilter.All,
@@ -36,11 +25,9 @@ function BusinessTable({
     <Box>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values) =>
-          onChangeSearch({ additionalFilter: values.location })
-        }
+        onSubmit={() =>{}}
       >
-        {({ values, ...helpers }) => (
+        {({ values }) => (
           <Form>
             <StyledRadioGroup
               label={``}
@@ -58,11 +45,7 @@ function BusinessTable({
             {loading ? <LinearProgress /> : <Box pt={0.5}/>}
             <Table
               data={data[values.location]}
-              {...(values.location === BusinessFilter.All
-                ? paginatedTableProps
-                : {})}
             />
-            <AutoSubmitFormik values={values} submitForm={helpers.submitForm} />
           </Form>
         )}
       </Formik>

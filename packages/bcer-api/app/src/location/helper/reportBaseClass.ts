@@ -17,26 +17,28 @@ export class ReportBaseClass {
   public check(){
     for(let l of this.locations || []) {
 
+      const report = this.service.getStatus(l);
+
       //Check Missing NOI
-      if(this.service.getNoiReportStatus(l) === ReportStatus.Missing){
+      if(report.noi === ReportStatus.Missing){
         this.report.missingNoi.push(l.id);
         this.report.earlyMissingConfirmed = true;
       }
 
       //Check Missing Manufacturing Report
-      if(this.service.getManufacturingReportStatus(l) === ReportStatus.Missing){
+      if(report.manufacturingReport === ReportStatus.Missing){
         this.report.missingManufacturingReport.push(l.id);
         this.report.earlyMissingConfirmed = true;
       }
 
       //Check Missing Products Report
-      if(this.service.getProductsReportStatus(l) === ReportStatus.Missing){
+      if(report.productReport === ReportStatus.Missing){
         this.report.missingProductReport.push(l.id);
         this.report.earlyMissingConfirmed = true;
       }
 
       //Check Missing Sales Report
-      if(this.service.getSalesReportStatus(l) === ReportStatus.Missing){
+      if(report.salesReport === ReportStatus.Missing){
         this.report.missingSalesReport.push(l.id);
         this.report.earlyMissingConfirmed = true;
       }

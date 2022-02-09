@@ -1,6 +1,7 @@
 import React, { Children } from 'react';
 import { Box, makeStyles } from '@material-ui/core';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const useStyle = makeStyles(() => ({
   root: {
@@ -32,7 +33,7 @@ export function StyledSuccessIcon() {
   const classes = useStyle();
   return (
     <span className={`${classes.root} ${classes.success}`}>
-      <ErrorOutlineIcon />
+      <CheckCircleIcon />
     </span>
   )
 }

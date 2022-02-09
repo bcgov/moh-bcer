@@ -627,7 +627,7 @@ export class LocationService {
     options?: { exitEarly?: boolean; type?: BusinessReportType },
   ): BusinessReportingStatusRO {
     const { exitEarly, type = BusinessReportType.Report } = options || {};
-
+    
     const status =
       type === BusinessReportType.Report
         ? new LocationReportingStatus(locations, exitEarly)
@@ -640,12 +640,14 @@ export class LocationService {
 
   async getReportingStatus(businessId: string, type?: BusinessReportType){
     const locations = await this.getBusinessLocations(businessId, 'noi', 'products,manufactures,sales');
+    
+    const reportingOverview = this.checkLocationReportComplete(locations, {type: type});
+    
     const locationsRO = locations.map((l) => {
       let status = (type === BusinessReportType.Compliance ? new SingleLocationComplianceStatus() : new SingleLocationReportStatus());
       l.reportStatus = status.getStatus(l);
       return l.toResponseObject();
     })
-    const reportingOverview = this.checkLocationReportComplete(locations, {type: type});
 
     return {locations: locationsRO, overview: reportingOverview}
   }

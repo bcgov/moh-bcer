@@ -38,8 +38,6 @@ function Dashboard() {
         />
         <BusinessTable
           data={businessList}
-          onChangeSearch={onChangeSearch}
-          searchOptions={searchOptions}
           loading={businessLoading}
         />
       </Paper>

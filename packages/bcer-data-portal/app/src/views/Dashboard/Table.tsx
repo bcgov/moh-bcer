@@ -19,7 +19,7 @@ function Table({
         columns={DashboardUtil.tableColumn}
         data={data}
         options={{
-          pageSize: data?.length > 20 ? 20 : data?.length || 5,
+          pageSize: 20,
           pageSizeOptions: [20, 30, 50],
         }}
         {...props}

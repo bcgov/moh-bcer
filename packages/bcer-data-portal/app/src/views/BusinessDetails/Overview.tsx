@@ -8,7 +8,7 @@ import { routes } from '@/constants/routes';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
-import { makeStyles } from '@material-ui/core';
+import { CircularProgress, makeStyles } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import {
@@ -53,6 +53,7 @@ function BusinessDetails() {
   }, [error])
   return (
     <Page error={error}>
+      {loading && <CircularProgress />}
       <BusinessDashboard
         data={data}
         showOverview={true}
