@@ -39,7 +39,6 @@ function useBusiness() {
 
   useEffect(() => {
     const query = GeneralUtil.searchQueryBuilder(searchOptions);
-    console.log(query)
     getBusinesses({ url: `/data/business/businesses?${query}`});
   }, [searchOptions])
 
