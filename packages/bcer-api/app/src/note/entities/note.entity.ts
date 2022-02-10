@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { NoteRO } from '../ro/note.ro';
 
 @Entity('note')
 export class NoteEntity {
@@ -45,4 +46,14 @@ export class NoteEntity {
     name: 'deleted_at',
   })
   deletedAt: Date;
+
+  toResponseObject(): NoteRO{
+    return {
+      id: this.id,
+      content: this.content,
+      user: this.user?.toResponseObject(),
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    }
+  }
 }

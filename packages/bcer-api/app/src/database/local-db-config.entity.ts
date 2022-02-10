@@ -9,7 +9,7 @@ export const LOCAL_DB_CONFIG = {
     password: process.env.DB_PASSWORD || 'vape_nest123',
     database: process.env.DB_DATABASE || 'nest_api_dev',
     entities: [join(__dirname, '../**/**.entity{.ts,.js}')],
-    synchronize: true,
+    synchronize: false,
     dropSchema: false,
     migrations: ['dist/migrations/**{.ts,.js}'],
     cli: {

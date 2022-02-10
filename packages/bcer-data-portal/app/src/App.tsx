@@ -35,7 +35,6 @@ const App = () => {
   const classes = useStyles();
   const history = useHistory();
   const { config } = useContext(ConfigContext);
-  const [{ error }] = useAxiosPost('/data/user/profile');
   return (
     <div className={classes.root}>
       <div>
