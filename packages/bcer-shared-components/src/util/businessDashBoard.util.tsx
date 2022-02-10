@@ -1,5 +1,6 @@
 import { ReportStatus } from "@/constants/enums/genericEnums";
 import { LocationReportStatus, LocationRO } from "@/constants/interfaces/genericInterfaces";
+import { Tooltip } from "@material-ui/core";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import React from 'react';
 
@@ -19,14 +20,18 @@ export class BusinessDashBoardUtil {
 
   static renderStatus(r: ReportStatus){
     let color = '#16C92E' //green
-
+    let tooltip = 'Submitted'
     if(r === ReportStatus.Missing){
       color = '#FF534A' //red
+      tooltip = 'Not Submitted'
     }else if(r === ReportStatus.NotRequired){
       color = '#aaa' //light grey
+      tooltip = 'Not Required'
     }
     return (
-      <FiberManualRecordIcon htmlColor={color} />
+      <Tooltip title={tooltip} placement="right">
+        <FiberManualRecordIcon htmlColor={color} />
+      </Tooltip>
     )
   }
 }

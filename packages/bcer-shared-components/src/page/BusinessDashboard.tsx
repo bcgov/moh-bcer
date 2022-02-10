@@ -13,6 +13,7 @@ export type BusinessDashboardProps = {
   loading?: boolean;
   showOverview?: boolean;
   showStatusMessage?: boolean;
+  isRetailerPortal?: boolean;
   renderAddress: (l: Partial<LocationRO>) => React.ReactNode;
 };
 
@@ -26,6 +27,24 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     fontSize: '17px',
   },
+  retailerLegend: {
+    display: 'flex',
+    border: '1px solid #CDCED2',
+    borderRadius: '4px',
+    padding: '12px 18px'
+  },
+  legendTitle: {
+    fontWeight: 600
+  },
+  legendItem: {
+    display: 'flex',
+    paddingLeft: '30px',
+    color: '#333333',
+    fontSize: '14px'
+  },
+  retailerText: {
+    fontSize: '16px'
+  },
 }));
 
 export function BusinessDashboard({
@@ -34,6 +53,7 @@ export function BusinessDashboard({
   showOverview = true,
   showStatusMessage = true,
   renderAddress,
+  isRetailerPortal = false
 }: BusinessDashboardProps) {
   const classes = useStyles();
   let outstanding: LocationRO[] = [];
@@ -74,15 +94,46 @@ export function BusinessDashboard({
           {data?.overview && showOverview && (
             <BusinessOverview data={data.overview} />
           )}
-          <Box pt={2} />
+          <Box pt={2} pb={1} > 
+            {
+              isRetailerPortal
+                &&
+              <Box className={classes.retailerLegend}>
+                <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
+                  Legend:
+                </Typography>
+                <div className={classes.legendItem}>
+                  {BusinessDashBoardUtil.renderStatus(ReportStatus.Reported)}
+                  &nbsp; Submitted
+                </div>
+                <div className={classes.legendItem}>
+                  {BusinessDashBoardUtil.renderStatus(ReportStatus.Missing)}
+                  &nbsp; Not Submitted
+                </div>
+                <div className={classes.legendItem}>
+                  {BusinessDashBoardUtil.renderStatus(ReportStatus.NotRequired)}
+                  &nbsp; Not Required
+                </div>
+              </Box>
+            }
+          </Box>
           <LocationOutstandingReportTable
             renderAddress={renderAddress}
             data={outstanding}
           />
+          {
+            isRetailerPortal
+              &&
+            <Typography className={classes.retailerText} style={{ paddingTop: '10px' }}>
+              You can submit outstanding reports for the above locations by navigating through the different respective menus on the left. 
+              If you're not planning on renewing your NOI for a location, you should close it on the "My Business" page or the system will 
+              do it automatically on October 1st.
+            </Typography>
+          }
         </Paper>
       )}
       <Box pt={2} />
-      {!!completed.length && (
+      {!!completed.length && (data?.overview?.incompleteReports?.length || !isRetailerPortal) && (
         <Paper className={classes.box}>
           <Box my={1}>
             <Typography className={classes.title}>
