@@ -218,14 +218,14 @@ export class LocationService {
 
   public packageAsZip(locations: LocationEntity[]): NodeJS.ReadableStream {
     let zip = new JSZip()
-    const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date\n';
+    const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date,Renewed Date\n';
     const productHeaders = 'Type,Brand Name,Product Name,Manufacturer Name,Manufacturer Contact,Manufacturer Address,Manufacturer Phone,Manufacturer Email,Concentration (mg/mL),Container Capacity,Cartridge Capacity,Ingredients,Flavour\n';
     const manufacturesHeaders = 'Ingredient Name,Scientific Name,Manufacturer Name,Manufacturer Address,Manufacturer Phone,Manufacturer Email\n';
 
     zip.folder('Locations');
 
     locations.map(location => {
-      const noiRow = `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`;
+      const noiRow = `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}","${location.noi.renewed_at? moment(location.noi.renewed_at).format('ll'): ''}"\n`;
       let productRows = '';
 
       zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}`)
@@ -260,11 +260,11 @@ export class LocationService {
 
   public packageOnlyNOI(locations: LocationEntity[]): NodeJS.ReadableStream {
     let zip = new JSZip();
-    const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date\n';
+    const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date,Renewed Date\n';
     let noiRows = '';
 
     locations.map(location => {
-      noiRows += `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}"\n`
+      noiRows += `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}","${location.noi.renewed_at? moment(location.noi.renewed_at).format('ll'): ''}"\n`
     });
 
     zip.file('All NOIs.csv', noiHeaders + noiRows);
