@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core';
@@ -14,6 +14,8 @@ import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
 import { ConfigContext } from './contexts/Config';
 import { useAxiosPost } from './hooks/axios';
+import { AppGlobalContext } from './contexts/AppGlobal';
+import { formatError } from './util/formatting';
 
 const useStyles = makeStyles({
   root: {
@@ -35,6 +37,20 @@ const App = () => {
   const classes = useStyles();
   const history = useHistory();
   const { config } = useContext(ConfigContext);
+  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+
+  //Creates or updated logged in user in database
+  const [{error}] = useAxiosPost('/data/user/profile');
+
+  useEffect(() => {
+    if(error){
+      setAppGlobal({
+        ...appGlobal,
+        networkErrorMessage: formatError(error)
+      })
+    }
+  }, [error])
+  
   return (
     <div className={classes.root}>
       <div>

@@ -6,3 +6,7 @@ export const userEditValidationSchema = yup.object({
     mergeData: yup.boolean().required('Please select merge options'),
     confirmed: yup.boolean().required().test('confirmed', 'Please confirm you choice', (value) => value === true)
 })
+
+export const noteValidateSchema = yup.object({
+    content: yup.string().required('Content can not be empty').max(1024, 'Must be less than 1024 characters')
+})

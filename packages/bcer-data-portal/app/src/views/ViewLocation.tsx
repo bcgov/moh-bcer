@@ -18,6 +18,7 @@ import { CSVLink } from 'react-csv';
 import LocationViewMap from './Map/LocationViewMap';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
+import Note from '@/components/note/Note';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -342,6 +343,10 @@ export default function ViewLocations() {
                             </Grid>
                           </Grid>    
                         </Paper>
+                      </Grid>
+
+                      <Grid item xs={12} id="notes">
+                          <Note targetId={id} type='location' showHideButton={true}/>
                       </Grid>
 
                       <Grid item xs={12} id="productReport">

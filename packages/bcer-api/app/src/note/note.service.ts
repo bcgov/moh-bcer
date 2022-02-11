@@ -26,7 +26,7 @@ export class NoteService {
       .leftJoinAndSelect('note.user', 'user')
       .where('note.locationId = :targetId', {targetId})
       .orWhere('note.businessId = :targetId', {targetId})
-      .orderBy('note.createdAt', 'ASC')
+      .orderBy('note.createdAt', 'DESC')
 
       return await qb.getMany();
   }
