@@ -1,4 +1,4 @@
-import { BusinessReportingStatusRO } from "src/business/ro/busunessReportingStatus.ro";
+import { BusinessReportingStatusRO } from "src/business/ro/businessReportingStatus.ro";
 import { arrayDifference } from "src/utils/util";
 import { LocationEntity } from "../entities/location.entity";
 import { ReportStatus } from "../enums/report-status.enum";

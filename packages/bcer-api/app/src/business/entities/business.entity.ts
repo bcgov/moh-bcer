@@ -19,7 +19,7 @@ import { ProductEntity } from 'src/products/entities/product.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 import { SubscriptionEntity } from 'src/notification/entities/subscription.entity';
-import { BusinessReportingStatusRO } from '../ro/busunessReportingStatus.ro';
+import { BusinessReportingStatusRO } from '../ro/businessReportingStatus.ro';
 
 @Entity('business')
 export class BusinessEntity {

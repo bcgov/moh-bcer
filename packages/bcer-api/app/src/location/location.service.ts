@@ -20,7 +20,7 @@ import { LocationStatus } from './enums/location-status.enum';
 import { GeoCodeService } from './geoCode.service';
 import { GoogleGeoCodeRO } from './ro/googleGeoCode.ro';
 import Axios from 'axios';
-import { BusinessReportingStatusRO } from 'src/business/ro/busunessReportingStatus.ro';
+import { BusinessReportingStatusRO } from 'src/business/ro/businessReportingStatus.ro';
 import { LocationReportingStatus } from './helper/locationReportStatus';
 import { LocationComplianceStatus } from './helper/locationComplianceStatus';
 import { BusinessReportType } from 'src/business/enums/businessReportType.enum';

@@ -1,9 +1,5 @@
-import { ForbiddenException } from "@nestjs/common";
-import { BusinessReportingStatusRO } from "src/business/ro/busunessReportingStatus.ro";
 import { LocationEntity } from "../entities/location.entity";
 import { ReportStatus } from "../enums/report-status.enum";
-import { LocationReportingStatusRO } from "../ro/locationReportingStatus.ro";
-import { LocationComplianceStatus } from "./locationComplianceStatus";
 import { SingleLocationReportStatus } from "./singleLocationReportStatus";
 
 export class SingleLocationComplianceStatus extends SingleLocationReportStatus {

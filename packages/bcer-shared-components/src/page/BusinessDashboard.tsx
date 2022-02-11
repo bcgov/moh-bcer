@@ -3,7 +3,7 @@ import {
   BusinessReportStatus,
   LocationRO,
 } from '@/constants/interfaces/genericInterfaces';
-import { BusinessDashBoardUtil } from '@/util/businessDashBoard.util';
+import { BusinessDashBoardUtil } from '@/util/businessDashboard.util';
 import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { StyledStatusMessage, StyledTable, StyledTextWithStatusIcon } from '..';
