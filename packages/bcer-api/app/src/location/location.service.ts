@@ -458,7 +458,8 @@ export class LocationService {
         await queryRunner.manager.delete('location_manufactures_manufacturing', { locationId });
         await queryRunner.manager.delete('location_products_product', { locationId });
         await queryRunner.manager.delete('salesreport', { locationId });
-        await queryRunner.manager.delete('product_sold', { locationId });
+        await queryRunner.manager.delete('product_sold', { location });
+        await queryRunner.manager.delete('note', { location });
         await queryRunner.manager.delete('location', { id: locationId });
         await queryRunner.manager.delete('noi', { id: location.noi.id });
 

@@ -19,6 +19,7 @@ import { ProductEntity } from 'src/products/entities/product.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 import { SubscriptionEntity } from 'src/notification/entities/subscription.entity';
+import { NoteEntity } from 'src/note/entities/note.entity';
 
 @Entity('business')
 export class BusinessEntity {
@@ -85,6 +86,12 @@ export class BusinessEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(
+    () => NoteEntity,
+    (note: NoteEntity) => note.business
+  )
+  notes: NoteEntity[];
 
   toResponseObject(): BusinessRO {
     return {

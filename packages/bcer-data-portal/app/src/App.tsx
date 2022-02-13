@@ -13,6 +13,7 @@ import { routes } from './constants/routes';
 import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
 import { ConfigContext } from './contexts/Config';
+import { useAxiosPost } from './hooks/axios';
 
 const useStyles = makeStyles({
   root: {

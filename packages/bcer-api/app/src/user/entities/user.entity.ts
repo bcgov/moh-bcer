@@ -5,12 +5,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { UserTypeEnum } from '../enums/user-type.enum'
 import { UserRO } from '../ro/user.ro';
 
 import { BusinessEntity } from 'src/business/entities/business.entity';
+import { NoteEntity } from 'src/note/entities/note.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -78,6 +80,12 @@ export class UserEntity {
   // Allows us to get the business id without getting the whole relation
   @Column({ nullable: true })
   businessId: string;
+  
+  @OneToMany(
+    () => NoteEntity,
+    (note: NoteEntity) => note.user
+  )
+  notes: NoteEntity[];
 
   toResponseObject(): UserRO {
     return {

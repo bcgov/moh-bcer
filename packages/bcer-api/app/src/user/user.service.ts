@@ -40,7 +40,6 @@ export class UserService {
   async create(data: Partial<UserEntity>): Promise<UserEntity> {
     const user = this.userRepository.create({
       ...data,
-      type: UserTypeEnum[data.type],
     });
     await this.userRepository.save(user);
     return user;
