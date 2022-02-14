@@ -385,3 +385,17 @@ export interface GroupedSalesRO {
   submissionDate: string; 
   reports: Array<SalesRO>
 }
+
+export interface NoteDTO {
+  content: string;
+  businessId?: string;
+  locationId?: string;
+}
+
+export interface NoteRO {
+  content: string;
+  createdAt: Date;
+  id: string;
+  updatedAt: Date;
+  user: UserRO;
+}
