@@ -149,7 +149,7 @@ export default function NoiSubmit() {
         maxWidth='sm'
         dialogTitle="Confirm Your Submission"
         checkboxLabel='I agree that the location information entered is correct and wish to submit my Notice of Intent.'
-        dialogMessage='You are about to submit/renew the Notice of Intent for the selected retail locations.'
+        dialogMessage='You are about to submit/renew the Notice of Intent for the selected retail locations. You will not be able to update location details once the NOI is submitted.'
         setOpen={() => setOpenConfirm(false)}
         confirmHandler={confirmSubmit}
         acceptButtonText={'Submit Now'}
