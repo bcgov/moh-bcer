@@ -213,6 +213,13 @@ export default function Locations() {
           : '',
     },
     {
+      title: 'Renewed Date',
+      render: (rd: BusinessLocation) =>
+        rd.noi?.renewed_at
+          ? `${moment(rd.noi.renewed_at).format('MMM DD, YYYY')}`
+          : '',
+    },
+    {
       title: 'Health Authority',
       field: 'health_authority',
     },

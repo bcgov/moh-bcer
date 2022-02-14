@@ -20,6 +20,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 import { SubscriptionEntity } from 'src/notification/entities/subscription.entity';
 import { BusinessReportingStatusRO } from '../ro/businessReportingStatus.ro';
+import { NoteEntity } from 'src/note/entities/note.entity';
 
 @Entity('business')
 export class BusinessEntity {
@@ -90,6 +91,11 @@ export class BusinessEntity {
   reportingStatus?: BusinessReportingStatusRO;
 
   complianceStatus?: BusinessReportingStatusRO;
+  @OneToMany(
+    () => NoteEntity,
+    (note: NoteEntity) => note.business
+  )
+  notes: NoteEntity[];
 
   toResponseObject(): BusinessRO {
     return {

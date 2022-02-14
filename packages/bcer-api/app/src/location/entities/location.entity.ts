@@ -24,6 +24,7 @@ import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity';
 import { LocationStatus } from '../enums/location-status.enum';
 import { LocationReportingStatusRO } from '../ro/locationReportingStatus.ro';
+import { NoteEntity } from 'src/note/entities/note.entity';
 
 @Entity('location')
 export class LocationEntity {
@@ -175,6 +176,12 @@ export class LocationEntity {
 
   @Column({ type: 'varchar', nullable: true, default: null, name: 'geo_confidence' })
   geoAddressConfidence: string;
+
+  @OneToMany(
+    () => NoteEntity,
+    (note: NoteEntity) => note.location
+  )
+  notes: NoteEntity[];
 
   productsCount?: number;
   manufacturesCount?: number;

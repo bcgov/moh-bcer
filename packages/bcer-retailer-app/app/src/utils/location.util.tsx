@@ -85,7 +85,7 @@ export class LocationUtil {
                 handleAction.handleView(l);
               }}
             >
-              <VisibilityIcon />
+              <CreateIcon />
             </IconButton>
           </Tooltip>
             :

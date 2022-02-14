@@ -55,6 +55,7 @@ export interface BusinessLocation {
   manufactures: Array<ManufacturingReport>
   noi?: {
     created_at: Date;
+    renewed_at?: Date;
   },
   business?: {
     businessName: string;
@@ -422,4 +423,18 @@ export interface LocationReportStatus {
   manufacturingReport: ReportStatus;
   productReport: ReportStatus;
   salesReport: ReportStatus;
+}
+
+export interface NoteDTO {
+  content: string;
+  businessId?: string;
+  locationId?: string;
+}
+
+export interface NoteRO {
+  content: string;
+  createdAt: Date;
+  id: string;
+  updatedAt: Date;
+  user: UserRO;
 }
