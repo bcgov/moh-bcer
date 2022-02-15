@@ -6,11 +6,10 @@ import { StyledRadioGroup, StyledDialog, StyledHeaderMapper, mapToObject } from 
 
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { BusinessLocationDTOHeaders, BusinessLocationHeaders } from '@/constants/localEnums';
-import { BusinessLocation, LocationFileUploadRO } from '@/constants/localInterfaces';
+import { LocationFileUploadRO } from '@/constants/localInterfaces';
 import BusinessLocationForm from '@/components/form/forms/BusinessLocationForm';
 import UploadArea from '@/components/form/UploadArea';
 import { useAxiosPatch } from '@/hooks/axios';
-import { exampleBusinessLocations } from '@/constants/exampleCsvData';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 

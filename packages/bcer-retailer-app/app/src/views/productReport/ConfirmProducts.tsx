@@ -18,15 +18,12 @@ import {
   StyledButton,
   StyledWarning,
 } from 'vaping-regulation-shared-components';
-import { Products } from '@/constants/localInterfaces';
-import {
-  BusinessLocationHeaders,
-  ProductReportHeaders,
-} from '@/constants/localEnums';
 import { ProductInfoContext } from '@/contexts/ProductReport';
 import { useValidator } from '@/hooks/useValidator';
 import { ProductReportCsvValidation } from '@/components/form/validations/CsvSchemas/vProductReportCsv';
 import { ProductUtil } from '@/utils/product.util';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -98,12 +95,13 @@ export default function ConfirmProducts() {
   const classes = useStyles();
   const history = useHistory();
   const [filterTable, setFilterTable] = useState(false);
+  const viewFullscreenTable = useState<boolean>(false);
 
   const [productInfo, setProductInfo] = useContext(ProductInfoContext);
   const {
     errors: uploadErrors,
-    validatedData,
-    erroredOnlyData,
+    validatedData = [],
+    erroredOnlyData = [],
     validate,
   } = useValidator();
 
@@ -192,10 +190,18 @@ export default function ConfirmProducts() {
             </Box>
           </div>
           <div style={{ overflowX: 'auto' }}>
-            <StyledTable
-              columns={ProductUtil.columns}
-              data={filterTable ? erroredOnlyData : validatedData}
-            />
+            <FullScreen fullScreenProp={viewFullscreenTable}>
+              <TableWrapper
+                 data={filterTable ? erroredOnlyData : validatedData}
+                 fullScreenProp={viewFullscreenTable}
+                 isOutlined={false}
+              >
+                <StyledTable
+                  columns={ProductUtil.columns}
+                  data={filterTable ? erroredOnlyData : validatedData}
+                />
+              </TableWrapper>
+            </FullScreen>
           </div>
         </Paper>
         <div></div>

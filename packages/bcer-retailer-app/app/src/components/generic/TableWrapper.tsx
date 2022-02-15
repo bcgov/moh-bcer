@@ -1,12 +1,8 @@
-import { BusinessLocationHeaders } from '@/constants/localEnums';
-import { BusinessLocation } from '@/constants/localInterfaces';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { CSVLink } from 'react-csv';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import NoiTable from '@/components/Noi/NoiTable';
-import SendIcon from '@material-ui/icons/Send';
 import { useHistory } from 'react-router';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 
@@ -61,12 +57,13 @@ const useStyles = makeStyles({
 interface TableWrapperProp {
   data: Array<any>;
   children: React.ReactNode;
-  blockHeader?: string;
-  tableHeader?: string;
-  tableSubHeader?: string;
+  blockHeader?: string | React.ReactNode;
+  tableHeader?: string | React.ReactNode;
+  tableSubHeader?: string | React.ReactNode;
   tableButton?: React.ReactNode;
   csvProps?: CsvProps;
   fullScreenProp?: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+  isOutlined?: boolean;
 }
 
 interface CsvProps {
@@ -84,9 +81,20 @@ function TableWrapper({
   tableButton,
   csvProps,
   fullScreenProp,
+  isOutlined = true,
 }: TableWrapperProp) {
   const classes = useStyles();
   const history = useHistory();
+
+  function TableContainer ({children}: {children: React.ReactNode}) {
+
+    if (!isOutlined) {
+      return <Paper style={{boxShadow: 'none'}} >{children}</Paper>
+    } else {
+      return <Paper style={{boxShadow: 'none'}} variant="outlined" className={classes.box}>{children}</Paper>
+    }
+  }
+
   return (
     <div>
       {blockHeader && (
@@ -96,7 +104,7 @@ function TableWrapper({
           </Typography>
         </div>
       )}
-      <Paper variant="outlined" className={classes.box}>
+      <TableContainer>
         <div className={classes.headerWrapper}>
           <div>
             {tableHeader && (
@@ -131,7 +139,7 @@ function TableWrapper({
           )}
         </div>
         <div>{children}</div>
-      </Paper>
+      </TableContainer>
     </div>
   );
 }

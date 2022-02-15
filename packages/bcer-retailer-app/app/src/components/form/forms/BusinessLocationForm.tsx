@@ -18,6 +18,8 @@ import {
 import BusinessLocationInputs from '@/components/form/inputs/BusinessLocationInputs';
 import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
 import { LocationUtil } from '@/utils/location.util';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   closeButton: {
@@ -46,7 +48,8 @@ function BusinessLocationForm({ entry }: { entry: string }) {
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
-
+  const viewFullscreenTable = useState<boolean>();
+  
   const newLocations = businessInfo.locations.filter(l => !l.id);
 
   const confirmDelete = () => {
@@ -75,27 +78,35 @@ function BusinessLocationForm({ entry }: { entry: string }) {
           newLocations.length && entry === 'manual'
             ? (
                 <div>
-                  <StyledTable
-                    options={{
-                      fixedColumns: {
-                        right: 1,
-                      },
-                    }}
-                    columns={[
-                      {title: 'Address 1', field: 'addressLine1', width: 150},
-                      {title: 'Address 2', field: 'addressLine2', width: 150},
-                      {title: 'Postal Code', field: 'postal', width: 150},
-                      {title: 'City', field: 'city', width: 150},
-                      {title: 'Business Phone', field: 'phone', width: 150},
-                      {title: 'Business email', field: 'email', width: 150},
-                      {title: 'Health Authority', field: 'health_authority', width: 150},
-                      {title: 'Doing Business As', field: 'doingBusinessAs', width: 150},
-                      {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
-                      {title: 'Manufacturing Premises', field: 'manufacturing', width: 200},
-                      {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete }), width: 100}
-                    ]}
-                    data={newLocations}
-                  />
+                  <FullScreen fullScreenProp={viewFullscreenTable}>
+                    <TableWrapper
+                     data={newLocations}
+                     isOutlined={false}
+                     fullScreenProp={viewFullscreenTable}
+                    >
+                      <StyledTable
+                        options={{
+                          fixedColumns: {
+                            right: 1,
+                          },
+                        }}
+                        columns={[
+                          {title: 'Address 1', field: 'addressLine1', width: 150},
+                          {title: 'Address 2', field: 'addressLine2', width: 150},
+                          {title: 'Postal Code', field: 'postal', width: 150},
+                          {title: 'City', field: 'city', width: 150},
+                          {title: 'Business Phone', field: 'phone', width: 150},
+                          {title: 'Business email', field: 'email', width: 150},
+                          {title: 'Health Authority', field: 'health_authority', width: 150},
+                          {title: 'Doing Business As', field: 'doingBusinessAs', width: 150},
+                          {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
+                          {title: 'Manufacturing Premises', field: 'manufacturing', width: 200},
+                          {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete }), width: 100}
+                        ]}
+                        data={newLocations}
+                      />
+                    </TableWrapper>
+                  </FullScreen>
                 </div>
               )
             : null
