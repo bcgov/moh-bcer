@@ -45,11 +45,11 @@ export class NotificationService {
   }
 
   async getNotifications(): Promise<NotificationEntity[]> {
-    return await this.notificationRepository.find();
+    return await this.notificationRepository.find({order: {createdAt: 'DESC'} });
   }
 
   async getSubscriptions(): Promise<SubscriptionEntity[]> {
-    return await this.subscriptionRepository.find();
+    return await this.subscriptionRepository.find({relations: ['business']});
   }
 
   async sendText(
