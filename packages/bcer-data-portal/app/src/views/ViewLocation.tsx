@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Box, CircularProgress, Dialog, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { Formik } from 'formik';
 import moment from 'moment';
 
@@ -107,6 +107,9 @@ export default function ViewLocations() {
   const { id } = useParams<{id: string}>();
   const { config: authConfig } = useContext(ConfigContext);
   const csvRef = useRef(null);
+  const search = useLocation().search;
+  const businessId = new URLSearchParams(search).get('businessId');
+
 
   const [{ data, loading, error }, get] = useAxiosGet(`/data/location/get-location/${id}`, {
     manual: false,
@@ -211,7 +214,16 @@ export default function ViewLocations() {
             <CircularProgress/>
           :
             <>
-              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.push(routes.submittedLocations)}>Submitted Locations</span> / Location Details</Typography>
+              {
+                !businessId 
+                  ? 
+                    <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.push(routes.submittedLocations)}>Submitted Locations</span> / Location Details</Typography>
+                  : 
+                    <Typography variant="body1">
+                      <span className={classes.clickBack} onClick={() => history.push(routes.root)}>Dashboard</span> / 
+                      <span className={classes.clickBack} onClick={() => history.push(`${routes.viewBusiness}/${businessId}`)}> Business Details</span> / Location Details
+                    </Typography>
+              }
               {
                 data
                   &&

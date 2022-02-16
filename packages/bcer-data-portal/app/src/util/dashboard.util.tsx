@@ -8,7 +8,7 @@ export class DashboardUtil {
     { title: 'Business Name', render: (b: BusinessRO) => <Link to={`${routes.viewBusiness}/${b.id}`}>{b.businessName}</Link> },
     { title: 'Address', field: 'addressLine1' },
     { title: 'City', field: 'city' },
-    { title: 'Location with complete reports', render: (b: BusinessRO) => b.reportingStatus?.completeReports?.length ?? 'N/A'},
-    { title: 'Location with missing reports', render: (b: BusinessRO) => b.reportingStatus?.incompleteReports?.length ?? 'N/A'}
+    { title: 'With complete reports', render: (b: BusinessRO) => b.reportingStatus?.completeReports?.length ?? 'N/A'},
+    { title: 'With outstanding reports', render: (b: BusinessRO) => b.reportingStatus?.incompleteReports?.length ?? 'N/A'}
   ];
 }
