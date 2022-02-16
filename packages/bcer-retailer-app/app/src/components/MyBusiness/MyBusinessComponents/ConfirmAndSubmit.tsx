@@ -1,12 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import { Form, Formik } from 'formik';
-import { CSVLink } from 'react-csv';
 import { makeStyles } from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
 
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
-import { BusinessLocationHeaders, SubmissionTypeEnum } from '@/constants/localEnums';
+import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import { Validation } from '@/components/form/validations/vBusinessDetails';
 import { BusinessDetails } from '@/constants/localInterfaces';
@@ -15,7 +13,8 @@ import BusinessDetailsEditInputs from '@/components/form/inputs/BusinessDetailsE
 import { useAxiosPatch } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
-import { LocationUtil } from '@/utils/location.util';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 
 const useStyles = makeStyles({
@@ -44,11 +43,6 @@ const useStyles = makeStyles({
     color: '#3A3A3A',
     lineHeight: '20px',
     paddingBottom: '15px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px'
   },
   boxRow: {
     display: 'flex',
@@ -89,6 +83,7 @@ export default function ConfirmAndSubmit () {
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
   const [isEditDetailsOpen, setOpenEditDetails] = useState<boolean>();
   const [isAddLocationOpen, setOpenAddLocation] = useState<boolean>(false);
+  const viewFullscreenTable = useState<boolean>(false);
   const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/submission/${businessInfo.submissionId}`, { manual: true });
   const newLocations = businessInfo.locations.filter((l: any) => !l.id);
 
@@ -224,24 +219,24 @@ export default function ConfirmAndSubmit () {
         </div>
       </div>
       <div className={classes.box}>
-        <div className={classes.boxHeader}>
-          New Business Locations
-        </div>
-        <div className={classes.actionsWrapper}>
-          <div className={classes.boxDescription}>You have {newLocations?.length} retail entries.</div>
-          <CSVLink
-            headers={Object.keys(BusinessLocationHeaders)}
-            data={newLocations?.map((l: any) => {
-              return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.doingBusinessAs, l.health_authority, l.manufacturing];
-            })}
-            filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-            <StyledButton variant='outlined'>
-              <SaveAltIcon className={classes.buttonIcon} />
-              Download CSV
-            </StyledButton>
-          </CSVLink>
-        </div>
-          {newLocations.length ?
+      {
+        newLocations.length 
+          ?
+        <FullScreen fullScreenProp={viewFullscreenTable}>
+          <TableWrapper
+            tableHeader='New Business Locations'
+            tableSubHeader={`You have ${newLocations?.length} retail entries.`}
+            data={newLocations}
+            csvProps={{
+              headers: Object.keys(BusinessLocationHeaders),
+              data: newLocations?.map((l: any) => {
+                return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.doingBusinessAs, l.health_authority, l.manufacturing];
+              }),
+              filename: 'business_locations.csv'
+            }}
+            fullScreenProp={viewFullscreenTable} 
+            isOutlined={false}
+          >
             <div style={{ overflowX: 'auto' }}>
               <StyledTable
                 columns={[
@@ -259,7 +254,10 @@ export default function ConfirmAndSubmit () {
                 data={newLocations}
               />
             </div>
-          : null}
+          </TableWrapper>
+        </FullScreen>
+        : null
+      }
         </div>
       <LocationsEditForm rowData={targetRow} openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit }} />
       {

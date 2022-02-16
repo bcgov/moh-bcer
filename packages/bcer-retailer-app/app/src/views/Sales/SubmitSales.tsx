@@ -7,6 +7,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { SalesReportContext } from '@/contexts/SalesReport';
 import { useAxiosPatch, useAxiosGet } from '@/hooks/axios';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -46,6 +48,7 @@ export default function SubmitSalesReport() {
   const [salesReport, setSalesReport] = useContext(SalesReportContext);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [products, setProducts] = useState([]);
+  const viewFullscreenTable = useState<boolean>(false);
   const [{ data: locationData, loading: productsLoading, error }, get] = useAxiosGet(`/location/${salesReport.locationId}?includes=sales,sales.product,products`, { manual: true });
   const [, patch] = useAxiosPatch(`/sales`, { manual: true });
   const [displayEmpty, setDisplayEmpty] = useState(false);
@@ -138,61 +141,69 @@ export default function SubmitSalesReport() {
         {
           products.length > 0 ?
           <>
-            <StyledTable
-              columns={[
-                { title: 'Brand', field: 'brand', editable: 'never' },
-                { title: 'Product Name', field: 'productName', editable: 'never' },
-                { title: 'Type', field: 'type', editable: 'never' },
-                { title: 'Flavour', field: 'flavour', editable: 'never' },
-                { title: 'Number of Containers Sold', field: 'containers' },
-                { title: 'Number of Cartridges Sold', field: 'cartridges' },
-                { title: 'Concentration', field: 'concentration', editable: 'never' },
-                { title: 'Cartridge Capacity', field: 'cartridgeCapacity', editable: 'never' },
-                { title: 'Container Capacity', field: 'containerCapacity', editable: 'never' },
-              ]}
-              data={products}
-              options={{ 
-                pageSize: 10,
-                pageSizeOptions: [5, 10, 20],
-                sorting: true
-              }}
-              localization={{
-                body: {
-                  bulkEditTooltip: 'The data will not be saved until you submit your changes',
-                  bulkEditApprove: 'The data will not be saved until you submit your changes',
-                }
-              }}
-              icons={{
-                Check: forwardRef((props, ref) => (
-                  <StyledButton variant='contained' onClick={(event: any) => setEditing(false)} >
-                    Done Editing
-                  </StyledButton>
-                )),
-                Clear: forwardRef((props, ref) => (
-                  <StyledButton variant='outlined' onClick={(event: any) => setEditing(false)} >
-                    Cancel
-                  </StyledButton>
-                )),
-                Edit: forwardRef((props, ref) => (
-                  <StyledButton variant='outlined' onClick={(event: any) => setEditing(true)} >
-                    Edit All
-                  </StyledButton>
-                )),
-              }}
-              editable={{
-                onBulkUpdate: (changes: { [key: number]: any }) =>
-                  new Promise((resolve, reject) => {
-                    const newProducts = [...products];
-                    Object.keys(changes).forEach(index => {
-                      const idx = parseInt(index, 10);
-                      newProducts[idx] = changes[idx].newData;
-                    });
-                    setProducts(newProducts);
-                    setEditing(false);
-                    resolve(true);
-                  }),
-              }}
-            />
+            <FullScreen fullScreenProp={viewFullscreenTable}>
+              <TableWrapper
+                data={products}
+                fullScreenProp={viewFullscreenTable}
+                isOutlined={false}
+              >
+                <StyledTable
+                  columns={[
+                    { title: 'Brand', field: 'brand', editable: 'never' },
+                    { title: 'Product Name', field: 'productName', editable: 'never' },
+                    { title: 'Type', field: 'type', editable: 'never' },
+                    { title: 'Flavour', field: 'flavour', editable: 'never' },
+                    { title: 'Number of Containers Sold', field: 'containers' },
+                    { title: 'Number of Cartridges Sold', field: 'cartridges' },
+                    { title: 'Concentration', field: 'concentration', editable: 'never' },
+                    { title: 'Cartridge Capacity', field: 'cartridgeCapacity', editable: 'never' },
+                    { title: 'Container Capacity', field: 'containerCapacity', editable: 'never' },
+                  ]}
+                  data={products}
+                  options={{ 
+                    pageSize: 10,
+                    pageSizeOptions: [5, 10, 20],
+                    sorting: true
+                  }}
+                  localization={{
+                    body: {
+                      bulkEditTooltip: 'The data will not be saved until you submit your changes',
+                      bulkEditApprove: 'The data will not be saved until you submit your changes',
+                    }
+                  }}
+                  icons={{
+                    Check: forwardRef((props, ref) => (
+                      <StyledButton variant='contained' onClick={(event: any) => setEditing(false)} >
+                        Done Editing
+                      </StyledButton>
+                    )),
+                    Clear: forwardRef((props, ref) => (
+                      <StyledButton variant='outlined' onClick={(event: any) => setEditing(false)} >
+                        Cancel
+                      </StyledButton>
+                    )),
+                    Edit: forwardRef((props, ref) => (
+                      <StyledButton variant='outlined' onClick={(event: any) => setEditing(true)} >
+                        Edit All
+                      </StyledButton>
+                    )),
+                  }}
+                  editable={{
+                    onBulkUpdate: (changes: { [key: number]: any }) =>
+                      new Promise((resolve, reject) => {
+                        const newProducts = [...products];
+                        Object.keys(changes).forEach(index => {
+                          const idx = parseInt(index, 10);
+                          newProducts[idx] = changes[idx].newData;
+                        });
+                        setProducts(newProducts);
+                        setEditing(false);
+                        resolve(true);
+                      }),
+                  }}
+                />
+              </TableWrapper>
+            </FullScreen>
             <div className={classes.submitWrapper}>
               <StyledButton
                 variant='contained'

@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { CSVLink } from 'react-csv';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
 import { makeStyles, Typography, Paper } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import moment from 'moment';
 
@@ -16,6 +14,8 @@ import SendIcon from '@material-ui/icons/Send';
 import ProductReportSubmission from '@/components/productReport/ProductReportSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -35,6 +35,7 @@ const useStyles = makeStyles({
     paddingBottom: '10px'
   },
   pageDescription: {
+    color: '#000000',
     padding: '20px 0'
   },
   highlightedText: {
@@ -69,15 +70,6 @@ const useStyles = makeStyles({
     maxWidth: '6px',
     borderRadius: '5px',
     backgroundColor: '#0053A4'
-  },
-  subtitleWrapper: {
-    display: 'flex',
-    alignItems: 'bottom',
-    justifyContent: 'space-between',
-    padding: '30px 0px 10px 0px',
-  },
-  subtitle: {
-    color: '#0053A4',
   },
   boxTitle: {
     paddingBottom: '10px'
@@ -119,6 +111,9 @@ export default function ProductOverview() {
   const { location: { pathname } } = history;
   const [withProducts, setWithProducts] = useState([]);
   const [withoutProducts, setWithoutProducts] = useState([]);
+  const viewProductlessFullscreenTable = useState<boolean>(false);
+  const viewProductsFullscreenTable = useState<boolean>(false);
+  const viewSubmittedFullscreenTable = useState<boolean>(false);
   const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?count=products`);
   const [{ data: productSubmissions = [] }] = useAxiosGet(`/products/submissions`);
   const [{ loading: patchLoading, error: patchError, data: patchedSubmission }, patch] = useAxiosPatch('/submission', { manual: true });
@@ -277,125 +272,119 @@ export default function ProductOverview() {
           <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
           <Typography variant='body1'><span className={classes.highlightedText}>Note:</span> If you are resubmitting a product report that was previously submitted before December 16, 2020, you are not required to wait 6 weeks before selling. You are only required to wait 6 weeks for any new products that you intend to sell and have not yet been reported.</Typography>
         </div>
-        <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6'>Locations without Product Reports</Typography>
-        </div>
-        <Paper variant='outlined' className={classes.box}>
-          <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
-          <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>You have {withoutProducts.length} retail locations</Typography>
-            {
-              withoutProducts.length
-                ?
-                <CSVLink
-                  headers={Object.keys(BusinessLocationHeaders)}
-                  data={withoutProducts.map((l: BusinessLocation) => {
-                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-                  })}
-                  filename={'business_locations_productless.csv'} className={classes.csvLink} target='_blank'>
-                  <StyledButton variant='outlined'>
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download CSV
-                  </StyledButton>
-                </CSVLink>
-                :
-                null
+        <FullScreen fullScreenProp={viewProductlessFullscreenTable}>
+          <TableWrapper
+            blockHeader='Locations without Product Reports'
+            tableHeader='Business Locations'
+            tableSubHeader={`You have ${withoutProducts.length} retail locations.`}
+            data={locations}
+            csvProps={{
+              headers: Object.keys(BusinessLocationHeaders),
+              data: withoutProducts.map((l: BusinessLocation) => {
+                return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+              }),
+              filename: 'business_locations_productless.csv'
+            }}
+            fullScreenProp={viewProductlessFullscreenTable} 
+          >
+            <div>
+              <StyledTable
+                columns={[
+                  {
+                    title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
+                  },
+                  {
+                    title: 'Added Date', render: (rd: BusinessLocation) => rd.created_at ? `${moment(rd.created_at).format('MMM DD, YYYY')}` : ''
+                  },
+                  {
+                    title: 'Status',
+                    render: (rd: BusinessLocation) => `${rd?.products?.length ? 'Submitted' : 'Not Submitted'}`
+                  },
+                ]}
+                data={withoutProducts}
+              />
+            </div>
+          </TableWrapper>
+        </FullScreen>
+        <FullScreen fullScreenProp={viewProductsFullscreenTable}>
+          <TableWrapper
+            blockHeader='Locations with Submitted Products'
+            tableHeader='Business Locations'
+            tableSubHeader={`You have ${withProducts.length} retail locations.`}
+            data={locations}
+            csvProps={{
+              headers: Object.keys(BusinessLocationHeaders),
+              data: withProducts.map((l: BusinessLocation) => {
+                return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+              }),
+              filename: 'business_locations_with_products.csv'
+            }}
+            fullScreenProp={viewProductsFullscreenTable} 
+          >
+            <div>
+              <StyledTable
+                columns={[
+                  {
+                    title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
+                  },
+                  {
+                    title: 'Status',
+                    render: (rd: BusinessLocation) => `${rd.products?.length || rd.productsCount > 0 ? 'Submitted' : 'Not Submitted'}`
+                  },
+                ]}
+                actions={[
+                  {
+                    icon: tableAction,
+                    onClick: (event: any, rowData: any) => history.push(`/products/location/${rowData.id}`)
+                  }
+                ]}
+                data={withProducts}
+              />
+            </div>
+          </TableWrapper>
+        </FullScreen>
+        <FullScreen fullScreenProp={viewSubmittedFullscreenTable}>
+          <TableWrapper
+            blockHeader={
+              <>
+                Product Report Submissions
+                <Typography variant='body1' className={classes.pageDescription}>
+                  In this section, you can review the product reports that you have submitted. When you select “view”
+                  you can review and delete specific submissions. <span className={classes.highlightedText}>Note</span>: the purpose of this option is to delete products
+                  that were submitted in error. If you are no longer selling a product, please <span className={classes.highlightedText}>do not delete</span> the product
+                  from the list, as you will be required to report on it for your sales report in that current year.
+                </Typography>
+              </>
             }
-          </div>
-          <div>
-            <StyledTable
-              columns={[
-                {
-                  title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
-                },
-                {
-                  title: 'Added Date', render: (rd: BusinessLocation) => rd.created_at ? `${moment(rd.created_at).format('MMM DD, YYYY')}` : ''
-                },
-                {
-                  title: 'Status',
-                  render: (rd: BusinessLocation) => `${rd?.products?.length ? 'Submitted' : 'Not Submitted'}`
-                },
-              ]}
-              data={withoutProducts}
-            />
-          </div>
-        </Paper>
-        <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6'>Locations with Submitted Products</Typography>
-        </div>
-        <Paper className={classes.box} variant='outlined' >
-          <Typography className={classes.boxTitle} variant='subtitle1'>Business Locations</Typography>
-          <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>You have {withProducts.length} retail locations</Typography>
-            {
-              withProducts.length
-                ?
-                <CSVLink
-                  headers={Object.keys(BusinessLocationHeaders)}
-                  data={withProducts.map((l: BusinessLocation) => {
-                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-                  })}
-                  filename={'business_locations_with_products.csv'} className={classes.csvLink} target='_blank'>
-                  <StyledButton variant='outlined'>
-                    <SaveAltIcon className={classes.buttonIcon} />
-                      Download CSV
-                    </StyledButton>
-                </CSVLink>
-                :
-                null
-            }
-          </div>
-          <div>
-            <StyledTable
-              columns={[
-                {
-                  title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
-                },
-                {
-                  title: 'Status',
-                  render: (rd: BusinessLocation) => `${rd.products?.length || rd.productsCount > 0 ? 'Submitted' : 'Not Submitted'}`
-                },
-              ]}
-              actions={[
-                {
-                  icon: tableAction,
-                  onClick: (event: any, rowData: any) => history.push(`/products/location/${rowData.id}`)
-                }
-              ]}
-              data={withProducts}
-            />
-          </div>
-        </Paper>
-        <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6'>Product Report Submissions</Typography>
-        </div>
-        <Typography variant='body1' className={classes.pageDescription}>
-          In this section, you can review the product reports that you have submitted. When you select “view”
-          you can review and delete specific submissions. <span className={classes.highlightedText}>Note</span>: the purpose of this option is to delete products
-          that were submitted in error. If you are no longer selling a product, please <span className={classes.highlightedText}>do not delete</span> the product
-          from the list, as you will be required to report on it for your sales report in that current year.
-        </Typography>
-        <Paper className={classes.box} variant='outlined' >
-          <Typography className={classes.boxTitle} variant='subtitle1'>Product Report Submissions</Typography>
-          <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>You have submitted {productSubmissions.length} product reports</Typography>
-          </div>
-          <div>
-            <StyledTable
-              columns={[
-                { title: 'Submission Date', render: (submission: any) => `${moment(submission.dateSubmitted).format('LLL')}` },
-                { title: 'Products Submitted', render: (submission: any) => `${submission.productCount}` },
-              ]}
-              actions={[
-                {
-                  icon: tableAction,
-                  onClick: (event: any, rowData: any) => history.push(`/products/submission/${rowData.productUploadId}`)
-                }
-              ]}
-              data={productSubmissions}
-            />
-          </div>
-        </Paper>
+            tableHeader='Product Report Submissions'
+            tableSubHeader={`You have submitted ${productSubmissions.length} product reports`}
+            data={locations}
+            csvProps={{
+              headers: Object.keys(BusinessLocationHeaders),
+              data: withProducts.map((l: BusinessLocation) => {
+                return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+              }),
+              filename: 'business_locations_with_products.csv'
+            }}
+            fullScreenProp={viewSubmittedFullscreenTable} 
+          >
+            <div>
+              <StyledTable
+                columns={[
+                  { title: 'Submission Date', render: (submission: any) => `${moment(submission.dateSubmitted).format('LLL')}` },
+                  { title: 'Products Submitted', render: (submission: any) => `${submission.productCount}` },
+                ]}
+                actions={[
+                  {
+                    icon: tableAction,
+                    onClick: (event: any, rowData: any) => history.push(`/products/submission/${rowData.productUploadId}`)
+                  }
+                ]}
+                data={productSubmissions}
+              />
+            </div>
+          </TableWrapper>
+        </FullScreen>
       </div>
     </>
   );
