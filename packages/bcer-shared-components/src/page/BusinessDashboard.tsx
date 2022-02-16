@@ -95,27 +95,23 @@ export function BusinessDashboard({
             <BusinessOverview data={data.overview} />
           )}
           <Box pt={2} pb={1} > 
-            {
-              isRetailerPortal
-                &&
-              <Box className={classes.retailerLegend}>
-                <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
-                  Legend:
-                </Typography>
-                <div className={classes.legendItem}>
-                  {BusinessDashBoardUtil.renderStatus(ReportStatus.Reported)}
-                  &nbsp; Submitted
-                </div>
-                <div className={classes.legendItem}>
-                  {BusinessDashBoardUtil.renderStatus(ReportStatus.Missing)}
-                  &nbsp; Not Submitted
-                </div>
-                <div className={classes.legendItem}>
-                  {BusinessDashBoardUtil.renderStatus(ReportStatus.NotRequired)}
-                  &nbsp; Not Required
-                </div>
-              </Box>
-            }
+            <Box className={classes.retailerLegend}>
+              <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
+                Legend:
+              </Typography>
+              <div className={classes.legendItem}>
+                {BusinessDashBoardUtil.renderStatus(ReportStatus.Reported)}
+                &nbsp; Submitted
+              </div>
+              <div className={classes.legendItem}>
+                {BusinessDashBoardUtil.renderStatus(ReportStatus.Missing)}
+                &nbsp; Not Submitted
+              </div>
+              <div className={classes.legendItem}>
+                {BusinessDashBoardUtil.renderStatus(ReportStatus.NotRequired)}
+                &nbsp; Not Required
+              </div>
+            </Box>
           </Box>
           <LocationOutstandingReportTable
             renderAddress={renderAddress}
