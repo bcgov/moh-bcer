@@ -161,7 +161,7 @@ export default function ViewLocations() {
   const getBreadcrumb = () => {
     if (appGlobal?.history?.pathname?.includes('business')) return 'Business Details'
     else if (appGlobal?.history?.pathname?.includes('locations')) return 'Submitted Locations'
-    else return 'Back'
+    else return 'Previous Page'
   }
 
   const yeildGroupedSalesArray = (salesReports: Array<any>) => {
