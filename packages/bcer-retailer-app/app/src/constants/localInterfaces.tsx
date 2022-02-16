@@ -227,3 +227,13 @@ export type BCGeocoderAutocompleteData = {
   };
   type: string;
 }
+
+export type BusinessReportStatus = {
+  completeReports: string[];
+  incompleteReports: string[];
+  missingNoi: string[];
+  missingProductReport: string[];
+  missingSalesReport: string[];
+  missingManufacturingReport: string[];
+  earlyMissingConfirmed: boolean;
+}

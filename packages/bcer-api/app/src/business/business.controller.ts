@@ -11,6 +11,7 @@ import {
   Post,
   Query,
   Request,
+  UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -29,6 +30,11 @@ import { BusinessRO } from 'src/business/ro/business.ro';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/auth/auth.module';
+import { BusinessOverviewDto } from './dto/businessOverview.dto';
+import { SearchDto } from './dto/search.dto';
+import { LocationRO } from 'src/location/ro/location.ro';
+import { BusinessReportingStatusRO } from './ro/busunessReportingStatus.ro';
+import { LocationService } from 'src/location/location.service';
 
 
 @ApiTags('business')
@@ -36,7 +42,8 @@ import { Roles } from 'src/auth/auth.module';
 @Controller('business')
 export class BusinessController {
   constructor(
-    public businessService: BusinessService
+    public businessService: BusinessService,
+    public locationService: LocationService
   ){}
 
   @ApiOperation({ summary: 'Submit business details' })
@@ -80,5 +87,20 @@ export class BusinessController {
   async clearBusinesses(): Promise<BusinessRO[]> {
     await this.businessService.clearBusinesses();
     return;
+  }
+
+  @ApiOperation({ summary: 'gets report/compliance report for all business location' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK, type: String })
+  @Roles('user')
+  @Get('/report-overview')
+  async getLocationReportingOverview(
+    @Request() req: RequestWithUser,
+  ) 
+    :Promise<{locations: LocationRO[], overview: BusinessReportingStatusRO}> {
+    if(!req.ctx.businessId){
+      throw new UnprocessableEntityException('Business id is required!')
+    }
+    return await this.locationService.getReportingStatus(req.ctx.businessId);
   }
 }

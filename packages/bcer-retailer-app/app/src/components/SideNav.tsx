@@ -106,7 +106,7 @@ function ListItemLink(props: ListItemProps<'a', { button?: true }>) {
   )
 }
 
-interface IconProps { formStep: 'myBusiness' | 'noi' | 'productReport' | 'manufacturingReport' | 'salesReports' };
+interface IconProps { formStep: 'myDashboard' | 'myBusiness' | 'noi' | 'productReport' | 'manufacturingReport' | 'salesReports' };
 
 export default function SideNav() {
   const { pathname } = useLocation();
@@ -153,6 +153,13 @@ export default function SideNav() {
     let href = '';
     let showWarningIcon = true;
     switch (formStep) {
+      case 'myDashboard':
+        completedStep = appGlobal.myBusinessComplete;
+        pathName = '/myDashboard';
+        stepTitle = 'My Dashboard';
+        // href = sideNav.myBusinessComplete ? '/mybusiness' : '/business/details'
+        href = '/myDashboard'
+        break;
       case 'myBusiness':
         completedStep = appGlobal.myBusinessComplete;
         pathName = '/business';
@@ -228,6 +235,7 @@ export default function SideNav() {
   return (
     <div className={classes.sideNav}>
       <List component='nav' className={classes.listGroup} >
+        <NavItem formStep={'myDashboard'} />
         <NavItem formStep={'myBusiness'} />
         <NavItem formStep={'noi'} />
         <NavItem formStep={'productReport'} />

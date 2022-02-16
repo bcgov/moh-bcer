@@ -159,6 +159,11 @@ export default function ViewLocations() {
     setViewOpen(true)
   }
 
+  const getBreadcrumb = () => {
+    if (appGlobal?.history?.pathname?.includes('business')) return 'Business Details'
+    else if (appGlobal?.history?.pathname?.includes('locations')) return 'Submitted Locations'
+    else return 'Previous Page'
+  }
 
   const yeildGroupedSalesArray = (salesReports: Array<any>) => {
     const grouped =  salesReports.reduce((group, report) => {
@@ -211,7 +216,7 @@ export default function ViewLocations() {
             <CircularProgress/>
           :
             <>
-              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.push(routes.submittedLocations)}>Submitted Locations</span> / Location Details</Typography>
+              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.goBack()}>{getBreadcrumb()}</span> / Location Details</Typography>
               {
                 data
                   &&

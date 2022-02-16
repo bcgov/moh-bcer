@@ -11,12 +11,13 @@ const useStyle = makeStyles(() => ({
     display: 'flex',
     width: '48px',
     height: '48px',
+    borderRadius: '4px'
   },
   error: {
     backgroundColor: 'red',
   },
   success: {
-    backgroundColor: '#16C92E'
+    backgroundColor: '#2E8540'
   }
 }))
 

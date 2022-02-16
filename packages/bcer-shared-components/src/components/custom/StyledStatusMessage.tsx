@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
   success: {
     fontSize: '20px',
     fontWeight: 'bold',
-    color: '#53FF4A',
+    color: '#2E8540',
   },
 }));
 
@@ -38,7 +38,7 @@ export function StyledStatusMessage({ status, message }: StyledStatusMessage) {
       break;
   }
   return (
-    <Box display={'flex'} alignItems={'center'} bgcolor={backgroundColor} p={1.5} borderRadius={3}>
+    <Box display={'flex'} alignItems={'center'} bgcolor={backgroundColor} p={1.5} >
       {status === 'error' && <StyledErrorIcon />}
       {status === 'success' && <StyledSuccessIcon />}
       {status === 'warning' && <span>Not Implemented</span>}

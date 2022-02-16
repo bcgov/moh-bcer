@@ -38,7 +38,7 @@ export default function Welcome() {
     }
   }, [error])
 
-  return loading ? <CircularProgress /> : businessInformation ? <Redirect to='/mybusiness' /> : (
+  return loading ? <CircularProgress /> : businessInformation ? <Redirect to='/myDashboard' /> : (
     <div className={classes.splashContainer}>
       <div className={classes.splashWrapper}>
         <Typography variant='h5'>Welcome to E-Substances Reporting Application</Typography>

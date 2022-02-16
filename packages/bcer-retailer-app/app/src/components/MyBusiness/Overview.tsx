@@ -1,15 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { makeStyles, CircularProgress, Grid, Typography, Paper } from '@material-ui/core';
-import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
+import { makeStyles, CircularProgress, Typography, Box } from '@material-ui/core';
+import { BusinessDashboard } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
-import { CSVLink } from 'react-csv';
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
 
-import { BusinessLocationHeaders } from '@/constants/localEnums';
-import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
-import { BusinessDetails } from '@/constants/localInterfaces';
-import { BusinessInfoContext } from '@/contexts/BusinessInfo';
+import { BusinessLocation, BusinessReportStatus } from '@/constants/localInterfaces';
+import { AppGlobalContext } from '@/contexts/AppGlobal';
+import moment from 'moment';
+import { LocationStatus } from '@/constants/localEnums';
 
 const useStyles = makeStyles({
   title: {
@@ -17,212 +15,84 @@ const useStyles = makeStyles({
     paddingBottom: '30px',
     paddingTop: 0,
   },
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem 1.4rem 0rem 1.4rem',
-    marginBottom: '30px'
-  },
-  description: {
-    color: '#565656',
-    paddingBottom: '20px'
-  },
-  boxTitle: {
-    fontSize: '17px',
-    fontWeight: 600,
-    lineHeight: '22px',
-  },
-  boxHeader: {
-    fontSize: '17px',
-    fontWeight: 600,
+  reportingPeriodDisclaimer: {
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingBottom: '15px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px'
-  },
-  boxDescription: {
-    fontSize: '14px',
-    color: '#3A3A3A',
-    lineHeight: '20px',
-    paddingBottom: '15px',
-  },
-  boxRow: {
-    display: 'flex',
-    paddingBottom: '20px',
-  },
-  buttonIcon: {
-    paddingRight: '5px',
-    color: '#285CBC',
-    fontSize: '20px',
-  },
-  csvLink: {
-    textDecoration: 'none',
-  },
-  rowTitle: {
-    fontSize: '14px',
-    color: '#424242',
-    width: '300px'
-  },
-  rowContent: {
-    fontSize: '14px',
-    fontWeight: 600,
-    color: '#3A3A3A',
-  },
-  editButton: {
-    fontSize: '14px',
-    width: '150px',
-    minWidth: '150px',
-    maxHeight: '26px',
-  },
-  tableWrapper: {
-    marginBottom: '20px',
-  },
+    padding: '10px 15px',
+    marginBottom: '20px'
+  }
 })
 
-
-export default function MyBusinessSubmission () {
+export default function MyDashboard () {
   const classes = useStyles();
   const history = useHistory();
-
-  const [{ data: business, loading }] = useAxiosGet(`/business?includes=locations`);
-  const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
-  const [details, setDetails] = useState<BusinessDetails>();
-  const [locations, setlocations] = useState<Array<IBusinessLocationValues>>();
+  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+  const [{ data, error, loading }] = useAxiosGet<{
+    locations: BusinessLocation[];
+    overview: BusinessReportStatus;
+  }>('/business/report-overview');
 
   useEffect(() => {
-    if (business) {
-      setDetails(business);
-      setlocations(business.locations)
+    if(appGlobal && !appGlobal.myBusinessComplete) {
+      history.push('/')
     }
-  }, [business]);
+  }, [appGlobal])
+
+  const getReportingYear = (startingMonth: number) => {
+    const currentTime = moment();
+    const currentMonth = currentTime.get('month')
+    if (currentMonth <= startingMonth) {
+      return currentTime.format('yyyy')
+    } else {
+      return currentTime.add(1, 'year').format('yyyy')
+    }
+  }
 
   return (
     <div>
-      <Typography variant='h5' className={classes.title}>My Business</Typography>
+      <Typography variant='h5' className={classes.title}>My Dashboard</Typography>
       {
         loading ? <CircularProgress /> :
-        details
+        data
           ?
-            <Paper variant='outlined' className={classes.box}>
-              <Grid container justify='space-between'>
-                <Grid className={classes.actionsWrapper} item xs={12}>
-                  <Typography paragraph variant='h6'>Business Details</Typography>
-                  <StyledButton
-                    onClick={() => history.push('/business/details')}
-                    className={classes.editButton}
-                    variant='outlined'
-                  >
-                    Edit
-                  </StyledButton>
-                </Grid>
+            <>
+              <Box 
+                className={classes.reportingPeriodDisclaimer} 
+                style={{ 
+                  borderLeft: `10px solid ${data?.overview?.incompleteReports?.length ? '#F5A623' : '#0053A4'}`, 
+                  backgroundColor: data?.overview?.incompleteReports?.length ? 'rgba(245,166,35,0.1)' : 'rgba(0,83,164,0.1)'
+                }}
+              >
+                <Typography variant='subtitle1'>
+                  {
+                    data?.overview?.incompleteReports?.length 
+                    ? `The next reporting period will start on October 1st, ${getReportingYear(10)}`
+                    : `You are in the reporting period and have until January 15th, ${getReportingYear(0)} to submit the outstanding reports.`
+                  }
+                </Typography>
+              </Box>
+              <BusinessDashboard 
+                data={data}
+                showOverview={true}
+                showStatusMessage={true}
+                isRetailerPortal={true}
+                renderAddress={(l: BusinessLocation) => <span>{l.addressLine1}</span>}
+              />
 
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>Legal name of business</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.legalName}</Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>Name under which business is conducted</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.businessName}</Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>Business address line 1</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.addressLine1}</Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>City</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.city}</Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>Postal Code</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.postal}</Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>Business address line 2</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.addressLine2}</Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>Business email</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.email}</Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography paragraph variant='body1'>Business phone number</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography paragraph variant='subtitle1'>{details.phone}</Typography>
-                </Grid>
-
-              </Grid>
-            </Paper>
+              {
+                data?.overview?.incompleteReports?.length === 0
+                  &&                  
+                <Typography variant='body1'>
+                  You have no outstanding reports to submit. Please make sure to continue updating your list of products and manufacturing throughout the year.
+                  On October 1st, 2022 you will have:
+                  <ul>
+                    <li>{data.locations.map(l => l.status !== LocationStatus.Closed).length} Notice of intents to renew</li>
+                    <li>{data.locations.length} Sales Reports to submit</li>
+                  </ul>
+                </Typography>
+              }
+            </>
           :
         null
-      }
-      {
-        locations?.length
-          ?
-            <div className={classes.box}>
-              <div className={classes.boxHeader}>
-                Business Locations
-              </div>
-              <div className={classes.actionsWrapper}>
-                <div className={classes.boxDescription}>You have {locations.length} retail entries.</div>
-                <CSVLink
-                  headers={Object.keys(BusinessLocationHeaders)}
-                  data={locations.map((l) => {
-                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-                  })}
-                  filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-                  <StyledButton variant='outlined'>
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download CSV
-                  </StyledButton>
-                </CSVLink>
-              </div>
-              <div className={classes.tableWrapper}>
-                <StyledTable
-                  columns={[
-                    {title: 'Address 1', field: 'addressLine1'},
-                    {title: 'Address 2', field: 'addressLine2'},
-                    {title: 'Postal Code', field: 'postal'},
-                    {title: 'City', field: 'city'},
-                    {title: 'Business Phone', field: 'phone'},
-                    {title: 'Business email', field: 'email'},
-                    {title: 'Health Authority', field: 'health_authority'},
-                    {title: 'Doing Business As', field: 'doingBusinessAs'},
-                    {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`},
-                    {title: 'Manufacturing  Premises', field: 'manufacturing'}
-                  ]}
-                  data={locations}
-                />
-              </div>
-            </div>
-          :
-            null
       }
     </div>
   )
