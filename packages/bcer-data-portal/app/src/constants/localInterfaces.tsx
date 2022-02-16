@@ -1,4 +1,5 @@
-import { UserType, HealthAuthority } from '@/constants/localEnums';
+import { UserType, HealthAuthority, HealthAuthorities, ReportStatus } from '@/constants/localEnums';
+import { BusinessFilter } from '@/hooks/useBusiness';
 
 export interface UserProfile {
   id: string;
@@ -273,6 +274,7 @@ export type LocationRO = {
   sales: Array<SalesRO>;
   products: Array<ProductsRO>;
   manufactures: Array<ManufacturesRO>;
+  reportStatus?: LocationReportStatus;
 }
 
 export type BusinessRO = {
@@ -289,7 +291,8 @@ export type BusinessRO = {
     notificationPreferences: string;
     created_at: string;
     updated_at: string;
-    users: Array<UserRO>
+    users: Array<UserRO>;
+    reportingStatus: BusinessReportStatus;
 }
 
 export type UserRO = {
@@ -384,6 +387,42 @@ export interface GroupedSalesRO {
   year: string; 
   submissionDate: string; 
   reports: Array<SalesRO>
+}
+
+export interface BusinessReportOverview {
+  compliant: number,
+  nonCompliant: number,
+  total: number,
+}
+
+export interface SearchQueryBuilder {
+  category: string;
+  search: string;
+  healthAuthority: string;
+  page?: number;
+  pageSize?: number;
+  additionalFilter?: string;
+}
+
+export interface BusinessReportStatus {
+  completeReports: string[];
+  incompleteReports: string[];
+  missingNoi: string[];
+  missingProductReport: string[];
+  missingSalesReport: string[];
+  missingManufacturingReport: string[];
+  earlyMissingConfirmed: boolean;
+}
+
+export type BusinessList = {
+  [key in BusinessFilter]: BusinessRO[];
+}&{total: number}
+
+export interface LocationReportStatus {
+  noi: ReportStatus;
+  manufacturingReport: ReportStatus;
+  productReport: ReportStatus;
+  salesReport: ReportStatus;
 }
 
 export interface NoteDTO {

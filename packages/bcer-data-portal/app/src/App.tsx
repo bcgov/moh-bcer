@@ -13,6 +13,8 @@ import { routes } from './constants/routes';
 import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
 import { ConfigContext } from './contexts/Config';
+import Dashboard from './views/Dashboard/Overview';
+import BusinessDetails from './views/BusinessDetails/Overview';
 import { useAxiosPost } from './hooks/axios';
 import { AppGlobalContext } from './contexts/AppGlobal';
 import { formatError } from './util/formatting';
@@ -63,12 +65,14 @@ const App = () => {
       </div>
       <div className={classes.appBody}>
         <Switch>
-          <Route exact path={routes.root} component={Locations} />
+          <Route exact path={routes.root} component={Dashboard} />
+          <Route exact path={routes.submittedLocations} component={Locations} />
           <Route exact path={`${routes.viewLocation}/:id`} component={ViewLocation} />
           <Route exact path={routes.getHelp} component={GetHelp} />
           <Route exact path={routes.userManagement} component={UserManagement} />
           { config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
           <Route exact path={routes.map} component={Map} />
+          <Route exact path={`${routes.viewBusiness}/:id`} component={BusinessDetails} />
         </Switch>
       </div>
     </div>
