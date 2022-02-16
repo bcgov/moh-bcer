@@ -8,7 +8,7 @@ import { routes } from '@/constants/routes';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
-import { CircularProgress, makeStyles } from '@material-ui/core';
+import { CircularProgress, makeStyles, Typography } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import {
@@ -21,6 +21,13 @@ const useStyles = makeStyles(() => ({
     color: 'blue',
     textDecoration: 'underline',
     cursor: 'pointer',
+  },
+  breadcrumb: {
+    paddingBottom: '20px'
+  },
+  clickBack: {
+    cursor: 'pointer',
+    color: 'rgba(51, 51, 51, 0.5)',
   },
 }));
 
@@ -37,7 +44,13 @@ function BusinessDetails() {
   const renderAddress = (l: LocationRO) => (
     <span
       className={classes.link}
-      onClick={() => history.push(`${routes.viewLocation}/${l.id}`)}
+      onClick={() => {
+        setAppGlobal({
+          ...appGlobal,
+          history: history.location
+        })
+        history.push(`${routes.viewLocation}/${l.id}`)
+      }}
     >
       {l.addressLine1}
     </span>
@@ -54,6 +67,7 @@ function BusinessDetails() {
   return (
     <Page error={error}>
       {loading && <CircularProgress />}
+      <Typography variant="body1" className={classes.breadcrumb} ><span className={classes.clickBack} onClick={() => history.goBack()}>Dashboard</span> / Business Details</Typography>
       <BusinessDashboard
         data={data}
         showOverview={true}

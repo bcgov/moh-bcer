@@ -34,9 +34,9 @@ function BusinessTable({
               name="location"
               options={[
                 { label: 'All', value: BusinessFilter.All },
-                { label: 'Complete Reports', value: BusinessFilter.Completed },
+                { label: 'With complete reports', value: BusinessFilter.Completed },
                 {
-                  label: 'Missing Reports',
+                  label: 'With outstanding reports',
                   value: BusinessFilter.NotCompleted,
                 },
               ]}
