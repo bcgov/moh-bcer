@@ -19,6 +19,10 @@ import LocationViewMap from './Map/LocationViewMap';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
 import Note from '@/components/note/Note';
+import LocationProductTable from '@/components/tables/LocationProductTable';
+import LocationManufacturingTable from '@/components/tables/LocationManufacturingTable';
+import LocationSalesTable from '@/components/tables/LocationSalesTable';
+import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -89,9 +93,6 @@ const useStyles = makeStyles({
   mapBox: {
     height: '540px',
   },
-  csvLink: {
-    textDecoration: 'none',
-  },
 })
 
 export default function ViewLocations() {
@@ -99,16 +100,14 @@ export default function ViewLocations() {
   const history = useHistory();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [businessOwner, setBusinessOwner] = useState<UserRO>();
-  const [selectedManufactureReport, setSelectedManufactureReport] = useState<ManufacturesRO>();
-  const [selectedSalesReport, setSelectedSalesReport] = useState<GroupedSalesRO>();
-  const [viewOpen, setViewOpen] = useState<boolean>();
+  const { showNetworkErrorMessage } = useNetworkErrorMessage();
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState<boolean>();
   const [currentContent, setCurrentContent] = useState<string>('locationStatus');
   const { id } = useParams<{id: string}>();
   const { config: authConfig } = useContext(ConfigContext);
   const csvRef = useRef(null);
 
-  const [{ data, loading, error }, get] = useAxiosGet(`/data/location/get-location/${id}`, {
+  const [{ data, loading, error }, get] = useAxiosGet(`/data/location/get-location/${id}?includes=business,business.users,noi`, {
     manual: false,
   });
 
@@ -121,7 +120,6 @@ export default function ViewLocations() {
     '/data/location/config'
   );
 
-  const [{ data: download = [], loading: downloadLoading, error: downloadError }, getDownload] = useAxiosGet(`/data/location/download/`, { manual: true });
 
   useEffect(() => {
     if (data) {
@@ -141,37 +139,12 @@ export default function ViewLocations() {
   }, [deleteData])
 
   useEffect(() => {
-    if (deleteError) {
-      setAppGlobalContext({
-        ...appGlobal,
-        networkErrorMessage: formatError(deleteError),
-      });
-    }
+    showNetworkErrorMessage(deleteError)
   }, [deleteError])
 
-  const handleManufactureSelect = (manufactureReport: ManufacturesRO) => {
-    setSelectedManufactureReport(manufactureReport)
-    setViewOpen(true)
-  }
-
-  const handleSalesSelect = (salesReport: GroupedSalesRO) => {
-    setSelectedSalesReport(salesReport)
-    setViewOpen(true)
-  }
-
-
-  const yeildGroupedSalesArray = (salesReports: Array<any>) => {
-    const grouped =  salesReports.reduce((group, report) => {
-      const { year } = report;
-      const groupIndex = group.findIndex((element: any) => element.year === year)
-      groupIndex === -1 
-        ? group.push({year: report.year, submissionDate: moment(report.created_at).format('YYYY-MM-DD'), reports: [report]}) 
-        : group[groupIndex].reports.push(report)
-
-      return group
-    }, [])
-    return grouped
-  }
+  useEffect(() => {
+    showNetworkErrorMessage(error)
+  }, [error])
 
   const getOptions = () => {
     const options = [
@@ -352,43 +325,14 @@ export default function ViewLocations() {
                       <Grid item xs={12} id="productReport">
                         <Typography className={classes.cellTitle}>Product Report Submissions</Typography>
                         <Paper className={classes.tableBox}>
-                          <Typography variant="body2" style={{paddingBottom: '8px'}}>{data.products.length} product reports submitted</Typography>
-                          <StyledTable 
-                            data={data.products}
-                            columns={[
-                              {
-                                title: 'Type of Product', field: 'type'
-                              },
-                              {
-                                title: 'Brand Name', field: 'brandName'
-                              },
-                              {
-                                title: 'Product Name', field: 'productName'
-                              },
-                              {
-                                title: 'Manufacturer Name', field: 'manufacturerName'
-                              },
-                            ]}
-                          />
+                          <LocationProductTable locationId={id} />
                         </Paper>
                       </Grid>
 
                       <Grid item xs={12} id="manufacturingReport">
                         <Typography className={classes.cellTitle}>Manufacturing Report Submissions</Typography>
                         <Paper className={classes.tableBox}>
-                          <Typography variant="body2" style={{paddingBottom: '8px'}}>{data.manufactures.length} manufacturing reports submitted</Typography>
-                          <StyledTable 
-                            data={data.manufactures}
-                            columns={[
-                              {
-                                title: 'Product', field: 'productName'
-                              },
-                              {
-                                title: '',
-                                render: (manufactureReport: ManufacturesRO) => <StyledButton variant="table" onClick={() => handleManufactureSelect(manufactureReport)}>View</StyledButton> 
-                              }
-                            ]}
-                          />
+                          <LocationManufacturingTable locationId={id} />
                         </Paper>
                       </Grid>
 
@@ -398,50 +342,8 @@ export default function ViewLocations() {
                         <Grid item xs={12} id="salesReport">
                           <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
                           <Paper className={classes.tableBox}>
-                            <Typography variant="body2" style={{paddingBottom: '8px'}}>{data.sales.length} sales reports submitted</Typography>
-                            <StyledTable 
-                              data={yeildGroupedSalesArray(data.sales)}
-                              columns={[
-                                {
-                                  title: 'Reporting Year', field: 'year'
-                                },
-                                {
-                                  title: 'Submission Date', field: 'submissionDate'
-                                },
-                                {
-                                  title: '',
-                                  render: (salesReport: SalesRO) => <StyledButton variant="small-outlined" onClick={async() => {
-                                    await getDownload({
-                                      url: `/data/location/download?locationId=${data.id}&year=${salesReport.year}`,
-                                    });
-                                    csvRef.current.link.click();
-                                  }}>Download</StyledButton> 
-                                },
-                                {
-                                  title: '',
-                                  render: (salesReport: GroupedSalesRO) => <StyledButton variant="table" onClick={() => handleSalesSelect(salesReport)}>View</StyledButton> 
-                                }
-                              ]}
-                            />
+                            <LocationSalesTable locationId={id} />
                           </Paper>
-                          <CSVLink
-                            ref={csvRef}
-                            headers={[
-                              'Brand Name',
-                              'Product Name',
-                              'Concentration (mg/mL) (optional)',
-                              'Container Capacity',
-                              'Cartridge Capacity',
-                              'Flavour',
-                              'UPC (optional)',
-                              'Number of Containers Sold',
-                              'Number of Cartridges Sold',
-                            ]}
-                            data={download}
-                            filename={`sales_report_${data.doingBusinessAs}.csv`}
-                            className={classes.csvLink}
-                            target="_blank"
-                          />
                         </Grid>
                       }
 
@@ -467,127 +369,6 @@ export default function ViewLocations() {
                   </Grid>
                 </>
               }
-
-              {
-                selectedManufactureReport
-                  &&
-                <Dialog
-                  fullScreen
-                  open={viewOpen}
-                  onClose={() => {
-                    setSelectedManufactureReport(null)
-                    setViewOpen((open) => !open)
-                  }}
-                >
-                  <div className={classes.dialogWrap}>
-                    <Paper variant="outlined" className={classes.tableBox}>
-                      <Typography className={classes.boxTitle} variant="subtitle1">
-                        Ingredients
-                      </Typography>
-                      <div className={classes.actionsWrapper}>
-                        <Typography style={{paddingBottom: '8px'}} variant="body2">
-                          There are {selectedManufactureReport.ingredients.length} submitted ingredients
-                        </Typography>
-                      </div>
-                      <div>
-                        <StyledTable
-                          data={selectedManufactureReport.ingredients}
-                          columns={[
-                            {
-                              title: 'Name',
-                              field: 'name',
-                            },
-                            {
-                              title: 'Scientific Name',
-                              field: 'scientificName',
-                            },
-                            {
-                              title: 'Manufacturer Name',
-                              field: 'manufacturerName',
-                            },
-                            {
-                              title: 'Manufacturer Name',
-                              field: 'manufacturerName',
-                            },
-                          ]}
-                        />
-                      </div>
-                    </Paper>
-                    <div>
-                      <StyledButton
-                        variant="outlined"
-                        onClick={() => setViewOpen(false)}
-                        style={{ margin: '1rem 0' }}
-                      >
-                        Close
-                      </StyledButton>
-                    </div>
-                  </div>
-                </Dialog>
-              }
-
-              {
-                selectedSalesReport
-                  &&
-                <Dialog
-                  fullScreen
-                  open={viewOpen}
-                  onClose={() => {
-                    setSelectedSalesReport(null)
-                    setViewOpen((open) => !open)
-                  }}
-                >
-                  <div className={classes.dialogWrap}>
-                    <Paper variant="outlined" className={classes.tableBox}>
-                      <Typography className={classes.boxTitle} variant="subtitle1">
-                        Reports
-                      </Typography>
-                      <div className={classes.actionsWrapper}>
-                        <Typography style={{paddingBottom: '8px'}} variant="body2">
-                          There are {selectedSalesReport.reports.length} submitted reports
-                        </Typography>
-                      </div>
-                      <div>
-                        <StyledTable
-                          data={selectedSalesReport.reports}
-                          columns={[
-                            {
-                              title: 'Product Name',
-                              field: 'productSold.productName',
-                            },
-                            {
-                              title: 'Cartridges',
-                              field: 'cartridges',
-                            },
-                            {
-                              title: 'Containers',
-                              field: 'containers',
-                            },
-                            {
-                              title: 'Containers',
-                              field: 'containers',
-                            },
-                            {
-                              title: 'UPC',
-                              field: 'productSold.upc',
-                            },
-                          ]}
-                        />
-                      </div>
-                    </Paper>
-                    <div>
-                      <StyledButton
-                        variant="outlined"
-                        onClick={() => setViewOpen(false)}
-                        style={{ margin: '1rem 0' }}
-                      >
-                        Close
-                      </StyledButton>
-                    </div>
-                  </div>
-                </Dialog>
-              }
-
               {
                 isConfirmDialogOpen
                   &&
