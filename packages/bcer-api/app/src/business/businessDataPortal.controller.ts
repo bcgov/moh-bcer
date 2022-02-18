@@ -33,7 +33,7 @@ import { BusinessMergeDTO } from './dto/business-merge.dto';
 import { BusinessOverviewDto } from './dto/businessOverview.dto';
 import { SearchDto } from './dto/search.dto';
 import { BusinessRO } from './ro/business.ro';
-import { BusinessReportingStatusRO } from './ro/busunessReportingStatus.ro';
+import { BusinessReportingStatusRO } from './ro/businessReportingStatus.ro';
 
 @ApiBearerAuth()
 @ApiTags('Business')
@@ -114,7 +114,7 @@ export class BusinessDataPortalController {
      return await this.businessService.getComplianceOverview(query.type);
   }
 
-  @ApiOperation({ summary: 'gets report/compliance overview' })
+  @ApiOperation({ summary: 'gets paginated business data with report status summary' })
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, type: String })
   @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)

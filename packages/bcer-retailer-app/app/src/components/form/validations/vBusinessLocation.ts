@@ -80,3 +80,13 @@ export const Validation = yup.object({
   }),
   manufacturing: yup.string().required('This is a required field'),
 });
+
+export const ValidateLocationWithNOI = yup.object({
+  phone: yup.string()
+    .matches(
+      /^(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)$/,
+      'Please provide a valid phone number'
+    )
+    .required('A Phone number is required'),
+  email: yup.string().email('Invalid Email').required('Email is a required field'),
+})

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1026px" height="326px" viewBox="0 0 1026 326" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>1C8281C3-7F32-4809-97D7-646B2D15E0BD@1.5x</title>
+    <g id="Landing-page" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Retailer-/-Get-help" transform="translate(-389.000000, -713.000000)">
+            <g id="timeline" transform="translate(390.000000, 713.500000)">
+                <text id="Previous-Year-Oct-1" font-family="OpenSans-Regular, Open Sans" font-size="10" font-weight="normal" line-spacing="18" fill="#333333">
+                    <tspan x="56.6738281" y="113.5">Previous Year</tspan>
+                    <tspan x="120.326172" y="113.5" font-family="OpenSans-Bold, Open Sans" font-size="14" font-weight="bold"></tspan>
+                    <tspan x="57.9960938" y="129.398438" font-family="OpenSans-Bold, Open Sans" font-size="16" font-weight="bold">Oct 1</tspan>
+                </text>
+                <text id="Current-Year-Jan-15" font-family="OpenSans-Regular, Open Sans" font-size="10" font-weight="normal" line-spacing="18" fill="#333333">
+                    <tspan x="400.935059" y="113.5">Current Year</tspan>
+                    <tspan x="460.275879" y="113.5" font-family="OpenSans-Bold, Open Sans" font-size="14" font-weight="bold"></tspan>
+                    <tspan x="396.75" y="129.398438" font-family="OpenSans-Bold, Open Sans" font-size="16" font-weight="bold">Jan 15</tspan>
+                </text>
+                <text id="Current-Year-Sept-30" font-family="OpenSans-Regular, Open Sans" font-size="10" font-weight="normal" line-spacing="18" fill="#333333">
+                    <tspan x="916.114746" y="113.5">Current Year</tspan>
+                    <tspan x="975.455566" y="113.5" font-family="OpenSans-Bold, Open Sans" font-size="14" font-weight="bold"></tspan>
+                    <tspan x="907" y="129.398438" font-family="OpenSans-Bold, Open Sans" font-size="16" font-weight="bold">Sept 30</tspan>
+                </text>
+                <line x1="0" y1="180" x2="57" y2="180" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square" stroke-dasharray="5"></line>
+                <line x1="967" y1="180" x2="1024" y2="180" id="Line-2-Copy-3" stroke="#979797" stroke-width="2" stroke-linecap="square" stroke-dasharray="5"></line>
+                <line x1="58.5" y1="180" x2="967" y2="180" id="Line-2-Copy" stroke="#2E8540" stroke-width="2" stroke-linecap="square"></line>
+                <path id="Line-4-Copy-3" d="M87.5,143 C91.3659932,143 94.5,146.134007 94.5,150 C94.5,153.526122 91.8928118,156.443302 88.5010101,156.928967 L88.5,181 L86.5,181 L86.4999918,156.92911 C83.1077016,156.443877 80.5,153.526469 80.5,150 C80.5,146.134007 83.6340068,143 87.5,143 Z" fill="#2E8540" fill-rule="nonzero"></path>
+                <path id="Line-4-Copy" d="M426.75,143 C430.615993,143 433.75,146.134007 433.75,150 C433.75,153.526122 431.142812,156.443302 427.75101,156.928967 L427.75,181 L425.75,181 L425.749992,156.92911 C422.357702,156.443877 419.75,153.526469 419.75,150 C419.75,146.134007 422.884007,143 426.75,143 Z" fill="#2E8540" fill-rule="nonzero"></path>
+                <path id="Line-4-Copy-2" d="M937,143 C940.865993,143 944,146.134007 944,150 C944,153.526122 941.392812,156.443302 938.00101,156.928967 L938,181 L936,181 L935.999992,156.92911 C932.607702,156.443877 930,153.526469 930,150 C930,146.134007 933.134007,143 937,143 Z" fill="#2E8540" fill-rule="nonzero"></path>
+                <line x1="543.280251" y1="241.553368" x2="543.280251" y2="198.799062" id="Line-7-Copy" stroke="#333333" stroke-linecap="square" stroke-dasharray="5" transform="translate(543.280251, 220.053368) rotate(-180.000000) translate(-543.280251, -220.053368) "></line>
+                <rect id="Rectangle-Copy-2" fill="#CDCED2" x="125.577433" y="0" width="238" height="84" rx="4"></rect>
+                <rect id="Rectangle-Copy" fill="#CDCED2" x="423.780251" y="241.430521" width="239" height="84" rx="4"></rect>
+                <text id="Reporting-period-for" font-family="BCSans-Regular, BC Sans" font-size="14" font-weight="normal" line-spacing="20" fill="#333333">
+                    <tspan x="139.077433" y="27.5">Reporting period for submitting </tspan>
+                    <tspan x="139.077433" y="47.5">Sales report from the previous </tspan>
+                    <tspan x="139.077433" y="67.5">year and renewing NOIs</tspan>
+                </text>
+                <text id="Full-12-months-repor" font-family="BCSans-Regular, BC Sans" font-size="14" font-weight="normal" line-spacing="20" fill="#333333">
+                    <tspan x="437.280251" y="268.930521">Full 12 months reporting cycle </tspan>
+                    <tspan x="437.280251" y="288.930521">to submit NOIs, Product Reports </tspan>
+                    <tspan x="437.280251" y="308.930521">and Manufacturing Reports</tspan>
+                </text>
+                <line x1="244.577433" y1="159.754306" x2="244.577433" y2="84" id="Line-7-Copy-8" stroke="#333333" stroke-linecap="square" stroke-dasharray="5"></line>
+                <path d="M92.5,160 L93.3681096,162.853589 C94.1367865,165.38033 96.4672862,167.107308 99.1083624,167.107308 L236.403206,167.107308 C238.671519,167.107308 240.745922,168.386496 241.764395,170.413304 L242.282152,171.443664 C242.778104,172.430631 243.980248,172.828678 244.967216,172.332726 C245.35144,172.139653 245.663205,171.827887 245.856278,171.443664 L246.374035,170.413304 C247.392508,168.386496 249.466911,167.107308 251.735223,167.107308 L405.891638,167.107308 C408.532714,167.107308 410.863214,165.38033 411.63189,162.853589 L412.5,160 L412.5,160" id="Path-3-Copy-9" stroke="#333333" transform="translate(252.500000, 167.500000) scale(1, -1) translate(-252.500000, -167.500000) "></path>
+                <path d="M87.5,185 L88.3681096,187.853589 C89.1367865,190.38033 91.4672862,192.107308 94.1083624,192.107308 L475.71224,192.107308 C477.980553,192.107308 480.054956,193.386496 481.073429,195.413304 L481.591186,196.443664 C482.087138,197.430631 483.289282,197.828678 484.27625,197.332726 C484.660473,197.139653 484.972239,196.827887 485.165312,196.443664 L485.683069,195.413304 C486.701542,193.386496 488.775945,192.107308 491.044257,192.107308 L932.5538,192.107308 C935.194876,192.107308 937.525376,190.38033 938.294053,187.853589 L939.162162,185 L939.162162,185" id="Path-3-Copy-10" stroke="#333333" transform="translate(513.331081, 192.500000) scale(1, -1) rotate(-180.000000) translate(-513.331081, -192.500000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

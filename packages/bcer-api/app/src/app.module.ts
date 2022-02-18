@@ -28,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ProductSoldModule } from './product-sold/product-sold.module';
 import { CronModule } from './cron/cron.module';
 import { NotificationModule } from './notification/notification.module';
+import { NoteModule } from './note/note.module';
 
 const moduleImports = [
   AuthModule,
@@ -45,7 +46,8 @@ const moduleImports = [
   ProductSoldModule,
   ScheduleModule.forRoot(),
   CronModule,
-  NotificationModule
+  NotificationModule,
+  NoteModule,
 ];
 
 @Module({

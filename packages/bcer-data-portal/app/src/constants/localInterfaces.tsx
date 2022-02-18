@@ -55,6 +55,7 @@ export interface BusinessLocation {
   manufactures: Array<ManufacturingReport>
   noi?: {
     created_at: Date;
+    renewed_at?: Date;
   },
   business?: {
     businessName: string;
@@ -422,4 +423,48 @@ export interface LocationReportStatus {
   manufacturingReport: ReportStatus;
   productReport: ReportStatus;
   salesReport: ReportStatus;
+}
+
+export interface NoteDTO {
+  content: string;
+  businessId?: string;
+  locationId?: string;
+}
+
+export interface NoteRO {
+  content: string;
+  createdAt: Date;
+  id: string;
+  updatedAt: Date;
+  user: UserRO;
+}
+
+export interface NotificationRO {
+  id: string;
+  title: string;
+  message: string;
+  createdAt: Date;
+  updatedAt: Date;
+  success: number;
+  fail: number;
+  errorData: ErrorDataType[];
+  completed: boolean;
+  sender: string;
+  pending: string[];
+  sent: string[];
+}
+
+export class ErrorDataType {
+  recipient: string;
+  message: string;
+}
+
+export type Subscribers = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  phoneNumber1: string;
+  phoneNumber2: string;
+  confirmed: string;
+  business: BusinessRO;
 }
