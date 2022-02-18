@@ -1,11 +1,14 @@
 import { createContext } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 
 export interface AppGlobalContext {
   networkErrorMessage: string;
+  history?: Location;
 }
 
 const Context = createContext<[AppGlobalContext, Function]>([{
-  networkErrorMessage: ''
+  networkErrorMessage: '',
+  history: null,
 }, () => {}]);
 
 export const AppGlobalContext = Context;

@@ -161,6 +161,7 @@ export default function Locations() {
   const classes = useStyles();
   const history = useHistory();
   const [keycloak] = useKeycloak();
+  const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -174,16 +175,25 @@ export default function Locations() {
   });
   const [locations, setLocations] = useState([]);
 
+  const handleRouteWithHistory = (locationId: string) => {
+    setAppGlobalContext({
+      ...appGlobal,
+      history: history.location
+    })
+    history.push(`/location/${locationId}`)
+
+  }
+
   const tableColumns = [
     {
       title: 'Business Name',
-      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => history.push(`/location/${location.id}`)}>{location.business.businessName}</span>,
+      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => handleRouteWithHistory(location.id)}>{location.business.businessName}</span>,
       sorting: false,
     },
     {
       title: 'Business Legal Name',
       field: 'business.legalName',
-      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => history.push(`/location/${location.id}`)}>{location.business.legalName}</span>,
+      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => handleRouteWithHistory(location.id)}>{location.business.legalName}</span>,
     },
     {
       title: 'Doing Business As',
@@ -249,7 +259,6 @@ export default function Locations() {
   });
   const [{ data: zipFile, loading: zipLoading, error: zipError }, post] =
     useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
-  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const healthAuthorityOptions = [
     { value: 'all', label: 'All' },
@@ -324,7 +333,7 @@ export default function Locations() {
     if (locations && !error) {
     } else {
       if (error) {
-        setAppGlobal({
+        setAppGlobalContext({
           ...appGlobal,
           networkErrorMessage: error?.response?.data?.message,
         });
