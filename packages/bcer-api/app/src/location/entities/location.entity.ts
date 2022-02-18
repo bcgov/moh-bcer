@@ -201,8 +201,8 @@ export class LocationEntity {
       city: this.city,
       postal: this.postal,
       phone: this.phone,
-      underage: ['yes', 'no'].includes(this.underage) ? this.underage : 'other',
-      underage_other: !['yes', 'no'].includes(this.underage)
+      underage: ['yes', 'no'].includes(this.underage?.toLowerCase()) ? this.underage : 'other',
+      underage_other: !['yes', 'no'].includes(this.underage?.toLowerCase())
         ? this.underage
         : '',
       health_authority: this.ha,
