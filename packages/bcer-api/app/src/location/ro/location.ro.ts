@@ -6,6 +6,7 @@ import { NoiRO } from 'src/noi/ro/noi.ro';
 import { ProductRO } from 'src/products/ro/product.ro';
 import { SalesReportRO } from 'src/sales/ro/sales.ro';
 import { LocationStatus } from '../enums/location-status.enum';
+import { LocationReportingStatusRO } from './locationReportingStatus.ro';
 
 export class LocationRO {
 
@@ -107,4 +108,7 @@ export class LocationRO {
 
   @ApiProperty()
   geoAddressConfidence: string;
+
+  @ApiProperty()
+  reportStatus?: LocationReportingStatusRO;
 }

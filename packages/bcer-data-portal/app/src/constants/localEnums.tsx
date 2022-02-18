@@ -119,3 +119,31 @@ export enum UserStatus {
     PENDING,
     BLOCKED,
 }
+
+export type Subscribers = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  phoneNumber1: string;
+  phoneNumber2: string;
+  confirmed: string;
+}
+
+export type Notifications = {
+  id: string;
+  sender: string;
+  title: string;
+  message: string;
+  success: number;
+  fail: number;
+  errorData: string;
+  createdAt: string;
+  updatedAt: string;
+  completed: string;
+}
+
+export enum ReportStatus {
+  Reported = 'reported',
+  Missing = 'missing',
+  NotRequired = 'notRequired',
+}

@@ -3,6 +3,7 @@ import { LocationRO } from 'src/location/ro/location.ro';
 import { ManufacturingRO } from 'src/manufacturing/ro/manufacturing.ro';
 import { NoiRO } from 'src/noi/ro/noi.ro';
 import { ProductRO } from 'src/products/ro/product.ro';
+import { BusinessReportingStatusRO } from './businessReportingStatus.ro';
 
 export class BusinessRO {
 
@@ -59,4 +60,10 @@ export class BusinessRO {
 
   @ApiProperty()
   updated_at: Date;
+
+  @ApiProperty()
+  reportingStatus?: BusinessReportingStatusRO;
+
+  @ApiProperty()
+  complianceStatus?: BusinessReportingStatusRO;
 }
