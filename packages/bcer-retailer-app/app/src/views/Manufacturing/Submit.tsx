@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useHistory, Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import { makeStyles, Typography, Paper } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
@@ -15,6 +15,8 @@ import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -44,7 +46,7 @@ const useStyles = makeStyles({
     padding: '1.4rem',
   },
   boxTitle: {
-    paddingBottom: '10px'
+    padding: '10px 0px'
   },
   tableRowCount: {
     paddingBottom: '10px'
@@ -72,6 +74,7 @@ export default function ManufacturingSubmit() {
   const classes = useStyles();
   const history = useHistory();
   const [selectedLocations, setSelectedLocations] = useState([]);
+  const viewFullscreenTable = useState<boolean>(false);
   const [{ data: locations = [], loading, error }] = useAxiosGet(`/manufacturing/locations`);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
@@ -99,28 +102,30 @@ export default function ManufacturingSubmit() {
         </div>
 
         <ManufacturingReportForm>
-
-          <Paper elevation={0} className={classes.section}>
-            <Typography className={classes.boxTitle} variant='h6'>2. Location Information</Typography>
-            <Typography variant='body1'>
-              Please select the location(s) that this manufacturing report applies to
-            </Typography>
-            <div style={{ overflowX: 'auto', marginTop: '1rem' }}>
-              <StyledTable
-                columns={[
-                  {title: 'Address', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
-                  {title: 'Email Address', field: 'email'},
-                  {title: 'Phone Number', field: 'phone'},
-                ]}
-                data={locations}
-                options={{ selection: true }}
-                onSelectionChange={(rows: any) => {
-                  setSelectedLocations(rows.map((row: BusinessLocation) => row.id))
-                }}
-              />
-            </div>
-          </Paper>
-
+          <FullScreen fullScreenProp={viewFullscreenTable}>
+            <TableWrapper
+              tableHeader={<Typography className={classes.boxTitle} variant='h6'>2. Location Information</Typography>}
+              tableSubHeader='Please select the location(s) that this manufacturing report applies to'
+              data={locations}
+              fullScreenProp={viewFullscreenTable}
+              isOutlined={false} 
+            >
+              <div style={{ overflowX: 'auto', marginTop: '1rem' }}>
+                <StyledTable
+                  columns={[
+                    {title: 'Address', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
+                    {title: 'Email Address', field: 'email'},
+                    {title: 'Phone Number', field: 'phone'},
+                  ]}
+                  data={locations}
+                  options={{ selection: true }}
+                  onSelectionChange={(rows: any) => {
+                    setSelectedLocations(rows.map((row: BusinessLocation) => row.id))
+                  }}
+                />
+              </div>
+            </TableWrapper>
+          </FullScreen>
           <div className={classes.submitWrapper}>
             <ManufacturingReportSubmitButton selectedLocations={selectedLocations} />
           </div>
