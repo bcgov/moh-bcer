@@ -438,3 +438,33 @@ export interface NoteRO {
   updatedAt: Date;
   user: UserRO;
 }
+
+export interface NotificationRO {
+  id: string;
+  title: string;
+  message: string;
+  createdAt: Date;
+  updatedAt: Date;
+  success: number;
+  fail: number;
+  errorData: ErrorDataType[];
+  completed: boolean;
+  sender: string;
+  pending: string[];
+  sent: string[];
+}
+
+export class ErrorDataType {
+  recipient: string;
+  message: string;
+}
+
+export type Subscribers = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  phoneNumber1: string;
+  phoneNumber2: string;
+  confirmed: string;
+  business: BusinessRO;
+}

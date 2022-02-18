@@ -56,6 +56,7 @@ export class SubscriptionEntity {
             phoneNumber1: this.phoneNumber1,
             phoneNumber2: this.phoneNumber2,
             confirmed: this.confirmed,
+            business: this.business?.toResponseObject(),
         };
     }
 }

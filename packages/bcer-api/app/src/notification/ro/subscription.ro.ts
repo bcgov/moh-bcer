@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { BusinessRO } from "src/business/ro/business.ro";
 
 export class SubscriptionRO {
     @ApiProperty()
@@ -21,4 +22,7 @@ export class SubscriptionRO {
 
     @ApiProperty()
     confirmed: boolean;
+
+    @ApiProperty()
+    business?: BusinessRO;
 }

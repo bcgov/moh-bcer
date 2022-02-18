@@ -10,3 +10,9 @@ export const userEditValidationSchema = yup.object({
 export const noteValidateSchema = yup.object({
     content: yup.string().required('Content can not be empty').max(1024, 'Must be less than 1024 characters')
 })
+
+export const notificationValidationSchema = yup.object({
+    title: yup.string().optional(),
+    message: yup.string().required('Message can not be empty').max(612, 'Must be less than 612 characters'),
+    confirm: yup.boolean().required().test('confirm', 'Please confirm', (v) => !!v)
+})
