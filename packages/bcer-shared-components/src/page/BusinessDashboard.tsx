@@ -3,7 +3,7 @@ import {
   BusinessReportStatus,
   LocationRO,
 } from '@/constants/interfaces/genericInterfaces';
-import { BusinessDashBoardUtil } from '@/util/businessDashBoard.util';
+import { BusinessDashboardUtil } from '@/util/businessDashboard.util';
 import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { StyledStatusMessage, StyledTable, StyledTextWithStatusIcon } from '..';
@@ -100,15 +100,15 @@ export function BusinessDashboard({
                 Legend:
               </Typography>
               <div className={classes.legendItem}>
-                {BusinessDashBoardUtil.renderStatus(ReportStatus.Reported)}
+                {BusinessDashboardUtil.renderStatus(ReportStatus.Reported)}
                 &nbsp; Submitted
               </div>
               <div className={classes.legendItem}>
-                {BusinessDashBoardUtil.renderStatus(ReportStatus.Missing)}
+                {BusinessDashboardUtil.renderStatus(ReportStatus.Missing)}
                 &nbsp; Not Submitted
               </div>
               <div className={classes.legendItem}>
-                {BusinessDashBoardUtil.renderStatus(ReportStatus.NotRequired)}
+                {BusinessDashboardUtil.renderStatus(ReportStatus.NotRequired)}
                 &nbsp; Not Required
               </div>
             </Box>
@@ -198,7 +198,7 @@ export function LocationOutstandingReportTable({
   renderAddress,
   data,
 }: LocationReportTableProps) {
-  const columns = BusinessDashBoardUtil.getColumns(renderAddress);
+  const columns = BusinessDashboardUtil.getColumns(renderAddress);
   return <StyledTable columns={columns} data={data} />;
 }
 
