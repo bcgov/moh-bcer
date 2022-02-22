@@ -58,6 +58,7 @@ export function BusinessDashboard({
   const classes = useStyles();
   let outstanding: LocationRO[] = [];
   let completed: LocationRO[] = [];
+  let missingSales = 0;
 
   data?.locations?.forEach((l) => {
     if (
@@ -65,6 +66,9 @@ export function BusinessDashboard({
       Object.values(l.reportStatus).includes(ReportStatus.Missing)
     ) {
       outstanding.push(l);
+      if(l.reportStatus.salesReport === ReportStatus.Missing){
+        missingSales++;
+      }
     } else {
       completed.push(l);
     }
@@ -92,7 +96,7 @@ export function BusinessDashboard({
             </Typography>
           </Box>
           {data?.overview && showOverview && (
-            <BusinessOverview data={data.overview} />
+            <BusinessOverview data={data.overview} missingSales={missingSales}/>
           )}
           <Box pt={2} pb={1} > 
             <Box className={classes.retailerLegend}>
@@ -146,7 +150,7 @@ export function BusinessDashboard({
   );
 }
 
-export function BusinessOverview({ data }: { data: BusinessReportStatus }) {
+export function BusinessOverview({ data, missingSales }: { data: BusinessReportStatus, missingSales: number }) {
   return (
     <Box>
       <StyledTextWithStatusIcon
@@ -179,11 +183,11 @@ export function BusinessOverview({ data }: { data: BusinessReportStatus }) {
       <StyledTextWithStatusIcon
         text={
           <>
-            <b>{data.missingSalesReport?.length ?? 'N/A'}</b> locations with
+            <b>{missingSales ?? 'N/A'}</b> locations with
             outstanding Sales Report
           </>
         }
-        success={!data.missingSalesReport?.length}
+        success={!missingSales}
       />
     </Box>
   );
