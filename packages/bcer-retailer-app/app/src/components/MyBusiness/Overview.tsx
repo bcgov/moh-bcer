@@ -37,14 +37,22 @@ export default function MyDashboard () {
     }
   }, [appGlobal])
 
-  const getReportingYear = (startingMonth: number) => {
+  const getReportingText = () => {
     const currentTime = moment();
-    const currentMonth = currentTime.get('month')
-    if (currentMonth <= startingMonth) {
-      return currentTime.format('yyyy')
+    const currentDay = currentTime.get('dayOfYear')
+    const endOfReporting = 15
+    const startOfReporting = 274
+    const relevantYear = currentDay >= startOfReporting ? currentTime.add(1, 'year').format('yyyy') : currentTime.format('yyyy')
+
+    if (currentDay >= startOfReporting || currentDay <= endOfReporting) {
+      return `You are in the reporting period and have until January 15th ${relevantYear} to submit the outstanding reports.`
     } else {
-      return currentTime.add(1, 'year').format('yyyy')
-    }
+      if (data?.overview?.incompleteReports?.length) {
+        return `Your outstanding reports must be submitted before the next reporting period that will start on October 1st ${relevantYear}.`
+      } else {
+      }
+        return `Thank you for submitting your reports, the next reporting period will start on October 1st ${relevantYear}.`
+    } 
   }
 
   return (
@@ -62,13 +70,7 @@ export default function MyDashboard () {
                   backgroundColor: data?.overview?.incompleteReports?.length ? 'rgba(245,166,35,0.1)' : 'rgba(0,83,164,0.1)'
                 }}
               >
-                <Typography variant='subtitle1'>
-                  {
-                    data?.overview?.incompleteReports?.length 
-                    ? `The next reporting period will start on October 1st, ${getReportingYear(10)}`
-                    : `You are in the reporting period and have until January 15th, ${getReportingYear(0)} to submit the outstanding reports.`
-                  }
-                </Typography>
+                <Typography variant='subtitle1'>{getReportingText()}</Typography>
               </Box>
               <BusinessDashboard 
                 data={data}
