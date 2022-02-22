@@ -10,18 +10,18 @@ import { LocationReportingStatusRO } from '../ro/locationReportingStatus.ro';
 export class SingleLocationReportStatus {
   protected readonly currentReportingStart =
     ConfigDates.getCurrentReportingStartDate();
-  protected result: LocationReportingStatusRO = new LocationReportingStatusRO();
 
   /**
    *
    * @param l `LocationEntity` with productCount, salesCount and manufacturingCount available*
    */
   getStatus(l: LocationEntity) {
-    this.result.noi = this.getNoiReportStatus(l);
-    this.result.manufacturingReport = this.getManufacturingReportStatus(l);
-    this.result.productReport = this.getProductsReportStatus(l);
-    this.result.salesReport = this.getSalesReportStatus(l);
-    return this.result;
+    const result = new LocationReportingStatusRO();
+    result.noi = this.getNoiReportStatus(l);
+    result.manufacturingReport = this.getManufacturingReportStatus(l);
+    result.productReport = this.getProductsReportStatus(l);
+    result.salesReport = this.getSalesReportStatus(l);
+    return result;
   }
 
   /**
