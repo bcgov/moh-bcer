@@ -145,7 +145,7 @@ export class BusinessDataPortalController {
   @AllowAnyRole()
   @Get('/report-overview/:businessId')
   async getLocationReportingOverview(@Param('businessId') businessId, @Query() query: BusinessOverviewDto) 
-    :Promise<{locations: LocationRO[], overview: BusinessReportingStatusRO}> {
+    :Promise<{locations: LocationRO[], overview: Partial<BusinessReportingStatusRO>}> {
     if(!businessId){
       throw new UnprocessableEntityException('Business id is required!')
     }

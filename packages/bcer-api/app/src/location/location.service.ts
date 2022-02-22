@@ -26,6 +26,8 @@ import { LocationComplianceStatus } from './helper/locationComplianceStatus';
 import { BusinessReportType } from 'src/business/enums/businessReportType.enum';
 import { SingleLocationComplianceStatus } from './helper/singleLocationComplianceStatus';
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
+import { LocationRO } from './ro/location.ro';
+import { ReportStatus } from './enums/report-status.enum';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -641,15 +643,40 @@ export class LocationService {
 
   async getReportingStatus(businessId: string, type?: BusinessReportType){
     const locations = await this.getBusinessLocations(businessId, 'noi', 'products,manufactures,sales');
-    
-    const reportingOverview = this.checkLocationReportComplete(locations, {type: type});
-    
+        
     const locationsRO = locations.map((l) => {
       let status = (type === BusinessReportType.Compliance ? new SingleLocationComplianceStatus() : new SingleLocationReportStatus());
       l.reportStatus = status.getStatus(l);
       return l.toResponseObject();
     })
 
+    const reportingOverview = this.getLocationsReportingOverview(locationsRO);
+
     return {locations: locationsRO, overview: reportingOverview}
+  }
+
+  getLocationsReportingOverview(locations: LocationRO[]){
+    let overview = {
+      missingNoi: [],
+      missingProductReport: [],
+      missingSalesReport: [],
+      missingManufacturingReport: [],
+    }
+
+    locations?.forEach(l => {
+      if(l.reportStatus?.noi === ReportStatus.Missing){
+        overview.missingNoi.push(l.id);
+      }
+      if(l.reportStatus?.productReport === ReportStatus.Missing){
+        overview.missingProductReport.push(l.id);
+      }
+      if(l.reportStatus?.salesReport === ReportStatus.Missing){
+        overview.missingSalesReport.push(l.id);
+      }
+      if(l.reportStatus?.manufacturingReport === ReportStatus.Missing){
+        overview.missingManufacturingReport.push(l.id);
+      }
+    })
+    return overview;
   }
 }

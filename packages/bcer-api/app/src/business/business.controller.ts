@@ -33,8 +33,8 @@ import { Roles } from 'src/auth/auth.module';
 import { BusinessOverviewDto } from './dto/businessOverview.dto';
 import { SearchDto } from './dto/search.dto';
 import { LocationRO } from 'src/location/ro/location.ro';
-import { BusinessReportingStatusRO } from './ro/busunessReportingStatus.ro';
 import { LocationService } from 'src/location/location.service';
+import { BusinessReportingStatusRO } from './ro/businessReportingStatus.ro';
 
 
 @ApiTags('business')
@@ -97,7 +97,7 @@ export class BusinessController {
   async getLocationReportingOverview(
     @Request() req: RequestWithUser,
   ) 
-    :Promise<{locations: LocationRO[], overview: BusinessReportingStatusRO}> {
+    :Promise<{locations: LocationRO[], overview: Partial<BusinessReportingStatusRO>}> {
     if(!req.ctx.businessId){
       throw new UnprocessableEntityException('Business id is required!')
     }
