@@ -4,10 +4,11 @@ import { Tooltip } from "@material-ui/core";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import React from 'react';
 
-export class BusinessDashBoardUtil {
+export class BusinessDashboardUtil {
   static getColumns (addressLine1: Function){
     return [
     {title: 'Location', render: (l: LocationRO) => addressLine1(l)},
+    {title: 'Doing Business As', render: (l: LocationRO) => l.doingBusinessAs || ''},
     {title: 'NOI', render: (l:LocationRO) => this.render(l, 'noi')},
     {title: 'Product Report', render: (l:LocationRO) => this.render(l, 'productReport')},
     {title: 'Manufacturing Report', render: (l:LocationRO) => this.render(l, 'manufacturingReport')},
