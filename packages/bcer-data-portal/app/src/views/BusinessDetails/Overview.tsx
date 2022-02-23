@@ -1,4 +1,6 @@
+import BusinessInfo from '@/components/BusinessInfo';
 import Page from '@/components/generic/Page';
+import Note from '@/components/note/Note';
 import {
   BusinessReportOverview,
   BusinessReportStatus,
@@ -8,7 +10,7 @@ import { routes } from '@/constants/routes';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
-import { CircularProgress, makeStyles, Typography } from '@material-ui/core';
+import { Box, CircularProgress, makeStyles, Typography } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import {
@@ -68,6 +70,10 @@ function BusinessDetails() {
     <Page error={error}>
       {loading && <CircularProgress />}
       <Typography variant="body1" className={classes.breadcrumb} ><span className={classes.clickBack} onClick={() => history.goBack()}>Dashboard</span> / Business Details</Typography>
+      <BusinessInfo businessId={id} />
+      <Box pb={3}/>
+      <Note targetId={id} type='business' showHideButton={true} />
+      <Box pb={3}/>
       <BusinessDashboard
         data={data}
         showOverview={true}

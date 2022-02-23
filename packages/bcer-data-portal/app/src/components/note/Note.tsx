@@ -63,7 +63,7 @@ function Note({ targetId, type, showHideButton }: NoteProps) {
     const { index, style } = props;
     let backgroundColor = 'none';
     if (index === 0) {
-      backgroundColor = 'rgba(255, 255, 0, 0.2)';
+      backgroundColor = '#E0E8F0';
     }
     return (
       <ListItem
