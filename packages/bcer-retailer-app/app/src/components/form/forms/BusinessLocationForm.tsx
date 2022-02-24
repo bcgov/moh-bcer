@@ -88,7 +88,7 @@ function BusinessLocationForm({ entry }: { entry: string }) {
                         options={{
                           fixedColumns: {
                             right: 1,
-                          },
+                          }
                         }}
                         columns={[
                           ...LocationUtil.getTableColumns(),

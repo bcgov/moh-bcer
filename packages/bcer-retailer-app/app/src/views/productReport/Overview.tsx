@@ -174,6 +174,14 @@ export default function ProductOverview() {
     }
   }, [patchError]);
 
+  const getInitialPagination = (data: Array<BusinessLocation>) => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+
   return loading ? <CircularProgress /> : (
     <>
       <div>
@@ -289,6 +297,10 @@ export default function ProductOverview() {
           >
             <div>
               <StyledTable
+                options={{
+                  pageSize: getInitialPagination(withoutProducts),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                }}
                 columns={[
                   {
                     title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
@@ -323,6 +335,10 @@ export default function ProductOverview() {
           >
             <div>
               <StyledTable
+                options={{
+                  pageSize: getInitialPagination(withProducts),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                }}
                 columns={[
                   {
                     title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`

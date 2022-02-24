@@ -131,6 +131,14 @@ export default function ConfirmAndSubmit () {
     setOpenEdit(true);
   }
 
+  const getInitialPagination = () => {
+    if (newLocations.length <= 5) {
+      return 5
+    } else if (newLocations.length <= 10) {
+      return 10
+    } else return 20
+  }
+
   return (
     <>
       <div className={classes.box}>
@@ -241,6 +249,10 @@ export default function ConfirmAndSubmit () {
             <div style={{ overflowX: 'auto' }}>
               <StyledTable
                 columns={LocationUtil.getTableColumns()}
+                options={{
+                  pageSize: getInitialPagination(),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                }}
                 data={newLocations}
               />
             </div>

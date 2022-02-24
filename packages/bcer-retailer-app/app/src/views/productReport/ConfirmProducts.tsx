@@ -111,6 +111,14 @@ export default function ConfirmProducts() {
     }
   }, [productInfo?.products]);
 
+  const getInitialPagination = (data: Array<any>) => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+  
   return (
     <>
       <div>
@@ -197,6 +205,10 @@ export default function ConfirmProducts() {
                  isOutlined={false}
               >
                 <StyledTable
+                  options={{
+                    pageSize: getInitialPagination(filterTable ? erroredOnlyData : validatedData),
+                    pageSizeOptions: [5, 10, 20, 30, 50]
+                  }}
                   columns={ProductUtil.columns}
                   data={filterTable ? erroredOnlyData : validatedData}
                 />

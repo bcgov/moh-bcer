@@ -231,6 +231,8 @@ export default function SalesOverview() {
                 },
                 search: true,
                 searchFieldAlignment: 'left',
+                pageSize: getInitialPagination(outstanding?.data || []),
+                pageSizeOptions: [5, 10, 20, 30, 50]
               }}
               columns={[
                 ...commonColumns,
@@ -318,6 +320,8 @@ export default function SalesOverview() {
                 },
                 search: true,
                 searchFieldAlignment: 'left',
+                pageSize: getInitialPagination(submitted?.data || []),
+                pageSizeOptions: [5, 10, 20, 30, 50]
               }}
               columns={[
                 ...commonColumns,
@@ -418,6 +422,7 @@ export default function SalesOverview() {
                   },
                   search: true,
                   searchFieldAlignment: 'left',
+                  
                 }}
                 columns={[
                   ...commonColumns,

@@ -84,6 +84,14 @@ export default function ManufacturingSubmit() {
     }
   }, [error])
 
+  const getInitialPagination = () => {
+    if (locations.length <= 5) {
+      return 5
+    } else if (locations.length <= 10) {
+      return 10
+    } else return 20
+  }
+
   return (loading) ? <CircularProgress /> : (
     <div>
       <div>
@@ -118,7 +126,11 @@ export default function ManufacturingSubmit() {
                     {title: 'Phone Number', field: 'phone'},
                   ]}
                   data={locations}
-                  options={{ selection: true }}
+                  options={{ 
+                    selection: true, 
+                    pageSize: getInitialPagination(),
+                    pageSizeOptions: [5, 10, 20, 30, 50] 
+                  }}
                   onSelectionChange={(rows: any) => {
                     setSelectedLocations(rows.map((row: BusinessLocation) => row.id))
                   }}

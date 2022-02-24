@@ -49,6 +49,14 @@ export function OutstandingNoiTable({
 }: OutstandingNoiTableProp) {
   const classes = useStyles();
 
+  const getInitialPagination = () => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+  
   return (
     <TableWrapper
       data={data}
@@ -64,7 +72,13 @@ export function OutstandingNoiTable({
       csvProps={NoiUtil.getCsvProp(data, 'business_locations.csv')}
       fullScreenProp={fullScreenProp}
     >
-      <NoiTable data={data} />
+      <NoiTable 
+        options={{
+          pageSize: getInitialPagination(),
+          pageSizeOptions: [5, 10, 20, 30, 50]
+        }}
+        data={data} 
+      />
     </TableWrapper>
   );
 }
@@ -76,6 +90,14 @@ export function SubmittedNoiTable({
   ...prop
 }: SubmittedNoiTableProp) {
 
+  const getInitialPagination = () => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+  
   return (
     <TableWrapper
       data={data}
@@ -93,6 +115,8 @@ export function SubmittedNoiTable({
           fixedColumns: {
             right: 1,
           },
+          pageSize: getInitialPagination(),
+          pageSizeOptions: [5, 10, 20, 30, 50]
         }}
       />
     </TableWrapper>
@@ -105,6 +129,15 @@ export function NoiSubmissionTable({
   fullScreenProp,
   ...props
 }: SubmitNoiTableProp){
+
+  const getInitialPagination = () => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+
   return (
     <TableWrapper
       data={data}
@@ -116,6 +149,8 @@ export function NoiSubmissionTable({
         data={data}
         options={{
           selection: true,
+          pageSize: getInitialPagination(),
+          pageSizeOptions: [5, 10, 20, 30, 50]
         }}
         onSelectionChange={handleSelection}
       />

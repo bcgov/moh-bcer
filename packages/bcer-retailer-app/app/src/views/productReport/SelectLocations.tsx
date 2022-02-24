@@ -95,6 +95,14 @@ export default function SelectLocations() {
     }
   }, [error]);
 
+  const getInitialPagination = () => {
+    if (locations.length <= 5) {
+      return 5
+    } else if (locations.length <= 10) {
+      return 10
+    } else return 20
+  }
+
   return (
     <>
       <div>
@@ -140,7 +148,11 @@ export default function SelectLocations() {
                   {title: 'Phone Number', field: 'phone'},
                 ]}
                 data={locations}
-                options={{ selection: true }}
+                options={{ 
+                  selection: true,
+                  pageSize: getInitialPagination(),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                 }}
                 onSelectionChange={(rows: any) => {
                   setSelectedProducts(rows.map((row: BusinessLocation) => row.id))
                   setProductInfo({

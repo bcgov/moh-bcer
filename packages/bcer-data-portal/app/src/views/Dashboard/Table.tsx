@@ -13,14 +13,23 @@ function Table({
   data,
   ...props
 }: TableProps) {
+
+  const getInitialPagination = () => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+
   return (
     <Box>
       <StyledTable
         columns={DashboardUtil.tableColumn}
         data={data}
         options={{
-          pageSize: 20,
-          pageSizeOptions: [20, 30, 50],
+          pageSize: getInitialPagination(),
+          pageSizeOptions: [5, 10, 20, 30, 50],
         }}
         {...props}
       />

@@ -378,10 +378,12 @@ export default function Locations() {
     }
   }
 
-  const viewLocation = () => {
-    if(selectedRows?.length === 1){
-      history.push(`/location/${selectedRows[0].id}`)
-    }
+  const getInitialPagination = () => {
+    if (locations.length <= 5) {
+      return 5
+    } else if (locations.length <= 10) {
+      return 10
+    } else return 20
   }
 
   return (
@@ -499,8 +501,8 @@ export default function Locations() {
                   columns={tableColumns}
                   options={{
                     selection: true,
-                    pageSize: 20,
-                    pageSizeOptions: [20, 30, 50],
+                    pageSize: getInitialPagination(),
+                    pageSizeOptions: [5, 10, 20, 30, 50],
                     sorting: true,
                   }}
                   onSelectionChange={(rows: BusinessLocation[]) => {

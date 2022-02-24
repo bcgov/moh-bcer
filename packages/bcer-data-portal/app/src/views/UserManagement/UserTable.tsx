@@ -11,6 +11,15 @@ interface UserTableProps {
 }
 
 function UserTable({ data, editHandler, loading }: UserTableProps) {
+
+  const getInitialPagination = () => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+
   return (
     <Box>
       {loading && <LinearProgress />}
@@ -18,7 +27,7 @@ function UserTable({ data, editHandler, loading }: UserTableProps) {
         columns={UserManagementUtil.getColumns(editHandler)}
         data={data}
         options={{
-          pageSize: 5,
+          pageSize: getInitialPagination(),
           pageSizeOptions: [5, 10, 20, 30],
         }}
       />
