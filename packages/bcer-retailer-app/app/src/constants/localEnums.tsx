@@ -168,3 +168,9 @@ export enum ApiOperation {
   UploadData = 'Upload Data',
   ConfirmSubmission = 'Confirm Submission',
 }
+
+export enum ReportStatus {
+  Reported = 'reported',
+  Missing = 'missing',
+  NotRequired = 'notRequired',
+}

@@ -10,7 +10,7 @@ import { Business, BusinessLocation } from '@/constants/localInterfaces';
 import { formatError } from '@/utils/formatting';
 import NoiSubmission from '@/components/Noi/NoiSubmission';
 import { NoiUtil } from '@/utils/noi.util';
-import { OutstandingNoiTable, SubmittedNoiTable } from './Tables';
+import { NoiMissingSalesReportTable, OutstandingNoiTable, SubmittedNoiTable } from './Tables';
 import FullScreen from '@/components/generic/FullScreen';
 import jsPDF from 'jspdf';
 import Pdf from './Pdf';
@@ -35,8 +35,10 @@ export default function NoiOverview() {
   const outstandingFullscreenState = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<Array<BusinessLocation>>([]);
   const submittedFullscreenState = useState<boolean>(false);
+  const [missingSales, setMissingSales] = useState<Array<BusinessLocation>>([]);
+  const missingSalesFullScreenState = useState<boolean>(false);
   const { location: { pathname } } = history;
-  const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?includes=noi`);
+  const [{ data, loading, error }] = useAxiosGet<{locations: BusinessLocation[]}>(`/business/report-overview`);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
 
@@ -47,13 +49,15 @@ export default function NoiOverview() {
   }, [pathname, appGlobal.noiComplete]);
 
   useEffect(() => {
-    if (locations.length) {
-      const outstanding = locations.filter(NoiUtil.outstandingNoi);
-      const submitted = locations.filter(NoiUtil.submittedNoi);
+    if (data?.locations?.length) {
+      const outstanding = data.locations?.filter(NoiUtil.outstandingNoi);
+      const missingSales = data.locations?.filter(NoiUtil.missingSalesReport);
+      const submitted = data.locations?.filter(NoiUtil.submittedNoi);
       setOutstanding(outstanding);
+      setMissingSales(missingSales);
       setSubmitted(submitted);
     }
-  }, [locations]);
+  }, [data]);
 
   useEffect(() => {
     if (error) {
@@ -106,16 +110,24 @@ export default function NoiOverview() {
           fullScreenProp={outstandingFullscreenState}
         >
           <OutstandingNoiTable 
-            data={outstanding} 
+            data={outstanding || []} 
             handleActionButton={()=>{history.push('/noi/submit')}}
             fullScreenProp={outstandingFullscreenState}
+          />
+        </FullScreen>
+        <FullScreen
+          fullScreenProp={missingSalesFullScreenState}
+        >
+          <NoiMissingSalesReportTable 
+            data={missingSales || []}
+            fullScreenProp={missingSalesFullScreenState}
           />
         </FullScreen>
         <FullScreen
           fullScreenProp={submittedFullscreenState}
         >
           <SubmittedNoiTable 
-            data={submitted}
+            data={submitted || []}
             fullScreenProp={submittedFullscreenState}
             downloadAction={printDocument}
           />
