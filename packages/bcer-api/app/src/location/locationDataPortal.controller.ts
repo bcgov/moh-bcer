@@ -252,9 +252,18 @@ export class LocationDataPortalController {
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
   @AllowAnyRole()
   @Get('/get-location/:id')
-  async getExtendedLocation(@Param('id') id: string){
+  async getExtendedLocation(@Param('id') id: string, @Query('includes') includes: string){
     if(!id) throw NotFoundException;
-    const location = await this.service.getLocation(id, 'business,business.users,noi,sales,sales.product,sales.productSold,products,manufactures,manufactures.ingredients');
+    const defaultRelations = 'business,business.users,noi,sales,sales.product,sales.productSold,products,manufactures,manufactures.ingredients';
+    const allowedRelations = defaultRelations.split(',');
+    if(includes){
+      includes.split(',').forEach((relation) => {
+        if(!allowedRelations.includes(relation)){
+          throw new UnprocessableEntityException('Includes invalid relation');
+        }
+      })
+    }
+    const location = await this.service.getLocation(id, includes || defaultRelations);
     return location;
   }
 

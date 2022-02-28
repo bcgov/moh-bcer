@@ -8,6 +8,7 @@ import { LocationModule } from 'src/location/location.module';
 import { BusinessEntity } from 'src/business/entities/business.entity';
 import { UserMiddleware } from 'src/user/middleware/user.middleware';
 import { UserModule } from 'src/user/user.module';
+import { ProductsDataPortalController } from './productsDataPortal.controller';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { UserModule } from 'src/user/user.module';
   ],
   exports: [ProductsService],
   providers: [ProductsService],
-  controllers: [ProductsController]
+  controllers: [ProductsController, ProductsDataPortalController]
 })
 export class ProductsModule {
   async configure(consumer: MiddlewareConsumer) {
