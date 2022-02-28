@@ -151,4 +151,25 @@ export class BusinessDataPortalController {
     }
     return await this.locationService.getReportingStatus(businessId, query?.type);
   }
+
+  @ApiOperation({ summary: 'gets business info by id' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK, type: String })
+  @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+  @AllowAnyRole()
+  @Get('/:businessId')
+  async getSingleBusiness(@Param('businessId') businessId, @Query('includes') includes: string){
+    if(!businessId){
+      throw new UnprocessableEntityException('businessId is a required parameter')
+    }
+    if(includes){
+      includes.split(',').forEach((relation) => {
+        if(!['noi', 'locations', 'users'].includes(relation)){
+          throw new UnprocessableEntityException('Invalid relation. allowed relations: noi,locations,users');
+        }
+      })
+    }
+    const business = await this.businessService.getBusinessById(businessId, includes);
+    return business?.toResponseObject();
+  }
 }
