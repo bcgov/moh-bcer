@@ -146,6 +146,12 @@ export default function ViewLocations() {
     showNetworkErrorMessage(error)
   }, [error])
 
+  const getBreadcrumb = () => {
+    if (appGlobal?.history?.pathname?.includes('business')) return 'Business Details'
+    else if (appGlobal?.history?.pathname?.includes('locations')) return 'Submitted Locations'
+    else return 'Previous Page'
+  }
+
   const getOptions = () => {
     const options = [
       {
@@ -184,7 +190,7 @@ export default function ViewLocations() {
             <CircularProgress/>
           :
             <>
-              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.push(routes.root)}>Submitted Locations</span> / Location Details</Typography>
+              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.goBack()}>{getBreadcrumb()}</span> / Location Details</Typography>
               {
                 data
                   &&
@@ -305,13 +311,13 @@ export default function ViewLocations() {
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">NOI Original Submission Date</Typography>
-                                <Typography className={classes.rowContent}>{moment(data.noi.created_at).format('YYYY-MM-DD')}</Typography>
+                                <Typography className={classes.rowContent}>{data.noi ? moment(data.noi.created_at).format('YYYY-MM-DD') : 'N/A'}</Typography>
                               </Box>
                             </Grid>
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">NOI Renewal Date</Typography>
-                                <Typography className={classes.rowContent}>{data.noi.renewed_at ? moment(data.noi.renewed_at).format('YYYY-MM-DD') : 'Not Renewed'}</Typography>
+                                <Typography className={classes.rowContent}>{data.noi ? data.noi.renewed_at ? moment(data.noi.renewed_at).format('YYYY-MM-DD') : 'Not Renewed' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
                           </Grid>    

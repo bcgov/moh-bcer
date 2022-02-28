@@ -2,10 +2,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
 import { makeStyles, Typography, Paper, Snackbar } from '@material-ui/core';
-import { CSVLink } from 'react-csv';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
 
 import { StyledTable, StyledButton, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
@@ -13,6 +11,8 @@ import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { ProductInfoContext } from '@/contexts/ProductReport';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -36,24 +36,8 @@ const useStyles = makeStyles({
     color: '#0053A4',
     paddingRight: '25px',
   },
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-  },
-  boxTitle: {
-    paddingBottom: '10px'
-  },
   tableRowCount: {
     paddingBottom: '10px'
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px'
-  },
-  csvLink: {
-    textDecoration: 'none',
   },
   submitWrapper: {
     display: 'flex',
@@ -72,6 +56,7 @@ export default function SelectLocations() {
   const [{ data: locations = [], loading, error }, get] = useAxiosGet(`/location`); 
   const [{ response, loading: patchLoading, error: patchError }, patch] = useAxiosPatch(`/products`, { manual: true });
   const [isConfirmOpen, setOpenConfirm] = useState<boolean>(false);
+  const viewFullscreenTable = useState<boolean>(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [productInfo, setProductInfo] = useContext(ProductInfoContext);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
@@ -127,52 +112,46 @@ export default function SelectLocations() {
             locations if they will sell the same inventory.
           </Typography>
         </div>
-        <Paper className={classes.box} variant='outlined'>
-          <Typography className={classes.boxTitle} variant='subtitle1'>Select locations that this report applies to.</Typography>
-          <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant='body2'>
-              You have {locations.length} retail locations.
-              {productInfo.products.length * productInfo.locations.length < 200000
+        <FullScreen fullScreenProp={viewFullscreenTable}>
+          <TableWrapper
+            tableHeader='Select locations that this report applies to.'
+            tableSubHeader={
+              `You have ${locations.length} retail locations.
+              ${productInfo.products.length * productInfo.locations.length < 200000
                 ? ` You are submitting ${productInfo.products.length} products to ${productInfo.locations.length} locations.`
                 : ` Please limit your submission to ${Math.floor(200000 / productInfo.products.length)} locations.`
-              }
-            </Typography>
-            {
-              locations.length
-              ?
-                <CSVLink
-                  headers={Object.keys(BusinessLocationHeaders)}
-                  data={locations?.map((l: BusinessLocation) => {
-                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-                  })}
-                  filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-                  <StyledButton variant='outlined'>
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download CSV
-                  </StyledButton>
-                </CSVLink>
-              : null
+              }`
             }
-          </div>
-          <div style={{ overflowX: 'auto' }}>
-            <StyledTable
-              columns={[
-                {title: 'Address', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
-                {title: 'Email Address', field: 'email'},
-                {title: 'Phone Number', field: 'phone'},
-              ]}
-              data={locations}
-              options={{ selection: true }}
-              onSelectionChange={(rows: any) => {
-                setSelectedProducts(rows.map((row: BusinessLocation) => row.id))
-                setProductInfo({
-                  ...productInfo,
-                  locations: rows.map((row: BusinessLocation) => row.id)
-                })
-              }}
-            />
-          </div>
-        </Paper>
+            data={locations}
+            csvProps={{
+              headers: Object.keys(BusinessLocationHeaders),
+              data: locations?.map((l: BusinessLocation) => {
+                return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+              }),
+              filename: 'business_locations.csv'
+            }}
+            fullScreenProp={viewFullscreenTable} 
+          >
+            <div style={{ overflowX: 'auto' }}>
+              <StyledTable
+                columns={[
+                  {title: 'Address', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
+                  {title: 'Email Address', field: 'email'},
+                  {title: 'Phone Number', field: 'phone'},
+                ]}
+                data={locations}
+                options={{ selection: true }}
+                onSelectionChange={(rows: any) => {
+                  setSelectedProducts(rows.map((row: BusinessLocation) => row.id))
+                  setProductInfo({
+                    ...productInfo,
+                    locations: rows.map((row: BusinessLocation) => row.id)
+                  })
+                }}
+              />
+            </div>
+          </TableWrapper>
+        </FullScreen>
         <div className={classes.submitWrapper}>
           <StyledButton
             variant='contained'

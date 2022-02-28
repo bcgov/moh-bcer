@@ -7,3 +7,5 @@ export * from './components/steppers';
 export * from './components/custom';
 export * from './utils';
 export * from './components/generic';
+export * from './page';
+export * from './components/icons';

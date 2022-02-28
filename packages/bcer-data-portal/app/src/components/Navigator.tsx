@@ -69,8 +69,6 @@ function Navigator() {
     history.push(routes.root);
   };
 
-  console.log(config)
-
   return (
     <div>
       <AppBar position="static" className={classes.appBar}>
@@ -83,19 +81,25 @@ function Navigator() {
               textColor="primary"
               aria-label="icon tabs example"
             >
+              <StyledTab 
+                disableRipple
+                label="Dashboard"
+                {...a11yProps(0)}
+                value={routes.root}
+              />
               {config.permissions.MANAGE_LOCATIONS && (
                 <StyledTab
                   disableRipple
                   label="Submitted Locations"
-                  {...a11yProps(0)}
-                  value={routes.root}
+                  {...a11yProps(1)}
+                  value={routes.submittedLocations}
                 />
               )}
               {config.permissions.MANAGE_USERS && (
                 <StyledTab
                   disableRipple
                   label="User Management"
-                  {...a11yProps(1)}
+                  {...a11yProps(2)}
                   value={routes.userManagement}
                 />
               )}
@@ -103,7 +107,7 @@ function Navigator() {
                 <StyledTab
                   disableRipple
                   label="Send Notification"
-                  {...a11yProps(2)}
+                  {...a11yProps(3)}
                   value={routes.sendNotification}
                 />
               )}

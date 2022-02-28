@@ -51,7 +51,7 @@ const BusinessOwner = () => {
       <div className={classes.contentWrapper}>
         <Switch>
           <Route exact path='/business/:step' component={MyBusinessNav} />
-          <Route exact path='/mybusiness' component={MyBusiness} />
+          <Route exact path='/myDashboard' component={MyBusiness} />
           <Route exact path='/submission/:submissionId' component={MyBusinessSubmission} />
           <Route exact path={['/noi', '/noi/success']} component={NoiOverview} />
           <Route exact path='/noi/submit' component={NoiSubmit} />

@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useLocation, useHistory, useParams, Link } from 'react-router-dom';
+import { useLocation, useHistory, Link } from 'react-router-dom';
 import moment from 'moment';
 
 import { useAxiosGet } from '@/hooks/axios';
 import { Divider, Grid, makeStyles, Typography, Paper } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
 import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
 import ArrowBack from '@material-ui/icons/ArrowBack';
@@ -17,6 +16,8 @@ import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
 import { BusinessLocation, ManufacturingReport } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -148,6 +149,7 @@ export default function ManufacturingOverview() {
   const history = useHistory();
   const searchParams = new URLSearchParams(location.search);
   let [success, setSuccess] = useState<boolean>(false);
+  let viewFullscreenTable = useState<boolean>(false);
 
   const [{ data: manufacturingReports = [], error: manufacturingError }] = useAxiosGet(`/manufacturing`);
   const [{ data: locations = [], loading, error: locationsError }] = useAxiosGet(`/manufacturing/locations`);
@@ -260,43 +262,44 @@ export default function ManufacturingOverview() {
           </div>
           <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
         </div>
-        <div className={classes.subtitleWrapper}>
-          <Typography className={classes.subtitle} variant='h6'>Submitted Manufacturing Reports</Typography>
-        </div>
-        <Paper className={classes.tableBox} variant='outlined' >
-          <Typography variant='body1' className={classes.bannerHeader}>
-            Manufacturing List
-          </Typography>
-          <div>
-            <StyledTable
-              data={manufacturingReports}
-              columns={[
-                {
-                  title: 'Product name',
-                  render: (report: ManufacturingReport) => `${report.productName}`,
-                },
-                {
-                  title: 'Submitted Date',
-                  render: (report: ManufacturingReport) => `${moment(report.created_at).format('MMM DD, YYYY')}`,
-                },
-                {
-                  title: 'Locations',
-                  render: (report: ManufacturingReport) => `${report.locations.length}`
-                },
-                {
-                  title: '',
-                  readOnly: true,
-                  render: (report: ManufacturingReport) => (
-                    <Link to={`/manufacturing/${report.id}`} className={classes.viewLink}>
-                      View
-                    </Link>
-                  ),
-                  align: 'right'
-                }
-              ]}
-            />
-          </div>
-        </Paper>
+        <FullScreen fullScreenProp={viewFullscreenTable}>
+          <TableWrapper
+            blockHeader='Submitted Manufacturing Reports'
+            tableHeader='Manufacturing List'
+            data={manufacturingReports}
+            fullScreenProp={viewFullscreenTable} 
+          >
+            <div>
+              <StyledTable
+                data={manufacturingReports}
+                columns={[
+                  {
+                    title: 'Product name',
+                    render: (report: ManufacturingReport) => `${report.productName}`,
+                  },
+                  {
+                    title: 'Submitted Date',
+                    render: (report: ManufacturingReport) => `${moment(report.created_at).format('MMM DD, YYYY')}`,
+                  },
+                  {
+                    title: 'Locations',
+                    render: (report: ManufacturingReport) => `${report.locations.length}`
+                  },
+                  {
+                    title: '',
+                    readOnly: true,
+                    render: (report: ManufacturingReport) => (
+                      <Link to={`/manufacturing/${report.id}`} className={classes.viewLink}>
+                        View
+                      </Link>
+                    ),
+                    align: 'right'
+                  }
+                ]}
+              />
+            </div>
+          </TableWrapper>
+        </FullScreen>
       </div>
     </>
   );

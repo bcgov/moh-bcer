@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles, Typography, Paper } from '@material-ui/core';
-import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
+import { StyledTable } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
-import { CSVLink } from 'react-csv';
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
 
 import { SuccessStepEnum, BusinessLocationHeaders } from '@/constants/localEnums';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
@@ -12,6 +10,8 @@ import SuccessStep from '@/components/successStep/SuccessStep'
 import FileCheckGreen from '@/assets/images/file-check-green.png';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   title: {
@@ -110,6 +110,7 @@ export default function MyBusinessSubmission (props: any) {
   const [{ data: submission, error }, get] = useAxiosGet(`/submission/${props.match.params.submissionId}`);
   const [details, setDetails] = useState<BusinessDetails>();
   const [locations, setlocations] = useState<Array<IBusinessLocationValues>>();
+  const viewFullscreenTable = useState<boolean>(false);
   const [appGlobal, setAppGlobalContext ] = useContext(AppGlobalContext);
 
   const [{ data: status, error: statusError }] = useAxiosGet(`/users/status`);
@@ -248,24 +249,20 @@ export default function MyBusinessSubmission (props: any) {
       {
         locations?.length
           ?
-            <div className={classes.box}>
-              <div className={classes.boxHeader}>
-                Business Locations
-              </div>
-              <div className={classes.actionsWrapper}>
-                <div className={classes.boxDescription}>You have {locations.length} retail entries.</div>
-                <CSVLink
-                  headers={Object.keys(BusinessLocationHeaders)}
-                  data={locations.map((l) => {
-                    return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
-                  })}
-                  filename={'business_locations.csv'} className={classes.csvLink} target='_blank'>
-                  <StyledButton variant='outlined'>
-                    <SaveAltIcon className={classes.buttonIcon} />
-                    Download CSV
-                  </StyledButton>
-                </CSVLink>
-              </div>
+          <FullScreen fullScreenProp={viewFullscreenTable}>
+            <TableWrapper
+              tableHeader='Business Locations'
+              tableSubHeader={`You have ${locations.length} retail entries.`}
+              data={locations}
+              csvProps={{
+                headers: Object.keys(BusinessLocationHeaders),
+                data: locations.map((l) => {
+                  return [l.addressLine1, l.postal, l.city, l.email, l.phone, l.underage, l.health_authority, l.doingBusinessAs, l.manufacturing];
+                }),
+                filename: 'business_locations.csv'
+              }}
+              fullScreenProp={viewFullscreenTable} 
+            >
               <div className={classes.tableWrapper}>
                 <StyledTable
                   columns={[
@@ -283,9 +280,9 @@ export default function MyBusinessSubmission (props: any) {
                   data={locations}
                 />
               </div>
-            </div>
-          :
-            null
+            </TableWrapper>
+          </FullScreen>
+          : null
       }
     </div>
   )

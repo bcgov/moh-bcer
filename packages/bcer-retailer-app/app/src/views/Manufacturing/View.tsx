@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 
 import { useAxiosGet } from '@/hooks/axios';
@@ -12,6 +12,8 @@ import { HealthAuthorities } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import Delete from './Delete';
+import FullScreen from '@/components/generic/FullScreen';
+import TableWrapper from '@/components/generic/TableWrapper';
 
 const useStyles = makeStyles({
   box: {
@@ -37,6 +39,7 @@ export default function ManufacturingReport() {
   const classes = useStyles();
   const history = useHistory();
   const { reportId } = useParams<{reportId: string}>();
+  const viewFullscreenTable = useState<boolean>(false)
   const [{ data: report, loading, error }] = useAxiosGet(`/manufacturing/${reportId}`);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
@@ -53,40 +56,50 @@ export default function ManufacturingReport() {
           <ArrowBackIcon className={classes.buttonIcon} />
           Back
         </StyledButton>
-        <Typography className={classes.title} variant='h5'>Manufacturing Report</Typography>
-        <StyledTable
-          data={report.ingredients}
-          columns={[
-            {
-              title: 'Product name',
-              render: () => `${report.productName}`,
-            },
-            {
-              title: 'Ingredient Name',
-              field: 'name',
-            },
-            {
-              title: 'Scientific Name',
-              field: 'scientificName',
-            },
-            {
-              title: 'Manufacturer Name',
-              field: 'manufacturerName',
-            },
-            {
-              title: 'Manufacturer Address',
-              field: 'manufacturerAddress',
-            },
-            {
-              title: 'Manufacturer Email',
-              field: 'manufacturerEmail',
-            },
-            {
-              title: 'Manufacturer Phone',
-              field: 'manufacturerPhone',
-            },
-          ]}
-        />
+        <FullScreen fullScreenProp={viewFullscreenTable}>
+          <TableWrapper
+            blockHeader={<Typography className={classes.title} variant='h5'>Manufacturing Report</Typography>}
+            data={report.ingredients}
+            fullScreenProp={viewFullscreenTable}
+            isOutlined={false}
+          >
+            <div>
+              <StyledTable
+                data={report.ingredients}
+                columns={[
+                  {
+                    title: 'Product name',
+                    render: () => `${report.productName}`,
+                  },
+                  {
+                    title: 'Ingredient Name',
+                    field: 'name',
+                  },
+                  {
+                    title: 'Scientific Name',
+                    field: 'scientificName',
+                  },
+                  {
+                    title: 'Manufacturer Name',
+                    field: 'manufacturerName',
+                  },
+                  {
+                    title: 'Manufacturer Address',
+                    field: 'manufacturerAddress',
+                  },
+                  {
+                    title: 'Manufacturer Email',
+                    field: 'manufacturerEmail',
+                  },
+                  {
+                    title: 'Manufacturer Phone',
+                    field: 'manufacturerPhone',
+                  },
+                ]}
+              />
+            </div>
+          </TableWrapper>
+        </FullScreen>
         {report.locations.map((location: BusinessLocation) => (
           <Paper className={classes.box} variant='outlined' key={location.id}>
             <Grid container alignItems='center' spacing={2}>
