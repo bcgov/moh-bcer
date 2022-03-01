@@ -6,6 +6,7 @@ import {
   LocationStatus,
   NoiStatus,
   NoiStatusHeaders,
+  ReportStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { Box, Grid, IconButton, Tooltip, Typography } from '@material-ui/core';
@@ -18,8 +19,17 @@ export class NoiUtil {
   static outstandingNoi(l: BusinessLocation): boolean {
     return (
       l.status === LocationStatus.Active &&
-      (!l.noi || l.noi?.status === NoiStatus.NotRenewed)
+      (!l.noi || l.noi?.status === NoiStatus.NotRenewed) &&
+      (l.reportStatus?.salesReport !== ReportStatus.Missing)
     );
+  }
+
+  static missingSalesReport(l: BusinessLocation): boolean {
+    return (
+      l.status === LocationStatus.Active &&
+      (!l.noi || l.noi?.status === NoiStatus.NotRenewed) &&
+      (l.reportStatus?.salesReport === ReportStatus.Missing)
+    )
   }
 
   static submittedNoi(l: BusinessLocation): boolean {

@@ -122,3 +122,22 @@ export function NoiSubmissionTable({
     </TableWrapper>
   );
 };
+
+export function NoiMissingSalesReportTable({
+  data,
+  fullScreenProp,
+}: GenericTableProp){
+  return (
+    <TableWrapper
+      blockHeader={'NOI Renewal requiring Sales Report submission'}
+      data={data}
+      tableHeader={'Business Locations'}
+      tableSubHeader={`You have ${data.length} locations that require a Sales Report before their NOI can be renewed.`}
+      fullScreenProp={fullScreenProp}
+    >
+      <NoiTable 
+        data={data}
+      />
+    </TableWrapper>
+  )
+}

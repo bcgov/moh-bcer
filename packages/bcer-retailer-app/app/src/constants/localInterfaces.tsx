@@ -3,6 +3,7 @@ import {
   HealthAuthority,
   NoiStatus,
   LocationStatus,
+  ReportStatus,
 } from '@/constants/localEnums';
 
 export interface UserProfile {
@@ -75,6 +76,7 @@ export interface BusinessLocation {
   salesCount: number;
   created_at?: Date;
   status: LocationStatus;
+  reportStatus?: LocationReportStatus;
 }
 
 export interface LocationFileUploadRO {
@@ -236,4 +238,11 @@ export type BusinessReportStatus = {
   missingSalesReport: string[];
   missingManufacturingReport: string[];
   earlyMissingConfirmed: boolean;
+}
+
+export interface LocationReportStatus {
+  noi: ReportStatus;
+  manufacturingReport: ReportStatus;
+  productReport: ReportStatus;
+  salesReport: ReportStatus;
 }
