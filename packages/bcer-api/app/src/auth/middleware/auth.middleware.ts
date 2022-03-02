@@ -37,7 +37,7 @@ export class AuthMiddleware implements NestMiddleware {
             start,
           )} ms`,
         );
-        if (profile.bceid_user_guid) {
+        if (profile.bceid_user_guid || profile.sub) {
           req.ctx = {
             bceidGuid: profile.bceid_user_guid || profile.sub || profile.id,
             bceidUser: profile.preferred_username,

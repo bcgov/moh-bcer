@@ -56,6 +56,15 @@ run-local:
 	@echo "+\n++ Make: Running locally ...\n+"
 	@docker-compose -f docker-compose.dev.yml up
 
+setup-test:
+	@echo "+\n++ Make: setting for test environment ...\n+"
+	@cd ./packages/bcer-shared-components && npm i && npm run build && cd ../../
+	@cd ./packages/bcer-retailer-app && make setup-cypress-env
+
+run-test:
+	@echo "+\n++ Make: Running test environment ...\n+"
+	@docker-compose -f docker-compose.test.yml up
+
 run-local-retailer:
 	@echo "+\n++ Make: Running client locally ...\n+"
 	@docker-compose -f docker-compose.dev.yml up retailer-app

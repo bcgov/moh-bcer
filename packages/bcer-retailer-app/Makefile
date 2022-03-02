@@ -54,6 +54,10 @@ setup-local-env:
 	@echo "+\n++ Make: Preparing project for dev environment...\n+"
 	@cp .config/.env.local app/.env
 
+setup-cypress-env:
+	@echo "+\n++ Make: Preparing project for cypress environment...\n+"
+	@cp .config/.env.cypress app/.env
+
 setup-development-env:
 	@echo "+\n++ Make: Preparing project for dev environment...\n+"
 	@cp .config/.env.dev app/.env

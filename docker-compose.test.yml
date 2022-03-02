@@ -1,0 +1,95 @@
+version: '3'
+
+services:
+  retailer-app:
+    image: bcer-retailer-app:test
+    container_name: bcer-retailer-app-test
+    build:
+      context: ./packages
+      dockerfile: Dockerfile.retailer-app.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/bcer-retailer-app:/usr/src/app/bcer-retailer-app
+      - ./packages/bcer-shared-components:/usr/src/app/bcer-shared-components
+      - /usr/src/app/bcer-retailer-app/app/node_modules
+      - /usr/src/app/bcer-shared-components/node_modules
+    depends_on:
+      - postgres
+      - application
+    networks:
+      - backend
+      
+  data-portal:
+    image: bcer-data-portal:test
+    container_name: bcer-data-portal-test
+    build:
+      context: ./packages
+      dockerfile: Dockerfile.data-portal.dev
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./packages/bcer-data-portal:/usr/src/app/bcer-data-portal
+      - ./packages/bcer-shared-components:/usr/src/app/bcer-shared-components
+      - /usr/src/app/bcer-data-portal/app/node_modules
+      - /usr/src/app/bcer-shared-components/node_modules
+    depends_on:
+      - postgres
+      - application
+    networks:
+      - backend
+
+  application:
+    image: vape-nest-api:test
+    container_name: vape-nest-api-test
+    build:
+      context: ./packages/bcer-api/app
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=local-dev
+      - DB_CONFIG_NAME=${DB_CONFIG_NAME}
+      - DB_CONFIG_TYPE=${DB_CONFIG_TYPE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - KEYCLOAK_PORT=8080
+      - KEYCLOAK_REALM=vaping-test
+      - KEYCLOAK_CLIENT=CYPRESS
+      - KEYCLOAK_AUTH_URL=https://keycloak.freshworks.club/auth
+      - KEYCLOAK_DATA_REALM=vaping-test
+      - KEYCLOAK_DATA_CLIENT=CYPRESS
+      - KEYCLOAK_DATA_AUTH_URL=https://keycloak.freshworks.club/auth
+    expose:
+      - "4000"
+    volumes:
+      - ./packages/bcer-api/app:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  postgres:
+    image: vape-nest-api-postgres:test
+    container_name: vape-nest-api-postgres-test
+    build:
+      context: ./packages/bcer-api/.docker/postgres
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES="nest_api_dev","nest_api_test","vape_migrations"
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"
+
+volumes:
+  postgres:
