@@ -168,9 +168,10 @@ export interface GenericTableProp {
 
 export type TableColumn = {
   title?: string;
-  sorting?: string;
-  defaultSort?: string;
-} & ({ field: string } | { render: Function });
+  sorting?: boolean;
+  defaultSort?: 'desc' | 'asc';
+  width?: number;
+} & ({ field: string } | { render: (data: any, type: "row" | "group") => any });
 
 export interface SubscriptionFormData {
   phoneNumber1: string;

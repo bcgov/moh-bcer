@@ -15,6 +15,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { LocationUtil } from '@/utils/location.util';
 
 
 const useStyles = makeStyles({
@@ -239,18 +240,7 @@ export default function ConfirmAndSubmit () {
           >
             <div style={{ overflowX: 'auto' }}>
               <StyledTable
-                columns={[
-                  {title: 'Address 1', field: 'addressLine1', width: 150},
-                  {title: 'Address 2', field: 'addressLine2', width: 150},
-                  {title: 'Postal Code', field: 'postal', width: 150},
-                  {title: 'City', field: 'city', width: 150},
-                  {title: 'Business Phone', field: 'phone', width: 150},
-                  {title: 'Business email', field: 'email', width: 150},
-                  {title: 'Health Authority', field: 'health_authority', width: 150},
-                  {title: 'Doing Business As', field: 'doingBusinessAs', width: 150},
-                  {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
-                  {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
-                ]}
+                columns={LocationUtil.getTableColumns()}
                 data={newLocations}
               />
             </div>

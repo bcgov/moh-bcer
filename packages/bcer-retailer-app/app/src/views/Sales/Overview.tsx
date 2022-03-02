@@ -31,6 +31,7 @@ import SalesSubmittedStatus from '@/components/Sales/SalesSubmittedStatus';
 import { SalesTable } from '@/components/Sales/SalesTable';
 import { getSalesReportYear } from '@/utils/time';
 import Loader from '@/components/Sales/Loader';
+import { LocationUtil } from '@/utils/location.util';
 
 const IconButton = styled(Button)({
   minWidth: '30px !important',
@@ -166,6 +167,8 @@ export default function SalesOverview() {
 
   const periodYear = getSalesReportYear();
 
+  const commonColumns = LocationUtil.getTableColumns(['doingBusinessAs', 'address1', 'city']);
+
   return outstandingLoading || submittedLoading ? (
     <CircularProgress />
   ) : (
@@ -230,22 +233,7 @@ export default function SalesOverview() {
                 searchFieldAlignment: 'left',
               }}
               columns={[
-                {
-                  title: 'Doing Business As',
-                  field: 'doingBusinessAs',
-                  render: (rd: BusinessLocation) => rd.doingBusinessAs,
-                },
-                {
-                  title: 'Address 1',
-                  field: 'addressLine1',
-                  render: (rd: BusinessLocation) => `${rd.addressLine1}`,
-                },
-
-                {
-                  title: 'City',
-                  field: 'city',
-                  render: (rd: BusinessLocation) => rd.city,
-                },
+                ...commonColumns,
                 {
                   title: 'Timeline',
                   render: (rd: BusinessLocation) =>
@@ -332,22 +320,7 @@ export default function SalesOverview() {
                 searchFieldAlignment: 'left',
               }}
               columns={[
-                {
-                  title: 'Doing Business As',
-                  field: 'doingBusinessAs',
-                  render: (rd: BusinessLocation) => rd.doingBusinessAs,
-                },
-                {
-                  title: 'Address 1',
-                  field: 'addressLine1',
-                  render: (rd: BusinessLocation) => `${rd.addressLine1}`,
-                },
-
-                {
-                  title: 'City',
-                  field: 'city',
-                  render: (rd: BusinessLocation) => rd.city,
-                },
+                ...commonColumns,
                 {
                   title: 'Timeline',
                   render: (rd: BusinessLocation) =>
@@ -447,22 +420,7 @@ export default function SalesOverview() {
                   searchFieldAlignment: 'left',
                 }}
                 columns={[
-                  {
-                    title: 'Doing Business As',
-                    field: 'doingBusinessAs',
-                    render: (rd: BusinessLocation) => rd.doingBusinessAs,
-                  },
-                  {
-                    title: 'Address 1',
-                    field: 'addressLine1',
-                    render: (rd: BusinessLocation) => `${rd.addressLine1}`,
-                  },
-
-                  {
-                    title: 'City',
-                    field: 'city',
-                    render: (rd: BusinessLocation) => rd.city,
-                  },
+                  ...commonColumns,
                   {
                     title: 'Timeline',
                     render: (rd: BusinessLocation) =>
@@ -556,22 +514,7 @@ export default function SalesOverview() {
                   searchFieldAlignment: 'left',
                 }}
                 columns={[
-                  {
-                    title: 'Doing Business As',
-                    field: 'doingBusinessAs',
-                    render: (rd: BusinessLocation) => rd.doingBusinessAs,
-                  },
-                  {
-                    title: 'Address 1',
-                    field: 'addressLine1',
-                    render: (rd: BusinessLocation) => `${rd.addressLine1}`,
-                  },
-
-                  {
-                    title: 'City',
-                    field: 'city',
-                    render: (rd: BusinessLocation) => rd.city,
-                  },
+                  ...commonColumns,
                   {
                     title: 'Timeline',
                     render: (rd: BusinessLocation) =>

@@ -15,3 +15,10 @@ export const mapToObject = (targetKeys: Object, sourceObject: Object): any => {
 
   return constructedObject;
 }
+
+export const truncateString = (s: string, length: number) => {
+  if((s || '').length > length){
+    s = `${s.slice(0, length)}..`;
+  }
+  return s;
+}
