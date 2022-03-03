@@ -1,0 +1,41 @@
+name: Test Application (e2e)
+
+on:
+  push:
+    tags:
+      - cypress
+  
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  tests:
+    name: cypress
+    runs-on: ubuntu-20.04
+    concurrency: ci-test
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install deps
+        run: npm install
+
+      - name: Run Locally
+        run: make run-tests
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          wait-on-timeout: 120
+          wait-on: 'http://localhost:3000'
+
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash

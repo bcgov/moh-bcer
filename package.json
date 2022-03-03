@@ -4,10 +4,12 @@
   "description": "![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)",
   "main": "index.js",
   "dependencies": {
-    "cypress-keycloak": "^1.8.0",
-    "cypress": "^9.5.0"
+    "cypress-keycloak": "^1.8.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "cypress": "^9.5.1",
+    "cypress-keycloak-commands": "^1.2.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
