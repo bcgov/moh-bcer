@@ -27,8 +27,11 @@ jobs:
       - name: Install deps
         run: npm install
 
+      - name: Setting up for local test
+        run: make setup-test
+
       - name: Run Locally
-        run: make run-tests
+        run: make run-test
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
