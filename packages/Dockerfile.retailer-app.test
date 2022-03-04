@@ -1,0 +1,26 @@
+FROM node:14.16.1 as builder
+
+MAINTAINER FreshWorks <web@freshworks.io>
+
+ENV PATH $PATH:/usr/src/app/node_modules/.bin
+
+WORKDIR /usr/src/app
+
+# Gets all the dependencies
+RUN apt-get update
+RUN apt-get install libgl1 -y
+RUN echo done
+# Assumes shared component is already built.
+COPY bcer-shared-components ./bcer-shared-components
+
+COPY ./bcer-retailer-app/app/package.json ./bcer-retailer-app/app/
+
+RUN cd ./bcer-retailer-app/app && npm i && cd ../../
+COPY ./bcer-retailer-app/app ./bcer-retailer-app/app
+COPY ./bcer-retailer-app/.config/.env.cypress ./bcer-retailer-app/app/.env
+RUN npm --prefix ./bcer-retailer-app/app/ run build:test
+
+FROM nginx:latest
+EXPOSE 3000
+COPY ./bcer-retailer-app/.nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /usr/src/app/bcer-retailer-app/app/build /usr/share/nginx/html

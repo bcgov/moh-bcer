@@ -70,7 +70,7 @@ const devConfig = merge([
       publicPath: ASSET_PATH,
       filename: 'bundle.js',
     },
-    watch: true,
+    watch: process.env.WATCH_FILES === 'false' ? false:  true,
     watchOptions: {
       ignored: /node_modules/,
       aggregateTimeout: 600,

@@ -63,7 +63,7 @@ setup-test:
 
 run-test:
 	@echo "+\n++ Make: Running test environment ...\n+"
-	@docker-compose -f docker-compose.test.yml up
+	@COMPOSE_HTTP_TIMEOUT=200 docker-compose -f docker-compose.test.yml up
 
 run-local-retailer:
 	@echo "+\n++ Make: Running client locally ...\n+"

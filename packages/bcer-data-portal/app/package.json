@@ -43,6 +43,7 @@
     "build:dev": "cp \"..\\.config\\.env.dev\" \".env\" && webpack --env=production",
     "build:uat": "cp \"..\\.config\\.env.staging\" \".env\" && webpack --env=production",
     "build:prod": "cp \"..\\.config\\.env.production\" \".env\" && webpack --env=production",
+    "build:test": "cp \"..\\.config\\.env.cypress\" \".env\" && webpack --env=production",
     "serve": "node ./server.js",
     "lint": "tslint -p ./tsconfig.json",
     "lint:fix": "tslint --fix -p ./tsconfig.json",

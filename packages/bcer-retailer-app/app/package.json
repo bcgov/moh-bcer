@@ -39,6 +39,7 @@
     "build:dev": "copy \"..\\.config\\.env.dev\" \".env\" && webpack --env=production",
     "build:uat": "cp \"..\\.config\\.env.staging\" \".env\" && webpack --env=production",
     "build:prod": "cp \"..\\.config\\.env.production\" \".env\" && webpack --env=production",
+    "build:test": "WATCH_FILES=false webpack --mode=production",
     "serve": "node ./server.js",
     "lint": "tslint -p ./tsconfig.json",
     "lint:fix": "tslint --fix -p ./tsconfig.json",
