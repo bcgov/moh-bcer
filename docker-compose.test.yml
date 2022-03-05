@@ -1,0 +1,99 @@
+version: '3'
+
+services:
+  retailer-app:
+    image: bcer-retailer-app:test
+    container_name: bcer-retailer-app-test
+    build:
+      context: ./packages
+      dockerfile: Dockerfile.retailer-app.test
+    ports:
+      - "3001:3000"
+    depends_on:
+      - postgres
+      - application
+    networks:
+      - backend
+
+  data-portal:
+    image: bcer-data-portal:test
+    container_name: bcer-data-portal-test
+    build:
+      context: ./packages
+      dockerfile: Dockerfile.data-portal.test
+    ports:
+      - "3002:3000"
+    depends_on:
+      - postgres
+      - application
+    networks:
+      - backend
+
+  application:
+    image: vape-nest-api:test
+    container_name: vape-nest-api-test
+    build:
+      context: ./packages/bcer-api/app
+      dockerfile: Dockerfile.test
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=local-dev
+      - DB_CONFIG_NAME=${DB_CONFIG_NAME}
+      - DB_CONFIG_TYPE=${DB_CONFIG_TYPE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=nest_api_test
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - KEYCLOAK_PORT=${TEST_KEYCLOAK_PORT}
+      - KEYCLOAK_REALM=${TEST_KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT=${TEST_KEYCLOAK_CLIENT}
+      - KEYCLOAK_AUTH_URL=${TEST_KEYCLOAK_AUTH_URL}
+      - KEYCLOAK_DATA_REALM=${TEST_KEYCLOAK_DATA_REALM}
+      - KEYCLOAK_DATA_CLIENT=${TEST_KEYCLOAK_DATA_CLIENT}
+      - KEYCLOAK_DATA_AUTH_URL=${TEST_KEYCLOAK_DATA_AUTH_URL}
+      - GA_KEY=${GA_KEY}
+      - TEXT_API_KEY=${TEXT_API_KEY}
+    expose:
+      - "4000"
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  postgres:
+    image: vape-nest-api-postgres:dev
+    container_name: vape-nest-api-postgres
+    build:
+      context: ./packages/bcer-api/.docker/postgres
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES="nest_api_dev","nest_api_test","vape_migrations"
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - backend
+
+  nginx:
+    restart: always
+    image: vape-nginx:test
+    container_name: vape-nginx-test
+    build:
+      dockerfile: Dockerfile.test
+      context: ./.nginx
+    ports:
+      - "3000:80"
+    depends_on: 
+      - retailer-app
+      - application
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"
+
+volumes:
+  postgres:

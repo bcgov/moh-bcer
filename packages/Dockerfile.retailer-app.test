@@ -1,0 +1,34 @@
+FROM node:14.16.1 as builder
+
+MAINTAINER FreshWorks <web@freshworks.io>
+
+ENV PATH $PATH:/usr/src/app/node_modules/.bin
+
+WORKDIR /usr/src/app
+
+COPY ./bcer-retailer-app/app/ ./bcer-retailer-app/app/
+COPY ./bcer-shared-components/ ./bcer-shared-components/
+
+# Install dependencies
+# RUN apk add --no-cache git
+
+
+RUN cd ./bcer-shared-components && npm install && cd ../
+RUN cd ./bcer-shared-components && npm run build && cd ../
+
+# COPY ./bcer-shared-components ./bcer-shared-components
+
+# RUN cd ./bcer-shared-components && npm run build && cd ../
+
+RUN apt-get update
+RUN apt-get install libgl1 -y
+
+RUN cd ./bcer-retailer-app/app && npm i && cd ../../
+
+# COPY ./bcer-retailer-app ./bcer-retailer-app
+
+RUN cd ./bcer-retailer-app/app/ && npm run build && cd ../../
+
+EXPOSE 3000
+
+CMD [ "npm", "--prefix", "./bcer-retailer-app/app/", "run", "serve" ]

@@ -54,6 +54,10 @@ setup-local-env:
 	@echo "+\n++ Make: Preparing project for dev environment...\n+"
 	@cp .config/.env.local app/.env
 
+setup-test-env:
+	@echo "+\n++ Make: Preparing project for test environment...\n+"
+	@cp .config/.env.test app/.env
+
 setup-development-env:
 	@echo "+\n++ Make: Preparing project for dev environment...\n+"
 	@cp .config/.env.dev app/.env
