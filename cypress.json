@@ -1,0 +1,10 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "auth_base_url": "https://keycloak.freshworks.club/auth",
+    "auth_realm": "vaping-test",
+    "auth_client_id": "CYPRESS",
+    "chromeWebSecurity": false,
+    "video": false
+  }
+}
