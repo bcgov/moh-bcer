@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Box, CircularProgress, Dialog, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import { useHistory, useParams } from 'react-router-dom';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import moment from 'moment';
 
 import { routes } from '@/constants/routes';
@@ -96,8 +96,22 @@ const useStyles = makeStyles({
 })
 
 export default function ViewLocations() {
+
+  return (
+    <Formik 
+      initialValues={{content: 'locationStatus'}}
+      onSubmit={() => {}}
+    >
+        <LocationsContent />
+    </Formik>
+
+  )
+}
+
+function LocationsContent() {
   const classes = useStyles();
   const history = useHistory();
+  const { values, setFieldValue }: {values: any, setFieldValue: Function} = useFormikContext();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [businessOwner, setBusinessOwner] = useState<UserRO>();
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
@@ -105,8 +119,13 @@ export default function ViewLocations() {
   const [currentContent, setCurrentContent] = useState<string>('locationStatus');
   const { id } = useParams<{id: string}>();
   const { config: authConfig } = useContext(ConfigContext);
-  const csvRef = useRef(null);
-
+  const locationStatusRef = useRef(null);
+  const locationInformationRef = useRef(null);
+  const productReportRef = useRef(null);
+  const manufacturingReportRef = useRef(null);
+  const salesReportRef = useRef(null);
+  const mapBoxRef = useRef(null);
+  
   const [{ data, loading, error }, get] = useAxiosGet(`/data/location/get-location/${id}?includes=business,business.users,noi`, {
     manual: false,
   });
@@ -120,17 +139,17 @@ export default function ViewLocations() {
     '/data/location/config'
   );
 
+  let options: any = {
+    root: null,
+    rootMargin: "0px",
+    threshold: [1.0]
+  };
 
   useEffect(() => {
     if (data) {
       setBusinessOwner(data.business.users.find((e: UserRO) => e.type === 'bo'));
     }
   }, [data])
-
-  useEffect(() => {
-    const element = document.getElementById(currentContent)
-    if (element) element.scrollIntoView({behavior: 'smooth', block: 'end'});
-  }, [currentContent])
 
   useEffect(() => {
     if(deleteData) {
@@ -145,6 +164,49 @@ export default function ViewLocations() {
   useEffect(() => {
     showNetworkErrorMessage(error)
   }, [error])
+
+  useEffect(() => {
+  
+    const observer = new IntersectionObserver(handleIntersect, options);
+
+    if (locationStatusRef.current) observer.observe(locationStatusRef.current);
+    if (locationInformationRef.current) observer.observe(locationInformationRef.current);
+    if (productReportRef.current) observer.observe(productReportRef.current);
+    if (manufacturingReportRef.current) observer.observe(manufacturingReportRef.current);
+    if (salesReportRef.current) observer.observe(salesReportRef.current);
+    if (mapBoxRef.current) observer.observe(mapBoxRef.current);
+    
+    return () => {
+      if (locationStatusRef.current) observer.unobserve(locationStatusRef.current);
+      if (locationInformationRef.current) observer.unobserve(locationInformationRef.current);
+      if (productReportRef.current) observer.unobserve(productReportRef.current);
+      if (manufacturingReportRef.current) observer.unobserve(manufacturingReportRef.current);
+      if (salesReportRef.current) observer.unobserve(salesReportRef.current);
+      if (mapBoxRef.current) observer.unobserve(mapBoxRef.current);
+    }
+  },[
+      locationStatusRef,
+      locationInformationRef,
+      productReportRef,
+      manufacturingReportRef,
+      salesReportRef,
+      mapBoxRef,
+      options
+    ]
+  )
+
+  const handleTocSelection = (field: string) => {
+    const element = document.getElementById(field)
+    if (element) element.scrollIntoView({behavior: 'smooth', block: 'end'});
+  }
+
+  const handleIntersect = (entries: any, observer: any) => {
+    if (entries[0].isIntersecting) {
+      console.log(entries[0].target.id)
+      setFieldValue('content', entries[0].target.id)
+    }
+  }
+
 
   const getBreadcrumb = () => {
     if (appGlobal?.history?.pathname?.includes('business')) return 'Business Details'
@@ -202,24 +264,15 @@ export default function ViewLocations() {
                     <Grid item xs={3}>
                       <Box className={`${classes.tableBox} ${classes.toc}`}>
                         <Typography variant="subtitle2">Table of Contents</Typography>
-                        <Formik 
-                          initialValues={{content: 'locationStatus'}}
-                          onSubmit={() => {}}
-                          >
-                            {({values}) => {
-                              setCurrentContent(values.content)
-                              return (
-                                <StyledRadioGroup
-                                  name="content"
-                                  options={getOptions()}
-                              />
-                              )
-                            }}
-                          </Formik>
+                        <StyledRadioGroup
+                          name="content"
+                          options={getOptions()}
+                          onChange={handleTocSelection}
+                        />
                       </Box>
                     </Grid>
                     <Grid container item xs={9} spacing={3}>
-                      <Grid item xs={12} id="locationStatus">
+                      <Grid item xs={12} id="locationStatus" ref={locationStatusRef} >
                         <Typography className={classes.cellTitle}>Location Status</Typography>
                         <Paper className={classes.box}>
                           <Box>
@@ -238,7 +291,7 @@ export default function ViewLocations() {
                         </Paper>
                       </Grid>
 
-                      <Grid item xs={12} id="userInformation">
+                      <Grid item xs={12} id="userInformation" >
                         <Typography className={classes.cellTitle}>User Information</Typography>
                         <Paper className={classes.box}>
                           <Box>
@@ -256,7 +309,7 @@ export default function ViewLocations() {
                         </Paper>
                       </Grid>
 
-                      <Grid item xs={12} id="locationInformation">
+                      <Grid item xs={12} id="locationInformation" ref={locationInformationRef} >
                         <Typography className={classes.cellTitle}>Location Information</Typography>
                         <Paper className={classes.box}>
                           <Grid container spacing={2}>
@@ -328,14 +381,14 @@ export default function ViewLocations() {
                           <Note targetId={id} type='location' showHideButton={true}/>
                       </Grid>
 
-                      <Grid item xs={12} id="productReport">
+                      <Grid item xs={12} id="productReport" ref={productReportRef}>
                         <Typography className={classes.cellTitle}>Product Report Submissions</Typography>
                         <Paper className={classes.tableBox}>
                           <LocationProductTable locationId={id} />
                         </Paper>
                       </Grid>
 
-                      <Grid item xs={12} id="manufacturingReport">
+                      <Grid item xs={12} id="manufacturingReport" ref={manufacturingReportRef} >
                         <Typography className={classes.cellTitle}>Manufacturing Report Submissions</Typography>
                         <Paper className={classes.tableBox}>
                           <LocationManufacturingTable locationId={id} />
@@ -345,7 +398,7 @@ export default function ViewLocations() {
                       {
                         authConfig.permissions.VIEW_SALES
                           &&
-                        <Grid item xs={12} id="salesReport">
+                        <Grid item xs={12} id="salesReport" ref={salesReportRef} >
                           <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
                           <Paper className={classes.tableBox}>
                             <LocationSalesTable locationId={id} />
@@ -365,7 +418,7 @@ export default function ViewLocations() {
                           </StyledButton>
                         </Box>
                       </Grid>
-                      <Grid item xs={12} id="mapBox" >
+                      <Grid item xs={12} id="mapBox" ref={mapBoxRef} >
                         <Box className={classes.mapBox}>
                           {config && !configError && <LocationViewMap id={id} config={config} />}
                         </Box>
