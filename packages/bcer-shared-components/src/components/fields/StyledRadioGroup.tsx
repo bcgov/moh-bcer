@@ -68,6 +68,7 @@ function GroupedRadioButtons ({
   label,
   options,
   disabled,
+  additionalChange,
   ...props
 }: RadioGroupInputProps):ReactElement {
   const classes = useStyles();
@@ -76,6 +77,9 @@ function GroupedRadioButtons ({
   const error = form.errors[field.name];
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (additionalChange) {
+      additionalChange(event.target.value)
+    }
     const value = event.target.value;
     const handler = field.onChange as Function
     if (value === 'true' || value === 'false') {
@@ -139,6 +143,7 @@ export function StyledRadioGroup ({
   label,
   row = false,
   options,
+  onChange = undefined
 }: StyledRadioProps) {
   return (
     <Field
@@ -148,6 +153,7 @@ export function StyledRadioGroup ({
       options={options}
       row={row}
       disabled={isDisabled}
+      additionalChange={onChange}
     />
   )
 }
