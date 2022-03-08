@@ -12,7 +12,7 @@ const useStyles = makeStyles({
   splashContainer: {
     display: 'flex',
     width: '100%',
-    height: '100%',
+    marginTop: '70px',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -68,7 +68,7 @@ const useStyles = makeStyles({
     float: 'right'
   },
   splashVerbiage: {
-    padding: '30px 0px 30px 0px',
+    padding: '0px 0px 30px 0px',
   },
   splashVerbiageBold: {
     color: '#0053A4',
