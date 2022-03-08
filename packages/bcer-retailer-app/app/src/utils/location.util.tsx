@@ -12,21 +12,37 @@ import {
   LocationStatus,
   NoiStatus,
 } from '@/constants/localEnums';
-import { BusinessLocation } from '@/constants/localInterfaces';
+import { BusinessLocation, TableColumn } from '@/constants/localInterfaces';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import moment from 'moment';
+import { StyledTableColumn } from 'vaping-regulation-shared-components';
+
+export type LocationBaseColumnType = {
+  address1: TableColumn,
+  address2: TableColumn,
+  city: TableColumn,
+  doingBusinessAs: TableColumn,
+  postal: TableColumn,
+  phone: TableColumn,
+  email: TableColumn,
+  healthAuthority: TableColumn,
+  minor: TableColumn,
+  manufacturing: TableColumn,
+}
+
+export type LocationBaseColumnsHeader = keyof LocationBaseColumnType;
 
 export class LocationUtil {
   static isClosed(l: BusinessLocation): boolean {
     return l.status === LocationStatus.Closed;
   }
 
-  static renderAddressLine1(l: BusinessLocation): string {
-    return `${l.addressLine1}`;
+  static renderAddressLine1(l: BusinessLocation): React.ReactNode {
+    return <StyledTableColumn value={l.addressLine1} />;
   }
 
-  static renderCity(l: BusinessLocation): string {
-    return `${l.city}`;
+  static renderCity(l: BusinessLocation): React.ReactNode {
+    return <StyledTableColumn value={l.city} />;
   }
 
   static renderPostalCode(l: BusinessLocation): string {
@@ -37,8 +53,12 @@ export class LocationUtil {
     return `${l.addressLine1}, ${l.postal}, ${l.city}`;
   }
 
-  static renderDoingBusinessAs(l: BusinessLocation): string {
-    return `${l.doingBusinessAs}`;
+  static renderDoingBusinessAs(l: BusinessLocation): React.ReactNode {
+    return <StyledTableColumn value={l.doingBusinessAs} length={20}/>;
+  }
+
+  static renderEmail(l: BusinessLocation): React.ReactNode {
+    return <StyledTableColumn value={l.email} />
   }
 
   static renderStatus(l: BusinessLocation) {
@@ -212,5 +232,24 @@ export class LocationUtil {
       max: moment(`${minYear+1}-${LocationClosingWindow.Max}`, 'YYYY-MM-DD').toDate(),
       min: moment(`${minYear}-${LocationClosingWindow.Min}`, 'YYYY-MM-DD').toDate(),
     })
+  }
+
+  private static readonly locationTableBaseColumns: LocationBaseColumnType = {
+    address1: {title: 'Address 1', render: LocationUtil.renderAddressLine1, width: 150},
+    address2: {title: 'Address 2', field: 'addressLine2', width: 150},
+    postal: {title: 'Postal Code', field: 'postal', width: 150},
+    city: {title: 'City', render: LocationUtil.renderCity, width: 150},
+    phone: {title: 'Business Phone', field: 'phone', width: 150},
+    email: {title: 'Business email', render: LocationUtil.renderEmail, width: 150},
+    healthAuthority: {title: 'Health Authority', field: 'health_authority', width: 150},
+    doingBusinessAs: {title: 'Doing Business As', render: LocationUtil.renderDoingBusinessAs, width: 150},
+    minor: {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
+    manufacturing: {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
+  }
+
+  static getTableColumns(list: LocationBaseColumnsHeader[] = ['address1', 'postal', 'city', 'phone', 'email', 'healthAuthority', 'doingBusinessAs', 'minor', 'manufacturing' ]){
+    let columns: TableColumn[] = [];
+    list?.forEach(l => columns.push(this.locationTableBaseColumns[l]));
+    return columns;
   }
 }
