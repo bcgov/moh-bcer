@@ -50,6 +50,7 @@ export interface RadioGroupInputProps {
   field: FieldAttributes<RadioGroupProps>;
   form: FormikProps<FormData>;
   label: string;
+  additionalChange: Function | undefined;
   props: TextFieldProps;
   disabled: boolean;
   options: Array<{
@@ -67,6 +68,7 @@ export interface StyledRadioProps {
   }>
   isDisabled?: boolean;
   row?: boolean | undefined;
+  onChange?: Function | undefined;
 }
 
 export interface CheckboxInputProps {
