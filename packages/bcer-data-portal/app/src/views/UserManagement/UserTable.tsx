@@ -1,4 +1,5 @@
 import { UserDetails } from '@/constants/localInterfaces';
+import { getInitialPagination } from '@/util/general.util';
 import { UserManagementUtil } from '@/util/userManagement.util';
 import { Box, LinearProgress } from '@material-ui/core';
 import React from 'react';
@@ -11,6 +12,7 @@ interface UserTableProps {
 }
 
 function UserTable({ data, editHandler, loading }: UserTableProps) {
+
   return (
     <Box>
       {loading && <LinearProgress />}
@@ -18,7 +20,7 @@ function UserTable({ data, editHandler, loading }: UserTableProps) {
         columns={UserManagementUtil.getColumns(editHandler)}
         data={data}
         options={{
-          pageSize: 5,
+          pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30],
         }}
       />

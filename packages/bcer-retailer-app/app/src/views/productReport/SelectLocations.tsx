@@ -13,6 +13,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -140,7 +141,11 @@ export default function SelectLocations() {
                   {title: 'Phone Number', field: 'phone'},
                 ]}
                 data={locations}
-                options={{ selection: true }}
+                options={{ 
+                  selection: true,
+                  pageSize: getInitialPagination(locations),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                 }}
                 onSelectionChange={(rows: any) => {
                   setSelectedProducts(rows.map((row: BusinessLocation) => row.id))
                   setProductInfo({

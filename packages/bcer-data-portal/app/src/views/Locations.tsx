@@ -32,6 +32,7 @@ import {
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { getInitialPagination } from '@/util/general.util';
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -378,12 +379,6 @@ export default function Locations() {
     }
   }
 
-  const viewLocation = () => {
-    if(selectedRows?.length === 1){
-      history.push(`/location/${selectedRows[0].id}`)
-    }
-  }
-
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -499,8 +494,8 @@ export default function Locations() {
                   columns={tableColumns}
                   options={{
                     selection: true,
-                    pageSize: 20,
-                    pageSizeOptions: [20, 30, 50],
+                    pageSize: getInitialPagination(locations),
+                    pageSizeOptions: [5, 10, 20, 30, 50],
                     sorting: true,
                   }}
                   onSelectionChange={(rows: BusinessLocation[]) => {

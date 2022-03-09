@@ -16,6 +16,7 @@ import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { LocationUtil } from '@/utils/location.util';
+import { getInitialPagination } from '@/utils/util';
 
 
 const useStyles = makeStyles({
@@ -241,6 +242,10 @@ export default function ConfirmAndSubmit () {
             <div style={{ overflowX: 'auto' }}>
               <StyledTable
                 columns={LocationUtil.getTableColumns()}
+                options={{
+                  pageSize: getInitialPagination(newLocations),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                }}
                 data={newLocations}
               />
             </div>

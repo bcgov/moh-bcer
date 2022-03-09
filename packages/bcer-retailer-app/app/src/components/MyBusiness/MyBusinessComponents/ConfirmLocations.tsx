@@ -15,6 +15,7 @@ import { editLocationFormatting } from '@/utils/formatting';
 import { LocationUtil } from '@/utils/location.util';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -220,6 +221,8 @@ export default function ConfirmLocations () {
                       fixedColumns: {
                         right: 1,
                       },
+                      pageSize: getInitialPagination(validatedData),
+                      pageSizeOptions: [5, 10, 20, 30, 50]
                     }}
                     columns={[
                       ...LocationUtil.getTableColumns(),

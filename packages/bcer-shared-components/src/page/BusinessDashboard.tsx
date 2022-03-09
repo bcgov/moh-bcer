@@ -203,7 +203,25 @@ export function LocationOutstandingReportTable({
   data,
 }: LocationReportTableProps) {
   const columns = BusinessDashboardUtil.getColumns(renderAddress);
-  return <StyledTable columns={columns} data={data} />;
+
+  const getInitialPagination = () => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+
+  return (
+    <StyledTable 
+      options={{ 
+        pageSize: getInitialPagination(),
+        pageSizeOptions: [5, 10, 20, 30, 50]
+      }} 
+      columns={columns} 
+      data={data} 
+    />
+  )
 }
 
 export function LocationCompletedReportTable({
@@ -216,5 +234,23 @@ export function LocationCompletedReportTable({
       render: renderAddress,
     },
   ];
-  return <StyledTable columns={columns} data={data} />;
+  
+  const getInitialPagination = () => {
+    if (data.length <= 5) {
+      return 5
+    } else if (data.length <= 10) {
+      return 10
+    } else return 20
+  }
+
+  return (
+    <StyledTable 
+      options={{ 
+        pageSize: getInitialPagination(),
+        pageSizeOptions: [5, 10, 20, 30, 50]
+      }} 
+      columns={columns} 
+      data={data} 
+    />
+  )
 }

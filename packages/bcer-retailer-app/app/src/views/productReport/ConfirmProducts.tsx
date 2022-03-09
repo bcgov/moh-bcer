@@ -24,6 +24,7 @@ import { ProductReportCsvValidation } from '@/components/form/validations/CsvSch
 import { ProductUtil } from '@/utils/product.util';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -110,7 +111,7 @@ export default function ConfirmProducts() {
       validate(ProductReportCsvValidation, productInfo.products);
     }
   }, [productInfo?.products]);
-
+  
   return (
     <>
       <div>
@@ -197,6 +198,10 @@ export default function ConfirmProducts() {
                  isOutlined={false}
               >
                 <StyledTable
+                  options={{
+                    pageSize: getInitialPagination(filterTable ? erroredOnlyData : validatedData),
+                    pageSizeOptions: [5, 10, 20, 30, 50]
+                  }}
                   columns={ProductUtil.columns}
                   data={filterTable ? erroredOnlyData : validatedData}
                 />

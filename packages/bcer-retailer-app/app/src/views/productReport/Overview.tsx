@@ -16,6 +16,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -289,6 +290,10 @@ export default function ProductOverview() {
           >
             <div>
               <StyledTable
+                options={{
+                  pageSize: getInitialPagination(withoutProducts),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                }}
                 columns={[
                   {
                     title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
@@ -323,6 +328,10 @@ export default function ProductOverview() {
           >
             <div>
               <StyledTable
+                options={{
+                  pageSize: getInitialPagination(withProducts),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
+                }}
                 columns={[
                   {
                     title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`

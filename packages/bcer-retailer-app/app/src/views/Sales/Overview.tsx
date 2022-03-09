@@ -32,6 +32,7 @@ import { SalesTable } from '@/components/Sales/SalesTable';
 import { getSalesReportYear } from '@/utils/time';
 import Loader from '@/components/Sales/Loader';
 import { LocationUtil } from '@/utils/location.util';
+import { getInitialPagination } from '@/utils/util';
 
 const IconButton = styled(Button)({
   minWidth: '30px !important',
@@ -167,7 +168,7 @@ export default function SalesOverview() {
 
   const periodYear = getSalesReportYear();
 
-  const commonColumns = LocationUtil.getTableColumns(['doingBusinessAs', 'address1', 'city']);
+  const commonColumns = LocationUtil.getTableColumns(['doingBusinessAs', 'address1', 'city']) as any;
 
   return outstandingLoading || submittedLoading ? (
     <CircularProgress />
@@ -231,6 +232,8 @@ export default function SalesOverview() {
                 },
                 search: true,
                 searchFieldAlignment: 'left',
+                pageSize: getInitialPagination(outstanding?.data || []),
+                pageSizeOptions: [5, 10, 20, 30, 50]
               }}
               columns={[
                 ...commonColumns,
@@ -318,6 +321,8 @@ export default function SalesOverview() {
                 },
                 search: true,
                 searchFieldAlignment: 'left',
+                pageSize: getInitialPagination(submitted?.data || []),
+                pageSizeOptions: [5, 10, 20, 30, 50]
               }}
               columns={[
                 ...commonColumns,
@@ -418,6 +423,7 @@ export default function SalesOverview() {
                   },
                   search: true,
                   searchFieldAlignment: 'left',
+                  
                 }}
                 columns={[
                   ...commonColumns,

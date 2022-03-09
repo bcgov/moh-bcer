@@ -12,6 +12,7 @@ import SendIcon from '@material-ui/icons/Send';
 import { makeStyles } from '@material-ui/styles';
 import { NoiUtil } from '@/utils/noi.util';
 import { Typography } from '@material-ui/core';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   sendIcon: {
@@ -48,7 +49,7 @@ export function OutstandingNoiTable({
   ...props
 }: OutstandingNoiTableProp) {
   const classes = useStyles();
-
+  
   return (
     <TableWrapper
       data={data}
@@ -64,7 +65,13 @@ export function OutstandingNoiTable({
       csvProps={NoiUtil.getCsvProp(data, 'business_locations.csv')}
       fullScreenProp={fullScreenProp}
     >
-      <NoiTable data={data} />
+      <NoiTable 
+        options={{
+          pageSize: getInitialPagination(data),
+          pageSizeOptions: [5, 10, 20, 30, 50]
+        }}
+        data={data} 
+      />
     </TableWrapper>
   );
 }
@@ -93,6 +100,8 @@ export function SubmittedNoiTable({
           fixedColumns: {
             right: 1,
           },
+          pageSize: getInitialPagination(data),
+          pageSizeOptions: [5, 10, 20, 30, 50]
         }}
       />
     </TableWrapper>
@@ -105,6 +114,7 @@ export function NoiSubmissionTable({
   fullScreenProp,
   ...props
 }: SubmitNoiTableProp){
+
   return (
     <TableWrapper
       data={data}
@@ -116,6 +126,8 @@ export function NoiSubmissionTable({
         data={data}
         options={{
           selection: true,
+          pageSize: getInitialPagination(data),
+          pageSizeOptions: [5, 10, 20, 30, 50]
         }}
         onSelectionChange={handleSelection}
       />
