@@ -24,6 +24,7 @@ import { ProductReportCsvValidation } from '@/components/form/validations/CsvSch
 import { ProductUtil } from '@/utils/product.util';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -110,14 +111,6 @@ export default function ConfirmProducts() {
       validate(ProductReportCsvValidation, productInfo.products);
     }
   }, [productInfo?.products]);
-
-  const getInitialPagination = (data: Array<any>) => {
-    if (data.length <= 5) {
-      return 5
-    } else if (data.length <= 10) {
-      return 10
-    } else return 20
-  }
   
   return (
     <>

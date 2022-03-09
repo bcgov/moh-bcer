@@ -12,6 +12,7 @@ import SendIcon from '@material-ui/icons/Send';
 import { makeStyles } from '@material-ui/styles';
 import { NoiUtil } from '@/utils/noi.util';
 import { Typography } from '@material-ui/core';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   sendIcon: {
@@ -48,14 +49,6 @@ export function OutstandingNoiTable({
   ...props
 }: OutstandingNoiTableProp) {
   const classes = useStyles();
-
-  const getInitialPagination = () => {
-    if (data.length <= 5) {
-      return 5
-    } else if (data.length <= 10) {
-      return 10
-    } else return 20
-  }
   
   return (
     <TableWrapper
@@ -74,7 +67,7 @@ export function OutstandingNoiTable({
     >
       <NoiTable 
         options={{
-          pageSize: getInitialPagination(),
+          pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30, 50]
         }}
         data={data} 
@@ -90,14 +83,6 @@ export function SubmittedNoiTable({
   ...prop
 }: SubmittedNoiTableProp) {
 
-  const getInitialPagination = () => {
-    if (data.length <= 5) {
-      return 5
-    } else if (data.length <= 10) {
-      return 10
-    } else return 20
-  }
-  
   return (
     <TableWrapper
       data={data}
@@ -115,7 +100,7 @@ export function SubmittedNoiTable({
           fixedColumns: {
             right: 1,
           },
-          pageSize: getInitialPagination(),
+          pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30, 50]
         }}
       />
@@ -130,14 +115,6 @@ export function NoiSubmissionTable({
   ...props
 }: SubmitNoiTableProp){
 
-  const getInitialPagination = () => {
-    if (data.length <= 5) {
-      return 5
-    } else if (data.length <= 10) {
-      return 10
-    } else return 20
-  }
-
   return (
     <TableWrapper
       data={data}
@@ -149,7 +126,7 @@ export function NoiSubmissionTable({
         data={data}
         options={{
           selection: true,
-          pageSize: getInitialPagination(),
+          pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30, 50]
         }}
         onSelectionChange={handleSelection}

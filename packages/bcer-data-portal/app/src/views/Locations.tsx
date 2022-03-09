@@ -32,6 +32,7 @@ import {
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import { getInitialPagination } from '@/util/general.util';
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -378,14 +379,6 @@ export default function Locations() {
     }
   }
 
-  const getInitialPagination = () => {
-    if (locations.length <= 5) {
-      return 5
-    } else if (locations.length <= 10) {
-      return 10
-    } else return 20
-  }
-
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -501,7 +494,7 @@ export default function Locations() {
                   columns={tableColumns}
                   options={{
                     selection: true,
-                    pageSize: getInitialPagination(),
+                    pageSize: getInitialPagination(locations),
                     pageSizeOptions: [5, 10, 20, 30, 50],
                     sorting: true,
                   }}

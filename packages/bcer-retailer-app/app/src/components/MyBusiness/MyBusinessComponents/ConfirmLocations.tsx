@@ -15,6 +15,7 @@ import { editLocationFormatting } from '@/utils/formatting';
 import { LocationUtil } from '@/utils/location.util';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -136,14 +137,6 @@ export default function ConfirmLocations () {
     setOpenEdit(true);
   }
 
-  const getInitialPagination = () => {
-    if (validatedData.length <= 5) {
-      return 5
-    } else if (validatedData.length <= 10) {
-      return 10
-    } else return 20
-  }
-  
   return (
     <>
       <div className={classes.subHeader} >
@@ -228,7 +221,7 @@ export default function ConfirmLocations () {
                       fixedColumns: {
                         right: 1,
                       },
-                      pageSize: getInitialPagination(),
+                      pageSize: getInitialPagination(validatedData),
                       pageSizeOptions: [5, 10, 20, 30, 50]
                     }}
                     columns={[

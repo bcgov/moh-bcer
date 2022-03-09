@@ -16,6 +16,7 @@ import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { LocationUtil } from '@/utils/location.util';
+import { getInitialPagination } from '@/utils/util';
 
 
 const useStyles = makeStyles({
@@ -131,14 +132,6 @@ export default function ConfirmAndSubmit () {
     setOpenEdit(true);
   }
 
-  const getInitialPagination = () => {
-    if (newLocations.length <= 5) {
-      return 5
-    } else if (newLocations.length <= 10) {
-      return 10
-    } else return 20
-  }
-
   return (
     <>
       <div className={classes.box}>
@@ -250,7 +243,7 @@ export default function ConfirmAndSubmit () {
               <StyledTable
                 columns={LocationUtil.getTableColumns()}
                 options={{
-                  pageSize: getInitialPagination(),
+                  pageSize: getInitialPagination(newLocations),
                   pageSizeOptions: [5, 10, 20, 30, 50]
                 }}
                 data={newLocations}

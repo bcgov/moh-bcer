@@ -1,5 +1,6 @@
 import { BusinessRO, SearchQueryBuilder } from '@/constants/localInterfaces';
 import { DashboardUtil } from '@/util/dashboard.util';
+import { getInitialPagination } from '@/util/general.util';
 import { Box } from '@material-ui/core';
 import React from 'react';
 import { StyledTable } from 'vaping-regulation-shared-components';
@@ -14,21 +15,13 @@ function Table({
   ...props
 }: TableProps) {
 
-  const getInitialPagination = () => {
-    if (data.length <= 5) {
-      return 5
-    } else if (data.length <= 10) {
-      return 10
-    } else return 20
-  }
-
   return (
     <Box>
       <StyledTable
         columns={DashboardUtil.tableColumn}
         data={data}
         options={{
-          pageSize: getInitialPagination(),
+          pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30, 50],
         }}
         {...props}

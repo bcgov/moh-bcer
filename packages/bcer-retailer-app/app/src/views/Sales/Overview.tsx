@@ -32,6 +32,7 @@ import { SalesTable } from '@/components/Sales/SalesTable';
 import { getSalesReportYear } from '@/utils/time';
 import Loader from '@/components/Sales/Loader';
 import { LocationUtil } from '@/utils/location.util';
+import { getInitialPagination } from '@/utils/util';
 
 const IconButton = styled(Button)({
   minWidth: '30px !important',

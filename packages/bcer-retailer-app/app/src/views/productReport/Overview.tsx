@@ -16,6 +16,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -173,14 +174,6 @@ export default function ProductOverview() {
       setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(patchError) })
     }
   }, [patchError]);
-
-  const getInitialPagination = (data: Array<BusinessLocation>) => {
-    if (data.length <= 5) {
-      return 5
-    } else if (data.length <= 10) {
-      return 10
-    } else return 20
-  }
 
   return loading ? <CircularProgress /> : (
     <>

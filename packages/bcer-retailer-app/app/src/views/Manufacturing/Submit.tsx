@@ -17,6 +17,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
+import { getInitialPagination } from '@/utils/util';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -84,14 +85,6 @@ export default function ManufacturingSubmit() {
     }
   }, [error])
 
-  const getInitialPagination = () => {
-    if (locations.length <= 5) {
-      return 5
-    } else if (locations.length <= 10) {
-      return 10
-    } else return 20
-  }
-
   return (loading) ? <CircularProgress /> : (
     <div>
       <div>
@@ -128,7 +121,7 @@ export default function ManufacturingSubmit() {
                   data={locations}
                   options={{ 
                     selection: true, 
-                    pageSize: getInitialPagination(),
+                    pageSize: getInitialPagination(locations),
                     pageSizeOptions: [5, 10, 20, 30, 50] 
                   }}
                   onSelectionChange={(rows: any) => {
