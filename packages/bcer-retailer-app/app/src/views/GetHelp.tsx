@@ -42,7 +42,7 @@ export default function GetHelp() {
           and Sales Reports
         </div>
       </div>
-      <Typography variant="h6">If you experience any problems with the system, please send a request to <a href="https://mail.google.com/mail/?view=cm&fs=1&to=Vaping.info@gov.bc.ca" target="_blank" >Vaping.info@gov.bc.ca</a> </Typography>
+      <Typography variant="h6">If you experience any problems with the system, please send a request to <a href="mailto:Vaping.info@gov.bc.ca" >Vaping.info@gov.bc.ca</a> </Typography>
       <Typography variant="h5">Important Reporting Requirements</Typography>
       <ul>
         <li>
