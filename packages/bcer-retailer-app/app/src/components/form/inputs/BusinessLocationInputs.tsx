@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { FormikHelpers, useFormikContext } from 'formik';
-import { Grid, InputAdornment, makeStyles, Tooltip } from '@material-ui/core';
+import { Grid, InputAdornment, makeStyles, Tooltip, TextField } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { StyledTextField, StyledRadioGroup } from 'vaping-regulation-shared-components';
 import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason } from '@material-ui/lab';
@@ -55,12 +55,22 @@ const useStyles = makeStyles({
   }
 })
 
+const HealthAuthorities: { [key: string]: string } = {
+  fraser: 'Fraser Health',
+  interior: 'Interior Health',
+  island: 'Island Health',
+  northern: 'Northern Health',
+  coastal: 'Vancouver Coastal Health',
+  other: 'Other (e.g. Out of Province)',
+};
+
 function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: IBusinessLocationValues, formikHelpers: FormikHelpers<IBusinessLocationValues>}) {
   const classes = useStyles();
   const { values } = useFormikContext<IBusinessLocationValues>();
   const [ predictions, setPredictions ] = useState<Array<BCGeocoderAutocompleteData>>([]);
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
+  const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
 
   useEffect(() => {
     if (data && data.features?.length > 0) {
@@ -69,6 +79,14 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     }
   }, [data])
 
+  useEffect(() => {
+    if(healthAuthority) {
+      const haName = HealthAuthorities[healthAuthority.toLowerCase()];
+      formikHelpers.setFieldValue('health_authority', healthAuthority.toLowerCase());
+      formikHelpers.setFieldValue('health_authority_display', haName);
+    }
+  }, [healthAuthority]);
+
   const handleAutocompleteSelect = ( value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
     const fullLocation = predictions.find(e => e.properties.fullAddress === value)
     formikHelpers.setFieldValue('addressLine1', fullLocation ? fullLocation.properties.fullAddress : '')
@@ -76,10 +94,18 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     formikHelpers.setFieldValue('city', fullLocation.properties.localityName)
     formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[0])
     formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[1])
+
+    if (fullLocation) {
+      doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
+    }
   }
   
   const getAutocomplete = (e: any) => {
     getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
+  }
+
+  const doDetermineHealthAuthority = (long: number, lat: number) => {
+    determineHealthAuthority({url: `/location/determine-health-authority?lat=${lat}&long=${long}`})
   }
 
   const resetFieldsOnChange = () => {
@@ -175,7 +201,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
             fullWidth
           />
         </Grid>
-
       </Grid>
 
       <div className={classes.groupHeader} >
@@ -206,24 +231,17 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         <a href="https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries" target="_blank" rel="noopener noreferrer">following link</a>
         <span style={{color: 'red'}}> *</span>
       </div>
-      <div className={classes.optionalWrapper} >
-        <div className={classes.radioWrapper}>
-          <StyledRadioGroup
-            name="health_authority"
-            options={[
-              {label: 'Fraser Health', value: 'fraser'},
-              {label: 'Interior Health', value: 'interior'},
-              {label: 'Island Health', value: 'island'},
-              {label: 'Northern Health', value: 'northern'},
-              {label: 'Vancouver Coastal Health', value: 'coastal'},
-              {label: 'Other (e.g. Out of Province)', value: 'other'},
-            ]}
-          />
-          </div>
-          <div >
-            {values.health_authority === 'other' && <StyledTextField name="health_authority_other" placeholder="Please Specify" fullWidth={false}/>}
-          </div>
-        </div>
+      {values.health_authority !== 'other' && (<><StyledTextField
+        label={<RequiredFieldLabel label="Health Authority"/>}
+        name="health_authority_display"
+        fullWidth
+        disabled={true}/>
+
+      <TextField
+        name="health_authority"
+        type="hidden"/></>
+      )}
+      {values.health_authority === 'other' && <StyledTextField name="health_authority_other" placeholder="Please Specify" fullWidth={false}/>}
       <div className={classes.groupHeader}>
         Do you produce, formulate, package, repackage or prepare restricted e-substances for sale from this sales premises? <span style={{color: 'red'}}>*</span>
       </div>
