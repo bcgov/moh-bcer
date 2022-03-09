@@ -202,7 +202,6 @@ function LocationsContent() {
 
   const handleIntersect = (entries: any, observer: any) => {
     if (entries[0].isIntersecting) {
-      console.log(entries[0].target.id)
       setFieldValue('content', entries[0].target.id)
     }
   }
