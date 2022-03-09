@@ -39,6 +39,7 @@ import { ProductsService } from 'src/products/products.service';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { LocationDTO } from './dto/location.dto';
 import { LocationEntity } from './entities/location.entity';
+import { GeoCodeService } from './geoCode.service';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RoleGuard)
@@ -49,6 +50,7 @@ export class LocationController {
     public service: LocationService,
     private manufacturingService: ManufacturingService,
     private productsService: ProductsService,
+    private geoCodeService: GeoCodeService,
   ){}
 
   @ApiOperation({ summary: 'Get Locations' })
@@ -76,6 +78,20 @@ export class LocationController {
     return locations.map(location => location.toResponseObject())
   }
 
+  @ApiOperation({ summary: 'Determines the health authority the given coordinates is in' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @HttpCode(HttpStatus.OK)
+  @Roles('user')
+  @UseGuards(BusinessGuard)
+  @Get('determine-health-authority')
+  async determineHealthAuthority(
+    @Request() req: RequestWithUser,
+    @Query('lat') lat: number,
+    @Query('long') lng: number
+  ){
+    return this.geoCodeService.determineHealthAuthority(lat, lng);
+  }
+   
   @ApiOperation({ summary: 'Get Single Location' })
   @ApiParam({
     name: 'includes',
@@ -165,4 +181,6 @@ export class LocationController {
      await this.service.updateLocation(id, payload);
      return await this.service.getLocationsWithBusinessId(location?.businessId);
   }
+
+
 }

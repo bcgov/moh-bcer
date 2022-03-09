@@ -1,6 +1,8 @@
 import { Client } from '@googlemaps/google-maps-services-js';
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGeoCodeRO } from './ro/googleGeoCode.ro';
+import * as HealthAuthorityJson from '../assets/BCHA_HEALTH_AUTHORITY_BNDRY_SP.json';
+import geojsonUtils from 'geojson-utils';
 
 @Injectable()
 export class GeoCodeService {
@@ -32,5 +34,20 @@ export class GeoCodeService {
       Logger.error(error?.message)
       throw error;
     }
+  }
+
+  /**
+   * Determine if a location is within the boundary of a health authority
+   * @param lat Latitude of the location
+   * @param lng Longitude of the location
+   * @returns Name of health authority if location is within boundary, otherwise 'Other'
+   */
+  async determineHealthAuthority(lat: number, lng: number) {
+
+    const ha = HealthAuthorityJson.features.find(f => {      
+      return geojsonUtils.pointInPolygon({type: "Point", coordinates: [lng, lat]}, f.geometry);
+    });
+
+    return ha? ha.properties.HLTH_AUTHORITY_NAME : 'Other';
   }
 }
