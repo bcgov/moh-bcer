@@ -1,6 +1,7 @@
 export const locationErrorMessages = {
   addressLine1: {
     required: "The address of your place of business is required",
+    valid: "Address couldn't be found or is incorrect"
   },
   email: {
     valid: "Invalid Email",
@@ -71,6 +72,18 @@ export const exampleManualLocations = [
     doingBusinessAs: "",
     underage: "yes",
     healthAuthority: "fraser",
-    manufacturing: 'yes',
+    manufacturing: "yes",
+  },
+  {
+    addressLine1: "1100 Blan",
+    email: "location2@test.com",
+    phone: "2222222222",
+    postal: "k0k0k0",
+    doingBusinessAs: "",
+    underage: "other",
+    underageOther: "Test underage",
+    healthAuthority: "other",
+    healthAuthorityOther: "Test health authority",
+    manufacturing: "no",
   }
 ]
