@@ -23,3 +23,12 @@ export class GeneralUtil {
     return query;
   }
 }
+
+
+export function getInitialPagination(data:Array<any>) {
+  if (data.length <= 5) {
+    return 5
+  } else if (data.length <= 10) {
+    return 10
+  } else return 20
+}
