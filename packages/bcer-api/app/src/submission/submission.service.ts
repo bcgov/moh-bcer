@@ -130,7 +130,8 @@ export class SubmissionService {
     const submission = await this.getOne(submissionId);
     switch (submission.type) {
       case SubmissionTypeEnum.location: {
-        await this.locationService.createLocations(submission.data.locations, submission.business?.id);
+        const locations = submission.data.locations
+        
         delete submission.data.details.locations;
         delete submission.data.details.nois;
         delete submission.data.details.products;
@@ -142,6 +143,8 @@ export class SubmissionService {
         } else {
           await this.businessService.createBusiness({ ...submission.business, ...submission.data.details });
         }
+        
+        await this.locationService.createLocations(locations, submission.business?.id);
         // TODO create notification settings entity, linked to business entity
         break;
       }

@@ -54,12 +54,12 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     delete formattedLocation.id;
   }
 
-  const underageMatchString = location.underage.toLowerCase();
+  const underageMatchString = location.underage?.toLowerCase() || '';
   if (underageMatchString.includes('yes')) {
     formattedLocation.underage = 'Yes';
   } else if (underageMatchString.includes('no')) {
     formattedLocation.underage = 'No';
-  } else {
+  } else if(underageMatchString) {
     formattedLocation.underage = 'other';
     if (location.underage_other) {
       formattedLocation.underage_other = location.underage_other;
@@ -68,7 +68,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     }
   } 
 
-  const healthAuthorityMatchString = location.health_authority.toLowerCase();
+  const healthAuthorityMatchString = location.health_authority?.toLowerCase() || '';
   if (healthAuthorityMatchString.includes('viha') || healthAuthorityMatchString.includes('island')) {
     formattedLocation.health_authority = 'island';
   } else if (healthAuthorityMatchString.includes('fha') || healthAuthorityMatchString.includes('fraser')) {
@@ -80,7 +80,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     formattedLocation.health_authority = 'coastal';
   } else if (healthAuthorityMatchString.includes('nha') || healthAuthorityMatchString.includes('northern')) {
     formattedLocation.health_authority = 'northern';
-  } else {
+  } else if (healthAuthorityMatchString) {
     //TODO: for now just put the location.health_authority value back into the formatted object. Eventually once the 'other' option is ready
     formattedLocation.health_authority = 'other';
     if (location.health_authority_other) {
@@ -90,7 +90,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     }
   }
 
-  const manufacturingMatchString = location.manufacturing.toLowerCase();
+  const manufacturingMatchString = location.manufacturing?.toLowerCase() || '';
   if (manufacturingMatchString === 'yes' || manufacturingMatchString === 'no') {
     // explicitly set formattedLocation.manufacturing to manufacturingMatchString 
     // as this will cover cases where the user uploaded a CSV with 'yes', 'Yes', and 'YES' variants
