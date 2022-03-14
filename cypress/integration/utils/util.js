@@ -5,8 +5,7 @@ export function stringGen(length) {
 }
 
 export function clickButton(contains){
-  cy.get("button").contains(contains).parent().should('exist')
-  cy.get("button").contains(contains).parent().click();
+  cy.get("button").contains(contains).parent().should("exist").should("not.be.disabled").click();
 }
 
 export function insideDialog(func){

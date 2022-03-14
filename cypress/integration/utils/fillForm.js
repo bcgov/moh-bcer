@@ -1,6 +1,6 @@
 import { businessFieldNames, businessInfo } from "./business/businessObjects";
 import { exampleManualLocations, locationFieldNames } from "./location/locationObjects";
-import { insideDialog } from "./util";
+import { clickButton, insideDialog, Selector } from "./util";
 
 /**
  * Contains method to fill different forms in the application
@@ -66,6 +66,37 @@ import { insideDialog } from "./util";
         locationFieldNames.healthAuthority.fraser
       ).click().blur()
     });
+  }
+
+  static fillManufacturingForm(count){
+    const productName = new Selector("input").addName("productName").build();
+    cy.get(productName).type("Test product").blur();
+    count = count && count < 10 ? count : 1;
+    Array(count).fill(0).forEach((val, i) => {
+
+      if(i !== 0){
+        cy.wait(1000);
+        clickButton("Add Ingredient");
+      }
+      const base = `ingredients.${i}.`
+      const ingredients = new Selector("input").addName(base + "name").build();
+      cy.get(ingredients).type(`Test ingredient name ${i}`).blur();
+
+      const sciName = new Selector("input").addName(base + "scientificName").build();
+      cy.get(sciName).type(`Test ingredient ${i} scientific name`);
+
+      const manuName = new Selector("input").addName(base + "manufacturerName").build();
+      cy.get(manuName).type(`Test ingredient ${i} manufacturer name`);
+
+      const manuAddress = new Selector("input").addName(base + "manufacturerAddress").build();
+      cy.get(manuAddress).type(`Test ingredient ${i} manufacturer address`);
+
+      const email = new Selector("input").addName(base + "manufacturerEmail").build();
+      cy.get(email).type(`test.${i}@email.com`);
+
+      const phone = new Selector("input").addName(base + "manufacturerPhone").build();
+      cy.get(phone).type(`${i}999999999`);
+    })
   }
 }
 

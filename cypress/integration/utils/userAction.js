@@ -83,4 +83,34 @@ export class UserAction {
     }
     cy.get(selector.build()).first().click()
   }
+
+  static clickSelectAllRowsInTable(){
+    cy.get("table").first().should("exist").within(() => {
+      const selector = new Selector("input").addType("checkbox").build();
+      cy.get(selector).first().should("exist").click();
+    })
+  }
+
+  static clickUploadProductRadioButton(){
+    const selector = new Selector("input").addName("mode select").addType("radio").addValue("upload").build();
+    cy.get(selector).should("exist").click();
+  }
+
+  static uploadProductReport(filename){
+    this.clickUploadProductRadioButton();
+    cy.wait(1000);
+    cy.contains("Drop your product report here")
+    cy.get("div")
+      .contains("Drop your product report here")
+      .parent()
+      .parent()
+      .parent()
+      .attachFile("files/" + filename, { subjectType: "drag-n-drop" });
+      cy.wait(1000)
+      cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist")
+    insideDialog(() => {
+      clickButton("Map Headers");
+    });
+    cy.wait(1000);
+  }
 }
