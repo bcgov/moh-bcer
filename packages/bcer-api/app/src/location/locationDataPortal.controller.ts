@@ -322,4 +322,21 @@ export class LocationDataPortalController {
      const { locationId, year } = query;
      return this.service.getDownloadCSV(locationId, year);
    }
+
+  /**
+   * Get location Reporting status
+   * 
+   */
+   @ApiOperation({ summary: 'Get Location Reporting Status' })
+   @HttpCode(HttpStatus.OK)
+   @UseGuards(AuthDataGuard)
+   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+   @AllowAnyRole()
+   @Get('/report-status/:id')
+   async getReportingStatus(@Param('id') id: string){
+    if(!id){
+      throw new ForbiddenException("location ID is required");
+    }
+    return await this.service.getLocationReportingStatus(id);
+   }
 }
