@@ -26,9 +26,9 @@ export class GeneralUtil {
 
 
 export function getInitialPagination(data:Array<any>) {
-  if (data.length <= 5) {
+  if (data?.length <= 5) {
     return 5
-  } else if (data.length <= 10) {
+  } else if (data?.length <= 10) {
     return 10
   } else return 20
 }

@@ -16,14 +16,14 @@ function UserTable({ data, editHandler, loading }: UserTableProps) {
   return (
     <Box>
       {loading && <LinearProgress />}
-      <StyledTable
+      {data && <StyledTable
         columns={UserManagementUtil.getColumns(editHandler)}
         data={data}
         options={{
           pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30],
         }}
-      />
+      />}
     </Box>
   );
 }
