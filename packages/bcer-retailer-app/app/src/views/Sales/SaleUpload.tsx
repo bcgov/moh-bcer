@@ -147,7 +147,7 @@ function SaleUplad() {
   const handleUpload = (data: any | null) => {
     if (data) {
       const { saleReports, submissionId, headers } = data;
-      if (Object.keys(SalesReportCSVHeaders).every( header => headers.includes(header))) {\
+      if (Object.keys(SalesReportCSVHeaders).every( header => headers.includes(header))) {
         setMapping(SalesReportDTOHeaders)
         setSale({
           ...sale,
