@@ -13,16 +13,14 @@ describe("Tests the 1st time business submission flow", () => {
     return false;
   });
   before(() => {
-    Navigate.openBusinessSubmissionOnFirstLogin();
+    Navigate.loginRetailer();
+    clickButton("Start")
     cy.wait(1000);
   });
 
   it("Successfully creates a test business with a location", () => {
     FillForm.fillBusinessForm();
-    Navigate.openLocationManualInputForm();
-    FillForm.fillManualLocationForm(exampleManualLocations[0]);
-    cy.wait(1000);
-    clickButton("Submit")
+    UserAction.addNewLocationManually(exampleManualLocations);
     UserAction.submitBusinessInfo();
     cy.contains("Your Business Details have been submited.");
     cy.contains("Next steps");

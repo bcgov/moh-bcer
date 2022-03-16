@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import 'cypress-file-upload';
 
 const authBaseUrl = Cypress.env("auth_base_url");
 const realm = Cypress.env("auth_realm");
@@ -69,3 +70,26 @@ Cypress.Commands.add("kcLogin", (user) => {
   Cypress.log({ name: "Login" });
   login(user);
 });
+
+
+/**
+ * 
+ * React rerender sometimes causes issue with detached from DOM elements being clicked
+ * Found this solution at: https://github.com/cypress-io/cypress/issues/5743#issuecomment-650421731
+ * 
+ * getAttached(selector)
+ * getAttached(selectorFn)
+ *
+ * Waits until the selector finds an attached element, then yields it (wrapped).
+ * selectorFn, if provided, is passed $(document). Don't use cy methods inside selectorFn.
+ */
+ Cypress.Commands.add("getAttached", selector => {
+  const getElement = typeof selector === "function" ? selector : $d => $d.find(selector);
+  let $el = null;
+  return cy.document().should($d => {
+    $el = getElement(Cypress.$($d));
+    expect(Cypress.dom.isDetached($el)).to.be.false;
+  }).then(() => cy.wrap($el));
+});
+
+
