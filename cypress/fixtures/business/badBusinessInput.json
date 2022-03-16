@@ -1,0 +1,11 @@
+{
+  "businessName": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem pretium quam feugiat luctus dui.",
+  "legalName": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem pretium quam feugiat luctus dui.",
+  "addressLine1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem pretium quam feugiat luctus dui.",
+  "addressLine2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem pretium quam feugiat luctus dui.",
+  "city": "Lorem ipsum dolor sit amet, consectetur adipiscing est.",
+  "postal": "bad-postal",
+  "phone": "bad-phone",
+  "email": "bad-email",
+  "webPage": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem pretium quam feugiat luctus dui."
+}
