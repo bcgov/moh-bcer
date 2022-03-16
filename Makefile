@@ -16,6 +16,18 @@ export KEYCLOAK_DATA_REALM := $(or $(KEYCLOAK_DATA_REALM),moh_applications)
 export KEYCLOAK_DATA_CLIENT := $(or $(KEYCLOAK_DATA_CLIENT),BCER-CP)
 export KEYCLOAK_DATA_AUTH_URL := $(or $(KEYCLOAK_DATA_AUTH_URL),https://common-logon-dev.hlth.gov.bc.ca/auth/)
 
+# Test Env
+export TEST_KEYCLOAK_PORT := $(or $(TEST_KEYCLOAK_PORT),8080)
+export TEST_KEYCLOAK_REALM := $(or $(TEST_KEYCLOAK_REALM),vaping-test)
+export TEST_KEYCLOAK_AUTH_URL := $(or $(TEST_KEYCLOAK_AUTH_URL),https://keycloak.freshworks.club/auth)
+export TEST_KEYCLOAK_CLIENT := $(or $(TEST_KEYCLOAK_CLIENT),CYPRESS)
+export TEST_KEYCLOAK_DATA_REALM := $(or $(TEST_KEYCLOAK_DATA_REALM),vaping-test)
+export TEST_KEYCLOAK_DATA_CLIENT := $(or $(TEST_KEYCLOAK_DATA_CLIENT),CYPRESS)
+export TEST_KEYCLOAK_DATA_AUTH_URL := $(or $(TEST_KEYCLOAK_DATA_AUTH_URL),https://keycloak.freshworks.club/auth)
+
+export GA_KEY := $(or $(GA_KEY),not_provided)
+export TEXT_API_KEY := $(or $(TEXT_API_KEY),not_provided)
+
 #Database
 export DB_CONFIG_NAME := $(or $(DB_CONFIG_NAME),default)
 export DB_CONFIG_TYPE := $(or $(DB_CONFIG_TYPE),postgres)
@@ -89,7 +101,19 @@ build-shared:
 	@echo "+\n++ Make: building shared components ...\n+"
 	@cd ./packages/bcer-shared-components && npm run build && cd ../../
 
+setup-test:
+	@echo "+\n++ Make: setting up test environment"
+	@cd ./packages/bcer-retailer-app && make setup-test-env && cd ../../
+	@cd ./packages/bcer-data-portal && make setup-test-env
+
+run-test:
+	@echo "+\n++ Make: Running locally ...\n+"
+	@docker-compose -f docker-compose.test.yml up --build
+
+run-test-retailer:
+	@echo "+\n++ Make: Running client locally ...\n+"
+	@docker-compose -f docker-compose.test.yml up retailer-app
+
 package-build:
 	@echo "+\n++ Building + Packaging app for deployment"
-
 	.build/package-app.sh

@@ -1,0 +1,34 @@
+FROM node:14.16.1 as builder
+
+MAINTAINER FreshWorks <web@freshworks.io>
+
+ENV PATH $PATH:/usr/src/app/node_modules/.bin
+
+WORKDIR /usr/src/app
+
+COPY ./bcer-data-portal/app/ ./bcer-data-portal/app/
+COPY ./bcer-shared-components/ ./bcer-shared-components/
+
+# Install dependencies
+# RUN apk add --no-cache git
+
+RUN apt-get update
+RUN apt-get install libgl1 -y
+
+
+RUN cd ./bcer-shared-components && npm install && cd ../
+RUN cd ./bcer-shared-components && npm run build && cd ../
+
+# COPY ./bcer-shared-components ./bcer-shared-components
+
+# RUN cd ./bcer-shared-components && npm run build && cd ../
+
+RUN cd ./bcer-data-portal/app && npm i && cd ../../
+
+# COPY ./bcer-retailer-app ./bcer-retailer-app
+
+RUN cd ./bcer-data-portal/app/ && npm run build && cd ../../
+
+EXPOSE 3000
+
+CMD [ "npm", "--prefix", "./bcer-data-portal/app/", "run", "serve" ]

@@ -1,0 +1,22 @@
+FROM node:14.17.6-slim
+
+MAINTAINER FreshWorks <web@freshworks.io>
+
+ENV PATH $PATH:/usr/src/app/node_modules/.bin
+
+WORKDIR '/app'
+
+COPY ./package.json .
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build:prem
+
+RUN npm install -g typeorm
+
+COPY ./.test-files/ormconfig.js ./ormconfig.js
+COPY ./.test-files/.env.test ./env
+
+CMD [ "npm", "run", "start:prod" ]
