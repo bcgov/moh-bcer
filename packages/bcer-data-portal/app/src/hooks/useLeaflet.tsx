@@ -371,7 +371,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
  * based on the BC Health Authority Boundaries Dataset (https://catalogue.data.gov.bc.ca/dataset/health-authority-boundaries)
  * @param m Leaflet map where leayer needs to be added
  */
-  function createHealthAuthorityLayer() {
+function createHealthAuthorityLayer() {
   // Add health authority boundary layer to map
   const mywms = L.tileLayer.wms('https://openmaps.gov.bc.ca/geo/pub/WHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP/ows?service=WMS', {
       layers: 'pub:WHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP',
@@ -390,12 +390,9 @@ function createHealthAuthorityLegend() {
     options: {
       position: 'bottomright'
     },
-
     onAdd: () => {
       const container = L.DomUtil.create('div', 'legendwrapper');
-
-      container.innerHTML = `<img src="https://openmaps.gov.bc.ca/geo/pub/WHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP/ows?service=WMS&request=GetLegendGraphic&format=image%2Fpng&width=30&height=30&layer=pub%3AWHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP">`
-
+      container.innerHTML = `<img src="https://openmaps.gov.bc.ca/geo/pub/WHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP/ows?service=WMS&request=GetLegendGraphic&format=image%2Fpng&width=30&height=30&layer=pub%3AWHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP">`;
       return container;
     }
   });
