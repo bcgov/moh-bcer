@@ -28,6 +28,7 @@ export type LocationBaseColumnType = {
   healthAuthority: TableColumn,
   minor: TableColumn,
   manufacturing: TableColumn,
+  status: TableColumn,
 }
 
 export type LocationBaseColumnsHeader = keyof LocationBaseColumnType;
@@ -245,6 +246,7 @@ export class LocationUtil {
     doingBusinessAs: {title: 'Doing Business As', render: LocationUtil.renderDoingBusinessAs, width: 150},
     minor: {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
     manufacturing: {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
+    status: {title: 'status', render: LocationUtil.renderStatus, width: 150},
   }
 
   static getTableColumns(list: LocationBaseColumnsHeader[] = ['address1', 'postal', 'city', 'phone', 'email', 'healthAuthority', 'doingBusinessAs', 'minor', 'manufacturing' ]){
