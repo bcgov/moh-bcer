@@ -18,6 +18,12 @@ import markerShadow from '@/assets/images/marker-shadow.png'
 import { useAxiosPost } from './axios';
 import sanitizeHtml from 'sanitize-html';
 
+// Map layer for Health Authority Boundaries
+const haLayer = createHealthAuthorityLayer();
+
+// Map control for Health Authority Boundary Legend
+const haLegend = createHealthAuthorityLegend();
+
 function useLeaflet(locationIds: string, config: LocationConfig) {
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
 
@@ -36,6 +42,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   const [map, setMap] = useState<L.Map>();
   const [markers, setMarkers] = useState<L.Marker[]>([]);
   const [geoJsonData, setGeoJsonData] = useState<L.GeoJSON>();
+  const [showHALayer, setShowHALayer] = useState<boolean>(false);
   const [startingLocation, setStartingLocation] =
     useState<BCGeocoderAutocompleteData>();
 
@@ -53,6 +60,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     globalDistortionField: false,
     turnCost: false,
     localDistortionField: false,
+    haOverlay: false,
   };
 
   const [routeOptions, setRouteOptions] = useState<RouteOptions>({
@@ -165,6 +173,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       setMarkers([]);
     }
   };
+
 
   /**
    * Adds Tile style to map
@@ -324,6 +333,16 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   }, [directionError]);
 
+  useEffect(() => {
+    if(showHALayer) {
+      map?.addLayer(haLayer);
+      map?.addControl(haLegend);
+    } else {
+      map?.removeLayer(haLayer);
+      map?.removeControl(haLegend);
+    }
+  }, [showHALayer]);
+
   return {
     selectedLocations,
     setSelectedLocations,
@@ -340,8 +359,48 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     createGoogleLink,
     routeOptions,
     setRouteOptions,
+    setShowHALayer,
     directionError,
   };
 }
+
+/**
+ * Adds Health Authority boundry layer to the map.
+ * 
+ * Layer is rendered as an image using the BC Imagery Web Map Services and is
+ * based on the BC Health Authority Boundaries Dataset (https://catalogue.data.gov.bc.ca/dataset/health-authority-boundaries)
+ * @param m Leaflet map where leayer needs to be added
+ */
+  function createHealthAuthorityLayer() {
+  // Add health authority boundary layer to map
+  const mywms = L.tileLayer.wms('https://openmaps.gov.bc.ca/geo/pub/WHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP/ows?service=WMS', {
+      layers: 'pub:WHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP',
+      format: 'image/png',
+      transparent: true,
+      version: '1.3.0',
+      attribution: 'BC Map Services'
+  });
+
+  return mywms;
+};
+
+function createHealthAuthorityLegend() {
+  // Add map legend to map
+  const LegendControl = L.Control.extend({
+    options: {
+      position: 'bottomright'
+    },
+
+    onAdd: () => {
+      const container = L.DomUtil.create('div', 'legendwrapper');
+
+      container.innerHTML = `<img src="https://openmaps.gov.bc.ca/geo/pub/WHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP/ows?service=WMS&request=GetLegendGraphic&format=image%2Fpng&width=30&height=30&layer=pub%3AWHSE_ADMIN_BOUNDARIES.BCHA_HEALTH_AUTHORITY_BNDRY_SP">`
+
+      return container;
+    }
+  });
+  
+  return new LegendControl();
+};
 
 export default useLeaflet;

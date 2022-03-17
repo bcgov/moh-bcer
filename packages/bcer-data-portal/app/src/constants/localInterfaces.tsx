@@ -156,6 +156,7 @@ export interface RouteOptions {
   globalDistortionField: boolean;
   turnCost: boolean;
   localDistortionField: boolean;
+  haOverlay: boolean;
 }
 
 export interface DirectionNotification {
