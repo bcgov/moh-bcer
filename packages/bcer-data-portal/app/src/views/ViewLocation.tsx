@@ -23,6 +23,7 @@ import LocationProductTable from '@/components/tables/LocationProductTable';
 import LocationManufacturingTable from '@/components/tables/LocationManufacturingTable';
 import LocationSalesTable from '@/components/tables/LocationSalesTable';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
+import { LocationReportStatus } from '@/components/location/LocationReportStatus';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -273,20 +274,25 @@ function LocationsContent() {
                     <Grid container item xs={9} spacing={3}>
                       <Grid item xs={12} id="locationStatus" ref={locationStatusRef} >
                         <Typography className={classes.cellTitle}>Location Status</Typography>
-                        <Paper className={classes.box}>
-                          <Box>
-                            <Typography variant="body2">Business Status</Typography>
-                            <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
-                          </Box>
-                          {
-                            data.closedAt 
-                              && 
+                        <Paper className={classes.box} style={{ display: 'block'}}>
+                          <Box display="flex" justifyContent="space-between">
                             <Box>
-                              <Typography variant="body2">Closed At</Typography>
-                              <Typography className={classes.rowContent}>{data.closedAt}</Typography>
+                              <Typography variant="body2">Business Status</Typography>
+                              <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
                             </Box>
-                          }
-                          <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
+                            {
+                              data.closedAt 
+                                && 
+                              <Box>
+                                <Typography variant="body2">Closed At</Typography>
+                                <Typography className={classes.rowContent}>{data.closedAt}</Typography>
+                              </Box>
+                            }
+                            <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
+                          </Box>
+                          <Box mt={3}>
+                            <LocationReportStatus id={id}/>
+                          </Box>
                         </Paper>
                       </Grid>
 

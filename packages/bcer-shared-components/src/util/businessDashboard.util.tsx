@@ -35,4 +35,13 @@ export class BusinessDashboardUtil {
       </Tooltip>
     )
   }
+
+  static getLocationColumn() {
+    return ([
+      {title: 'NOI', render: (r:LocationReportStatus) => this.renderStatus(r.noi)},
+      {title: 'Product Report', render: (r:LocationReportStatus) => this.renderStatus(r.productReport)},
+      {title: 'Manufacturing Report', render: (r:LocationReportStatus) => this.renderStatus(r.manufacturingReport)},
+      {title: 'Sales Report', render: (r:LocationReportStatus) => this.renderStatus(r.salesReport)},
+    ])
+  }
 }
