@@ -27,19 +27,23 @@ export class Navigate {
   }
 
   static gotoMyBusiness() {
+    cy.wait(1000);
     cy.get(new Selector("a").addHref("/business/details").build()).should('be.visible').click({force: true});
   }
 
   static gotoNoi() {
-    cy.get(new Selector("a").addHref("/noi").build()).click();
+    cy.wait(1000);
+    cy.get(new Selector("a").addHref("/noi").build()).should("be.visible").click({force: true});
   }
 
   static gotoProducts() {
-    cy.get(new Selector("a").addHref("/products").build()).click();
+    cy.wait(1000);
+    cy.get(new Selector("a").addHref("/products").build()).should("be.visible").click({force: true});
   }
 
   static gotoManufacturing() {
-    cy.get(new Selector("a").addHref("/manufacturing").build()).click();
+    cy.wait(1000);
+    cy.get(new Selector("a").addHref("/manufacturing").build()).should("be.visible").click({force: true});
   }
 
   static gotoSales() {
