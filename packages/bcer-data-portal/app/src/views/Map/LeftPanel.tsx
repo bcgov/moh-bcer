@@ -56,6 +56,7 @@ interface LeftPanelProps {
   routeData: BCDirectionData;
   createGoogleLink: () => string;
   setRouteOptions: React.Dispatch<SetStateAction<RouteOptions>>;
+  setShowHALayer: React.Dispatch<SetStateAction<boolean>>,
   directionError: AxiosError;
 }
 
@@ -72,6 +73,7 @@ function LeftPanel({
   routeData,
   createGoogleLink,
   setRouteOptions,
+  setShowHALayer,
   directionError,
 }: LeftPanelProps) {
   const classes = useStyles();
@@ -135,6 +137,7 @@ function LeftPanel({
       <MapControl
         initialRoutingOptions={initialRoutingOptions}
         setRouteOptions={setRouteOptions}
+        setShowHALayer={setShowHALayer}
       />
       {routeData?.visitOrder && locations && (
         <OptimizedOrder

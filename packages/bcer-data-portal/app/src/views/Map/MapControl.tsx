@@ -34,9 +34,11 @@ const useStyles = makeStyles(() => ({
 function MapControl({
   initialRoutingOptions,
   setRouteOptions,
+  setShowHALayer,
 }: {
   initialRoutingOptions: RouteOptions;
   setRouteOptions: React.Dispatch<SetStateAction<RouteOptions>>;
+  setShowHALayer: React.Dispatch<SetStateAction<boolean>>;
 }) {
   const classes = useStyles();
   return (
@@ -46,7 +48,25 @@ function MapControl({
         onSubmit={(v) => setRouteOptions(v)}
       >
         {({ values, ...helpers }) => (
-          <Form>
+          <Form
+            onChange={(e:any) => {
+              if(e.target.name === 'haOverlay') {
+                setShowHALayer(e.target.checked);
+              }
+            }}
+          >
+            <Box mt={2} mb={2}>
+              <Typography className={classes.text}>Map Options</Typography>
+              <Box className={classes.routeOption}>
+                <Box>
+                  <StyledCheckboxInput
+                    name="haOverlay"
+                    label="Display Health Authority Boundaries"
+                  />
+                </Box>
+              </Box>
+            </Box>
+
             <Typography className={classes.text}>Filter Options</Typography>
             <Box className={classes.routeOption}>
               <Box flex={0.5}>
