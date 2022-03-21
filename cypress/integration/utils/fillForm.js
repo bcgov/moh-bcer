@@ -39,14 +39,10 @@ import { clickButton, insideDialog, Selector } from "./util";
       if (location.underage === "other") {
         cy.get(locationFieldNames.underageOther).type(location.underageOther);
       }
-      cy.get(
-        locationFieldNames.healthAuthority[location.healthAuthority]
-      ).click();
-      if (location.healthAuthority === "other") {
-        cy.get(locationFieldNames.healthAuthorityOther).type(
-          location.healthAuthorityOther
-        );
-      }
+      /**
+       * Missing proper way to fill health authority other atm
+       * Should be added when health authority is automatically added with csv upload
+       */
       cy.get(locationFieldNames.manufacturing[location.manufacturing]).click();
     });
   }
@@ -62,9 +58,6 @@ import { clickButton, insideDialog, Selector } from "./util";
       cy.wait(1000)
       cy.get(locationFieldNames.postal).type("k0k0k0").blur();
       cy.wait(1000)
-      cy.get(
-        locationFieldNames.healthAuthority.fraser
-      ).click().blur()
     });
   }
 
@@ -123,17 +116,18 @@ export class CheckForm {
       cy.get(locationFieldNames.city).invoke("attr", "value").then(val => {
         expect(val).to.have.lengthOf.above(1);
       })
-      // cy.get(locationFieldNames.doingBusinessAs).invoke("attr", "value").then(val => {
-      //   expect(val).to.be.oneOf([location.doingBusinessAs || businessInfo.businessName]);
-      // })
+      cy.get(locationFieldNames.doingBusinessAs).invoke("attr", "value").then(val => {
+        expect(val).to.be.oneOf([location.doingBusinessAs || businessInfo.businessName]);
+      })
       cy.get(locationFieldNames.underage[location.underage]).should("be.checked");
       if(location.underage === "other"){
         cy.get(locationFieldNames.underageOther).should("have.value", location.underageOther)
       }
-      cy.get(locationFieldNames.healthAuthority[location.healthAuthority]).should("be.checked");
-      if(location.healthAuthority === 'other'){
-        cy.get(locationFieldNames.healthAuthorityOther).should("have.value", location.healthAuthorityOther);
-      }
+      // Missing proper testing for health authority
+      // cy.get(locationFieldNames.healthAuthority[location.healthAuthority]).should("be.checked");
+      // if(location.healthAuthority === 'other'){
+      //   cy.get(locationFieldNames.healthAuthorityOther).should("have.value", location.healthAuthorityOther);
+      // }
       cy.get(locationFieldNames.manufacturing[location.manufacturing]).should("be.checked");
     })
   }
