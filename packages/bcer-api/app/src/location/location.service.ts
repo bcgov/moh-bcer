@@ -26,6 +26,7 @@ import { LocationComplianceStatus } from './helper/locationComplianceStatus';
 import { BusinessReportType } from 'src/business/enums/businessReportType.enum';
 import { SingleLocationComplianceStatus } from './helper/singleLocationComplianceStatus';
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
+import { LocationContactDTO } from './dto/locationContact.dto';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -665,5 +666,15 @@ export class LocationService {
 
     const location = await qb.getOne();
     return new SingleLocationReportStatus().getStatus(location);
+  }
+  
+  async updateMultipleLocationContactInfo(payload: LocationContactDTO, businessId: string) {
+    return await this.locationRepository.update(
+      { id: In(payload.ids), businessId }, 
+      {
+        phone: payload.phone, 
+        email: payload.email
+      }
+    )
   }
 }
