@@ -103,11 +103,17 @@ function Navigator() {
                   value={routes.userManagement}
                 />
               )}
+              <StyledTab
+                disableRipple
+                label="FAQ Management"
+                {...a11yProps(3)}
+                value={routes.FAQManagement}
+              />
               {config.permissions.SEND_TEXT_MESSAGES && config.featureFlags.TEXT_MESSAGES && (
                 <StyledTab
                   disableRipple
                   label="Send Notification"
-                  {...a11yProps(3)}
+                  {...a11yProps(4)}
                   value={routes.sendNotification}
                 />
               )}

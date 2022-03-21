@@ -1,4 +1,4 @@
-import { StyledProps } from "@material-ui/core";
+import { AccordionSummaryProps, StyledProps } from "@material-ui/core";
 import { ReportStatus } from "../enums/genericEnums";
 
 export interface StyledWarningProps {
@@ -6,6 +6,36 @@ export interface StyledWarningProps {
   rootProps?: any,
   textProps?: any,
   iconProps?: any,
+}
+
+export type AccordionGroupProps = {
+  options: Array<{
+    title: string;
+    description: string;
+    id: string;
+  }>,
+  isEditable?: boolean,
+  isDeletable?: boolean,
+  editCallback?: Function,
+  deleteCallback?: Function,
+}
+export type AccordionSingleProps = {
+  content: {
+    title: string;
+    description: string;
+    id: string;
+  },
+  isEditable?: boolean,
+  isDeletable?: boolean,
+  editCallback?: Function,
+  deleteCallback?: Function,
+}
+
+export type StyledAccordionSummaryProps = AccordionSummaryProps & {
+  isEditable?: boolean,
+  isDeletable?: boolean,
+  editCallback?: Function,
+  deleteCallback?: Function,
 }
 
 export type LocationRO = {
