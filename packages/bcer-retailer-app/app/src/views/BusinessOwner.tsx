@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core';
 
 import Welcome from '@/views/Welcome';
 import GetHelp from '@/views/GetHelp';
+import FAQ from '@/views/FAQ';
 
 import MyBusinessNav from '@/components/MyBusiness/MyBusinessNav';
 import MyBusiness from '@/components/MyBusiness/Overview';
@@ -62,6 +63,7 @@ const BusinessOwner = () => {
           <Route path='/sales' component={SalesRoutes} />
           <Route exact path='/view-location/:reportId' component={Location} />
           <Route exact path='/gethelp' component={GetHelp} />
+          <Route exact path='/FAQ' component={FAQ} />
           <Route path='/' render={() => <Welcome />} />
         </Switch>
       </div>

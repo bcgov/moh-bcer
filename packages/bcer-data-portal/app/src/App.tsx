@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Locations from './views/Locations';
 import ViewLocation from './views/ViewLocation';
 import GetHelp from './views/GetHelp';
+import FAQManagement from './views/FAQManagement';
 import UserManagement from './views/UserManagement/Overview';
 import Navigator from './components/Navigator';
 import { routes } from './constants/routes';
@@ -69,6 +70,7 @@ const App = () => {
           <Route exact path={routes.submittedLocations} component={Locations} />
           <Route exact path={`${routes.viewLocation}/:id`} component={ViewLocation} />
           <Route exact path={routes.getHelp} component={GetHelp} />
+          <Route exact path={routes.FAQManagement} component={FAQManagement} />
           <Route exact path={routes.userManagement} component={UserManagement} />
           { config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
           <Route exact path={routes.map} component={Map} />
