@@ -12,7 +12,7 @@ jobs:
     name: cypress
     runs-on: ubuntu-20.04
     concurrency: ci-test
-    timeout-minutes: 20
+    timeout-minutes: 50
     steps:
       - name: Checkout
         uses: actions/checkout@v1
