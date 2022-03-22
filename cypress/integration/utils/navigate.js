@@ -11,6 +11,11 @@ export class Navigate {
     cy.visit("/retailer");
   }
 
+  static loginPortal() {
+    this.loginUser();
+    cy.visit("/portal")
+  }
+
   static openBusinessSubmissionOnFirstLogin() {
     this.loginRetailer();
     clickButton("Start");
