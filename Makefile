@@ -108,7 +108,7 @@ setup-test:
 
 run-test:
 	@echo "+\n++ Make: Running locally ...\n+"
-	@docker-compose -f docker-compose.test.yml up --build
+	@docker-compose -f docker-compose.test.yml up -d --build
 
 run-test-retailer:
 	@echo "+\n++ Make: Running client locally ...\n+"
