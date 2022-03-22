@@ -66,7 +66,7 @@ setup-local:
 
 run-local:
 	@echo "+\n++ Make: Running locally ...\n+"
-	@docker-compose -f docker-compose.dev.yml up
+	@COMPOSE_HTTP_TIMEOUT=200 docker-compose -f docker-compose.dev.yml up
 
 run-local-retailer:
 	@echo "+\n++ Make: Running client locally ...\n+"
@@ -103,6 +103,7 @@ build-shared:
 
 setup-test:
 	@echo "+\n++ Make: setting up test environment"
+	@npm i
 	@cd ./packages/bcer-retailer-app && make setup-test-env && cd ../../
 	@cd ./packages/bcer-data-portal && make setup-test-env
 
