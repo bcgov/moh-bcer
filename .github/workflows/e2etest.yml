@@ -1,10 +1,10 @@
 name: Test Application (e2e)
 
 on:
-  push:
   pull_request:
     branches:
       - main
+      - fix-ci
   workflow_dispatch:
 
 jobs:
