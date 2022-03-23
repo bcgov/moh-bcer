@@ -1,18 +1,18 @@
 import { clickButton, Selector } from "./util";
 
 export class Navigate {
-  static loginUser() {
+  static loginUser(name="user") {
     cy.kcLogout();
-    cy.kcLogin("user");
+    cy.kcLogin(name);
   }
 
-  static loginRetailer() {
-    this.loginUser();
+  static loginRetailer(name) {
+    this.loginUser(name);
     cy.visit("/retailer");
   }
 
-  static loginPortal() {
-    this.loginUser();
+  static loginPortal(name="admin") {
+    this.loginUser(name);
     cy.visit("/portal")
   }
 
