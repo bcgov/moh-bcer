@@ -25,6 +25,8 @@ export type AccordionSingleProps = {
     description: string;
     id: string;
   },
+  expandedId: string,
+  expandCallback: Function,
   isEditable?: boolean,
   isDeletable?: boolean,
   editCallback?: Function,

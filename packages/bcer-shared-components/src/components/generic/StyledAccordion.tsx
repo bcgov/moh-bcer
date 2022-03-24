@@ -4,9 +4,9 @@ import { styled } from '@material-ui/styles';
 import { ArrowForwardIosSharp, DeleteOutline, EditSharp, SearchOutlined } from '@material-ui/icons';
 import { AccordionGroupProps, StyledAccordionSummaryProps, AccordionSingleProps } from '@/constants/interfaces/genericInterfaces';
 import { Form, Formik } from 'formik';
-import * as yup from 'yup';
 import { StyledTextField } from '../fields';
 import { StyledButton } from '../buttons';
+import lunr from 'lunr';
 
 const StyledAccordionBase = styled((props: AccordionProps) => (
   <Accordion elevation={0} {...props} />
@@ -72,22 +72,39 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
  * @returns Reusable React component
  */
 export function StyledAccordionGroup ({options, isEditable = false, isDeletable = false, editCallback, deleteCallback }: AccordionGroupProps) {
-  const [ expanded, setExpanded ] = useState<number>(-1);
-  const [ order, setOrder ] = useState<Array<{id: string, title: string, description: string}> | null>(null);
+  const [ expanded, setExpanded ] = useState<string | null>(null);
+  const [ order, setOrder ] = useState<Array<{id: string, title: string, description: string}>>();
 
-  const handleExpand = (expandedIndex: number) => (event: any, expanded: boolean) =>{
-    setExpanded(expanded ? expandedIndex : -1)
+  const dict = lunr(function() {
+    this.ref('id')
+    this.field('title')
+    this.field('description')
+    options.forEach(element => this.add(element),this)
+  })
+
+  const handleExpand = (expandedIndex: string) => (event: any, expanded: boolean) =>{
+    setExpanded(expanded ? expandedIndex : null)
   }
 
   useEffect(() => {
     setOrder(options)
   }, [])
 
+  const updateOrder = (values: { searchString: string }) => {
+    const res = dict.search(values.searchString)
+    //Explicit cast because chaining member functions return '| undefined' by design, otherwise can't setState
+    const newOrder = res.map(element => options.find(option => option.id === element.ref)) as Array<{id: string, title: string, description: string}>
+    if (newOrder.length > 0) {
+      setOrder(newOrder)
+    }
+    setExpanded
+  }
+
   return (
     <>
       <Formik
         initialValues={{ searchString: ''}}
-        onSubmit={(values) => console.log(values)} 
+        onSubmit={(values) => updateOrder(values)} 
       >
         <Form style={{ display: 'flex', marginBottom: '20px' }}>
           <StyledTextField label="" name="searchString" variant="outlined" helpText="Search by keyword..." />
@@ -98,7 +115,7 @@ export function StyledAccordionGroup ({options, isEditable = false, isDeletable 
         order 
           &&
         order.map((element, index) => (
-          <StyledAccordionBase expanded={expanded === index} onChange={handleExpand(index)}>
+          <StyledAccordionBase expanded={expanded === element.id} onChange={handleExpand(element.id)}>
             <StyledAccordionSummary
               isEditable={isEditable}
               isDeletable={isDeletable}
@@ -131,21 +148,18 @@ export function StyledAccordionGroup ({options, isEditable = false, isDeletable 
  * @param {string} content.title `string` title of accordion
  * @param {string} content.description `string` content of accordion body
  * @param {string} content.id `string` id of element
+ * @param {string} expandedId `string` id of currently expanded element
+ * @param {function} expandCallback `function` callback function for handling expanding elements
  * @param {boolean} isEditable `optional | boolean` flag for enabling editing of an accordion element
  * @param {boolean} isDeletable `optional | boolean` flag for enabling deleting of an accordion element
  * @param {function} editCallback `optional | function` callback function for edit action
  * @param {function} deleteCallback `optional | function` callback function for delete action
  * @returns Reusable React component
  */
-export function StyledAccordion ({content, isEditable = false, isDeletable = false, editCallback, deleteCallback }: AccordionSingleProps) {
-  const [ expanded, setExpanded ] = useState<string>('-1');
-
-  const handleExpand = (expandedId: string) => (event: any, expanded: boolean) =>{
-    setExpanded(expanded ? expandedId : '-1')
-  }
+export function StyledAccordion ({content, isEditable = false, isDeletable = false, editCallback, deleteCallback, expandedId, expandCallback }: AccordionSingleProps) {
 
   return (
-    <StyledAccordionBase expanded={expanded === content.id} onChange={handleExpand(content.id)}>
+    <StyledAccordionBase expanded={expandedId === content.id} onChange={expandCallback(content.id)}>
       <StyledAccordionSummary
         isEditable={isEditable}
         isDeletable={isDeletable}

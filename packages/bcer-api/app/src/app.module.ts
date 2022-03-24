@@ -29,6 +29,7 @@ import { ProductSoldModule } from './product-sold/product-sold.module';
 import { CronModule } from './cron/cron.module';
 import { NotificationModule } from './notification/notification.module';
 import { NoteModule } from './note/note.module';
+import { FaqModule } from './faq/faq.module';
 
 const moduleImports = [
   AuthModule,
@@ -48,6 +49,7 @@ const moduleImports = [
   CronModule,
   NotificationModule,
   NoteModule,
+  FaqModule,
 ];
 
 @Module({
