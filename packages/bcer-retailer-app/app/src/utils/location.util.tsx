@@ -8,6 +8,7 @@ import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined'
 
 import {
   BusinessLocationHeaders,
+  DateFormat,
   LocationClosingWindow,
   LocationStatus,
   NoiStatus,
@@ -15,7 +16,8 @@ import {
 import { BusinessLocation, TableColumn } from '@/constants/localInterfaces';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import moment from 'moment';
-import { StyledTableColumn } from 'vaping-regulation-shared-components';
+import { StyledTableColumn, StyledToolTip } from 'vaping-regulation-shared-components';
+import { GeneralUtil } from './util';
 
 export type LocationBaseColumnType = {
   address1: TableColumn,
@@ -41,6 +43,10 @@ export class LocationUtil {
     return <StyledTableColumn value={l.addressLine1} />;
   }
 
+  static renderFullAddress(l: BusinessLocation) {
+    return <StyledTableColumn value={`${l.addressLine1}, ${l.city}, ${l.postal}`} />
+  }
+
   static renderCity(l: BusinessLocation): React.ReactNode {
     return <StyledTableColumn value={l.city} />;
   }
@@ -59,6 +65,16 @@ export class LocationUtil {
 
   static renderEmail(l: BusinessLocation): React.ReactNode {
     return <StyledTableColumn value={l.email} />
+  }
+
+  static renderCreationDate(l: BusinessLocation) {
+    return (
+      <StyledToolTip title={GeneralUtil.getFormattedTime(l.created_at, DateFormat.hh_mm_ss_a, true)}>
+        <Box>
+          {GeneralUtil.getFormattedDate(l.created_at, DateFormat.MMM_DD_YYYY, true)}
+        </Box>
+      </StyledToolTip>
+    )
   }
 
   static renderStatus(l: BusinessLocation) {

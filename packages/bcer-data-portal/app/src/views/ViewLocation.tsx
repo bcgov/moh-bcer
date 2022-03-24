@@ -372,6 +372,12 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.noi ? data.noi.renewed_at ? moment(data.noi.renewed_at).format('YYYY-MM-DD') : 'Not Renewed' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
+                            <Grid item xs={4}>
+                              <Box>
+                                <Typography variant="body2">Location Creation Date</Typography>
+                                <Typography className={classes.rowContent}>{data ? data.created_at ? moment(data.created_at).utc(true).format('YYYY-MM-DD hh:mm:ss a') : '' : 'N/A'}</Typography>
+                              </Box>
+                            </Grid>
                           </Grid>    
                         </Paper>
                       </Grid>

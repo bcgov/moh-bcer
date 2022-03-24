@@ -11,6 +11,14 @@ export class GeneralUtil {
     return date ? moment(date).utc(utc).format(format) : '';
   }
 
+  static getFormattedTime(
+    date: string | Date,
+    format?: DateFormat,
+    utc: boolean = true
+  ): string {
+    return date ? moment(date).utc(utc).format(format || DateFormat.hh_mm_ss_a) : '';
+  }
+
   static upperCaseFirstLetter(str: string): string {
     return str ? str[0].toUpperCase() + str.slice(1) : '';
   }

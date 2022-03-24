@@ -1,7 +1,9 @@
+import { StyledToolTip } from "@/components/generic";
 import { ReportStatus } from "@/constants/enums/genericEnums";
 import { LocationReportStatus, LocationRO } from "@/constants/interfaces/genericInterfaces";
-import { Tooltip } from "@material-ui/core";
+import { Box, Tooltip } from "@material-ui/core";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import moment from "moment";
 import React from 'react';
 
 export class BusinessDashboardUtil {
@@ -33,6 +35,14 @@ export class BusinessDashboardUtil {
       <Tooltip title={tooltip} placement="right">
         <FiberManualRecordIcon htmlColor={color} />
       </Tooltip>
+    )
+  }
+
+  static renderCreationDate(l: LocationRO){
+    const date = l.created_at ? moment(l.created_at).utc(true).format("MMM DD, YYYY") : "";
+    const time = l.created_at ? moment(l.created_at).utc(true).format("hh:mm:ss a") : "";
+    return (
+      `${date} at ${time}`
     )
   }
 }
