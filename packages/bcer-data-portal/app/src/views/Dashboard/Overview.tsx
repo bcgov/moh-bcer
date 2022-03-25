@@ -27,7 +27,7 @@ function Dashboard() {
   } = useBusiness();
 
   return (
-    <Page title='Dashboard'>
+    <Page title='Dashboard' error={businessError}>
       <Paper variant="outlined" className={classes.box}>
         <ReportingSummary />
         <BusinessSearch

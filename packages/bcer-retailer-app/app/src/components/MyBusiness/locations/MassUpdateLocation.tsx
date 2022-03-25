@@ -47,11 +47,6 @@ function MassUpdateLocation({
     [existingLocations]
   );
 
-  const initialIds = useMemo(
-    () => existingLocations.map((m: BusinessLocation) => m.id),
-    [existingLocations]
-  );
-
   const [{ loading, error }, patch] = useAxiosPatch(
     '/location/update-contact',
     { manual: true }
@@ -88,13 +83,14 @@ function MassUpdateLocation({
         initialValues={{
           email: '',
           phone: '',
-          ids: initialIds,
+          ids: existingLocations.map((m: BusinessLocation) => m.id),
         }}
         validationSchema={massContactValidationSchema}
         onSubmit={(v) => {
           setUpdateValues(v);
           setOpenConfirm(true);
         }}
+        enableReinitialize={true}
       >
         {({ values, ...helpers }) => (
           <Form>
