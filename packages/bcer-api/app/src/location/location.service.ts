@@ -652,4 +652,18 @@ export class LocationService {
 
     return {locations: locationsRO, overview: reportingOverview}
   }
+
+  async getLocationReportingStatus(id: string) {
+    const qb = this.locationRepository.createQueryBuilder('location')
+     .leftJoinAndSelect('location.noi', 'noi');
+
+    ['products', 'manufactures', 'sales'].forEach(colToCount => {
+      qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
+    })
+
+    qb.where('location.id = :id', { id });
+
+    const location = await qb.getOne();
+    return new SingleLocationReportStatus().getStatus(location);
+  }
 }

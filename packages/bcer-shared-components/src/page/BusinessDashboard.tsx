@@ -1,10 +1,11 @@
 import { ReportStatus } from '@/constants/enums/genericEnums';
 import {
   BusinessReportStatus,
+  LocationReportStatus,
   LocationRO,
 } from '@/constants/interfaces/genericInterfaces';
 import { BusinessDashboardUtil } from '@/util/businessDashboard.util';
-import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, LinearProgress, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { StyledStatusMessage, StyledTable, StyledTextWithStatusIcon } from '..';
 
@@ -99,23 +100,7 @@ export function BusinessDashboard({
             <BusinessOverview data={data.overview} missingSales={missingSales}/>
           )}
           <Box pt={2} pb={1} > 
-            <Box className={classes.retailerLegend}>
-              <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
-                Legend:
-              </Typography>
-              <div className={classes.legendItem}>
-                {BusinessDashboardUtil.renderStatus(ReportStatus.Reported)}
-                &nbsp; Submitted
-              </div>
-              <div className={classes.legendItem}>
-                {BusinessDashboardUtil.renderStatus(ReportStatus.Missing)}
-                &nbsp; Not Submitted
-              </div>
-              <div className={classes.legendItem}>
-                {BusinessDashboardUtil.renderStatus(ReportStatus.NotRequired)}
-                &nbsp; Not Required
-              </div>
-            </Box>
+            <ReportStatusLegend />
           </Box>
           <LocationOutstandingReportTable
             renderAddress={renderAddress}
@@ -252,5 +237,48 @@ export function LocationCompletedReportTable({
       columns={columns} 
       data={data} 
     />
+  )
+}
+
+export function ReportStatusLegend() {
+  const classes = useStyles();
+
+  return (
+    <Box className={classes.retailerLegend}>
+      <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
+        Legend:
+      </Typography>
+      <div className={classes.legendItem}>
+        {BusinessDashboardUtil.renderStatus(ReportStatus.Reported)}
+        &nbsp; Submitted
+      </div>
+      <div className={classes.legendItem}>
+        {BusinessDashboardUtil.renderStatus(ReportStatus.Missing)}
+        &nbsp; Not Submitted
+      </div>
+      <div className={classes.legendItem}>
+        {BusinessDashboardUtil.renderStatus(ReportStatus.NotRequired)}
+        &nbsp; Not Required
+      </div>
+    </Box>
+  )
+}
+
+export function LocationReportStatusTable({status, loading}: {status: LocationReportStatus, loading?: boolean}){
+  return(
+    <>
+      <Box py={1}>
+        <ReportStatusLegend />
+      </Box>
+      <StyledTable 
+        columns={BusinessDashboardUtil.getLocationColumn()}
+        data={ status? [status] : []}
+        options={{
+          paging: false,
+          loadingType: 'linear',
+        }}
+        isLoading={loading}
+      />
+    </>
   )
 }
