@@ -69,6 +69,14 @@ describe("Testing Location input form", () => {
     })
   })
 
+  it("Fails health authority field validation", () => {
+    cy.get(dialog).within(() => {
+      cy.get(locationFieldNames.healthAuthority.other).click();
+      cy.get(locationFieldNames.healthAuthorityOther).focus().blur();
+      cy.contains(locationErrorMessages.healthAuthorityOther.required);
+    })
+  })
+
   it('Fails to submit form without providing the rest of the fields', () => {
     cy.get(dialog).within(() => {
       cy.get("button").contains("Submit").click();

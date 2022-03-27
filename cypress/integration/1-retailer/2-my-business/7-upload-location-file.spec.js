@@ -35,6 +35,7 @@ describe("It tests adding location with file upload", () => {
     insideDialog(() => {
       cy.contains(locationErrorMessages.addressLine1.valid);
       cy.contains(locationErrorMessages.phone.required);
+      cy.contains(locationErrorMessages.healthAuthority.required);
     })
     FillForm.correctlyFillWrongLocation();
     insideDialog(() => {
