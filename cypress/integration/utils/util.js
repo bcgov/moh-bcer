@@ -5,14 +5,26 @@ export function stringGen(length) {
 }
 
 export function clickButton(contains){
-  cy.get("button").contains(contains).parent().should('exist')
-  cy.get("button").contains(contains).parent().click();
+  cy.get("button").contains(contains).parent().should("exist").should("not.be.disabled").click();
 }
 
 export function insideDialog(func){
-  cy.get(".MuiDialog-paper").should("exist").within(() => {
+  inside(".MuiDialog-paper", func);
+}
+
+export function inside(selector, func){
+  cy.get(selector).should("exist").within(() => {
     func();
   })
+}
+
+export function checkButtonIsDisabled(contains){
+  cy.get("button").contains(contains).parent().should("exist").should("be.disabled");
+}
+
+export function checkInputValue(name, value, type){
+  const selector = new Selector(type || "input").addName(name).build();
+  cy.get(selector).should("have.value", value);
 }
 
 export class Selector {

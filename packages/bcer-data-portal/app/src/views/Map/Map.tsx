@@ -32,6 +32,7 @@ function Map({config}: MapProps) {
     showOnMapHandler,
     createGoogleLink,
     setRouteOptions,
+    setShowHALayer,
     directionError,
   } = useLeaflet(locationIds, config);
 
@@ -62,6 +63,7 @@ function Map({config}: MapProps) {
             createGoogleLink={createGoogleLink}
             setRouteOptions={setRouteOptions}
             directionError={directionError}
+            setShowHALayer={setShowHALayer}
           />
         </Box>
       </Drawer>

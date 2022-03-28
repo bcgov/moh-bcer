@@ -83,4 +83,91 @@ export class UserAction {
     }
     cy.get(selector.build()).first().click()
   }
+
+  static clickSelectAllRowsInTable(){
+    cy.get("table").first().should("exist").within(() => {
+      const selector = new Selector("input").addType("checkbox").build();
+      cy.get(selector).first().should("exist").click();
+    })
+  }
+
+  static clickUploadProductRadioButton(){
+    const selector = new Selector("input").addName("mode select").addType("radio").addValue("upload").build();
+    cy.get(selector).should("exist").click();
+  }
+
+  static uploadProductReport(filename){
+    this.clickUploadProductRadioButton();
+    cy.wait(1000);
+    cy.contains("Drop your product report here")
+    cy.get("div")
+      .contains("Drop your product report here")
+      .parent()
+      .parent()
+      .parent()
+      .attachFile("files/" + filename, { subjectType: "drag-n-drop" });
+      cy.wait(1000)
+      cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist")
+    insideDialog(() => {
+      clickButton("Map Headers");
+    });
+    cy.wait(1000);
+  }
+
+  static writeInInputByName(name, write, type){
+    const selector = new Selector(type || "input").addName(name).build();
+    cy.get(selector).type(write);
+  }
+
+  static clearInputByName(name, type){
+    const selector = new Selector(type || "input").addName(name).build();
+    cy.get(selector).clear();
+  }
+
+  static selectOption(name, option){
+    const inputSelector = new Selector("input").addName(name).build();
+    cy.get(inputSelector).parent().click();
+
+    const optionSelector = new Selector("li").addProperty("role", "option").addProperty("data-value", option).build();
+    cy.get(optionSelector).click();
+  }
+
+  static clickRadio(name, value){
+    const selector = new Selector("input").addName(name).addValue(value).build();
+    cy.get(selector).parent().click();
+  }
+
+  static businessSearch(category, correctInput, correctHA, wrongHA){
+    cy.wait(1000)
+    UserAction.selectOption("category", category);
+    if(correctHA){
+      UserAction.selectOption("healthAuthority", correctHA);
+    }
+    UserAction.writeInInputByName("search", correctInput);
+    clickButton("Search");
+    cy.contains("Test address line 1");
+    UserAction.clearInputByName("search");
+    UserAction.writeInInputByName("search", "wrong input");
+    clickButton("Search");
+    cy.contains("No records to display");
+    if(wrongHA){
+      UserAction.clearInputByName("search");
+      UserAction.selectOption("healthAuthority", wrongHA);
+      UserAction.writeInInputByName("search", correctInput);
+      clickButton("Search");
+      cy.contains("No records to display");
+    }
+  }
+
+  static userSearch(type, correctInput){
+    cy.wait(1000);
+    UserAction.selectOption("type", type);
+    UserAction.writeInInputByName("search", correctInput);
+    clickButton("Search");
+    cy.contains("Test1 User1");
+    UserAction.clearInputByName("search");
+    UserAction.writeInInputByName("search", "wrong input");
+    clickButton("Search");
+    cy.contains("No records to display");
+  }
 }

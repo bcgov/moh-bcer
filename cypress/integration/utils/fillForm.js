@@ -1,6 +1,6 @@
 import { businessFieldNames, businessInfo } from "./business/businessObjects";
 import { exampleManualLocations, locationFieldNames } from "./location/locationObjects";
-import { insideDialog } from "./util";
+import { clickButton, insideDialog, Selector } from "./util";
 
 /**
  * Contains method to fill different forms in the application
@@ -39,14 +39,10 @@ import { insideDialog } from "./util";
       if (location.underage === "other") {
         cy.get(locationFieldNames.underageOther).type(location.underageOther);
       }
-      cy.get(
-        locationFieldNames.healthAuthority[location.healthAuthority]
-      ).click();
-      if (location.healthAuthority === "other") {
-        cy.get(locationFieldNames.healthAuthorityOther).type(
-          location.healthAuthorityOther
-        );
-      }
+      /**
+       * Missing proper way to fill health authority other atm
+       * Should be added when health authority is automatically added with csv upload
+       */
       cy.get(locationFieldNames.manufacturing[location.manufacturing]).click();
     });
   }
@@ -62,10 +58,38 @@ import { insideDialog } from "./util";
       cy.wait(1000)
       cy.get(locationFieldNames.postal).type("k0k0k0").blur();
       cy.wait(1000)
-      cy.get(
-        locationFieldNames.healthAuthority.fraser
-      ).click().blur()
     });
+  }
+
+  static fillManufacturingForm(count){
+    const productName = new Selector("input").addName("productName").build();
+    cy.get(productName).type("Test product").blur();
+    count = count && count < 10 ? count : 1;
+    Array(count).fill(0).forEach((val, i) => {
+
+      if(i !== 0){
+        cy.wait(1000);
+        clickButton("Add Ingredient");
+      }
+      const base = `ingredients.${i}.`
+      const ingredients = new Selector("input").addName(base + "name").build();
+      cy.get(ingredients).type(`Test ingredient name ${i}`).blur();
+
+      const sciName = new Selector("input").addName(base + "scientificName").build();
+      cy.get(sciName).type(`Test ingredient ${i} scientific name`);
+
+      const manuName = new Selector("input").addName(base + "manufacturerName").build();
+      cy.get(manuName).type(`Test ingredient ${i} manufacturer name`);
+
+      const manuAddress = new Selector("input").addName(base + "manufacturerAddress").build();
+      cy.get(manuAddress).type(`Test ingredient ${i} manufacturer address`);
+
+      const email = new Selector("input").addName(base + "manufacturerEmail").build();
+      cy.get(email).type(`test.${i}@email.com`);
+
+      const phone = new Selector("input").addName(base + "manufacturerPhone").build();
+      cy.get(phone).type(`${i}999999999`);
+    })
   }
 }
 
@@ -92,17 +116,18 @@ export class CheckForm {
       cy.get(locationFieldNames.city).invoke("attr", "value").then(val => {
         expect(val).to.have.lengthOf.above(1);
       })
-      // cy.get(locationFieldNames.doingBusinessAs).invoke("attr", "value").then(val => {
-      //   expect(val).to.be.oneOf([location.doingBusinessAs || businessInfo.businessName]);
-      // })
+      cy.get(locationFieldNames.doingBusinessAs).invoke("attr", "value").then(val => {
+        expect(val).to.be.oneOf([location.doingBusinessAs || businessInfo.businessName]);
+      })
       cy.get(locationFieldNames.underage[location.underage]).should("be.checked");
       if(location.underage === "other"){
         cy.get(locationFieldNames.underageOther).should("have.value", location.underageOther)
       }
-      cy.get(locationFieldNames.healthAuthority[location.healthAuthority]).should("be.checked");
-      if(location.healthAuthority === 'other'){
-        cy.get(locationFieldNames.healthAuthorityOther).should("have.value", location.healthAuthorityOther);
-      }
+      // Missing proper testing for health authority
+      // cy.get(locationFieldNames.healthAuthority[location.healthAuthority]).should("be.checked");
+      // if(location.healthAuthority === 'other'){
+      //   cy.get(locationFieldNames.healthAuthorityOther).should("have.value", location.healthAuthorityOther);
+      // }
       cy.get(locationFieldNames.manufacturing[location.manufacturing]).should("be.checked");
     })
   }

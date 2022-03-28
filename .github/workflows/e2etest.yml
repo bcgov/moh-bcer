@@ -1,10 +1,10 @@
 name: Test Application (e2e)
 
 on:
-  push:
   pull_request:
     branches:
       - main
+      - fix-ci
   workflow_dispatch:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     name: cypress
     runs-on: ubuntu-20.04
     concurrency: ci-test
-    timeout-minutes: 20
+    timeout-minutes: 50
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -34,8 +34,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          wait-on-timeout: 120
-          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 200
+          wait-on: 'http://localhost:3000/retailer'
 
       - name: Sleep for 30 seconds
         run: sleep 30s

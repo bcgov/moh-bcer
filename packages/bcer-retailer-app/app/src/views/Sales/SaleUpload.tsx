@@ -147,12 +147,21 @@ function SaleUplad() {
   const handleUpload = (data: any | null) => {
     if (data) {
       const { saleReports, submissionId, headers } = data;
-      setSale({
-        ...sale,
-        saleReports,
-        submissionId,
-      });
-      setProvidedHeaders(headers);
+      if (Object.keys(SalesReportCSVHeaders).every( header => headers.includes(header))) {
+        setMapping(SalesReportDTOHeaders)
+        setSale({
+          ...sale,
+          saleReports,
+          submissionId,
+        });
+      } else {
+        setSale({
+          ...sale,
+          saleReports,
+          submissionId,
+        });
+        setProvidedHeaders(headers);
+      }
     } else {
       setProvidedHeaders(null);
       setMapping(undefined);

@@ -133,11 +133,15 @@ export default function AddLocations () {
   }, [businessInfo.entry])
 
   const handleUpload = (data: LocationFileUploadRO | null) => {
-
     if (data) {
       const { locations, submissionId, headers } = data;
-      setBusinessInfo({...businessInfo, locations: locations.concat(businessInfo.locations.filter(l => l.id)), submissionId })
-      setProvidedHeaders(headers)
+      if (Object.keys(BusinessLocationHeaders).every( header => headers.includes(header))) {
+        setMapping(BusinessLocationDTOHeaders)
+        setBusinessInfo({...businessInfo, locations: locations.concat(businessInfo.locations.filter(l => l.id)), submissionId })
+      } else {
+        setBusinessInfo({...businessInfo, locations: locations.concat(businessInfo.locations.filter(l => l.id)), submissionId })
+        setProvidedHeaders(headers)
+      }
     } else {
       setBusinessInfo({...businessInfo, locations: businessInfo.locations.filter(l => l.id) })
       setProvidedHeaders(null)
