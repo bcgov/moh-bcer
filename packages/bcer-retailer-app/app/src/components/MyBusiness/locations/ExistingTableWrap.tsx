@@ -15,6 +15,7 @@ import LocationsEditForm from '@/components/form/forms/LocationsEditForm';
 import { LocationUtil } from '@/utils/location.util';
 import { editLocationFormatting } from '@/utils/formatting';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
+import MassUpdateLocation from './MassUpdateLocation';
 
 const useStyles = makeStyles({
   noiSubmittedBox: {
@@ -52,6 +53,7 @@ export default function ExistingTableWrap() {
   const existingLocations = locations?.filter((l) => !!l.id);
   const addedLocations = businessInfo.locations.filter((l: any) => !l.id);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+  const [multipleUpdateOpen, setMultipleUpdateOpen] = useState(false);
   /**
    * api request
    * */
@@ -86,6 +88,11 @@ export default function ExistingTableWrap() {
     }
   }, [status]);
 
+  const refreshData = async() => {
+    await postProfile();
+    getStatus();
+  }
+
   // update locations
   const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/edit`, { manual: true });
 
@@ -115,7 +122,7 @@ export default function ExistingTableWrap() {
     if (newBusinessInfo?.submissionId) {
       await patch({ url: `/location/edit/${targetConfirmRow.id}`, data: targetConfirmRow });
     }
-    getStatus();
+    await refreshData();
     setBusinessInfo(newBusinessInfo);
     setOpenEditConfirm(false);
     setOpenEdit(false);
@@ -131,8 +138,7 @@ export default function ExistingTableWrap() {
     await closePatch({
       url: `/location/close/${locationId}?closedTime=${moment(date).unix()}`,
     });
-    await postProfile();
-    getStatus();
+    await refreshData();
     setLocationId(null);
   };
   useEffect(() => {
@@ -153,8 +159,7 @@ export default function ExistingTableWrap() {
     await locationDelete({
       url: `/location/delete/${locationContext?.id}`,
     })
-    await postProfile()
-    getStatus();
+    await refreshData();
     setDeleteOpen(false)
   };
 
@@ -164,7 +169,7 @@ export default function ExistingTableWrap() {
         <ExistingTable
           data={existingLocations ? existingLocations : []}
           fullScreenProp={[isFullScreen, setIsFullScreen]}
-          handleActionButton={() => {}}
+          handleActionButton={() => setMultipleUpdateOpen(true)}
           handleAction={{
             handleEdit,
             handleView,
@@ -259,6 +264,14 @@ export default function ExistingTableWrap() {
             setOpen={() => setOpenEditConfirm(false)}
             confirmHandler={handleEditConfirm}
             acceptButtonText={'Submit'}
+          />
+        }
+        {
+          multipleUpdateOpen && existingLocations &&
+          <MassUpdateLocation
+            setMultipleUpdateOpen={setMultipleUpdateOpen}
+            existingLocations={existingLocations}
+            refreshData={refreshData}
           />
         }
       </>

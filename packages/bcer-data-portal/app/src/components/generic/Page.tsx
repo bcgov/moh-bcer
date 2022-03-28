@@ -91,7 +91,9 @@ function Page({
             <Box className={classes.helpTextWrapper}>
               <GetAppIcon className={classes.helperIcon} />
               <Typography variant="body1">
-                You do not have the correct role to view this page.
+                You do not have the correct role to view this page. 
+                <br />
+                Please contact your Health Authority account administrator to request access.
               </Typography>
             </Box>
             <Box className={classes.buttonWrapper}>
