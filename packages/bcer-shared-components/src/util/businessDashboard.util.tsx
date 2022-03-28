@@ -3,6 +3,7 @@ import { LocationReportStatus, LocationRO } from "@/constants/interfaces/generic
 import { Tooltip } from "@material-ui/core";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import React from 'react';
+import moment from 'moment';
 
 export class BusinessDashboardUtil {
   static getColumns (addressLine1: Function){
@@ -34,5 +35,22 @@ export class BusinessDashboardUtil {
         <FiberManualRecordIcon htmlColor={color} />
       </Tooltip>
     )
+  }
+
+  static renderCreationDate(l: LocationRO){
+    const date = l.created_at ? moment(l.created_at).utc(true).format("MMM DD, YYYY") : "";
+    const time = l.created_at ? moment(l.created_at).utc(true).format("hh:mm:ss a") : "";
+    return (
+      `${date} at ${time}`
+    )
+  }
+  
+  static getLocationColumn() {
+    return ([
+      {title: 'NOI', render: (r:LocationReportStatus) => this.renderStatus(r.noi)},
+      {title: 'Product Report', render: (r:LocationReportStatus) => this.renderStatus(r.productReport)},
+      {title: 'Manufacturing Report', render: (r:LocationReportStatus) => this.renderStatus(r.manufacturingReport)},
+      {title: 'Sales Report', render: (r:LocationReportStatus) => this.renderStatus(r.salesReport)},
+    ])
   }
 }

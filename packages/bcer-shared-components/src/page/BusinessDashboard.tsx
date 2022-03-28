@@ -218,6 +218,10 @@ export function LocationCompletedReportTable({
       title: 'Location',
       render: renderAddress,
     },
+    {
+      title: 'Creation Date',
+      render: BusinessDashboardUtil.renderCreationDate,
+    }
   ];
   
   const getInitialPagination = () => {

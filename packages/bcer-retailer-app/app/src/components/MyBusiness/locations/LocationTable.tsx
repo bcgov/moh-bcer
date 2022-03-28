@@ -30,8 +30,8 @@ function LocationTable({
       }}
       columns={[
         {
-          title: 'Address Line 1',
-          render: LocationUtil.renderAddressLine1,
+          title: 'Address',
+          render: LocationUtil.renderFullAddress,
           sorting: false
         },
         {
@@ -40,8 +40,8 @@ function LocationTable({
           defaultSort: 'DESC'
         },
         {
-          title: 'Postal Code',
-          render: LocationUtil.renderPostalCode,
+          title: 'Creation Date',
+          render: LocationUtil.renderCreationDate,
           sorting: false,
         },
         {

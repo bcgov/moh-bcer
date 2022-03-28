@@ -8,6 +8,7 @@ import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined'
 
 import {
   BusinessLocationHeaders,
+  DateFormat,
   LocationClosingWindow,
   LocationStatus,
   NoiStatus,
@@ -15,7 +16,8 @@ import {
 import { BusinessLocation, TableColumn } from '@/constants/localInterfaces';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import moment from 'moment';
-import { StyledTableColumn } from 'vaping-regulation-shared-components';
+import { StyledTableColumn, StyledToolTip } from 'vaping-regulation-shared-components';
+import { GeneralUtil } from './util';
 
 export type LocationBaseColumnType = {
   address1: TableColumn,
@@ -28,6 +30,7 @@ export type LocationBaseColumnType = {
   healthAuthority: TableColumn,
   minor: TableColumn,
   manufacturing: TableColumn,
+  status: TableColumn,
 }
 
 export type LocationBaseColumnsHeader = keyof LocationBaseColumnType;
@@ -39,6 +42,10 @@ export class LocationUtil {
 
   static renderAddressLine1(l: BusinessLocation): React.ReactNode {
     return <StyledTableColumn value={l.addressLine1} />;
+  }
+
+  static renderFullAddress(l: BusinessLocation) {
+    return <StyledTableColumn value={`${l.addressLine1}, ${l.city}, ${l.postal}`} />
   }
 
   static renderCity(l: BusinessLocation): React.ReactNode {
@@ -59,6 +66,16 @@ export class LocationUtil {
 
   static renderEmail(l: BusinessLocation): React.ReactNode {
     return <StyledTableColumn value={l.email} />
+  }
+
+  static renderCreationDate(l: BusinessLocation) {
+    return (
+      <StyledToolTip title={GeneralUtil.getFormattedTime(l.created_at, DateFormat.hh_mm_ss_a, true)}>
+        <Box>
+          {GeneralUtil.getFormattedDate(l.created_at, DateFormat.MMM_DD_YYYY, true)}
+        </Box>
+      </StyledToolTip>
+    )
   }
 
   static renderStatus(l: BusinessLocation) {
@@ -245,6 +262,7 @@ export class LocationUtil {
     doingBusinessAs: {title: 'Doing Business As', render: LocationUtil.renderDoingBusinessAs, width: 150},
     minor: {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
     manufacturing: {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
+    status: {title: 'status', render: LocationUtil.renderStatus, width: 150},
   }
 
   static getTableColumns(list: LocationBaseColumnsHeader[] = ['address1', 'postal', 'city', 'phone', 'email', 'healthAuthority', 'doingBusinessAs', 'minor', 'manufacturing' ]){

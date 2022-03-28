@@ -24,7 +24,7 @@ export enum BusinessLocationHeaders {
   'Address' = 'Business Address',
   'Postal Code' = 'Postal Code',
   'City' = 'City',
-  'Buiness Email' = 'Business Email Address',
+  'Business Email' = 'Business Email Address',
   'Phone Number' = 'Business Phone Number',
   'Underage Permitted' = 'Do you allow underage persons on premises?',
   'Health Authority' = 'Retail location health authority region',
@@ -36,7 +36,7 @@ export enum BusinessLocationDTOHeaders {
   addressLine1 = 'Address',
   postal = 'Postal Code',
   city = 'City',
-  email = 'Buiness Email',
+  email = 'Business Email',
   phone = 'Phone Number',
   underage = 'Underage Permitted',
   health_authority = 'Health Authority',
@@ -160,6 +160,7 @@ export enum LocationClosingWindow {
 export enum DateFormat {
   MMM_DD_YYYY = 'MMM DD, YYYY',
   MMMM_DD_YYYY = 'MMMM DD, YYYY',
+  hh_mm_ss_a = 'hh:mm:ss a',
 }
 
 export enum ApiOperation {

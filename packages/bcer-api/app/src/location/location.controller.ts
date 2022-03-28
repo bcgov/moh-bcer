@@ -40,6 +40,7 @@ import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
 import { LocationDTO } from './dto/location.dto';
 import { LocationEntity } from './entities/location.entity';
 import { GeoCodeService } from './geoCode.service';
+import { LocationContactDTO } from './dto/locationContact.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RoleGuard)
@@ -182,5 +183,21 @@ export class LocationController {
      return await this.service.getLocationsWithBusinessId(location?.businessId);
   }
 
-
+  /**
+   * 
+   * Update multiple contact info
+   */
+   @ApiOperation({ summary: 'Update contact info for multiple locations' })
+   @ApiResponse({ status: HttpStatus.OK })
+   @HttpCode(HttpStatus.OK)
+   @Roles('user')
+   @UseGuards(BusinessGuard)
+   @Patch('/update-contact')
+   async updateMassContactInfo(@Request() req: RequestWithUser, @Body() payload: LocationContactDTO) {
+     const result = await this.service.updateMultipleLocationContactInfo(payload, req.ctx.businessId);
+     return ({
+       success: result.affected || 0,
+       fail: payload.ids.length - (result.affected || 0)
+     });
+   }
 }

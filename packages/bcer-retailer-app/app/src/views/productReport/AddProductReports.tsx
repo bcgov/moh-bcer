@@ -219,9 +219,13 @@ export default function AddProductReports() {
   const handleUpload = (data: ProductsFileUploadRO | null) => {
     if (data) {
       const { products, submissionId, headers } = data;
-  
-      setProductInfo({...productInfo, products, submissionId })
-      setProvidedHeaders(headers)
+      if (Object.keys(ProductReportHeaders).every( header => headers.includes(header))) {
+        setMapping(ProductReportDTOHeaders)
+        setProductInfo({...productInfo, products, submissionId })
+      } else {
+        setProductInfo({...productInfo, products, submissionId })
+        setProvidedHeaders(headers)
+      }
     } else {
       setProvidedHeaders(null)
       setMapping(undefined)

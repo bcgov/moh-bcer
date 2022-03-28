@@ -5,3 +5,4 @@ export * from './StyledToast';
 export * from './StyledMenu';
 export * from './StyledTableColumn';
 export * from './StyledAccordion';
+export * from './StyledToolTip';
