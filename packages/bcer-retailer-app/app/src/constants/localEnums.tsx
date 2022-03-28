@@ -160,6 +160,7 @@ export enum LocationClosingWindow {
 export enum DateFormat {
   MMM_DD_YYYY = 'MMM DD, YYYY',
   MMMM_DD_YYYY = 'MMMM DD, YYYY',
+  hh_mm_ss_a = 'hh:mm:ss a',
 }
 
 export enum ApiOperation {
