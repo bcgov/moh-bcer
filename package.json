@@ -4,14 +4,17 @@
   "description": "![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)",
   "main": "index.js",
   "dependencies": {
-    "cypress-file-upload": "^5.0.8"
+    "cypress-file-upload": "5.0.8",
+    "moment": "^2.29.1",
+    "pg": "8.7.3"
   },
   "devDependencies": {
     "cypress": "^9.5.1"
   },
   "scripts": {
     "test:run": "./node_modules/.bin/cypress run --config video=false screenshotOnRunFailure=false",
-    "test:open": "./node_modules/.bin/cypress open"
+    "test:open": "./node_modules/.bin/cypress open",
+    "update:date": "node ./cypress/scripts/updateLocationNoiDate.js"
   },
   "repository": {
     "type": "git",

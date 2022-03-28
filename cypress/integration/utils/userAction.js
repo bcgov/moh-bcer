@@ -114,6 +114,23 @@ export class UserAction {
     cy.wait(1000);
   }
 
+  static uploadSalesReport(filename){
+    cy.contains("Drag your Sales Report here");
+    cy.wait(1000);
+    cy.get("div")
+      .contains("Drag your Sales Report here")
+      .parent()
+      .parent()
+      .parent()
+      .attachFile("files/" + filename, { subjectType: "drag-n-drop" });
+    cy.wait(1000);
+    cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist");
+    insideDialog(() => {
+      clickButton("Map Headers");
+    });
+    cy.wait(1000);
+  }
+
   static writeInInputByName(name, write, type){
     const selector = new Selector(type || "input").addName(name).build();
     cy.get(selector).type(write);

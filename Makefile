@@ -27,6 +27,7 @@ export TEST_KEYCLOAK_DATA_AUTH_URL := $(or $(TEST_KEYCLOAK_DATA_AUTH_URL),https:
 
 export GA_KEY := $(or $(GA_KEY),not_provided)
 export TEXT_API_KEY := $(or $(TEXT_API_KEY),not_provided)
+export SALES_REPORT_END_DATE := $(or $(SALES_REPORT_END_DATE),09-30)
 
 #Database
 export DB_CONFIG_NAME := $(or $(DB_CONFIG_NAME),default)

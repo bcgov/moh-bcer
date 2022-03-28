@@ -55,6 +55,7 @@ services:
       - KEYCLOAK_DATA_AUTH_URL=${TEST_KEYCLOAK_DATA_AUTH_URL}
       - GA_KEY=${GA_KEY}
       - TEXT_API_KEY=${TEXT_API_KEY}
+      - SALES_REPORT_END_DATE=${SALES_REPORT_END_DATE}
     expose:
       - "4000"
     depends_on:

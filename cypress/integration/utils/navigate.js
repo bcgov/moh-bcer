@@ -52,6 +52,7 @@ export class Navigate {
   }
 
   static gotoSales() {
-    cy.get(new Selector("a").addHref("sales").build()).click();
+    cy.wait(1000);
+    cy.get(new Selector("a").addHref("/sales").build()).should("be.visible").click({force: true});
   }
 }
