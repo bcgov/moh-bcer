@@ -1,5 +1,7 @@
 {
   "baseUrl": "http://localhost:3000",
+  "viewportHeight": 700,
+  "viewportWidth": 1200,
   "env": {
     "auth_base_url": "https://keycloak.freshworks.club/auth",
     "auth_realm": "vaping-test",
