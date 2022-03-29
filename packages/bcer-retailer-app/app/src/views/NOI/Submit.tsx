@@ -67,7 +67,7 @@ export default function NoiSubmit() {
 
   const [isConfirmOpen, setOpenConfirm] = useState<boolean>(false);
   const [isConfirmChecked, setConfirmChecked] = useState<boolean>();
-  const [{ data: locations = [], loading, error }] = useAxiosGet(`/location?includes=noi`);
+  const [{ data, loading, error }] = useAxiosGet<{locations: BusinessLocation[]}>(`/business/report-overview`);
   const [{ response, loading: postLoading, error: postError }, post] = useAxiosPost(`/noi`, { manual: true });
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
@@ -93,11 +93,11 @@ export default function NoiSubmit() {
   }, [postError])
 
   useEffect(() => {
-    if (locations.length && !error) {
-      const outstanding:Array<BusinessLocation> = locations.filter(NoiUtil.outstandingNoi);
+    if (data?.locations?.length && !error) {
+      const outstanding:Array<BusinessLocation> = data.locations.filter(NoiUtil.outstandingNoi);
       setOutstanding(outstanding);
     }
-  }, [locations]);
+  }, [data]);
   
   useEffect(() => {
     if (error) {
