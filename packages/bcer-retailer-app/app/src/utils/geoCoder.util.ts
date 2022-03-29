@@ -1,4 +1,5 @@
 import Axios from 'axios';
+import store from 'store';
 
 export class GeoCodeUtil {
   private static readonly baseUrl = `https://geocoder.api.gov.bc.ca/addresses.json`;
@@ -21,6 +22,17 @@ export class GeoCodeUtil {
   static async autoCompleteAddress(address: string) {
     const { data } = await Axios.get(this.getAutoCompleteUrl(address));
     return data;
+  }
+
+  /**
+   * Gets the Health Authority of a given lat lng pair
+   * @param {string}  request string containing the request URL with lat lng coordinates of a location
+   * @returns {string} the string representation of the health authority name 
+   */
+  static async getHealthAuthority(request: string) {
+    const {data} = await Axios.get(request, {headers: {'Authorization': `Bearer ${store.get('TOKEN')}`}})
+    return data;
+
   }
 
   /**

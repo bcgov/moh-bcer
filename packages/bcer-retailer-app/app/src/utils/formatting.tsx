@@ -39,6 +39,7 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     underage: '',
     underage_other: '',
     health_authority: '',
+    health_authority_display: location.health_authority_display ? location.health_authority_display : '',
     health_authority_other: '',
     doingBusinessAs: location.doingBusinessAs ? location.doingBusinessAs : '',
     manufacturing: '',
