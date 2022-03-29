@@ -15,6 +15,7 @@ export interface IBusinessLocationValues {
   underage_other?: string;
   health_authority: string;
   health_authority_other?: string;
+  health_authority_display?: string;
   doingBusinessAs: string;
   manufacturing: string;
   latitude: string;
