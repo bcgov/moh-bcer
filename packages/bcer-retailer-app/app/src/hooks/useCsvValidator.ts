@@ -4,10 +4,20 @@ import { useAxiosGet } from './axios';
 import Axios  from 'axios'
 import { GeoCodeUtil } from '@/utils/geoCoder.util';
 
+const HealthAuthorities: { [key: string]: string } = {
+  fraser: 'Fraser Health',
+  interior: 'Interior Health',
+  island: 'Island Health',
+  northern: 'Northern Health',
+  coastal: 'Vancouver Coastal Health',
+  other: 'Other (e.g. Out of Province)',
+};
+
 export const useCsvValidator = () => {
   const [errors, setErrors] = useState<Array<{row: string, field: string, message: string}>>()
   const [validatedData, setValidatedData] = useState<Array<any>>()
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
+  const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
 
   return {
     errors,
@@ -24,16 +34,21 @@ export const useCsvValidator = () => {
 
           try {
             const data = await GeoCodeUtil.geoCodeAddress(validatedDto.addressLine1);
+
             // Features prop will only ever have length 0 or 1
 
             if (data.features.length === 0 || data.features[0]?.properties.precisionPoints < 70) {
               errorArray.push({row: index + 2, field: 'Geocoder Error', message: 'We were unable to find a matching address. Please edit the location details.'})
               element.error = true;
             } else {
-              // Set the element's confidence interval, latitude, and longitude props from the retured geocoder data
+              const ha = await GeoCodeUtil.getHealthAuthority(`/location/determine-health-authority?lat=${data.features[0].geometry.coordinates[1]}&long=${data.features[0].geometry.coordinates[0]}`)
+              const formattedHealthAuthority = ha.toLowerCase()
+              // Set the element's confidence interval, latitude, longitude, health authority, and props from the retured geocoder data
               element.geoAddressConfidence = data.features[0].properties.precisionPoints
               element.longitude = data.features[0].geometry.coordinates[0]
               element.latitude = data.features[0].geometry.coordinates[1]
+              element.health_authority = formattedHealthAuthority
+              element.health_authority_display = HealthAuthorities[formattedHealthAuthority]
             }
           } catch (requestError) {
             console.log(requestError)
