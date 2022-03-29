@@ -1,9 +1,10 @@
 import BusinessSearch from '@/components/generic/BusinessSearch';
 import Page from '@/components/generic/Page';
 import { businessSearchCategoryOptions } from '@/constants/arrays';
+import { ConfigContext } from '@/contexts/Config';
 import useBusiness from '@/hooks/useBusiness';
 import { LinearProgress, makeStyles, Paper } from '@material-ui/core';
-import React from 'react';
+import React, { useContext } from 'react';
 import BusinessTable from './BusinessTable';
 import ReportingSummary from './ReportingSummary';
 
@@ -18,6 +19,8 @@ const useStyles = makeStyles(() => ({
 function Dashboard() {
   const classes = useStyles();
 
+  const { config } = useContext(ConfigContext);
+
   const {
     businessList,
     businessError,
@@ -27,7 +30,7 @@ function Dashboard() {
   } = useBusiness();
 
   return (
-    <Page title='Dashboard' error={businessError}>
+    <Page title='Dashboard' error={!businessLoading && !config.permissions.MANAGE_LOCATIONS}>
       <Paper variant="outlined" className={classes.box}>
         <ReportingSummary />
         <BusinessSearch
