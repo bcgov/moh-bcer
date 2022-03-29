@@ -11,7 +11,7 @@ export const businessSearchCategoryOptions = [
   { label: 'All', value: 'all'},
   { label: 'Business Name', value: 'businessName' },
   { label: 'Legal Name', value: 'legalName' },
-  { label: 'Address', value: 'address' },
+  { label: 'Address', value: 'addressLine1' },
   { label: 'City', value: 'city' },
   { label: 'Postal Code', value: 'postal' },
 ]
