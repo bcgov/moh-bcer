@@ -22,7 +22,7 @@ describe("Tests renewal of NOI", () => {
 
   it("Renews NOI", () => {
     Navigate.gotoNoi();
-    clickButton("Submit Outstanding NOI");
+    cy.get(".MuiButton-contained").contains("Submit Outstanding NOI").click();
     cy.contains("Confirm and Submit Notice of Intent");
     cy.contains("You have 1 retail locations");
     UserAction.clickSelectAllRowsInTable();

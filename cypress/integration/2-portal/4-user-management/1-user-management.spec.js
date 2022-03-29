@@ -35,7 +35,7 @@ describe("Tests the user management functionality", () => {
   });
 
   it("Assign a new user to existing business", () => {
-    const selector = new Selector("tr").addIndex(1).build();
+    const selector = new Selector("tr").addIndex(2).build();
     inside(selector, () => {
       const selector = new Selector("button").addTitle("Edit User").build();
       cy.get(selector).click();

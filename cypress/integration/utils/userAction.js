@@ -46,11 +46,9 @@ export class UserAction {
       .parent()
       .parent()
       .attachFile("files/" + filename, { subjectType: "drag-n-drop" });
-      cy.wait(1000)
-      cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist")
-    insideDialog(() => {
-      clickButton("Map Headers");
-    });
+    cy.wait(1000)
+    cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist")
+    cy.contains("Your CSV file has been mapped successfully.");
     clickButton("Next");
   }
 
@@ -106,11 +104,8 @@ export class UserAction {
       .parent()
       .parent()
       .attachFile("files/" + filename, { subjectType: "drag-n-drop" });
-      cy.wait(1000)
-      cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist")
-    insideDialog(() => {
-      clickButton("Map Headers");
-    });
+    cy.wait(1000)
+    cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist")
     cy.wait(1000);
   }
 
@@ -125,9 +120,7 @@ export class UserAction {
       .attachFile("files/" + filename, { subjectType: "drag-n-drop" });
     cy.wait(1000);
     cy.get(".MuiSnackbar-root", { timeout: 10000 }).should("not.exist");
-    insideDialog(() => {
-      clickButton("Map Headers");
-    });
+    cy.contains("Your CSV file has been mapped successfully.")
     cy.wait(1000);
   }
 

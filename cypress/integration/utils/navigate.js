@@ -18,7 +18,7 @@ export class Navigate {
 
   static openBusinessSubmissionOnFirstLogin() {
     this.loginRetailer();
-    clickButton("Start");
+    cy.contains("Start").click();
   }
 
   static openLocationManualInputForm() {

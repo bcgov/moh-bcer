@@ -13,7 +13,7 @@ describe("Tests uploading and submission of manufacturing report", () => {
 
   it("Submit a manufacturing report to all concerned locations", () => {
     Navigate.gotoManufacturing();
-    clickButton("Submit Manufacturing Report");
+    cy.get(".MuiButton-contained").contains("Submit Manufacturing Report").click();
     cy.contains("Add Manufacturing Report");
     FillForm.fillManufacturingForm(2);
     cy.wait(1000);

@@ -14,7 +14,7 @@ describe("Tests the 1st time business submission flow", () => {
   });
   before(() => {
     Navigate.loginRetailer();
-    clickButton("Start")
+    cy.contains("Start").click();
     cy.wait(1000);
   });
 

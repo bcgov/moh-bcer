@@ -11,7 +11,7 @@ describe("Correctly shows dashboard component assuming 1 business and 1 location
 
   beforeEach(() => {
     Navigate.loginPortal()
-    cy.wait(2000);
+    cy.wait(1000);
   })
 
   it("Shows the dashboard page in data portal", () => {
@@ -26,7 +26,7 @@ describe("Correctly shows dashboard component assuming 1 business and 1 location
     })
 
     it("Search with address works correctly", () => {
-      UserAction.businessSearch("address", "Test address")
+      UserAction.businessSearch("addressLine1", "Test address")
     })
 
     it("Search with legal name works correctly", () => {

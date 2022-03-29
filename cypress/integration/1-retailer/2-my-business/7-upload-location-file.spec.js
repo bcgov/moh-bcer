@@ -4,7 +4,7 @@ import { FillForm } from "../../utils/fillForm";
 import { locationErrorMessages } from "../../utils/location/locationObjects";
 import { Navigate } from "../../utils/navigate"
 import { UserAction } from "../../utils/userAction";
-import { clickButton, insideDialog } from "../../utils/util";
+import { clickButton, insideDialog, Selector } from "../../utils/util";
 
 describe("It tests adding location with file upload", () => {
   // To avoid tests fails due to network exceptions
@@ -35,7 +35,8 @@ describe("It tests adding location with file upload", () => {
     insideDialog(() => {
       cy.contains(locationErrorMessages.addressLine1.valid);
       cy.contains(locationErrorMessages.phone.required);
-      cy.contains(locationErrorMessages.healthAuthority.required);
+      const selector = new Selector("input").addName("health_authority_display").build();
+      cy.get(selector).should("not.have.value");
     })
     FillForm.correctlyFillWrongLocation();
     insideDialog(() => {
