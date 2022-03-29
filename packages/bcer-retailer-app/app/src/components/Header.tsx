@@ -4,7 +4,9 @@ import { useKeycloak } from '@react-keycloak/web';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
+import { StyledButton } from 'vaping-regulation-shared-components';
 import logo from '@/assets/images/logo-banner.svg';
+import { HelpOutlineOutlined } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   header: {
@@ -97,9 +99,22 @@ export default function Header() {
       </div>
       {
         keycloak.authenticated &&
-        <div className={classes.help}>
-          Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>
-        </div>
+        <>
+          <div className={classes.help}>
+            Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>
+          </div>
+          <StyledButton 
+            variant="small-outlined" 
+            size="small" 
+            style={{
+              backgroundColor: 'white',
+              marginLeft: '10px'
+            }} 
+            onClick={() => history.push('/FAQ')}
+          >
+            <HelpOutlineOutlined/> FAQ
+          </StyledButton>
+        </>
       }
     </div>
   );

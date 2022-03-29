@@ -68,6 +68,7 @@ export class AuthService {
       SEND_TEXT_MESSAGES: [ROLES.MOH_ADMIN],
       PLAN_ROUTES: [ROLES.HA_ADMIN, ROLES.MOH_ADMIN],
       VIEW_SALES: [ROLES.MOH_ADMIN],
+      MANAGE_FAQ: [ROLES.MOH_ADMIN],
     };
 
     const featureFlags = {

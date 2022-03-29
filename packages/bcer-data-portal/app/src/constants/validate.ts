@@ -16,3 +16,8 @@ export const notificationValidationSchema = yup.object({
     message: yup.string().required('Message can not be empty').max(612, 'Must be less than 612 characters'),
     confirm: yup.boolean().required().test('confirm', 'Please confirm', (v) => !!v)
 })
+
+export const faqValidationSchema = yup.object({
+  title: yup.string().required('Question cannot be empty'),
+  description: yup.string().required('Response cannot be empty')
+})
