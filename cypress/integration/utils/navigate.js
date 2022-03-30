@@ -28,7 +28,8 @@ export class Navigate {
   }
 
   static gotoRetailerDashBoard() {
-    cy.get(new Selector("a").addHref("/myDashboard").build()).click();
+    cy.wait(1000)
+    cy.get(new Selector("a").addHref("/myDashboard").build()).should('be.visible').click({force: true});
   }
 
   static gotoMyBusiness() {

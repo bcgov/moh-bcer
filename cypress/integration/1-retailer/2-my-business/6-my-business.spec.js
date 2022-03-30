@@ -24,6 +24,7 @@ describe("Tests my-business assuming the 1st business creation with 1 location",
   context("Tests the Existing business locations", () => {
     beforeEach(() => {
       cy.reload();
+      cy.wait(1000);
     })
 
     it("checks that example location-1 was created/rendered with proper values", () => {

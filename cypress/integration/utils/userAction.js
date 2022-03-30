@@ -21,7 +21,7 @@ export class UserAction {
       .addTitle("Edit Location")
       .build();
     cy.wait(1000);
-    cy.get(selector).first().click();
+    cy.get(selector).first().click({ force: true });
   }
 
   static addNewLocationManually(locations) {

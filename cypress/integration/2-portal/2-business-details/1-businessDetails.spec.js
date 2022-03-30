@@ -3,6 +3,9 @@
 import { Navigate } from "../../utils/navigate"
 
 describe("Tests the Business Details in business details page", () => {
+  Cypress.on("uncaught:exception", () => {
+    return false;
+  });
   beforeEach(() => {
     Navigate.loginPortal();
     cy.contains("Test business name").parent().click();
