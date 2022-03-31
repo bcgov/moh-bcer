@@ -12,7 +12,7 @@ describe("Tests the submission flow of product report", () => {
 
   it("Test: Uploads product report with error", () => {
     Navigate.gotoProducts();
-    clickButton("Submit Product Report");
+    cy.get(".MuiButton-contained").contains("Submit Product Report").click();
     cy.wait(1000);
     UserAction.uploadProductReport('productReportWithError.csv')
     cy.wait(1000)
@@ -22,7 +22,7 @@ describe("Tests the submission flow of product report", () => {
 
   it("Upload a valid product report for all locations", () => {
     Navigate.gotoProducts();
-    clickButton("Submit Product Report");
+    cy.get(".MuiButton-contained").contains("Submit Product Report").click();
     cy.wait(1000);
     UserAction.uploadProductReport("productReport.csv");
     cy.get("button").should("not.contain", "Download Errors CSV");

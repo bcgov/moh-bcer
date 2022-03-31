@@ -5,7 +5,7 @@ import {
   locationFieldNames,
 } from "../../utils/location/locationObjects";
 import { Navigate } from "../../utils/navigate";
-import { stringGen } from "../../utils/util";
+import { Selector, stringGen } from "../../utils/util";
 
 const dialog =".MuiDialog-paper";
 
@@ -71,9 +71,8 @@ describe("Testing Location input form", () => {
 
   it("Fails health authority field validation", () => {
     cy.get(dialog).within(() => {
-      cy.get(locationFieldNames.healthAuthority.other).click();
-      cy.get(locationFieldNames.healthAuthorityOther).focus().blur();
-      cy.contains(locationErrorMessages.healthAuthorityOther.required);
+      const selector = new Selector("input").addName("health_authority_display").build();
+      cy.get(selector).should("not.have.value");
     })
   })
 
