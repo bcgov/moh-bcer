@@ -72,6 +72,7 @@ export interface BusinessLocation {
   geoAddressConfidence?: string;
   geoAddress?: string;
   geoAddressId?: string;
+  reportStatus?: LocationReportStatus;
 }
 
 export interface LocationFileUploadRO {

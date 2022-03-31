@@ -79,7 +79,7 @@ export class LocationService {
     return locations;
   }
 
-  async getCommonLocations(query: LocationSearchDTO) {
+  async getCommonLocations(query: LocationSearchDTO, addCount?: boolean) {
     const possibleRelations = new Set(['business', 'noi', 'products', 'manufactures']);
     const qb = this.locationRepository.createQueryBuilder('location');
     let relations = [];
@@ -126,6 +126,13 @@ export class LocationService {
     }
     if (query.authority) {
       qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
+    }
+
+    // Counting the number of submitted reports
+    if(addCount){
+      ['products', 'manufactures', 'sales'].forEach((colToCount) =>{
+        qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
+      })
     }
 
     // TYPEORM wonkiness: Skip and Take broken here, but offset and limit may not be ideal?

@@ -29,6 +29,8 @@ import {
   StyledTextField,
   StyledMenus,
   StyledMenuItems,
+  BusinessDashboardUtil,
+  StyledTableColumn,
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
@@ -192,28 +194,28 @@ export default function Locations() {
       sorting: false,
     },
     {
-      title: 'Business Legal Name',
-      field: 'business.legalName',
-      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => handleRouteWithHistory(location.id)}>{location.business.legalName}</span>,
-    },
-    {
       title: 'Doing Business As',
       field: 'doingBusinessAs',
     },
     {
-      title: 'Phone Number',
-      field: 'phone',
-      sorting: false,
+      title: 'NOI',
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.noi),
     },
     {
-      title: 'Address 1',
-      render: (rd: BusinessLocation) =>
-        `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
-      sorting: false,
+      title: 'Product Report', 
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.productReport)
     },
     {
-      title: 'Email Address',
-      field: 'email',
+      title: 'Manufacturing Report', 
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.manufacturingReport)
+    },
+    {
+      title: 'Sales Report', 
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.salesReport)
+    },
+    {
+      title: 'Address',
+      render: (rd: BusinessLocation) => <StyledTableColumn value={`${rd.addressLine1}, ${rd.postal}, ${rd.city}`} />,
       sorting: false,
     },
     {
