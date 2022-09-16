@@ -6,7 +6,7 @@ import { BCERNotifyClient } from './notification.client';
 
 export class TextService {
   private readonly apiEndpoint =
-    process.env.TEXT_API_ENDPOINT || 'https://api.notification.canada.ca';
+    process.env.TEXT_API_ENDPOINT || 'http://api.notification.canada.ca';
   private readonly apiKey = process.env.TEXT_API_KEY;
   private readonly templateId =
     process.env.TEXT_GENERIC_NOTIFICATION_TEMPLATE_ID;
