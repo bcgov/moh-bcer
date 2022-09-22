@@ -292,7 +292,7 @@ function LocationsContent() {
                             }
 
                             {
-                              authConfig.permissions.VIEW_SALES
+                              authConfig.permissions.SEND_TEXT_MESSAGES
                                 &&
                               <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
                             }
@@ -448,7 +448,7 @@ function LocationsContent() {
                 </>
               }
               {
-                authConfig.permissions.VIEW_SALES
+                authConfig.permissions.SEND_TEXT_MESSAGES
                   &&
                 isConfirmDialogOpen
                   &&
