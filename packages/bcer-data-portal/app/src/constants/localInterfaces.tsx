@@ -254,6 +254,7 @@ export type LocationRO = {
   postal: string;
   phone: string;
   underage: string;
+  health_authority: string;
   ha: string;
   ha_other: string;
   doingBusinessAs: string;
@@ -397,7 +398,7 @@ export interface BusinessReportOverview {
 }
 
 export interface SearchQueryBuilder {
-  category: string;
+  category?: string;
   search: string;
   healthAuthority: string;
   page?: number;
