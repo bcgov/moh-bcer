@@ -293,7 +293,7 @@ function LocationsContent() {
 
                             {
                               authConfig.permissions.VIEW_SALES
-                              &&
+                                &&
                               <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
                             }
                             
@@ -448,6 +448,8 @@ function LocationsContent() {
                 </>
               }
               {
+                authConfig.permissions.VIEW_SALES
+                  &&
                 isConfirmDialogOpen
                   &&
                 <StyledConfirmDialog
