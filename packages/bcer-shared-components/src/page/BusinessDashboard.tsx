@@ -88,35 +88,38 @@ export function BusinessDashboard({
           )}
         </Box>
       )}
-      <Box pt={2} />
-      {!!outstanding.length && (
+      <Box pt={2} />      
         <Paper variant="outlined" className={classes.box}>
           <Box my={1}>
             <Typography className={classes.title}>
-              Locations with outstanding reports
+              Total Locations with outstanding reports
             </Typography>
           </Box>
           {data?.overview && showOverview && (
             <BusinessOverview data={data.overview} missingSales={missingSales}/>
           )}
-          <Box pt={2} pb={1} > 
-            <ReportStatusLegend />
-          </Box>
-          <LocationOutstandingReportTable
-            renderAddress={renderAddress}
-            data={outstanding}
-          />
-          {
-            isRetailerPortal
-              &&
-            <Typography className={classes.retailerText} style={{ paddingTop: '10px' }}>
-              You can submit outstanding reports for the above locations by navigating through the different respective menus on the left. 
-              If you're not planning on renewing your NOI for a location, you should close it on the "My Business" page or the system will 
-              do it automatically on October 1st.
-            </Typography>
+          {!!outstanding.length && 
+            <>
+              <Box pt={2} pb={1} > 
+                <ReportStatusLegend />
+              </Box>
+              <LocationOutstandingReportTable
+                renderAddress={renderAddress}
+                data={outstanding}
+              />
+              {
+                isRetailerPortal
+                  &&
+                <Typography className={classes.retailerText} style={{ paddingTop: '10px' }}>
+                  You can submit outstanding reports for the above locations by navigating through the different respective menus on the left. 
+                  If you're not planning on renewing your NOI for a location, you should close it on the "My Business" page or the system will 
+                  do it automatically on October 1st.
+                </Typography>
+              }
+            </>
           }
         </Paper>
-      )}
+      
       <Box pt={2} />
       {!!completed.length && (data?.overview?.incompleteReports?.length || !isRetailerPortal) && (
         <Paper className={classes.box}>
