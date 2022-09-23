@@ -21,23 +21,30 @@ function useBusiness() {
     total: 0,
   });
 
-  const [searchOptions, setSearchOptions] = useState<SearchQueryBuilder>({
-    search: '',
-    category: '',
-    healthAuthority: '',
-    additionalFilter: 'all',
-  })
+  const getInitialState = () => {
+    const initialState = {
+      search: '',
+      category: '',
+      healthAuthority: '',
+      additionalFilter: 'all',
+    }
+    const filterParams = JSON.parse(localStorage.getItem('searchOptions'));
+    return filterParams ? filterParams : initialState;
+  }
+
+  const [searchOptions, setSearchOptions] = useState<SearchQueryBuilder>(getInitialState());
+
   const [{data: businessData, error: businessError, loading: businessLoading}, getBusinesses] = useAxiosGet<{data: BusinessRO[], count: number}>('/data/business/businesses', { manual: true });
 
   function onChangeSearch(queryOptions: Partial<SearchQueryBuilder>){
     setSearchOptions({
       ...searchOptions,
       ...queryOptions,
-    });
+    });    
   }
 
-
   useEffect(() => {
+    localStorage.setItem('searchOptions', JSON.stringify(searchOptions));
     const query = GeneralUtil.searchQueryBuilder(searchOptions);
     getBusinesses({ url: `/data/business/businesses?${query}`});
   }, [searchOptions])
