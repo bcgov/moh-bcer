@@ -25,6 +25,7 @@ import LocationSalesTable from '@/components/tables/LocationSalesTable';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import { LocationReportStatus } from '@/components/location/LocationReportStatus';
 
+
 const useStyles = makeStyles({
   contentWrapper: {
     display: 'flex',
@@ -97,7 +98,6 @@ const useStyles = makeStyles({
 })
 
 export default function ViewLocations() {
-
   return (
     <Formik 
       initialValues={{content: 'locationStatus'}}
@@ -107,7 +107,9 @@ export default function ViewLocations() {
     </Formik>
 
   )
+
 }
+
 
 function LocationsContent() {
   const classes = useStyles();
@@ -288,7 +290,13 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.closedAt}</Typography>
                               </Box>
                             }
-                            <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
+
+                            {
+                              authConfig.permissions.SEND_TEXT_MESSAGES
+                                &&
+                              <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
+                            }
+                            
                           </Box>
                           <Box mt={3}>
                             <LocationReportStatus id={id}/>
