@@ -9,6 +9,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 import { healthAuthorityOptions } from '@/constants/arrays';
 import { SearchQueryBuilder } from '@/constants/localInterfaces';
+import useBusiness from '@/hooks/useBusiness';
 
 export type BusinessSearchProps = {
   onSubmit: (v: Partial<SearchQueryBuilder>) => void;
@@ -28,17 +29,22 @@ function BusinessSearch({
 }: BusinessSearchProps) {
   let inputFlexAmount = 0.86;
 
+  const {
+    searchOptions,
+  } = useBusiness();
+
   if (showHealthAuthority) {
     inputFlexAmount -= 0.2;
   }
+  
   return (
     <Box my={2}>
       <Formik
         onSubmit={onSubmit}
         initialValues={{
-          category: initialCategory || '',
-          search: '',
-          healthAuthority: showHealthAuthority ? 'all' : '',
+          category: searchOptions.category || initialCategory,
+          search: searchOptions.search,
+          healthAuthority: showHealthAuthority ? searchOptions.healthAuthority : 'all',
         }}
       >
         <Form>
