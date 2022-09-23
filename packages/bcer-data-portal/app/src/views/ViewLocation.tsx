@@ -448,8 +448,6 @@ function LocationsContent() {
                 </>
               }
               {
-                authConfig.permissions.SEND_TEXT_MESSAGES
-                  &&
                 isConfirmDialogOpen
                   &&
                 <StyledConfirmDialog
