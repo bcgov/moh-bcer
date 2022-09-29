@@ -3,7 +3,6 @@ import { Box, IconButton, Tooltip } from '@material-ui/core';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import CreateIcon from '@material-ui/icons/Create';
-import VisibilityIcon from '@material-ui/icons/Visibility';
 import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined';
 
 import {
@@ -11,6 +10,8 @@ import {
   DateFormat,
   LocationClosingWindow,
   LocationStatus,
+  LocationType,
+  LocationTypeLabels,
   NoiStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation, TableColumn } from '@/constants/localInterfaces';
@@ -31,6 +32,8 @@ export type LocationBaseColumnType = {
   minor: TableColumn,
   manufacturing: TableColumn,
   status: TableColumn,
+  locationType: TableColumn,
+  webpage: TableColumn,
 }
 
 export type LocationBaseColumnsHeader = keyof LocationBaseColumnType;
@@ -40,12 +43,18 @@ export class LocationUtil {
     return l.status === LocationStatus.Closed;
   }
 
+  static renderLocationType(l: BusinessLocation): React.ReactNode {
+    const location = LocationTypeLabels[l.location_type];
+    return <StyledTableColumn value={location} />;
+  }
+
   static renderAddressLine1(l: BusinessLocation): React.ReactNode {
     return <StyledTableColumn value={l.addressLine1} />;
   }
 
   static renderFullAddress(l: BusinessLocation) {
-    return <StyledTableColumn value={`${l.addressLine1}, ${l.city}, ${l.postal}`} />
+    const value = l.location_type === LocationType.online ? "" : `${l.addressLine1}, ${l.city}, ${l.postal}`
+    return <StyledTableColumn value={value} />
   }
 
   static renderCity(l: BusinessLocation): React.ReactNode {
@@ -224,6 +233,8 @@ export class LocationUtil {
           l.health_authority,
           l.doingBusinessAs,
           l.manufacturing,
+          l.webpage,
+          l.location_type
         ]);
         return dataList;
       }, []),
@@ -252,20 +263,22 @@ export class LocationUtil {
   }
 
   private static readonly locationTableBaseColumns: LocationBaseColumnType = {
+    locationType: {title: 'Type of Location', render: LocationUtil.renderLocationType, width: 150},
     address1: {title: 'Address 1', render: LocationUtil.renderAddressLine1, width: 150},
     address2: {title: 'Address 2', field: 'addressLine2', width: 150},
     postal: {title: 'Postal Code', field: 'postal', width: 150},
     city: {title: 'City', render: LocationUtil.renderCity, width: 150},
-    phone: {title: 'Business Phone', field: 'phone', width: 150},
+    phone: {title: 'Business Phone', field: 'phone', width: 150, },
     email: {title: 'Business email', render: LocationUtil.renderEmail, width: 150},
     healthAuthority: {title: 'Health Authority', field: 'health_authority', width: 150},
     doingBusinessAs: {title: 'Doing Business As', render: LocationUtil.renderDoingBusinessAs, width: 150},
     minor: {title: 'Minors Allowed', render: (rowData: IBusinessLocationValues) => rowData.underage === 'other' && rowData.underage_other ? `${rowData.underage_other}` : `${rowData.underage}`, width: 150},
     manufacturing: {title: 'Manufacturing  Premises', field: 'manufacturing', width: 200},
     status: {title: 'status', render: LocationUtil.renderStatus, width: 150},
+    webpage: {title: 'webpage', field: 'webpage', width: 150},
   }
 
-  static getTableColumns(list: LocationBaseColumnsHeader[] = ['address1', 'postal', 'city', 'phone', 'email', 'healthAuthority', 'doingBusinessAs', 'minor', 'manufacturing' ]){
+  static getTableColumns(list: LocationBaseColumnsHeader[] = ['locationType', 'address1', 'postal', 'city', 'phone', 'email', 'healthAuthority', 'doingBusinessAs', 'minor', 'manufacturing', 'webpage' ]){
     let columns: TableColumn[] = [];
     list?.forEach(l => columns.push(this.locationTableBaseColumns[l]));
     return columns;

@@ -4,6 +4,7 @@ import {
   NoiStatus,
   LocationStatus,
   ReportStatus,
+  LocationType,
 } from '@/constants/localEnums';
 
 export interface UserProfile {
@@ -47,6 +48,7 @@ export interface BusinessDetails {
 }
 
 export interface BusinessLocation {
+  location_type: LocationType,
   id?: string;
   addressLine1: string;
   geoAddressConfidence: string;
@@ -77,6 +79,7 @@ export interface BusinessLocation {
   created_at?: Date;
   status: LocationStatus;
   reportStatus?: LocationReportStatus;
+  webpage: string;
 }
 
 export interface LocationFileUploadRO {
