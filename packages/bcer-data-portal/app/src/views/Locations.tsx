@@ -485,7 +485,6 @@ export default function Locations() {
                       </Box>
                     </Grid>
                   </Grid>
-
                 </Form>
               </Formik>
 
