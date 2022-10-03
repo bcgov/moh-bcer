@@ -29,14 +29,14 @@ export const BusinessCsvValidation = yup.object({
   email: yup.string().email('Invalid Email').required('Email is a required field'),
   underage: yup.string().ensure().when('location_type', {
     is: 'physical' || 'both',
-    then: yup.string().test('length', 'The underage option must be less than 40 characters.', val => val?.length <= 40).required('This is a required field')
+    then: yup.string().required('This is a required field').test('length', 'The underage option must be less than 40 characters.', val => val?.length <= 40)
   }),
   doingBusinessAs: yup.string().test('length', 'The business name must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
   health_authority: yup.string().ensure().when('location_type', {
     is: 'physical' || 'both',
-    then: yup.string().test('length', 'The health authority must be less than 30 characters.', val => val?.length <= 30).required('Please select your Health Authority')
+    then: yup.string().required('Please select your Health Authority').test('length', 'The health authority must be less than 30 characters.', val => val?.length <= 30)
   }),
-  manufacturing: yup.string().test('string boolean', 'The manufacturing field must only contain a "Yes" or a "No"', val => (val.toLowerCase() === "yes" || val.toLowerCase() === "no")).required('This is a required field'),
+  manufacturing: yup.string().required('This is a required field').test('string boolean', 'The manufacturing field must only contain a "Yes" or a "No"', val => (val.toLowerCase() === "yes" || val.toLowerCase() === "no")),
   webpage: yup.string().ensure().when('location_type', {
     is: 'online' || 'both',
     then: yup.string()
