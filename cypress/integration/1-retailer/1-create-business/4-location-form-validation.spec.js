@@ -104,9 +104,8 @@ describe("Testing Location input form", () => {
         cy.contains(locationErrorMessages.addressLine1.required);
         cy.contains(locationErrorMessages.email.required);
         cy.contains(locationErrorMessages.phone.required);
-        cy.contains(locationErrorMessages.city.required);
         cy.contains(locationErrorMessages.postal.required);
-        cy.contains(locationErrorMessages.underageOther.required);
+        cy.contains(locationErrorMessages.underage.required);
         cy.contains(locationErrorMessages.manufacturing.required);
     })
   })
@@ -126,7 +125,7 @@ describe("Testing Location input form", () => {
     })
   })
 
-  it('Checks all required fields for Physical annd Online location selection', () => {
+  it('Checks all required fields for Physical and Online location selection', () => {
     cy.get(dialog).within(() => {
       /*
         Required field for Physical and Online are Address, Email, Phone, City, Postal Code, webpage, underage, health authority and manufaturing
@@ -138,9 +137,8 @@ describe("Testing Location input form", () => {
         cy.contains(locationErrorMessages.email.required);
         cy.contains(locationErrorMessages.phone.required);
         cy.contains(locationErrorMessages.webpage.required);
-        cy.contains(locationErrorMessages.city.required);
         cy.contains(locationErrorMessages.postal.required);
-        cy.contains(locationErrorMessages.underageOther.required);
+        cy.contains(locationErrorMessages.underage.required);
         cy.contains(locationErrorMessages.manufacturing.required);
     })
   })
