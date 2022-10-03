@@ -105,7 +105,7 @@ export default function ConfirmLocations () {
   const {errors: uploadErrors, validatedData, validateCSV} = useCsvValidator();
 
   useEffect(() => {
-    setNewLocations(businessInfo.locations.filter((l: any) => !l.id))
+    setNewLocations(businessInfo.locations.filter((l: any) => !l.id).map(v => ({...v, location_type: v.location_type ? v.location_type: 'physical'})))
   }, [businessInfo.locations])
 
   useEffect(() => {
@@ -224,7 +224,7 @@ export default function ConfirmLocations () {
                       pageSize: getInitialPagination(validatedData),
                       pageSizeOptions: [5, 10, 20, 30, 50]
                     }}
-                    columns={[
+                    columns={[                      
                       ...LocationUtil.getTableColumns(),
                       {title: '', render: LocationUtil.renderNewLocationActions({ handleEdit, handleDelete }), width: 100}
                     ]}

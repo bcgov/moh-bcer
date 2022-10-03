@@ -29,6 +29,7 @@ export function formatError (error: any) {
  */
 export function editLocationFormatting (location: IBusinessLocationValues):IBusinessLocationValues {
   let formattedLocation = {
+    location_type: location.location_type ? location.location_type : '',
     id: location.id ? location.id : null,
     addressLine1: location.addressLine1 ? location.addressLine1 : '' ,
     geoAddressConfidence: location.geoAddressConfidence ? location.geoAddressConfidence : '' ,
@@ -47,7 +48,8 @@ export function editLocationFormatting (location: IBusinessLocationValues):IBusi
     longitude: location.longitude ? location.longitude : '',
     tableData: location.tableData ? location.tableData : {id: undefined},
     error: location.error ? location.error : undefined,
-    noi: location.noi ? location.noi : undefined
+    noi: location.noi ? location.noi : undefined,
+    webpage: location.webpage ? location.webpage : ''
   }
 
   // TS will not allow adding a prop after the fact, so this is the workaround if location.id is empty (i.e location is new and not from DB)

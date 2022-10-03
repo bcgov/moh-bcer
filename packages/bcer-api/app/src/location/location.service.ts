@@ -27,6 +27,7 @@ import { BusinessReportType } from 'src/business/enums/businessReportType.enum';
 import { SingleLocationComplianceStatus } from './helper/singleLocationComplianceStatus';
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
 import { LocationContactDTO } from './dto/locationContact.dto';
+import { LocationType } from './enums/location_type.enum';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -207,7 +208,7 @@ export class LocationService {
 
   private mapLocationDTOs(dto: LocationDTO[], business: BusinessEntity): Partial<LocationEntity>[] {
     return dto.map((l) => {
-      const { health_authority, underage, underage_other, manufacturing, doingBusinessAs, ...rest } = l;
+      const { health_authority, underage, underage_other, manufacturing, doingBusinessAs, location_type, ...rest } = l;
       const entity: Partial<LocationEntity> = rest;
       if (l.underage === 'other') {
         entity.underage = l.underage_other || l.underage;
@@ -219,6 +220,9 @@ export class LocationService {
       entity.ha_other = l.health_authority_other;
       entity.business = business;
       entity.doingBusinessAs = doingBusinessAs?.length > 0 ? doingBusinessAs : business.businessName;
+      entity.webpage = l.webpage;
+      entity.location_type = l.location_type as LocationType;
+
       return entity;
     });
   }
