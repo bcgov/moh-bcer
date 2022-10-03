@@ -65,11 +65,11 @@ export const Validation = yup.object({
   postal: yup.string().ensure().when('location_type', {
     is: 'physical' || 'both',
     then: yup.string()
+          .required('Postal Code is a required field')
           .matches(
             /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/,
             'Please provide a valid postal code'
-          )
-          .required('Postal Code is a required field')
+          )          
   }),
   city: yup.string().ensure().when('location_type', {
     is: 'physical' || 'both',
