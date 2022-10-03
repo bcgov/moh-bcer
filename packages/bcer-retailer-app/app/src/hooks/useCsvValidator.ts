@@ -15,9 +15,7 @@ const HealthAuthorities: { [key: string]: string } = {
 
 export const useCsvValidator = () => {
   const [errors, setErrors] = useState<Array<{row: string, field: string, message: string}>>()
-  const [validatedData, setValidatedData] = useState<Array<any>>()
-  const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
-  const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
+  const [validatedData, setValidatedData] = useState<Array<any>>();
 
   return {
     errors,
@@ -27,43 +25,43 @@ export const useCsvValidator = () => {
       let validatedDataArray: Array<any> = [];
       
       await Promise.all(uploadData.map(async(element, index) => {
-
-        element.error = undefined;
-        try {
-          const validatedDto = await validationSchema.validateSync(element, { abortEarly: false });
-
+        
+          element.error = undefined;
           try {
-            const data = await GeoCodeUtil.geoCodeAddress(validatedDto.addressLine1);
+              const validatedDto = await validationSchema.validateSync(element, { abortEarly: false });
+              
+              if (validatedDto.addressLine1 !== "") {
+                try {                  
+                  const data = await GeoCodeUtil.geoCodeAddress(validatedDto.addressLine1);
 
-            // Features prop will only ever have length 0 or 1
+                  // Features prop will only ever have length 0 or 1
 
-            if (data.features.length === 0 || data.features[0]?.properties.precisionPoints < 70) {
-              errorArray.push({row: index + 2, field: 'Geocoder Error', message: 'We were unable to find a matching address. Please edit the location details.'})
-              element.error = true;
-            } else {
-              const ha = await GeoCodeUtil.getHealthAuthority(`/location/determine-health-authority?lat=${data.features[0].geometry.coordinates[1]}&long=${data.features[0].geometry.coordinates[0]}`)
-              const formattedHealthAuthority = ha.toLowerCase()
-              // Set the element's confidence interval, latitude, longitude, health authority, and props from the retured geocoder data
-              element.geoAddressConfidence = data.features[0].properties.precisionPoints
-              element.longitude = data.features[0].geometry.coordinates[0]
-              element.latitude = data.features[0].geometry.coordinates[1]
-              element.health_authority = formattedHealthAuthority
-              element.health_authority_display = HealthAuthorities[formattedHealthAuthority]
-            }
-          } catch (requestError) {
-            console.log(requestError)
-          }
-
-
-          validatedDataArray.push(element);
-        } catch (validationError) {
-          console.log(validationError)
-          //@ts-ignore
-          // needed to access validationError.inner
-          validationError.inner.map((error: any) => errorArray.push({row: index + 2, field: error.path, message: error.message})) as any
-          element.error = true;
-          validatedDataArray.push(element)
-        }
+                  if (data.features.length === 0 || data.features[0]?.properties.precisionPoints < 70) {
+                    errorArray.push({row: index + 2, field: 'Geocoder Error', message: 'We were unable to find a matching address. Please edit the location details.'})
+                    element.error = true;
+                  } else {
+                    const ha = await GeoCodeUtil.getHealthAuthority(`/location/determine-health-authority?lat=${data.features[0].geometry.coordinates[1]}&long=${data.features[0].geometry.coordinates[0]}`)
+                    const formattedHealthAuthority = ha.toLowerCase()
+                    // Set the element's confidence interval, latitude, longitude, health authority, and props from the retured geocoder data
+                    element.geoAddressConfidence = data.features[0].properties.precisionPoints
+                    element.longitude = data.features[0].geometry.coordinates[0]
+                    element.latitude = data.features[0].geometry.coordinates[1]
+                    element.health_authority = formattedHealthAuthority
+                    element.health_authority_display = HealthAuthorities[formattedHealthAuthority]
+                  }
+                } catch (requestError) {
+                  console.log(requestError)
+                }
+              }   
+            validatedDataArray.push(element);
+          } catch (validationError) {
+            console.log(validationError)
+            //@ts-ignore
+            // needed to access validationError.inner
+            validationError.inner.map((error: any) => errorArray.push({row: index + 2, field: error.path, message: error.message})) as any
+            element.error = true;
+            validatedDataArray.push(element)
+          }        
       }))
 
       setErrors(errorArray)

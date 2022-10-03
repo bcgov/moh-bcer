@@ -30,14 +30,13 @@ function LocationTable({
       }}
       columns={[
         {
+          title: 'Type of Location',
+          render: LocationUtil.renderLocationType
+        },
+        {
           title: 'Address',
           render: LocationUtil.renderFullAddress,
           sorting: false
-        },
-        {
-          title: 'City',
-          field: 'city',
-          defaultSort: 'DESC'
         },
         {
           title: 'Creation Date',

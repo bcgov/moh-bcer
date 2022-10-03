@@ -11,6 +11,10 @@ export const locationErrorMessages = {
     valid: "Please provide a valid phone number",
     required: "A Phone number is required",
   },
+  webpage: {
+    valid: "Please provide a valid business webpage",
+    required: "Please provide business URL",
+  },
   postal: {
     valid: "Please provide a valid postal code",
     required: "Postal Code is a required field",
@@ -36,6 +40,11 @@ export const locationErrorMessages = {
 };
 
 export const locationFieldNames = {
+  locationType: {
+    physical: 'input[name="location_type"][type="radio"][value="physical"]',
+    online: 'input[name="location_type"][type="radio"][value="online"]',
+    both: 'input[name="location_type"][type="radio"][value="both"]',
+  },
   addressLine1: 'input[name="addressLine1"][type="search"]',
   email: 'input[name="email"]',
   phone: 'input[name="phone"]',
@@ -60,7 +69,8 @@ export const locationFieldNames = {
   manufacturing: {
     yes: 'input[name="manufacturing"][value="yes"]',
     no: 'input[name="manufacturing"][value="no"]'
-  }
+  },
+  webpage: 'input[name="webpage"]',
 };
 
 export const exampleManualLocations = [

@@ -175,3 +175,16 @@ export enum ReportStatus {
   Missing = 'missing',
   NotRequired = 'notRequired',
 }
+
+export enum LocationType {
+  physical = 'physical',
+  online = 'online',
+  both = 'both',
+}
+
+
+export enum LocationTypeLabels {
+  'physical' = 'Physical',
+  'online' = 'Online',
+  'both' = 'Physical and Online',
+}

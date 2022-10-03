@@ -1,3 +1,4 @@
+import { LocationType } from '../enums/location_type.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { HealthAuthority } from 'src/business/enums/health-authority.enum'
 import { BusinessRO } from 'src/business/ro/business.ro';
@@ -111,4 +112,7 @@ export class LocationRO {
 
   @ApiProperty()
   reportStatus?: LocationReportingStatusRO;
+
+  @ApiProperty()
+  location_type: LocationType;
 }

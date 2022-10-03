@@ -43,7 +43,7 @@ export class LocationDTO {
     description: 'Street Address of business',
     example: faker.address.streetAddress()
   })
-  @IsNotEmpty()
+  @IsOptional()
   addressLine1: string;
 
   @ApiProperty({
@@ -57,14 +57,14 @@ export class LocationDTO {
     description: 'City',
     example: faker.address.city()
   })
-  @IsNotEmpty()
+  @IsOptional()
   city: string;
 
   @ApiProperty({
     description: 'Postal Code',
     example: faker.address.zipCode()
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsPostalCode('CA')
   postal: string;
 
@@ -80,7 +80,7 @@ export class LocationDTO {
     description: 'Whether or not minors can enter',
     example: true
   })
-  @IsNotEmpty()
+  @IsOptional()
   underage: string;
 
   @ApiProperty({
@@ -94,7 +94,7 @@ export class LocationDTO {
     description: 'The Health Authority this business belongs to',
     example: 'island'
   })
-  @IsNotEmpty()
+  @IsOptional()
   health_authority: string;
 
   @ApiProperty()
@@ -133,4 +133,11 @@ export class LocationDTO {
   })
   @IsOptional()
   geoAddressConfidence?: string;
+
+  @ApiProperty({
+    description: 'Is this an online business or has physical address or both?',
+    example: 'Online'
+  })
+  @IsNotEmpty()
+  location_type: string;
 }

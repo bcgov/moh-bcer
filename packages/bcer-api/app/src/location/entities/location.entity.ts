@@ -25,6 +25,7 @@ import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity
 import { LocationStatus } from '../enums/location-status.enum';
 import { LocationReportingStatusRO } from '../ro/locationReportingStatus.ro';
 import { NoteEntity } from 'src/note/entities/note.entity';
+import { LocationType } from '../enums/location_type.enum';
 
 @Entity('location')
 export class LocationEntity {
@@ -37,13 +38,13 @@ export class LocationEntity {
   @Column('varchar', { nullable: true })
   webpage: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   addressLine1: string;
 
   @Column('varchar', { nullable: true })
   addressLine2: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   city: string;
 
   @Column('varchar')
@@ -57,7 +58,7 @@ export class LocationEntity {
 
   @Column('enum', {
     enum: HealthAuthority,
-    nullable: false,
+    nullable: true,
     default: HealthAuthority.ISLAND,
     name: 'health_authority',
   })
@@ -177,6 +178,14 @@ export class LocationEntity {
   @Column({ type: 'varchar', nullable: true, default: null, name: 'geo_confidence' })
   geoAddressConfidence: string;
 
+  @Column('enum', {
+    enum: LocationType,
+    nullable: false,
+    default: LocationType.PHYSICAL,
+    name: 'location_type',
+  })
+  location_type: LocationType;
+
   @OneToMany(
     () => NoteEntity,
     (note: NoteEntity) => note.location
@@ -234,6 +243,7 @@ export class LocationEntity {
       latitude: this.latitude,
       longitude: this.longitude,
       reportStatus: this.reportStatus,
+      location_type: this.location_type,
     };
   }
 }

@@ -194,8 +194,8 @@ export default function AddLocations () {
                     ]}
                   />
                   <div className={classes.textWrapper}>
-                    <div className={classes.boxTitle} >Upload Business Location List File </div>
-                    <div className={classes.boxDescription}>Upload a prefilled location list file from your device. </div>
+                    <div className={classes.boxTitle} >Upload Business Physical Location List File </div>
+                    <div className={classes.boxDescription}>Upload a prefilled physical location list file from your device. </div>
                     <div >
                       <CSVLink
                         className={classes.linkWrapper}
@@ -203,14 +203,14 @@ export default function AddLocations () {
                         data={[]}
                         filename='vaping-reg-business-locations.csv'
                       >
-                        <div className={classes.linkText} >(Download Business location CSV template)</div>
+                        <div className={classes.linkText} >(Download Business physical location CSV template)</div>
                       </CSVLink>
                     </div>
                   </div>
                 </div>
                 <div>
                   {
-                    entry === 'upload' && <UploadArea actionText={'Drag your locations here'} endpoint={`/upload/location/${businessInfo.submissionId}`} handleUpload={handleUpload} />
+                    entry === 'upload' && <UploadArea actionText={'Drag your physical locations here'} endpoint={`/upload/location/${businessInfo.submissionId}`} handleUpload={handleUpload} />
                   }
                   {
                     providedHeaders?.length && entry === 'upload' && !mapping
