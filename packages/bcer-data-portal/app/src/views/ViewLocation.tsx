@@ -329,7 +329,6 @@ function LocationsContent() {
                           <Grid container spacing={2}>
                             <Grid item xs={12}>
                               <Box>
-                                {/* TODO */}
                                 <Typography variant="body2">Location is Physical, Online or Physical and Online</Typography>
                                 {data.location_type === "both" && <Typography className={classes.rowContent}>Physical and Online</Typography>}
                                 {data.location_type === "online" && <Typography className={classes.rowContent}>Online</Typography>}
@@ -405,28 +404,6 @@ function LocationsContent() {
                           </Grid>    
                         </Paper>
                       </Grid>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                       <Grid item xs={12} id="notes">
                           <Note targetId={id} type='location' showHideButton={true}/>
