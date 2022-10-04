@@ -39,9 +39,9 @@ export class UserAction {
       .addValue("upload")
       .build();
     cy.get(radioSelector).should("exist").click();
-    cy.contains("Drag your locations here")
+    cy.contains("Drag your physical locations here")
     cy.get("div")
-      .contains("Drag your locations here")
+      .contains("Drag your physical locations here")
       .parent()
       .parent()
       .parent()
