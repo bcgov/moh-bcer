@@ -10,6 +10,7 @@ import { Selector, stringGen } from "../../utils/util";
 const dialog =".MuiDialog-paper";
 
 describe("Testing Location input form", () => {
+  
   before(() => {
     Navigate.openBusinessSubmissionOnFirstLogin();
     Navigate.openLocationManualInputForm();
@@ -93,53 +94,56 @@ describe("Testing Location input form", () => {
     })
   })
 
-  // it('Checks all required fields for Physical location selection', () => {
-  //   cy.get(dialog).within(() => {
-  //     /*
-  //       Required field for Physical are Address, Email, Phone, City, Postal COde, underage, health authority and manufacturing
-  //       All these field should return required error message on blur
-  //     */       
-  //       cy.get(locationFieldNames.locationType.physical).click();
-  //       cy.get("button").contains("Submit").click(); 
-  //       cy.contains(locationErrorMessages.addressLine1.required);
-  //       cy.contains(locationErrorMessages.email.required);
-  //       cy.contains(locationErrorMessages.phone.required);
-  //       cy.contains(locationErrorMessages.postal.required);
-  //       cy.contains(locationErrorMessages.underage.required);
-  //       cy.contains(locationErrorMessages.manufacturing.required);
-  //   })
-  // })
+  it('Checks all required fields for Physical location selection', () => {
+    cy.get(dialog).within(() => {
+      /*
+        Required field for Physical are Address, Email, Phone, City, Postal COde, underage, health authority and manufacturing
+        All these field should return required error message on blur
+      */      
+        console.log(cy)
+        cy.get(locationFieldNames.locationType.physical).click();
+        const submitButton = cy.get("button").contains("Submit").click(); 
+        console.log(submitButton)
+        console.log(cy.get(dialog).children())
+        cy.contains(locationErrorMessages.addressLine1.required);
+        cy.contains(locationErrorMessages.email.required);
+        cy.contains(locationErrorMessages.phone.required);
+        cy.contains(locationErrorMessages.postal.required);
+        cy.contains(locationErrorMessages.underage.required);
+        cy.contains(locationErrorMessages.manufacturing.required);
+    })
+  })
 
-  // it('Checks all required fields for Online location selection', () => {
-  //   cy.get(dialog).within(() => {
-  //     /*
-  //       Required field for Online are Email, Phone, webpage and manufacturing
-  //       All these field should return required error message on blur
-  //     */       
-  //       cy.get(locationFieldNames.locationType.online).click();
-  //       cy.get("button").contains("Submit").click(); 
-  //       cy.contains(locationErrorMessages.email.required);
-  //       cy.contains(locationErrorMessages.phone.required);
-  //       cy.contains(locationErrorMessages.webpage.required);
-  //       cy.contains(locationErrorMessages.manufacturing.required);
-  //   })
-  // })
+  it('Checks all required fields for Online location selection', () => {
+    cy.get(dialog).within(() => {
+      /*
+        Required field for Online are Email, Phone, webpage and manufacturing
+        All these field should return required error message on blur
+      */       
+        cy.get(locationFieldNames.locationType.online).click();
+        cy.get("button").contains("Submit").click(); 
+        cy.contains(locationErrorMessages.email.required);
+        cy.contains(locationErrorMessages.phone.required);
+        cy.contains(locationErrorMessages.webpage.required);
+        cy.contains(locationErrorMessages.manufacturing.required);
+    })
+  })
 
-  // it('Checks all required fields for Physical and Online location selection', () => {
-  //   cy.get(dialog).within(() => {
-  //     /*
-  //       Required field for Physical and Online are Address, Email, Phone, City, Postal Code, webpage, underage, health authority and manufaturing
-  //       All these field should return required error message on blur
-  //     */       
-  //       cy.get(locationFieldNames.locationType.both).click();
-  //       cy.get("button").contains("Submit").click(); 
-  //       cy.contains(locationErrorMessages.addressLine1.required);
-  //       cy.contains(locationErrorMessages.email.required);
-  //       cy.contains(locationErrorMessages.phone.required);
-  //       cy.contains(locationErrorMessages.webpage.required);
-  //       cy.contains(locationErrorMessages.postal.required);
-  //       cy.contains(locationErrorMessages.underage.required);
-  //       cy.contains(locationErrorMessages.manufacturing.required);
-  //   })
-  // })
+  it('Checks all required fields for Physical and Online location selection', () => {
+    cy.get(dialog).within(() => {
+      /*
+        Required field for Physical and Online are Address, Email, Phone, City, Postal Code, webpage, underage, health authority and manufaturing
+        All these field should return required error message on blur
+      */       
+        cy.get(locationFieldNames.locationType.both).click();
+        cy.get("button").contains("Submit").click(); 
+        cy.contains(locationErrorMessages.addressLine1.required);
+        cy.contains(locationErrorMessages.email.required);
+        cy.contains(locationErrorMessages.phone.required);
+        cy.contains(locationErrorMessages.webpage.required);
+        cy.contains(locationErrorMessages.postal.required);
+        cy.contains(locationErrorMessages.underage.required);
+        cy.contains(locationErrorMessages.manufacturing.required);
+    })
+  })
 });

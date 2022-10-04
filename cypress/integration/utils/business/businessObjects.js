@@ -29,6 +29,9 @@ export const businessInputErrorMessage = {
   webPage: {
     length: "The URL must be less than 100 characters.",
   },
+  province: {
+    required: "Province is a required field"
+  }
 };
 
 export const businessFieldNames = {
@@ -41,6 +44,7 @@ export const businessFieldNames = {
   phone: 'input[name="phone"]',
   email: 'input[name="email"]',
   webPage: 'input[name="webpage"]',
+  province: 'input[name="province"]',
 };
 
 export const businessInfo = {
@@ -53,4 +57,5 @@ export const businessInfo = {
   phone: '0000000000',
   email: 'test@test.com',
   webPage: 'www.test.com',
+  province: 'ON'
 }
