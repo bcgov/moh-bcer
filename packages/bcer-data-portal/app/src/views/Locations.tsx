@@ -166,14 +166,13 @@ export default function Locations() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState  ({
+  const [searchTerms, setSearchTerms] = useState({
     term: undefined,
     authority: undefined,
     page: 0,
     pageSize: 20,
     orderBy: undefined,
     orderDirection: undefined,
-    // locationtype: undefined,
   });
   const [locations, setLocations] = useState([]);
 
@@ -247,17 +246,12 @@ export default function Locations() {
     searchTerms?.authority
       ? (url += `&authority=${searchTerms.authority}`)
       : null;
-    // searchTerms?.locationtype
-    //   ? (url += `&locationtype=${searchTerms.locationtype}`)
-    //   : null;
     searchTerms?.orderBy
       ? (url += `&orderBy=${tableColumns[searchTerms.orderBy].title}`)
       : null;
     searchTerms?.orderDirection
       ? (url += `&order=${searchTerms.orderDirection.toUpperCase()}`)
       : null;
-
-    // console.log(url);
     return url;
   };
 
@@ -276,12 +270,6 @@ export default function Locations() {
     { value: 'northern', label: 'Northern' },
   ];
 
-  const locationTypeOptions = [
-    { value: 'online', label: 'Online' },
-    { value: 'physical', label: 'Physical' },
-    { value: 'both', label: 'Physical and online' },
-  ]
-
   const logout = () => {
     store.clearAll();
     keycloak.logout();
@@ -290,12 +278,10 @@ export default function Locations() {
 
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
-    // const locationtype = e.location_type;
     setSearchTerms({
       ...searchTerms,
       term: e.search,
       authority,
-      // locationtype,
     });
   };
 
@@ -435,7 +421,6 @@ export default function Locations() {
                 Locations with a Notice of Intent
               </Typography>
             </div>
-
             <Paper className={classes.box} variant="outlined">
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
@@ -448,15 +433,13 @@ export default function Locations() {
                 }}
               >
                 <Form>
-                  <Grid id="first-row" container spacing={2}>
-                    {/* note: total xs = 12 each row*/}
-                    <Grid item xs={8}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={7}>
                       <StyledTextField
                         name="search"
                         label="Search (Address, Business Name, Legal Name, Doing Business As)"
                       />
                     </Grid>
-
                     <Grid item xs={2}>
                       <StyledSelectField
                         name="authority"
@@ -464,18 +447,7 @@ export default function Locations() {
                         label="Health Authority"
                       />
                     </Grid>
-
-                    {/* <Grid item xs={2}>
-                      <StyledSelectField
-                        name="locationtype"
-                        options={locationTypeOptions}
-                        label="Location"
-                      />
-                    </Grid> */}
-                  </Grid>
-
-                <Grid id="second-row" container spacing={2}>
-                  <Grid item xs={2}>
+                    <Grid item xs={3}>
                       <Box
                         alignContent="center"
                         alignItems="center"
@@ -485,7 +457,7 @@ export default function Locations() {
                       >
                         <StyledButton
                           fullWidth
-                          variant="dialog-accept"
+                          variant="contained"
                           type="submit"
                         >
                           Search
@@ -495,9 +467,7 @@ export default function Locations() {
                   </Grid>
                 </Form>
               </Formik>
-
               <div>
-                <Box display ='flex'my={1}></Box>             
                 <Typography className={classes.tableRowCount} variant="body2">
                   {totalRowCount} retail locations have submitted a Notice of
                   Intent
@@ -519,7 +489,6 @@ export default function Locations() {
                   <StyledMenus items={menuOptions} buttonComponent="Download"/>
                 </Box>
               </div>
-
               <div className={'tableDiv'}>
                 <StyledTable
                   columns={tableColumns}
@@ -592,12 +561,6 @@ export default function Locations() {
           </>
         )}
       </div>
-
-
-
-
-
-
       <Snackbar
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
