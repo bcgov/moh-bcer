@@ -29,6 +29,9 @@ export class BusinessRO {
   addressLine2: string;
 
   @ApiProperty()
+  province: string;
+
+  @ApiProperty()
   city: string;
 
   @ApiProperty()

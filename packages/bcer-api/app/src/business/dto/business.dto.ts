@@ -89,4 +89,12 @@ export class BusinessDTO {
   @IsNotEmpty()
   @IsPhoneNumber('CA')
   phone: string;
+
+  @ApiProperty({
+    description: 'Province',
+    example: "ON, AB"
+  })
+  @IsNotEmpty()
+  @IsNotEmpty()
+  province: string;
 }

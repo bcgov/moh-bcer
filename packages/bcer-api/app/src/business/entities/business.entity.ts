@@ -55,6 +55,9 @@ export class BusinessEntity {
   @Column('varchar', { nullable: true, default: '' } )
   phone: string;
 
+  @Column('varchar', { nullable: false, default: '' } )
+  province: string;
+
   @OneToMany(() => UserEntity, (user) => user.business)
   users: []
 
@@ -109,6 +112,7 @@ export class BusinessEntity {
       city: this.city,
       postal: this.postal,
       phone: this.phone,
+      province: this.province,
       locations: this.locations?.map((l: LocationEntity) => l.toResponseObject()) || [],
       nois: this.nois?.map((n: NoiEntity) => n.toResponseObject()) || [],
       products: this.products?.map((p: ProductEntity) => p.toResponseObject()) || [],

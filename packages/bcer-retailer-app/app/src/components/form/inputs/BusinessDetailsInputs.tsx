@@ -1,7 +1,8 @@
 import React from 'react';
 import { Grid, Typography, styled } from '@material-ui/core';
-import { StyledTextField } from 'vaping-regulation-shared-components'
+import { StyledSelectField, StyledTextField } from 'vaping-regulation-shared-components'
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
+import { provinceOptions } from '@/constants/arrays';
 
 const FormBorderGrid = styled(Grid)({
   padding: '25px 20px 15px 20px',
@@ -24,6 +25,7 @@ function BusinessDetailsInputs() {
           Please confirm your business details below
         </FormTitle>
       </Grid>
+
       <Grid item xs={12} md={6}>
         <StyledTextField
           label={<RequiredFieldLabel label="Business legal name"/>}
@@ -64,12 +66,24 @@ function BusinessDetailsInputs() {
         />
       </Grid>
 
-      <Grid item xs={12} md={6}>
-        <StyledTextField
-          label={<RequiredFieldLabel label="Postal code"/>}
-          name="postal"
-          fullWidth
-        />
+      <Grid container item xs={12} md={6} spacing={2}>  
+        
+        <Grid item xs={6}>
+          <StyledSelectField
+            label={<RequiredFieldLabel label="Province"/>}
+            name="province"
+            options={provinceOptions}
+            fullWidth
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          <StyledTextField
+            label={<RequiredFieldLabel label="Postal code"/>}
+            name="postal"          
+          />
+        </Grid>
+
       </Grid>
 
       <Grid item xs={12} md={6}>
