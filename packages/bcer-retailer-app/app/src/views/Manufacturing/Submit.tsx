@@ -18,6 +18,7 @@ import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
+import { LocationTypeLabels } from '@/constants/localEnums';
 
 const useStyles = makeStyles({
   buttonIcon: {
@@ -114,6 +115,7 @@ export default function ManufacturingSubmit() {
               <div style={{ overflowX: 'auto', marginTop: '1rem' }}>
                 <StyledTable
                   columns={[
+                    {title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
                     {title: 'Address', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
                     {title: 'Email Address', field: 'email'},
                     {title: 'Phone Number', field: 'phone'},

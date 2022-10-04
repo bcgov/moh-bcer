@@ -168,7 +168,7 @@ export default function SalesOverview() {
 
   const periodYear = getSalesReportYear();
 
-  const commonColumns = LocationUtil.getTableColumns(['doingBusinessAs', 'address1', 'city']) as any;
+  const commonColumns = LocationUtil.getTableColumns(['doingBusinessAs', 'address1', 'locationType']) as any;
 
   return outstandingLoading || submittedLoading ? (
     <CircularProgress />
