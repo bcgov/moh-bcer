@@ -11,6 +11,7 @@ import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 import { useAxiosGet } from '@/hooks/axios';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 import { GeoCodeUtil } from '@/utils/geoCoder.util';
+import { locationTypeOptions } from '@/constants/arrays';
 
 const useStyles = makeStyles({
   groupHeader: {
@@ -97,7 +98,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     formikHelpers.setFieldValue('city', fullLocation.properties.localityName)
     formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[0])
     formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[1])
-
+    
     if (fullLocation) {
       doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
     }
@@ -128,11 +129,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       <div className={classes.radioWrapper}>
         <StyledRadioGroup
           name="location_type"
-          options={[
-            {label: 'Physical', value: 'physical', },
-            {label: 'Online', value: 'online'},
-            {label: 'Physical and Online', value: 'both'}
-          ]}
+          options={locationTypeOptions}
         />
       </div>
 

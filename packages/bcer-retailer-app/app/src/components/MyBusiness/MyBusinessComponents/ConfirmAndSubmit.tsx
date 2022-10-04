@@ -4,7 +4,7 @@ import { Form, Formik } from 'formik';
 import { makeStyles } from '@material-ui/core';
 
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
-import { BusinessLocationHeaders } from '@/constants/localEnums';
+import { BusinessLocationHeaders, ProvinceLabels } from '@/constants/localEnums';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import { Validation } from '@/components/form/validations/vBusinessDetails';
 import { BusinessDetails } from '@/constants/localInterfaces';
@@ -192,6 +192,14 @@ export default function ConfirmAndSubmit () {
             </div>
             <div className={classes.rowContent}>
               {details.postal}
+            </div>
+          </div>          
+          <div className={classes.boxRow}>
+            <div className={classes.rowTitle}>
+              Province
+            </div>
+            <div className={classes.rowContent}>
+              {ProvinceLabels[details.province as keyof typeof ProvinceLabels]}
             </div>
           </div>
           <div className={classes.boxRow}>

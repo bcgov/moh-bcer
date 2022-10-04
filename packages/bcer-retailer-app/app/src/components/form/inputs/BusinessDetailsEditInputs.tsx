@@ -1,6 +1,8 @@
 import React from 'react';
 import { Grid, makeStyles } from '@material-ui/core';
-import { StyledTextField } from 'vaping-regulation-shared-components'
+import { StyledSelectField, StyledTextField } from 'vaping-regulation-shared-components'
+import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
+import { provinceOptions } from '@/constants/arrays';
 
 const useStyles = makeStyles({
   form: {
@@ -69,12 +71,22 @@ export default function BusinessDetailsEditInputs() {
         />
       </Grid>
 
-      <Grid className={classes.gridItemRight} item xs={12} md={6}>
-        <StyledTextField
-          label="Postal code"
-          name="postal"
-          fullWidth
-        />
+      <Grid container className={classes.gridItemRight} item xs={12} md={6} spacing={2}>
+
+        <Grid item xs={6}>
+          <StyledSelectField
+            label={<RequiredFieldLabel label="Province"/>}
+            name="province"
+            options={provinceOptions}            
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          <StyledTextField
+            label="Postal code"
+            name="postal"            
+          />
+        </Grid>
       </Grid>
 
       <Grid className={classes.gridItemLeft} item xs={12} md={6}>
