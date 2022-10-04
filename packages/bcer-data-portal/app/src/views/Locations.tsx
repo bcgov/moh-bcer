@@ -166,13 +166,14 @@ export default function Locations() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
+  const [searchTerms, setSearchTerms] = useState  ({
     term: undefined,
     authority: undefined,
     page: 0,
     pageSize: 20,
     orderBy: undefined,
     orderDirection: undefined,
+    // locationtype: undefined,
   });
   const [locations, setLocations] = useState([]);
 
@@ -246,12 +247,17 @@ export default function Locations() {
     searchTerms?.authority
       ? (url += `&authority=${searchTerms.authority}`)
       : null;
+    // searchTerms?.locationtype
+    //   ? (url += `&locationtype=${searchTerms.locationtype}`)
+    //   : null;
     searchTerms?.orderBy
       ? (url += `&orderBy=${tableColumns[searchTerms.orderBy].title}`)
       : null;
     searchTerms?.orderDirection
       ? (url += `&order=${searchTerms.orderDirection.toUpperCase()}`)
       : null;
+
+    // console.log(url);
     return url;
   };
 
@@ -273,7 +279,7 @@ export default function Locations() {
   const locationTypeOptions = [
     { value: 'online', label: 'Online' },
     { value: 'physical', label: 'Physical' },
-    { value: 'physical and online', label: 'Physical and online' },
+    { value: 'both', label: 'Physical and online' },
   ]
 
   const logout = () => {
@@ -284,10 +290,12 @@ export default function Locations() {
 
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
+    // const locationtype = e.location_type;
     setSearchTerms({
       ...searchTerms,
       term: e.search,
       authority,
+      // locationtype,
     });
   };
 
@@ -457,13 +465,13 @@ export default function Locations() {
                       />
                     </Grid>
 
-                    <Grid item xs={2}>
+                    {/* <Grid item xs={2}>
                       <StyledSelectField
                         name="locationtype"
                         options={locationTypeOptions}
                         label="Location"
                       />
-                    </Grid>
+                    </Grid> */}
                   </Grid>
 
                 <Grid id="second-row" container spacing={2}>
