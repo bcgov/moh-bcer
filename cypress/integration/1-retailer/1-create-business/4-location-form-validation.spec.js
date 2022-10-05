@@ -100,6 +100,7 @@ describe("Testing Location input form", () => {
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
         cy.contains(locationErrorMessages.addressLine1.required);
+        cy.get(something).contains(locationErrorMessages.addressLine1.required);
         cy.get(something).contains(locationErrorMessages.email.required);
         cy.get(something).contains(locationErrorMessages.phone.required);
         cy.get(something).contains(locationErrorMessages.postal.required);
