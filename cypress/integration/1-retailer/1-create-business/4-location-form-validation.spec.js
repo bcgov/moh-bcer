@@ -95,15 +95,16 @@ describe("Testing Location input form", () => {
   })
 
   it('Checks all required fields for Physical location selection', () => {
-    cy.get(dialog).within(() => {      
+    cy.get(dialog).within(() => {     
+        const something = ".MuiDialogContent-root"; 
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
         cy.contains(locationErrorMessages.addressLine1.required);
-        cy.get(dialog).contains(locationErrorMessages.email.required);
-        cy.get(dialog).contains(locationErrorMessages.phone.required);
-        cy.get(dialog).contains(locationErrorMessages.postal.required);
-        cy.get(dialog).contains(locationErrorMessages.underage.required);
-        cy.get(dialog).contains(locationErrorMessages.manufacturing.required);
+        cy.get(something).contains(locationErrorMessages.email.required);
+        cy.get(something).contains(locationErrorMessages.phone.required);
+        cy.get(something).contains(locationErrorMessages.postal.required);
+        cy.get(something).contains(locationErrorMessages.underage.required);
+        cy.get(something).contains(locationErrorMessages.manufacturing.required);
     })
   })
 
