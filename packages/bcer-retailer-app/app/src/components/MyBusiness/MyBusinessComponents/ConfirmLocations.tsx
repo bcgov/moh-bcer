@@ -105,7 +105,7 @@ export default function ConfirmLocations () {
   const {errors: uploadErrors, validatedData, validateCSV} = useCsvValidator();
 
   useEffect(() => {
-    setNewLocations(businessInfo.locations.filter((l: any) => !l.id).map(v => ({...v, location_type: v.location_type ? v.location_type: 'physical'})))
+    setNewLocations(businessInfo.locations.filter((l: any) => !l.id));
   }, [businessInfo.locations])
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 
 import ManufacturingReportForm from '@/components/form/forms/ManufacturingReportForm';
-import ManufacturingReportSubmitButton from '@/components/ManufacturingReports/SubmitButton.tsx';
+import ManufacturingReportSubmitButton from '@/components/ManufacturingReports/SubmitButton';
 
 import { useAxiosGet } from '@/hooks/axios';
 
