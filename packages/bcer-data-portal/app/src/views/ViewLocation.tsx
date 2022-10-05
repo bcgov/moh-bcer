@@ -328,7 +328,6 @@ function LocationsContent() {
                         </Paper>
                       </Grid>
 
-
                       <Grid item xs={12} id="locationInformation" ref={locationInformationRef} >
                         <Typography className={classes.cellTitle}>Location Information</Typography>
                         <Paper className={classes.box}>
@@ -336,7 +335,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Location is Physical, Online or Physical and Online</Typography>
-                                  {displayLocationType()}
+                                {displayLocationType()}
                               </Box>
                             </Grid>
                             <Grid item xs={4}>
@@ -345,7 +344,7 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.addressLine1}</Typography>
                               </Box>
                             </Grid>
-                            <Grid item xs={4}>            
+                            <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">City</Typography>
                                 <Typography className={classes.rowContent}>{data.city}</Typography>
