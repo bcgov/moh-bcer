@@ -56,14 +56,14 @@ export const Initial = {
 export const Validation = yup.object({
   location_type: yup.string().required(),
   addressLine1: yup.string().when('location_type', {
-    is: 'physical' || 'both',
+    is: (locationType) => locationType === 'physical' || locationType === 'both',
     then: yup.string()
           .required('The address of your place of business is required')
           .test('exists', `Address couldn't be found or is incorrect`,async (val) => await GeoCodeUtil.isValidAddress(val)),
   }), 
   addressLine2: yup.string().test('length', 'The address must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
   postal: yup.string().when('location_type', {
-    is: 'physical' || 'both',
+    is: (locationType) => locationType === 'physical' || locationType === 'both',
     then: yup.string()
           .required('Postal Code is a required field')
           .matches(
@@ -72,7 +72,7 @@ export const Validation = yup.object({
           )          
   }),
   city: yup.string().when('location_type', {
-    is: 'physical' || 'both',
+    is: (locationType) => locationType === 'physical' || locationType === 'both',
     then: yup.string()
           .test('length', 'The city must be less than 50 characters.', val => val?.length <= 50).required('City is a required field')
   }),
@@ -84,7 +84,7 @@ export const Validation = yup.object({
     .required('A Phone number is required'),
   email: yup.string().email('Invalid Email').required('Email is a required field'),
   underage: yup.string().when('location_type', {
-    is: 'physical' || 'both',
+    is: (locationType) => locationType === 'physical' || locationType === 'both',
     then: yup.string().required('This is a required field')
   }),
   underage_other: yup.string().when('underage', {
@@ -93,7 +93,7 @@ export const Validation = yup.object({
   }),
   doingBusinessAs: yup.string().test('length', 'The business name must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
   health_authority: yup.string().when('location_type', {
-    is: 'physical' || 'both',
+    is: (locationType) => locationType === 'physical' || locationType === 'both',
     then: yup.string().required('Please select your Health Authority')
   }),
   health_authority_other: yup.string().when('health_authority', {
@@ -102,7 +102,7 @@ export const Validation = yup.object({
   }),
   manufacturing: yup.string().required('This is a required field'),
   webpage: yup.string().when('location_type', {
-    is: 'online' || 'both',
+    is: (locationType) => locationType === 'online' || locationType === 'both',
     then: yup.string()
           .required('Please provide business URL')
           .matches(
