@@ -3,11 +3,11 @@ import * as yup from 'yup';
 
 export const BusinessCsvValidation = yup.object({
   location_type: yup.string().required(),
-  addressLine1: yup.string().ensure().when('location_type', {
+  addressLine1: yup.string().when('location_type', {
     is: 'physical' || 'both',
     then: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The address of your place of business is required'),
   }), 
-  postal: yup.string().ensure().when('location_type', {
+  postal: yup.string().when('location_type', {
     is: 'physical' || 'both',
     then: yup.string()
       .required('Postal Code is a required field')
@@ -16,7 +16,7 @@ export const BusinessCsvValidation = yup.object({
         'Please provide a valid postal code'
       )      
   }),
-  city: yup.string().ensure().when('location_type', {
+  city: yup.string().when('location_type', {
     is: 'physical' || 'both',
     then: yup.string().test('length', 'The city must be less than 50 characters.', val => val?.length <= 50).required('City is a required field'),
   }),
@@ -27,17 +27,17 @@ export const BusinessCsvValidation = yup.object({
     )
     .required('A Phone number is required'),
   email: yup.string().email('Invalid Email').required('Email is a required field'),
-  underage: yup.string().ensure().when('location_type', {
+  underage: yup.string().when('location_type', {
     is: 'physical' || 'both',
     then: yup.string().required('This is a required field').test('length', 'The underage option must be less than 40 characters.', val => val?.length <= 40)
   }),
   doingBusinessAs: yup.string().test('length', 'The business name must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
-  health_authority: yup.string().ensure().when('location_type', {
+  health_authority: yup.string().when('location_type', {
     is: 'physical' || 'both',
     then: yup.string().required('Please select your Health Authority').test('length', 'The health authority must be less than 30 characters.', val => val?.length <= 30)
   }),
   manufacturing: yup.string().required('This is a required field').test('string boolean', 'The manufacturing field must only contain a "Yes" or a "No"', val => (val.toLowerCase() === "yes" || val.toLowerCase() === "no")),
-  webpage: yup.string().ensure().when('location_type', {
+  webpage: yup.string().when('location_type', {
     is: 'online' || 'both',
     then: yup.string()
           .required('Please provide business URL')

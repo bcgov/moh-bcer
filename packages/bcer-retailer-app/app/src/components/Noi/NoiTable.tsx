@@ -15,7 +15,7 @@ interface NoiTableProps {
 
 function NoiTable({ data, type, ...props }: NoiTableProps): JSX.Element {
   let columns: Array<TableColumn> = [
-    ...LocationUtil.getTableColumns(['address1', 'city', 'postal', 'doingBusinessAs']),
+    ...LocationUtil.getTableColumns(['locationType', 'address1', 'postal', 'doingBusinessAs']),
     {
       title: 'Status',
       render: NoiUtil.renderStatus,

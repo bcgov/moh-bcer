@@ -17,6 +17,7 @@ import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
+import { LocationTypeLabels } from '@/constants/localEnums';
 
 const useStyles = makeStyles({
   bannerWrapper: {
@@ -296,6 +297,9 @@ export default function ProductOverview() {
                 }}
                 columns={[
                   {
+                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`
+                  },
+                  {
                     title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
                   },
                   {
@@ -333,6 +337,9 @@ export default function ProductOverview() {
                   pageSizeOptions: [5, 10, 20, 30, 50]
                 }}
                 columns={[
+                  {
+                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`
+                  },
                   {
                     title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
                   },

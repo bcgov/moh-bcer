@@ -24,8 +24,8 @@ export const useCsvValidator = () => {
       let errorArray: Array<any> = [];
       let validatedDataArray: Array<any> = [];
       
-      await Promise.all(uploadData.map(async(element, index) => {
-        
+      await Promise.all(uploadData.map(async(element, index) => {        
+          element.location_type = element.location_type ? element.location_type : 'physical';
           element.error = undefined;
           try {
               const validatedDto = await validationSchema.validateSync(element, { abortEarly: false });
