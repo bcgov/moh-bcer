@@ -198,6 +198,12 @@ function LocationsContent() {
     ]
   )
 
+  const displayLocationType = () => {
+    if(data.location_type === "both") return <Typography className={classes.rowContent}>Physical and Online</Typography>;
+    else if(data.location_type === "online") return <Typography className={classes.rowContent}>Online</Typography>;
+    else return <Typography className={classes.rowContent}>Pysical</Typography>;
+  }
+
   const handleTocSelection = (field: string) => {
     const element = document.getElementById(field)
     if (element) element.scrollIntoView({behavior: 'smooth', block: 'end'});
@@ -326,6 +332,12 @@ function LocationsContent() {
                         <Typography className={classes.cellTitle}>Location Information</Typography>
                         <Paper className={classes.box}>
                           <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                              <Box>
+                                <Typography variant="body2">Location is Physical, Online or Physical and Online</Typography>
+                                {displayLocationType()}
+                              </Box>
+                            </Grid>
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">Address</Typography>
