@@ -99,7 +99,7 @@ describe("Testing Location input form", () => {
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
 
-        cy.contain(locationErrorMessages.addressLine1.required);        
+        cy.contains(locationErrorMessages.addressLine1.required);        
     })
     
     cy.contains(locationErrorMessages.email.required);
