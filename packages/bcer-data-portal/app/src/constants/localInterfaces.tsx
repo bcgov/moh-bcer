@@ -293,6 +293,7 @@ export type BusinessRO = {
     notificationPreferences: string;
     created_at: string;
     updated_at: string;
+    province: string;
     users: Array<UserRO>;
     reportingStatus: BusinessReportStatus;
 }
