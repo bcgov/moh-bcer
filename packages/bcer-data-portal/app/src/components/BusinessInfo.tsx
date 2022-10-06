@@ -6,6 +6,7 @@ import { Box, Grid, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
+import {ProvinceLabels} from '@/constants/localEnums';
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -98,17 +99,17 @@ function BusinessInfo({ businessId }: { businessId: string }) {
               </Grid>
               <Grid item xs={4}>
                 <Box>
-                  <Typography variant="body2">Postal code</Typography>
+                  <Typography variant="body2">Province</Typography>
                   <Typography className={classes.rowContent}>
-                    {data.postal}
+                    {ProvinceLabels[data.province as keyof typeof ProvinceLabels]}
                   </Typography>
                 </Box>
               </Grid>
               <Grid item xs={4}>
                 <Box>
-                  <Typography variant="body2">Email</Typography>
+                  <Typography variant="body2">Postal code</Typography>
                   <Typography className={classes.rowContent}>
-                    {data.email}
+                    {data.postal}
                   </Typography>
                 </Box>
               </Grid>
@@ -121,6 +122,14 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                 </Box>
               </Grid>
               <Grid item xs={4}>
+                <Box>
+                  <Typography variant="body2">Email</Typography>
+                  <Typography className={classes.rowContent}>
+                    {data.email}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
                 <Box>
                   <Typography variant="body2">Web page</Typography>
                   <Typography className={classes.rowContent}>
