@@ -5,7 +5,7 @@ import {
   locationFieldNames,
 } from "../../utils/location/locationObjects";
 import { Navigate } from "../../utils/navigate";
-import { Selector, stringGen } from "../../utils/util";
+import { Selector, stringGen, insideDialog } from "../../utils/util";
 
 const dialog =".MuiDialog-paper";
 
@@ -95,16 +95,17 @@ describe("Testing Location input form", () => {
   })
 
   it('Checks all required fields for Physical location selection', () => {
-    cy.get(dialog).within(() => {             
+
+    insideDialog(() => {
+              
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
 
-        cy.contains(locationErrorMessages.addressLine1.required);        
+        cy.contains(locationErrorMessages.addressLine1.required);
+        cy.contains(locationErrorMessages.email.required);
+        cy.contains(locationErrorMessages.phone.required);
+        cy.contains(locationErrorMessages.webpage.required);
     })
-    
-    cy.contains(locationErrorMessages.email.required);
-    cy.contains(locationErrorMessages.phone.required);
-    cy.contains(locationErrorMessages.webpage.required);
   })
 
   it('Checks all required fields for Online location selection', () => {
