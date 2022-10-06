@@ -99,8 +99,7 @@ describe("Testing Location input form", () => {
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
         cy.contains(locationErrorMessages.addressLine1.required);
-        cy.children()
-        .should('contain', locationErrorMessages.email.required)
+        cy.should('contain', locationErrorMessages.email.required)
         .and('contain', locationErrorMessages.phone.required)
         .and('contain', locationErrorMessages.postal.required)
         
