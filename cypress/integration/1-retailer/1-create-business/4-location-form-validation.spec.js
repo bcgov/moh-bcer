@@ -99,10 +99,12 @@ describe("Testing Location input form", () => {
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
 
-        return cy.contains('.MuiDialogContent-root');        
+        cy.contain(locationErrorMessages.addressLine1.required);        
     })
-    .should('contain', locationErrorMessages.addressLine1.required)
-    .should('contain', locationErrorMessages.email.required);
+    
+    cy.contains(locationErrorMessages.email.required);
+    cy.contains(locationErrorMessages.phone.required);
+    cy.contains(locationErrorMessages.webpage.required);
   })
 
   it('Checks all required fields for Online location selection', () => {
