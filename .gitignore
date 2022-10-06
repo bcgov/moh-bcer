@@ -25,3 +25,7 @@ test-results
 # Shared Components
 **/coverage/
 junit.xml
+
+# Testing result for Cypress on local env
+cypress/screenshots/
+cypress/videos/
