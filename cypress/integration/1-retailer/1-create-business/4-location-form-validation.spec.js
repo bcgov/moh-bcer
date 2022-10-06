@@ -98,16 +98,10 @@ describe("Testing Location input form", () => {
     cy.get(dialog).within(() => {             
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
-        cy.contains(locationErrorMessages.addressLine1.required);
-        cy.should('contain', locationErrorMessages.email.required)
-        .and('contain', locationErrorMessages.phone.required)
-        .and('contain', locationErrorMessages.postal.required)
-        
-        cy.contains(locationErrorMessages.email.required);
-        cy.contains(locationErrorMessages.phone.required);
-        cy.contains(locationErrorMessages.postal.required);
-        cy.contains(locationErrorMessages.underage.required);
-        cy.contains(locationErrorMessages.manufacturing.required);
+        cy.contains(locationErrorMessages.addressLine1.required);        
+    })
+    cy.get(dialog).within(() => { 
+      cy.contains(locationErrorMessages.email.required);
     })
   })
 
