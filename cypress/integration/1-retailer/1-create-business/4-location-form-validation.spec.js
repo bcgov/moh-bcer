@@ -100,9 +100,7 @@ describe("Testing Location input form", () => {
         cy.get("button").contains("Submit").click();
         cy.contains(locationErrorMessages.addressLine1.required);        
     })
-    cy.get(dialog).within(() => { 
-      cy.contains(locationErrorMessages.email.required);
-    })
+    cy.get(dialog).children('.MuiDialogContent-root').contains(locationErrorMessages.email.required);
   })
 
   it('Checks all required fields for Online location selection', () => {
