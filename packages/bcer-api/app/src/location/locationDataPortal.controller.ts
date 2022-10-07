@@ -90,6 +90,11 @@ export class LocationDataPortalController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'location_type',
+    type: String,
+    required: false,
+  })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
