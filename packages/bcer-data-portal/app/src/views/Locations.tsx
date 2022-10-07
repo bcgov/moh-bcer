@@ -29,6 +29,8 @@ import {
   StyledTextField,
   StyledMenus,
   StyledMenuItems,
+  LocationType,
+  LocationTypeLabels,
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
@@ -206,9 +208,14 @@ export default function Locations() {
       sorting: false,
     },
     {
-      title: 'Address 1',
+      title: 'Type of Location',
+      render: (rd: BusinessLocation) => LocationTypeLabels[rd.location_type],
+      sorting: false,
+    },
+    {
+      title: 'Address 1/URL',
       render: (rd: BusinessLocation) =>
-        `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
+        rd.location_type === "online" ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
       sorting: false,
     },
     {

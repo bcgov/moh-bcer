@@ -10,14 +10,12 @@ import {
   DateFormat,
   LocationClosingWindow,
   LocationStatus,
-  LocationType,
-  LocationTypeLabels,
   NoiStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation, TableColumn } from '@/constants/localInterfaces';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import moment from 'moment';
-import { StyledTableColumn, StyledToolTip } from 'vaping-regulation-shared-components';
+import { StyledTableColumn, StyledToolTip, LocationTypeLabels, LocationType } from 'vaping-regulation-shared-components';
 import { GeneralUtil } from './util';
 
 export type LocationBaseColumnType = {

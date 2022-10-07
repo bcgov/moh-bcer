@@ -4,9 +4,8 @@ import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
 import { Box, Grid, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
-import {ProvinceLabels} from '@/constants/localEnums';
+import { ProvinceLabels } from 'vaping-regulation-shared-components';
 
 const useStyles = makeStyles(() => ({
   box: {

@@ -3,9 +3,9 @@ import {
   HealthAuthority,
   NoiStatus,
   LocationStatus,
-  ReportStatus,
-  LocationType,
+  ReportStatus
 } from '@/constants/localEnums';
+import { LocationType } from 'vaping-regulation-shared-components';
 
 export interface UserProfile {
   id: string;

@@ -9,3 +9,4 @@ export * from './utils';
 export * from './components/generic';
 export * from './page';
 export * from './components/icons';
+export * from './constants/enums/genericEnums';

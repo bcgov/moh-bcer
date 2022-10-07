@@ -6,7 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import moment from 'moment';
 
-import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
+import { StyledTable, StyledButton, LocationTypeLabels } from 'vaping-regulation-shared-components';
 import { BusinessLocationHeaders, SubmissionTypeEnum } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { ProductInfoContext } from '@/contexts/ProductReport';
@@ -17,7 +17,6 @@ import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
-import { LocationTypeLabels } from '@/constants/localEnums';
 
 const useStyles = makeStyles({
   bannerWrapper: {

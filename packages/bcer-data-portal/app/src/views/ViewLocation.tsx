@@ -9,22 +9,20 @@ import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
 import { GroupedSalesRO, LocationConfig, ManufacturesRO, SalesRO, UserRO } from '@/constants/localInterfaces';
 import { 
   StyledButton,
-  StyledTable, 
+  LocationTypeLabels, 
   StyledRadioGroup,
-  StyledConfirmDialog 
+  StyledConfirmDialog, 
+  LocationType
 } from 'vaping-regulation-shared-components';
 import { ConfigContext } from '@/contexts/Config';
-import { CSVLink } from 'react-csv';
 import LocationViewMap from './Map/LocationViewMap';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { formatError } from '@/util/formatting';
 import Note from '@/components/note/Note';
 import LocationProductTable from '@/components/tables/LocationProductTable';
 import LocationManufacturingTable from '@/components/tables/LocationManufacturingTable';
 import LocationSalesTable from '@/components/tables/LocationSalesTable';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import { LocationReportStatus } from '@/components/location/LocationReportStatus';
-
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -198,12 +196,6 @@ function LocationsContent() {
     ]
   )
 
-  const displayLocationType = () => {
-    if(data.location_type === "both") return <Typography className={classes.rowContent}>Physical and Online</Typography>;
-    else if(data.location_type === "online") return <Typography className={classes.rowContent}>Online</Typography>;
-    else return <Typography className={classes.rowContent}>Pysical</Typography>;
-  }
-
   const handleTocSelection = (field: string) => {
     const element = document.getElementById(field)
     if (element) element.scrollIntoView({behavior: 'smooth', block: 'end'});
@@ -214,7 +206,6 @@ function LocationsContent() {
       setFieldValue('content', entries[0].target.id)
     }
   }
-
 
   const getBreadcrumb = () => {
     if (appGlobal?.history?.pathname?.includes('business')) return 'Business Details'
@@ -335,15 +326,20 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Location is Physical, Online or Physical and Online</Typography>
-                                {displayLocationType()}
+                                <Typography className={classes.rowContent}>
+                                  {LocationTypeLabels[data.location_type as keyof typeof LocationTypeLabels]}
+                                </Typography>
                               </Box>
                             </Grid>
+                            {data.location_type !== LocationType.online &&
+                            <>
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">Address</Typography>
                                 <Typography className={classes.rowContent}>{data.addressLine1}</Typography>
                               </Box>
                             </Grid>
+                            
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">City</Typography>
@@ -356,6 +352,7 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.postal}</Typography>
                               </Box>
                             </Grid>
+                            </>}
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
@@ -368,6 +365,8 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.email}</Typography>
                               </Box>
                             </Grid>
+                            {data.location_type !== LocationType.online &&
+                            <>
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">If persons under 19 years of age are permitted on the sales premises</Typography>
@@ -380,6 +379,7 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.ha === 'other' ? data.ha_other : data.ha}</Typography>
                               </Box>
                             </Grid>
+                            </>}
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Intent to manufacture e-substances for sale at this business location</Typography>
