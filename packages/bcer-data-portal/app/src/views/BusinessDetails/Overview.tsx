@@ -173,4 +173,4 @@ export function BusinessLocationSearch(
         </Formik>
       </Box>
   );
-} 
+}
