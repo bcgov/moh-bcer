@@ -95,16 +95,17 @@ describe("Testing Location input form", () => {
   })
 
   it('Checks all required fields for Physical location selection', () => {
-
-    insideDialog(() => {
-              
+    insideDialog(() => {              
         cy.get(locationFieldNames.locationType.physical).click();
         cy.get("button").contains("Submit").click();
 
         cy.contains(locationErrorMessages.addressLine1.required);
-        cy.contains(locationErrorMessages.email.required);
-        cy.contains(locationErrorMessages.phone.required);
-        cy.contains(locationErrorMessages.webpage.required);
+        cy.document().then(() => {
+          cy.contains(locationErrorMessages.addressLine1.required);
+          cy.contains(locationErrorMessages.email.required);
+          cy.contains(locationErrorMessages.phone.required);
+          cy.contains(locationErrorMessages.webpage.required);
+        });
     })
   })
 
