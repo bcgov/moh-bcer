@@ -100,6 +100,7 @@ export class CheckForm {
     cy.get(businessFieldNames.addressLine1).should("have.value", business.addressLine1);
     cy.get(businessFieldNames.addressLine2).should("have.value", business.addressLine2);
     cy.get(businessFieldNames.city).should("have.value", business.city);
+    cy.get(businessFieldNames.province).should("have.value", business.province);
     cy.get(businessFieldNames.postal).should("have.value", business.postal);
     cy.get(businessFieldNames.email).should("have.value", business.email);
     cy.get(businessFieldNames.phone).should("have.value", business.phone);
