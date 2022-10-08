@@ -15,6 +15,7 @@ import { clickButton, insideDialog, Selector } from "./util";
     cy.get(businessFieldNames.addressLine1).type(businessInfo.addressLine1);
     cy.get(businessFieldNames.addressLine2).type(businessInfo.addressLine2);
     cy.get(businessFieldNames.city).type(businessInfo.city);
+    cy.get(businessFieldNames.province).type(businessInfo.province);
     cy.get(businessFieldNames.postal).type(businessInfo.postal);
     cy.get(businessFieldNames.phone).type(businessInfo.phone);
     cy.get(businessFieldNames.email).type(businessInfo.email);
