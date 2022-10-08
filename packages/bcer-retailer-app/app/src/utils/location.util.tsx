@@ -51,7 +51,7 @@ export class LocationUtil {
   }
 
   static renderFullAddress(l: BusinessLocation) {
-    const value = l.location_type === LocationType.online ? "" : `${l.addressLine1}, ${l.city}, ${l.postal}`
+    const value = l.location_type === LocationType.online ? l.webpage : `${l.addressLine1}, ${l.city}, ${l.postal}`
     return <StyledTableColumn value={value} />
   }
 

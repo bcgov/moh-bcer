@@ -274,7 +274,6 @@ export type LocationRO = {
   longitude: string;
   latitude: string;
   geoAddressConfidence: string;
-  location_type: string;
   business: BusinessRO;
   noi: NoiRO;
   sales: Array<SalesRO>;
