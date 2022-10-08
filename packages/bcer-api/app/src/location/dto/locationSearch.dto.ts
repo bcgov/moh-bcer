@@ -51,4 +51,11 @@ export class LocationSearchDTO {
   @IsString()
   @IsOptional()
   authority?: string;
+
+  @ApiProperty({
+    description: 'Location',
+  })
+  @IsString()
+  @IsOptional()
+  location_type?: string;
 }

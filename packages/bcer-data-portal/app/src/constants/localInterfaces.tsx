@@ -274,6 +274,7 @@ export type LocationRO = {
   longitude: string;
   latitude: string;
   geoAddressConfidence: string;
+  location_type: string;
   business: BusinessRO;
   noi: NoiRO;
   sales: Array<SalesRO>;
@@ -406,6 +407,7 @@ export interface SearchQueryBuilder {
   category?: string;
   search: string;
   healthAuthority: string;
+  location_type?: string;
   page?: number;
   pageSize?: number;
   additionalFilter?: string;

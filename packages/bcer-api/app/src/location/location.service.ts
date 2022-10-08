@@ -128,6 +128,9 @@ export class LocationService {
     if (query.authority) {
       qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
     }
+    if (query.location_type) {
+      qb.andWhere(`location.location_type = :location_type`, { location_type: query.location_type });
+    }
 
     // TYPEORM wonkiness: Skip and Take broken here, but offset and limit may not be ideal?
     qb.offset((query.page - 1) * query.numPerPage);

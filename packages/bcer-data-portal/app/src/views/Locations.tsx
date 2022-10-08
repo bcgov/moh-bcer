@@ -35,6 +35,7 @@ import {
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { getInitialPagination } from '@/util/general.util';
+import { healthAuthorityOptions, locationTypeOptions} from '../constants/arrays'
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -171,6 +172,7 @@ export default function Locations() {
   const [searchTerms, setSearchTerms] = useState({
     term: undefined,
     authority: undefined,
+    location_type: undefined,
     page: 0,
     pageSize: 20,
     orderBy: undefined,
@@ -253,6 +255,9 @@ export default function Locations() {
     searchTerms?.authority
       ? (url += `&authority=${searchTerms.authority}`)
       : null;
+    searchTerms?.location_type
+      ? (url += `&location_type=${searchTerms.location_type}`)
+      : null;
     searchTerms?.orderBy
       ? (url += `&orderBy=${tableColumns[searchTerms.orderBy].title}`)
       : null;
@@ -268,15 +273,6 @@ export default function Locations() {
   const [{ data: zipFile, loading: zipLoading, error: zipError }, post] =
     useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
 
-  const healthAuthorityOptions = [
-    { value: 'all', label: 'All' },
-    { value: 'coastal', label: 'Coastal' },
-    { value: 'fraser', label: 'Fraser' },
-    { value: 'interior', label: 'Interior' },
-    { value: 'island', label: 'Island' },
-    { value: 'northern', label: 'Northern' },
-  ];
-
   const logout = () => {
     store.clearAll();
     keycloak.logout();
@@ -285,10 +281,12 @@ export default function Locations() {
 
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
+    const location_type = e.location_type !== 'all' ? e.location_type : undefined;
     setSearchTerms({
       ...searchTerms,
       term: e.search,
       authority,
+      location_type,
     });
   };
 
@@ -437,11 +435,12 @@ export default function Locations() {
                 initialValues={{
                   search: undefined,
                   authority: 'all',
+                  location_type: 'all',
                 }}
               >
                 <Form>
-                  <Grid container spacing={2}>
-                    <Grid item xs={7}>
+                  <Grid id="first_row" container spacing={2}>
+                    <Grid item xs={8}>
                       <StyledTextField
                         name="search"
                         label="Search (Address, Business Name, Legal Name, Doing Business As)"
@@ -454,7 +453,16 @@ export default function Locations() {
                         label="Health Authority"
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
+                      <StyledSelectField
+                        name="location_type"
+                        options={locationTypeOptions}
+                        label="Location"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid id="second_row" container spacing={2}> 
+                    <Grid item xs={2}>
                       <Box
                         alignContent="center"
                         alignItems="center"
@@ -464,7 +472,7 @@ export default function Locations() {
                       >
                         <StyledButton
                           fullWidth
-                          variant="contained"
+                          variant="dialog-accept"
                           type="submit"
                         >
                           Search
