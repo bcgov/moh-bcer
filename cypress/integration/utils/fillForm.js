@@ -16,7 +16,7 @@ import { UserAction } from "./userAction";
     cy.get(businessFieldNames.addressLine1).type(businessInfo.addressLine1);
     cy.get(businessFieldNames.addressLine2).type(businessInfo.addressLine2);
     cy.get(businessFieldNames.city).type(businessInfo.city);
-    UserAction.selectOption(businessFieldNames.province, businessInfo.province);
+    UserAction.selectOption("province", businessInfo.province);
     cy.get(businessFieldNames.province).select(businessInfo.province);
     cy.get(businessFieldNames.postal).type(businessInfo.postal);
     cy.get(businessFieldNames.phone).type(businessInfo.phone);
