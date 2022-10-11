@@ -1,10 +1,4 @@
-export const locationTypeOptions = [
-  { value: 'physical', label: 'Physical' },
-  { value: 'online', label: 'Online' },
-  { value: 'both', label: 'Physical and Online' }
-];
-  
-  export const provinceOptions = [
+export const provinceOptions = [
     {value: 'AB', label: 'Alberta' },
     {value: 'BC', label: 'British Columbia' },
     {value: 'MB', label: 'Manitoba' },

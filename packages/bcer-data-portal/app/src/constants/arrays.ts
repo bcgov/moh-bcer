@@ -15,10 +15,3 @@ export const businessSearchCategoryOptions = [
   { label: 'City', value: 'city' },
   { label: 'Postal Code', value: 'postal' },
 ]
-
-export const locationTypeOptions = [
-  { value: 'all', label: 'All' },
-  { value: 'online', label: 'Online' },
-  { value: 'physical', label: 'Physical' },
-  { value: 'both', label: 'Online and Physical' },
-];

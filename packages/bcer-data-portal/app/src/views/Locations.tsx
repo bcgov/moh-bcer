@@ -10,7 +10,6 @@ import {
   IconButton,
   SnackbarContent,
   Tooltip,
-  MenuItemProps,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Form, Formik } from 'formik';
@@ -31,11 +30,12 @@ import {
   StyledMenuItems,
   LocationType,
   LocationTypeLabels,
+  locationTypeOptions
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { getInitialPagination } from '@/util/general.util';
-import { healthAuthorityOptions, locationTypeOptions} from '../constants/arrays'
+import { healthAuthorityOptions} from '../constants/arrays'
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -217,7 +217,7 @@ export default function Locations() {
     {
       title: 'Address 1/URL',
       render: (rd: BusinessLocation) =>
-        rd.location_type === "online" ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
+        rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
       sorting: false,
     },
     {
@@ -456,7 +456,7 @@ export default function Locations() {
                     <Grid item xs={2}>
                       <StyledSelectField
                         name="location_type"
-                        options={locationTypeOptions}
+                        options={locationTypeOptions(true)}
                         label="Location"
                       />
                     </Grid>
