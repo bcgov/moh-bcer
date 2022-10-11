@@ -11,14 +11,13 @@ import ManufacturingReportSubmitButton from '@/components/ManufacturingReports/S
 
 import { useAxiosGet } from '@/hooks/axios';
 
-import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
+import { StyledButton, StyledTable, LocationTypeLabels } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
-import { LocationTypeLabels } from '@/constants/localEnums';
 
 const useStyles = makeStyles({
   buttonIcon: {

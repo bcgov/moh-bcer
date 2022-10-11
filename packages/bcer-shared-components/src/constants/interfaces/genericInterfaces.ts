@@ -67,6 +67,7 @@ export type LocationRO = {
   latitude: string;
   geoAddressConfidence: string;
   reportStatus?: LocationReportStatus;
+  location_type: string;
 }
 
 export interface LocationReportStatus {

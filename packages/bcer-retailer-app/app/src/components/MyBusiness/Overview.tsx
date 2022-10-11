@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, CircularProgress, Typography, Box } from '@material-ui/core';
-import { BusinessDashboard } from 'vaping-regulation-shared-components';
+import { BusinessDashboard, LocationType } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
 
 import { BusinessLocation, BusinessReportStatus } from '@/constants/localInterfaces';
@@ -77,7 +77,7 @@ export default function MyDashboard () {
                 showOverview={true}
                 showStatusMessage={true}
                 isRetailerPortal={true}
-                renderAddress={(l: BusinessLocation) => <span>{l.addressLine1}</span>}
+                renderAddress={(l: BusinessLocation) => <span>{l.location_type === LocationType.online ? l.webpage : l.addressLine1}</span>}
               />
 
               {

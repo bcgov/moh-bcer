@@ -1,4 +1,4 @@
-import { ReportStatus } from "@/constants/enums/genericEnums";
+import { LocationTypeLabels, ReportStatus } from "@/constants/enums/genericEnums";
 import { LocationReportStatus, LocationRO } from "@/constants/interfaces/genericInterfaces";
 import { Tooltip } from "@material-ui/core";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
@@ -8,7 +8,8 @@ import React from 'react';
 export class BusinessDashboardUtil {
   static getColumns (addressLine1: Function){
     return [
-    {title: 'Location', render: (l: LocationRO) => addressLine1(l)},
+    {title: 'Type of Location', render: (l: LocationRO) => LocationTypeLabels[l.location_type]},
+    {title: 'Location/URL', render: (l: LocationRO) => addressLine1(l)},
     {title: 'Doing Business As', render: (l: LocationRO) => l.doingBusinessAs || ''},
     {title: 'NOI', render: (l:LocationRO) => this.render(l, 'noi')},
     {title: 'Product Report', render: (l:LocationRO) => this.render(l, 'productReport')},
@@ -36,7 +37,6 @@ export class BusinessDashboardUtil {
       </Tooltip>
     )
   }
-
 
   static renderCreationDate(l: LocationRO){
     const date = l.created_at ? moment(l.created_at).utc(true).format("MMM DD, YYYY") : "";

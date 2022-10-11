@@ -34,7 +34,7 @@ function LocationTable({
           render: LocationUtil.renderLocationType
         },
         {
-          title: 'Address',
+          title: 'Address/URL',
           render: LocationUtil.renderFullAddress,
           sorting: false
         },

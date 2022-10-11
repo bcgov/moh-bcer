@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog } from 'vaping-regulation-shared-components';
+import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog, ProvinceLabels} from 'vaping-regulation-shared-components';
 import { Form, Formik } from 'formik';
 import { makeStyles } from '@material-ui/core';
 
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
-import { BusinessLocationHeaders, ProvinceLabels } from '@/constants/localEnums';
+import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import { Validation } from '@/components/form/validations/vBusinessDetails';
 import { BusinessDetails } from '@/constants/localInterfaces';

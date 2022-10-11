@@ -10,14 +10,12 @@ import {
   DateFormat,
   LocationClosingWindow,
   LocationStatus,
-  LocationType,
-  LocationTypeLabels,
   NoiStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation, TableColumn } from '@/constants/localInterfaces';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import moment from 'moment';
-import { StyledTableColumn, StyledToolTip } from 'vaping-regulation-shared-components';
+import { StyledTableColumn, StyledToolTip, LocationTypeLabels, LocationType } from 'vaping-regulation-shared-components';
 import { GeneralUtil } from './util';
 
 export type LocationBaseColumnType = {
@@ -53,7 +51,7 @@ export class LocationUtil {
   }
 
   static renderFullAddress(l: BusinessLocation) {
-    const value = l.location_type === LocationType.online ? "" : `${l.addressLine1}, ${l.city}, ${l.postal}`
+    const value = l.location_type === LocationType.online ? l.webpage : `${l.addressLine1}, ${l.city}, ${l.postal}`
     return <StyledTableColumn value={value} />
   }
 

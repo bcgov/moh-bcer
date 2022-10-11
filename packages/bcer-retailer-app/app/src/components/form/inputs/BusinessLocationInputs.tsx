@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { FormikHelpers, useFormikContext } from 'formik';
 import { Grid, InputAdornment, makeStyles, Tooltip, TextField, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import { StyledTextField, StyledRadioGroup } from 'vaping-regulation-shared-components';
+import { StyledTextField, StyledRadioGroup, locationTypeOptions } from 'vaping-regulation-shared-components';
 import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason } from '@material-ui/lab';
 import HelpIcon from '@material-ui/icons/Help';
 
@@ -11,7 +11,6 @@ import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 import { useAxiosGet } from '@/hooks/axios';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 import { GeoCodeUtil } from '@/utils/geoCoder.util';
-import { locationTypeOptions } from '@/constants/arrays';
 
 const useStyles = makeStyles({
   groupHeader: {
@@ -129,7 +128,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       <div className={classes.radioWrapper}>
         <StyledRadioGroup
           name="location_type"
-          options={locationTypeOptions}
+          options={locationTypeOptions()}
         />
       </div>
 

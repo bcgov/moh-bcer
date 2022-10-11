@@ -14,6 +14,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   BusinessDashboard,
+  LocationType,
   StyledButton,
   StyledSelectField,
   StyledTextField
@@ -64,7 +65,7 @@ function BusinessDetails() {
         history.push(`${routes.viewLocation}/${l.id}`)
       }}
     >
-      {l.addressLine1}
+      {l.location_type === LocationType.online ? l.webpage : l.addressLine1}
     </span>
   );
 

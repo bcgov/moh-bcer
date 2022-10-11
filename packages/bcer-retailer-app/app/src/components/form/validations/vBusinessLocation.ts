@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { LocationType, NoiStatus } from '@/constants/localEnums';
+import { NoiStatus } from '@/constants/localEnums';
 import { GeoCodeUtil } from '@/utils/geoCoder.util';
 
 export interface IBusinessLocationValues {

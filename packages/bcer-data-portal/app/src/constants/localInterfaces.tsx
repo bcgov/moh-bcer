@@ -1,5 +1,6 @@
 import { UserType, HealthAuthority, HealthAuthorities, ReportStatus } from '@/constants/localEnums';
 import { BusinessFilter } from '@/hooks/useBusiness';
+import { LocationType } from 'vaping-regulation-shared-components';
 
 export interface UserProfile {
   id: string;
@@ -72,6 +73,8 @@ export interface BusinessLocation {
   geoAddressConfidence?: string;
   geoAddress?: string;
   geoAddressId?: string;
+  location_type: LocationType;
+  webpage: string;
 }
 
 export interface LocationFileUploadRO {
@@ -271,13 +274,13 @@ export type LocationRO = {
   longitude: string;
   latitude: string;
   geoAddressConfidence: string;
-  location_type: string;
   business: BusinessRO;
   noi: NoiRO;
   sales: Array<SalesRO>;
   products: Array<ProductsRO>;
   manufactures: Array<ManufacturesRO>;
   reportStatus?: LocationReportStatus;
+  location_type: string;
 }
 
 export type BusinessRO = {
