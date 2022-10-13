@@ -434,7 +434,7 @@ export default function Locations() {
                 onSubmit={search}
                 initialValues={{
                   search: undefined,
-                  authority: store.get('KEYCLOAK_USER_HA') || '',
+                  authority: store.get('KEYCLOAK_USER_HA') || 'all',
                   location_type: 'all',
                 }}
               >
