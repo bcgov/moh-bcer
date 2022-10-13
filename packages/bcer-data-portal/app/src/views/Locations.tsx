@@ -30,7 +30,10 @@ import {
   StyledMenuItems,
   LocationType,
   LocationTypeLabels,
-  locationTypeOptions
+  locationTypeOptions,
+  StyledTableColumn,
+  BusinessDashboardUtil,
+  ReportStatusLegend
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
@@ -198,17 +201,9 @@ export default function Locations() {
       sorting: false,
     },
     {
-      title: 'Business Legal Name',
-      field: 'business.legalName',
-      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => handleRouteWithHistory(location.id)}>{location.business.legalName}</span>,
-    },
-    {
-      title: 'Doing Business As',
-      field: 'doingBusinessAs',
-    },
-    {
-      title: 'Phone Number',
-      field: 'phone',
+      title: 'Address / URL',
+      render: (rd: BusinessLocation) =>
+        rd.location_type === LocationType.online ? rd.webpage: <StyledTableColumn value={`${rd.addressLine1}, ${rd.postal}, ${rd.city}`} />,
       sorting: false,
     },
     {
@@ -217,34 +212,28 @@ export default function Locations() {
       sorting: false,
     },
     {
-      title: 'Address 1/URL',
-      render: (rd: BusinessLocation) =>
-        rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`,
-      sorting: false,
-    },
-    {
-      title: 'Email Address',
-      field: 'email',
-      sorting: false,
-    },
-    {
-      title: 'Submitted Date',
+      title: 'NOI Submitted Date',
       render: (rd: BusinessLocation) =>
         rd.noi?.created_at
           ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}`
           : '',
     },
     {
-      title: 'Renewed Date',
-      render: (rd: BusinessLocation) =>
-        rd.noi?.renewed_at
-          ? `${moment(rd.noi.renewed_at).format('MMM DD, YYYY')}`
-          : '',
+      title: 'NOI',
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.noi),
     },
     {
-      title: 'Health Authority',
-      field: 'health_authority',
+      title: 'Product Report', 
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.productReport)
     },
+    {
+      title: 'Manufacturing Report', 
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.manufacturingReport)
+    },
+    {
+      title: 'Sales Report', 
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.salesReport)
+    }
   ];
 
   const buildSearchUrl = (): string => {
@@ -278,6 +267,7 @@ export default function Locations() {
   const [{ data, loading, error }, get] = useAxiosGet(buildSearchUrl(), {
     manual: true,
   });
+
   const [{ data: zipFile, loading: zipLoading, error: zipError }, post] =
     useAxiosPostFormData(`/data/location/reportsFile`, { manual: true });
 
@@ -430,14 +420,9 @@ export default function Locations() {
               </Typography>
             </div>
             <Typography variant="body1">
-              All locations with a submitted Notice of Intent can be viewed
-              here.
-            </Typography>
-            <div className={classes.subtitleWrapper}>
-              <Typography className={classes.subtitle} variant="h6">
-                Locations with a Notice of Intent
-              </Typography>
-            </div>
+              All locations submitted by the retailers can be viewed here.
+            </Typography>  
+            <br />          
             <Paper className={classes.box} variant="outlined">
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
@@ -517,8 +502,7 @@ export default function Locations() {
               </Formik>
               <div>
                 <Typography className={classes.tableRowCount} variant="body2">
-                  {totalRowCount} retail locations have submitted a Notice of
-                  Intent
+                  {totalRowCount} retail locations.
                 </Typography>
                 <Box display ='flex' justifyContent='flex-end' my={2}>
                   <Box mx={2}/>
@@ -537,6 +521,7 @@ export default function Locations() {
                   <StyledMenus items={menuOptions} buttonComponent="Download"/>
                 </Box>
               </div>
+              <ReportStatusLegend /> <br/>
               <div className={'tableDiv'}>
                 <StyledTable
                   columns={tableColumns}

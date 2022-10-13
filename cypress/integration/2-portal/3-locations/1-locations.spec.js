@@ -15,14 +15,13 @@ describe("Tests the submitted locations page", () => {
   })
 
   it("Tests that location page was render correctly", () => {
-    cy.contains("2 retail locations have submitted a Notice of Intent");
+    cy.contains("2 retail locations.");
   })
 
   it("Tests that link to location details page works correctly", () => {
     cy.contains("Test business name").click();
     cy.contains("Location Information");
     cy.contains("Submitted Locations").click();
-    cy.contains("Locations with a Notice of Intent")
   })
 
   it("Tests that link to map works correctly", () => {
@@ -31,6 +30,5 @@ describe("Tests the submitted locations page", () => {
     clickButton("Show on Map");
     cy.contains("Route");
     clickButton("Back");
-    cy.contains("Locations with a Notice of Intent");
   })
 })
