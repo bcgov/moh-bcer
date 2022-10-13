@@ -20,6 +20,11 @@ describe("Tests the location details page", () => {
     cy.contains("sagarbhp@gmail.com");
   });
 
+  it("Displays the location information correctly", () => {
+    cy.wait(1000);
+    cy.contains("Physical");
+  });
+
   it("Displays number of number of reports submitted properly", () => {
     cy.contains("1 products submitted");
     cy.contains("1 manufacturing reports submitted");

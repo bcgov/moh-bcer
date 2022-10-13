@@ -16,9 +16,13 @@ describe("Tests the Business Details in business details page", () => {
     cy.contains("Test business legal name");
     cy.contains("Test business name");
     cy.contains("Test address line 1");
-    cy.contains("test@test.com");
+    cy.contains("Test address line 2");
     cy.contains("Test city");
+    cy.contains("British Columbia");
     cy.contains("a0a0a0");
+    cy.contains("0000000000");
+    cy.contains("test@test.com");
+    cy.contains("www.test.com");
   })
 
   it("Business reporting status is properly identified", () => {
