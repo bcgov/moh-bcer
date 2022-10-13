@@ -40,6 +40,7 @@ import { AllowAnyRole, RoleGuard, Roles } from 'src/auth/auth.module';
 import { LocationConfig } from './config/dataLocation.config';
 import { DirectionDto } from './dto/direction.dto';
 import { DownloadSaleDTO } from 'src/sales/dto/download-sale.dto';
+import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -113,9 +114,15 @@ export class LocationDataPortalController {
   async getCommonLocations(
     @Query() query: LocationSearchDTO,
   ): Promise<LocationSearchRO> {
-    const [locations, count] = await this.service.getCommonLocations(query);
+    const [locations, count] = await this.service.getCommonLocations(query, true);
+
+    const locationsRO = locations.map((l) => {
+      l.reportStatus = new SingleLocationReportStatus().getStatus(l);
+      return l.toResponseObject();
+    })
+
     return {
-      rows: locations.map((location) => location.toResponseObject()),
+      rows: locationsRO,
       pageNum: query.page,
       totalRows: count,
     };

@@ -11,3 +11,4 @@ export * from './page';
 export * from './components/icons';
 export * from './constants/enums/genericEnums';
 export * from './constants/arrays';
+export * from './util';
