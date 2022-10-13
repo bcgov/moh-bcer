@@ -95,6 +95,16 @@ export class LocationDataPortalController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'reporting_status',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'underage',
+    type: String,
+    required: false,
+  })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)

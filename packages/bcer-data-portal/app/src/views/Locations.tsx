@@ -173,6 +173,8 @@ export default function Locations() {
     term: undefined,
     authority: store.get('KEYCLOAK_USER_HA') || undefined,
     location_type: undefined,
+    reporting_status: undefined,
+    underage: undefined,
     page: 0,
     pageSize: 20,
     orderBy: undefined,
@@ -258,6 +260,12 @@ export default function Locations() {
     searchTerms?.location_type
       ? (url += `&location_type=${searchTerms.location_type}`)
       : null;
+    searchTerms?.reporting_status
+      ? (url += `&reporting_status=${searchTerms.reporting_status}`)
+      : null;
+    searchTerms?.underage
+      ? (url += `&underage=${searchTerms.underage}`)
+      : null;
     searchTerms?.orderBy
       ? (url += `&orderBy=${tableColumns[searchTerms.orderBy].title}`)
       : null;
@@ -282,11 +290,15 @@ export default function Locations() {
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
     const location_type = e.location_type !== 'all' ? e.location_type : undefined;
+    const reporting_status = e.reporting_status !== 'all' ? e.reporting_status : undefined;
+    const underage = e.underage !== 'all' ? e.underage : undefined;
     setSearchTerms({
       ...searchTerms,
       term: e.search,
       authority,
       location_type,
+      reporting_status,
+      underage
     });
   };
 
@@ -436,24 +448,26 @@ export default function Locations() {
                   search: undefined,
                   authority: store.get('KEYCLOAK_USER_HA') || 'all',
                   location_type: 'all',
+                  reporting_status: 'all',
+                  underage: 'all'
                 }}
               >
                 <Form>
                   <Grid id="first_row" container spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item xs={6}>
                       <StyledTextField
                         name="search"
                         label="Search (Address, Business Name, Legal Name, Doing Business As)"
                       />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                       <StyledSelectField
                         name="authority"
                         options={healthAuthorityOptions}
                         label="Health Authority"
                       />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                       <StyledSelectField
                         name="location_type"
                         options={locationTypeOptions(true)}
@@ -462,6 +476,25 @@ export default function Locations() {
                     </Grid>
                   </Grid>
                   <Grid id="second_row" container spacing={2}> 
+                    {/* <Grid item xs={3}>
+                      <StyledSelectField
+                        name="reporting_status"
+                        options={healthAuthorityOptions}
+                        label="Reporting Status"
+                      />
+                    </Grid> */}
+                    <Grid item xs={3}>
+                      <StyledSelectField
+                        name="underage"
+                        options={[
+                          {label: 'All', value: 'all'},
+                          {label: 'Yes', value: 'Yes'},
+                          {label: 'No', value: 'No'},
+                          {label: 'Other', value: 'other'}
+                        ]}
+                        label="Underage Allowed"
+                      />
+                    </Grid>
                     <Grid item xs={2}>
                       <Box
                         alignContent="center"

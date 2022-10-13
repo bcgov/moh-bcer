@@ -53,9 +53,23 @@ export class LocationSearchDTO {
   authority?: string;
 
   @ApiProperty({
-    description: 'Location',
+    description: 'Location Type',
   })
   @IsString()
   @IsOptional()
   location_type?: string;
+
+  @ApiProperty({
+    description: 'Reporting Status',
+  })
+  @IsString()
+  @IsOptional()
+  reporting_status?: string;
+
+  @ApiProperty({
+    description: 'Less than 19 allowed?',
+  })
+  @IsString()
+  @IsOptional()
+  underage?: string;
 }
