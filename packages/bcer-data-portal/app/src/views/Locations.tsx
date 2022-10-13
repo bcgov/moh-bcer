@@ -171,7 +171,7 @@ export default function Locations() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [searchTerms, setSearchTerms] = useState({
     term: undefined,
-    authority: undefined,
+    authority: store.get('KEYCLOAK_USER_HA') || undefined,
     location_type: undefined,
     page: 0,
     pageSize: 20,
@@ -434,7 +434,7 @@ export default function Locations() {
                 onSubmit={search}
                 initialValues={{
                   search: undefined,
-                  authority: 'all',
+                  authority: store.get('KEYCLOAK_USER_HA') || 'all',
                   location_type: 'all',
                 }}
               >

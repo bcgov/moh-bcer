@@ -4,6 +4,7 @@ import { formatError } from '@/util/formatting';
 import { GeneralUtil } from '@/util/general.util';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAxiosGet } from './axios';
+import store from 'store';
 
 export enum BusinessFilter {
   All = 'all',
@@ -22,14 +23,23 @@ function useBusiness() {
   });
 
   const getInitialState = () => {
+    const user_ha = store.get('KEYCLOAK_USER_HA') || '';
     const initialState = {
       search: '',
       category: '',
-      healthAuthority: '',
+      healthAuthority: user_ha,
       additionalFilter: 'all',
-    }
+    }    
+    
     const filterParams = JSON.parse(localStorage.getItem('searchOptions'));
-    return filterParams ? filterParams : initialState;
+
+    if (filterParams) {
+      filterParams.healthAuthority = user_ha;
+
+      return filterParams
+    }
+
+    return initialState;
   }
 
   const [searchOptions, setSearchOptions] = useState<SearchQueryBuilder>(getInitialState());
