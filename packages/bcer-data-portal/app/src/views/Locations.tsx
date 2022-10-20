@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Grid,
@@ -10,6 +10,7 @@ import {
   IconButton,
   SnackbarContent,
   Tooltip,
+  Link,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Form, Formik } from 'formik';
@@ -33,11 +34,11 @@ import {
   locationTypeOptions,
   StyledTableColumn,
   BusinessDashboardUtil,
-  ReportStatusLegend
+  ReportStatusLegend,
+  reportingStatusOptions
 } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { getInitialPagination } from '@/util/general.util';
 import { healthAuthorityOptions} from '../constants/arrays'
 
 const useStyles = makeStyles({
@@ -162,6 +163,31 @@ const useStyles = makeStyles({
       marginLeft: '1rem',
     },
   },
+  reportTitle: {
+    minWidth: 150,   
+    width: 150 
+  },
+  reportStatusFilterTable: {
+
+  },
+  reportStatus: {
+    minWidth: 30,    
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlign: 'center'
+  },
+  reportSelect: {
+    paddingBottom: 7,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  radioGroup: {
+    display: 'inline-block'
+  },
+  showMoreLink: {
+    float: 'right',
+    textDecoration: 'underline',
+    fontWeight: 'bold'
+  }
 });
 
 export default function Locations() {
@@ -182,8 +208,13 @@ export default function Locations() {
     pageSize: 20,
     orderBy: undefined,
     orderDirection: undefined,
+    noi_report: undefined,
+    product_report: undefined,
+    manufacturing_report: undefined,
+    sales_report: undefined
   });
   const [locations, setLocations] = useState([]);
+  const [showMoreFilters, setShowMoreFilter] = useState(false);
 
   const handleRouteWithHistory = (locationId: string) => {
     setAppGlobalContext({
@@ -191,55 +222,65 @@ export default function Locations() {
       history: history.location
     })
     history.push(`/location/${locationId}`)
-
   }
 
   const tableColumns = [
     {
       title: 'Business Name',
-      render: (location: BusinessLocation) => <span className={classes.actionLink} onClick={() => handleRouteWithHistory(location.id)}>{location.business.businessName}</span>,
-      sorting: false,
+      render: (rd: BusinessLocation) => <span className={classes.actionLink} onClick={() => handleRouteWithHistory(rd.id)}>{rd.business.businessName}</span>,
+      sortTitle: "Business Name",
+      sorting: true,
+      width: 400
     },
     {
       title: 'Address / URL',
       render: (rd: BusinessLocation) =>
         rd.location_type === LocationType.online ? rd.webpage: <StyledTableColumn value={`${rd.addressLine1}, ${rd.postal}, ${rd.city}`} />,
-      sorting: false,
+      sortTitle: "Address",
+      sorting: true,
+      width: 350
     },
     {
       title: 'Type of Location',
       render: (rd: BusinessLocation) => LocationTypeLabels[rd.location_type],
-      sorting: false,
+      sortTitle: "Location Type",
+      sorting: true,
     },
     {
       title: 'NOI Submitted Date',
       render: (rd: BusinessLocation) =>
         rd.noi?.created_at
           ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}`
-          : '',
+          : '',          
+      sortTitle: "Submitted Date",
+      sorting: true,
     },
     {
       title: 'NOI',
       render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.noi),
+      sorting: false
     },
     {
       title: 'Product Report', 
-      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.productReport)
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.productReport),
+      sorting: false
     },
     {
       title: 'Manufacturing Report', 
-      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.manufacturingReport)
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.manufacturingReport),
+      sorting: false
     },
     {
       title: 'Sales Report', 
-      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.salesReport)
+      render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.salesReport),
+      sorting: false
     }
   ];
 
   const buildSearchUrl = (): string => {
     let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${
       searchTerms.pageSize || 20
-    }&includes=business,noi`;
+    }&includes=business,noi,products,manufactures,sales`;
     searchTerms?.term && searchTerms.term.length > 3
       ? (url += `&search=${searchTerms.term}`)
       : null;
@@ -248,19 +289,29 @@ export default function Locations() {
       : null;
     searchTerms?.location_type
       ? (url += `&location_type=${searchTerms.location_type}`)
-      : null;
-    searchTerms?.reporting_status
-      ? (url += `&reporting_status=${searchTerms.reporting_status}`)
-      : null;
+      : null;    
     searchTerms?.underage
       ? (url += `&underage=${searchTerms.underage}`)
       : null;
-    searchTerms?.orderBy
-      ? (url += `&orderBy=${tableColumns[searchTerms.orderBy].title}`)
+    searchTerms?.noi_report
+      ? (url += `&noi_report=${searchTerms.noi_report}`)
+      : null;
+    searchTerms?.product_report
+      ? (url += `&product_report=${searchTerms.product_report}`)
+      : null;
+    searchTerms?.manufacturing_report
+      ? (url += `&manufacturing_report=${searchTerms.manufacturing_report}`)
+      : null;
+    searchTerms?.sales_report
+      ? (url += `&sales_report=${searchTerms.sales_report}`)
+      : null;
+    searchTerms?.orderBy >= 0
+      ? (url += `&orderBy=${tableColumns[searchTerms.orderBy].sortTitle}`)
       : null;
     searchTerms?.orderDirection
       ? (url += `&order=${searchTerms.orderDirection.toUpperCase()}`)
       : null;
+    
     return url;
   };
 
@@ -280,15 +331,21 @@ export default function Locations() {
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
     const location_type = e.location_type !== 'all' ? e.location_type : undefined;
-    const reporting_status = e.reporting_status !== 'all' ? e.reporting_status : undefined;
     const underage = e.underage !== 'all' ? e.underage : undefined;
+    const noi_report = e.noi_report !== 'all' ? e.noi_report : undefined;
+    const product_report = e.product_report !== 'all' ? e.product_report : undefined;
+    const manufacturing_report = e.manufacturing_report !== 'all' ? e.manufacturing_report : undefined;
+    const sales_report = e.sales_report !== 'all' ? e.sales_report : undefined;
     setSearchTerms({
       ...searchTerms,
       term: e.search,
       authority,
       location_type,
-      reporting_status,
-      underage
+      underage,
+      noi_report,
+      product_report,
+      manufacturing_report,
+      sales_report
     });
   };
 
@@ -427,6 +484,13 @@ export default function Locations() {
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
               </Typography>
+              <Link
+                className={classes.showMoreLink}
+                component="button"
+                variant="body2"
+                onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
+                {showMoreFilters ? "Show less filters" : "Show more filters"}
+              </Link>
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -434,41 +498,36 @@ export default function Locations() {
                   authority: store.get('KEYCLOAK_USER_HA') || 'all',
                   location_type: 'all',
                   reporting_status: 'all',
-                  underage: 'all'
+                  underage: 'all',
+                  noi_report: 'all',
+                  product_report: 'all',
+                  manufacturing_report: 'all',
+                  sales_report: 'all'
                 }}
               >
                 <Form>
                   <Grid id="first_row" container spacing={2}>
-                    <Grid item xs={6}>
+                    <Grid item md={6} xs={12}>
                       <StyledTextField
                         name="search"
                         label="Search (Address, Business Name, Legal Name, Doing Business As)"
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="authority"
                         options={healthAuthorityOptions}
                         label="Health Authority"
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="location_type"
                         options={locationTypeOptions(true)}
                         label="Location"
                       />
-                    </Grid>
-                  </Grid>
-                  <Grid id="second_row" container spacing={2}> 
-                    {/* <Grid item xs={3}>
-                      <StyledSelectField
-                        name="reporting_status"
-                        options={healthAuthorityOptions}
-                        label="Reporting Status"
-                      />
-                    </Grid> */}
-                    <Grid item xs={3}>
+                    </Grid>   
+                    <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="underage"
                         options={[
@@ -479,8 +538,39 @@ export default function Locations() {
                         ]}
                         label="Underage Allowed"
                       />
+                    </Grid>                 
+                    <Grid item md={3} xs={6}>
+                      <StyledSelectField
+                        name="noi_report"
+                        options={reportingStatusOptions(false)}
+                        label="NOI Status"
+                      />                     
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item md={3} xs={6}>
+                      <StyledSelectField
+                        name="product_report"
+                        options={reportingStatusOptions(false)}
+                        label="Product Report Status"
+                      />                     
+                    </Grid> 
+                    {showMoreFilters && 
+                    <>             
+                    <Grid item md={3} xs={6}>
+                      <StyledSelectField
+                        name="manufacturing_report"
+                        options={reportingStatusOptions(true)}
+                        label="Manufacturing Report Status"
+                      />                     
+                    </Grid> 
+                    <Grid item md={3} xs={6}>
+                      <StyledSelectField
+                        name="sales_report"
+                        options={reportingStatusOptions(true)}
+                        label="Sales Report Status"
+                      />                     
+                    </Grid> 
+                    </>}
+                    <Grid item md={1} xs={12}>                   
                       <Box
                         alignContent="center"
                         alignItems="center"
@@ -497,7 +587,8 @@ export default function Locations() {
                         </StyledButton>
                       </Box>
                     </Grid>
-                  </Grid>
+                  </Grid>                  
+                  
                 </Form>
               </Formik>
               <div>
@@ -527,7 +618,7 @@ export default function Locations() {
                   columns={tableColumns}
                   options={{
                     selection: true,
-                    pageSize: getInitialPagination(locations),
+                    pageSize: searchTerms.pageSize, //getInitialPagination(locations),
                     pageSizeOptions: [5, 10, 20, 30, 50],
                     sorting: true,
                   }}
@@ -566,7 +657,7 @@ export default function Locations() {
                         orderDirection: undefined,
                       });
                       return;
-                    }
+                    }                    
                     setSearchTerms({
                       ...searchTerms,
                       orderBy: orderColumn,

@@ -10,3 +10,16 @@ export const locationTypeOptions = (includeAll: boolean = false) => {
 
     return locationTypes; 
 }
+
+export const reportingStatusOptions = (hasNotRequired: boolean = false) => {
+    let reportingStatusOption =  [
+        { value: 'all', label: 'All' },
+        { value: 'Submitted', label: 'Submitted' },
+        { value: 'NotSubmitted', label: 'Not Submitted' },
+    ];
+
+    if (hasNotRequired)
+        reportingStatusOption.push({ value: 'NotRequired', label: 'Not Required' });
+
+    return reportingStatusOption; 
+}
