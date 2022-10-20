@@ -15,7 +15,7 @@ export class LocationSearchDTO {
   })
   @IsOptional()
   @IsString()
-  @IsIn(['Business Legal Name', 'Submitted Date', 'Health Authority', 'Doing Business As'])
+  @IsIn(['Business Name', 'Business Legal Name', 'Submitted Date', 'Health Authority', 'Doing Business As', 'Location Type', 'Address'])
   orderBy?: string = 'Submitted Date';
 
   @ApiProperty({
@@ -60,16 +60,37 @@ export class LocationSearchDTO {
   location_type?: string;
 
   @ApiProperty({
-    description: 'Reporting Status',
-  })
-  @IsString()
-  @IsOptional()
-  reporting_status?: string;
-
-  @ApiProperty({
     description: 'Less than 19 allowed?',
   })
   @IsString()
   @IsOptional()
   underage?: string;
+
+  @ApiProperty({
+    description: 'NOI Status',
+  })
+  @IsString()
+  @IsOptional()
+  noi_report?: string;
+
+  @ApiProperty({
+    description: 'Product Report Status',
+  })
+  @IsString()
+  @IsOptional()
+  product_report?: string;
+
+  @ApiProperty({
+    description: 'Manufacturing Report Status',
+  })
+  @IsString()
+  @IsOptional()
+  manufacturing_report?: string;
+
+  @ApiProperty({
+    description: 'Sales Report Status',
+  })
+  @IsString()
+  @IsOptional()
+  sales_report?: string;
 }

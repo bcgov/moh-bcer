@@ -81,7 +81,7 @@ export class LocationService {
   }
 
   async getCommonLocations(query: LocationSearchDTO, addCount?: boolean) {
-    const possibleRelations = new Set(['business', 'noi', 'products', 'manufactures']);
+    const possibleRelations = new Set(['business', 'noi', 'products', 'manufactures', 'sales']);
     const qb = this.locationRepository.createQueryBuilder('location');
     let relations = [];
     if (query.includes) {
@@ -104,13 +104,23 @@ export class LocationService {
     } else if (query.orderBy === 'Business Legal Name') {
       qb.orderBy('LOWER("business"."legalName")', query.order);
       qb.addOrderBy('"noi"."id"', 'ASC');
+    }  else if (query.orderBy === 'Business Name') {
+      qb.orderBy('LOWER("business"."businessName")', query.order);
+      qb.addOrderBy('"noi"."id"', 'ASC');
     } else if (query.orderBy === 'Health Authority') {
       qb.orderBy(`"location"."health_authority"`, query.order);
       qb.addOrderBy('"noi"."id"', 'ASC');
     } else if (query.orderBy === 'Doing Business As') {
       qb.orderBy(`"location"."doingBusinessAs"`, query.order);
       qb.addOrderBy('"noi"."id"', 'ASC');
-    }    
+    } else if (query.orderBy === 'Location Type') {
+      qb.orderBy(`"location"."location_type"`, query.order);
+      qb.addOrderBy('"noi"."id"', 'ASC');
+    } else if (query.orderBy === 'Address') {
+      qb.orderBy(`"location"."addressLine1"`, query.order);
+      qb.addOrderBy(`"location"."webpage"`, query.order);
+      qb.addOrderBy('"noi"."id"', 'ASC');
+    } 
 
     if (query.search) {
       qb.andWhere(`
@@ -132,6 +142,41 @@ export class LocationService {
     }
     if (query.underage) {
       qb.andWhere(`location.underage = :underage`, { underage: query.underage });
+    }
+    if (query.noi_report) {
+      if (query.noi_report === "Submitted") {
+        qb.andWhere('location.noi IS NOT NULL')
+      } else {
+        qb.andWhere('location.noi IS NULL')
+      }
+    }
+    if (query.product_report) {
+      if (query.product_report === "Submitted") {
+        qb.andWhere(`"location_products"."locationId" IS NOT NULL`)
+      } else {        
+        qb.andWhere(`"location_products"."locationId" IS NULL`)
+      }
+    }
+    if (query.manufacturing_report) {
+      if (query.manufacturing_report === "NotRequired") {
+        qb.andWhere(`location.manufacturing = :manufacturing`, { manufacturing: false });
+      } else if (query.manufacturing_report === "NotSubmitted") {
+        qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NULL`, { manufacturing: true });
+      } else {
+        qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NOT NULL`, { manufacturing: true });
+      }
+    }
+    if (query.sales_report) {
+      const {startReport, endReport} = getSalesReportingPeriod();
+      if (query.sales_report === "NotRequired") {
+        
+        qb.andWhere('location.created_at BETWEEN :start AND :end', {start: startReport, end: endReport})
+      } else if (query.sales_report === "NotSubmitted") {
+        qb.andWhere('location.created_at NOT BETWEEN :start AND :end', {start: startReport, end: endReport})
+        qb.andWhere(`"sales"."locationId" IS NULL`);
+      } else {
+        qb.andWhere(`"sales"."locationId" IS NOT NULL`);
+      }
     }
 
     // Counting the number of submitted reports
