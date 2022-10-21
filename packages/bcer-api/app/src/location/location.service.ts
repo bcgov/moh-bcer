@@ -1,4 +1,4 @@
-import { Repository, In, Not, IsNull, SelectQueryBuilder, UpdateResult, getConnection } from 'typeorm';
+import { Repository, In, SelectQueryBuilder, UpdateResult, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -14,7 +14,6 @@ import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
 import { getSalesReportingPeriod, getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString, sleep } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
-import { NoiStatus } from 'src/noi/enums/status.enum';
 import { CronConfig } from 'src/cron/config/cron.config';
 import { LocationStatus } from './enums/location-status.enum';
 import { GeoCodeService } from './geoCode.service';
@@ -121,18 +120,18 @@ export class LocationService {
       qb.addOrderBy(`"location"."webpage"`, query.order);
       qb.addOrderBy('"noi"."id"', 'ASC');
     } 
-
-    if (query.search) {
+    
+    if (query.search) {      
       qb.andWhere(`
         (
-          LOWER(location.addressLine1) LIKE :search OR
-          LOWER(location.doingBusinessAs) LIKE :search OR
+          regexp_replace(LOWER(location.addressLine1), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
+          regexp_replace(LOWER(location.doingBusinessAs), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
           LOWER(location.city) LIKE :search OR
           REPLACE(LOWER(location.postal), ' ', '') LIKE REPLACE(:search, ' ', '') OR
-          LOWER(business.legalName) LIKE :search OR
-          LOWER(business.businessName) LIKE :search
+          regexp_replace(LOWER(business.legalName), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
+          regexp_replace(LOWER(business.businessName), '[^a-zA-Z0-9]', '', 'g') LIKE :search          
         )
-      `, { search: `%${query.search.toLowerCase()}%` });
+      `, { search: `%${query.search.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}%` });
     }
     if (query.authority) {
       qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
@@ -189,6 +188,7 @@ export class LocationService {
     // TYPEORM wonkiness: Skip and Take broken here, but offset and limit may not be ideal?
     qb.offset((query.page - 1) * query.numPerPage);
     qb.limit(query.numPerPage);
+    
     return await qb.getManyAndCount();
   }
 

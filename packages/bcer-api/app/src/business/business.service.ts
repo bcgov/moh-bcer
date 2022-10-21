@@ -154,19 +154,19 @@ export class BusinessService {
       .where("coalesce(business.legalName, '') != ''")
     
     if(search && Object.values(BusinessSearchCategory).includes(category) && category !== BusinessSearchCategory.Postal){
-      qb.andWhere(`LOWER(business.${category}) LIKE :search`, {search: `%${search.toLowerCase()}%`})
+      qb.andWhere(`regexp_replace(LOWER(business.${category}), '[^a-zA-Z0-9]', '', 'g') LIKE :search`, {search: `%${search.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}%`})
     }else if(search && category === BusinessSearchCategory.Postal){
       qb.andWhere(`REPLACE(LOWER(business.postal), ' ', '') LIKE REPLACE(:search, ' ', '')`, {search: `%${search.toLowerCase()}%`})
     }else if(search) {
       qb.andWhere(`
         (
-          LOWER(business.addressLine1) LIKE :search OR
+          regexp_replace(LOWER(business.addressLine1), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
           LOWER(business.city) LIKE :search OR
           REPLACE(LOWER(business.postal), ' ', '') LIKE REPLACE(:search, ' ', '') OR
-          LOWER(business.legalName) LIKE :search OR
-          LOWER(business.businessName) LIKE :search
+          regexp_replace(LOWER(business.legalName), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
+          regexp_replace(LOWER(business.businessName), '[^a-zA-Z0-9]', '', 'g') LIKE :search
         )
-      `, { search: `%${search.toLowerCase()}%` });
+      `, { search: `%${query.search.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}%` });
     }
 
     if(businessIds?.length){
