@@ -338,7 +338,8 @@ export default function Locations() {
     const sales_report = e.sales_report !== 'all' ? e.sales_report : undefined;
     setSearchTerms({
       ...searchTerms,
-      term: e.search,
+      page: 0,
+      term: e. search,
       authority,
       location_type,
       underage,
