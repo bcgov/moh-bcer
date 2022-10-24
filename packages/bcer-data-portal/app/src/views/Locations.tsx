@@ -21,7 +21,6 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import moment from 'moment';
 import store from 'store';
-
 import {
   StyledButton,
   StyledSelectField,
@@ -198,21 +197,27 @@ export default function Locations() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    term: undefined,
-    authority: store.get('KEYCLOAK_USER_HA') || undefined,
-    location_type: undefined,
-    reporting_status: undefined,
-    underage: undefined,
-    page: 0,
-    pageSize: 20,
-    orderBy: undefined,
-    orderDirection: undefined,
-    noi_report: undefined,
-    product_report: undefined,
-    manufacturing_report: undefined,
-    sales_report: undefined
-  });
+
+  const getInitialState = () => {
+    const user_ha = store.get('KEYCLOAK_USER_HA') || '';
+    const initialState = {
+      authority: store.get('KEYCLOAK_USER_HA') || undefined,
+      page: 0,
+      pageSize: 20      
+    }
+
+    const filterParams = JSON.parse(localStorage.getItem('location_searchOptions'));
+
+    if (filterParams) {
+      filterParams.authority = user_ha;
+
+      return filterParams
+    }
+
+    return initialState;
+  }
+
+  const [searchTerms, setSearchTerms] = useState(getInitialState());
   const [locations, setLocations] = useState([]);
   const [showMoreFilters, setShowMoreFilter] = useState(false);
 
@@ -351,6 +356,7 @@ export default function Locations() {
   };
 
   useEffect(() => {
+    localStorage.setItem('location_searchOptions', JSON.stringify(searchTerms));
     get();
   }, [searchTerms]);
 
@@ -495,15 +501,15 @@ export default function Locations() {
               <Formik
                 onSubmit={search}
                 initialValues={{
-                  search: undefined,
-                  authority: store.get('KEYCLOAK_USER_HA') || 'all',
-                  location_type: 'all',
-                  reporting_status: 'all',
-                  underage: 'all',
-                  noi_report: 'all',
-                  product_report: 'all',
-                  manufacturing_report: 'all',
-                  sales_report: 'all'
+                  search: searchTerms.term ? searchTerms.term: undefined,
+                  authority: searchTerms.authority || store.get('KEYCLOAK_USER_HA')  || 'all',
+                  location_type: searchTerms.location_type ? searchTerms.location_type: 'all',
+                  reporting_status: searchTerms.reporting_status ? searchTerms.reporting_status: 'all',
+                  underage: searchTerms.underage ? searchTerms.underage: 'all',
+                  noi_report: searchTerms.noi_report ? searchTerms.noi_report: 'all',
+                  product_report: searchTerms.product_report ? searchTerms.product_report: 'all',
+                  manufacturing_report: searchTerms.manufacturing_report ? searchTerms.manufacturing_report: 'all',
+                  sales_report: searchTerms.sales_report ? searchTerms.sales_report: 'all'
                 }}
               >
                 <Form>
