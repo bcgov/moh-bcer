@@ -18,7 +18,8 @@ function useLocation(locationIds?: string) {
     useAxiosGet(`/data/location/ids/${locationIds}`, { manual: true });
 
   useEffect(() => {
-    getLocationWithIds();
+    if (locationIds)
+      getLocationWithIds();
   }, []);
 
   useEffect(() => {

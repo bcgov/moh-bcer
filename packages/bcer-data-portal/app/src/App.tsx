@@ -19,6 +19,7 @@ import BusinessDetails from './views/BusinessDetails/Overview';
 import { useAxiosPost } from './hooks/axios';
 import { AppGlobalContext } from './contexts/AppGlobal';
 import { formatError } from './util/formatting';
+import MapMenu from './views/MapMenu';
 
 const useStyles = makeStyles({
   root: {
@@ -75,6 +76,7 @@ const App = () => {
           { config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
           <Route exact path={routes.map} component={Map} />
           <Route exact path={`${routes.viewBusiness}/:id`} component={BusinessDetails} />
+          <Route exact path={routes.mapMenu} component={MapMenu} />
         </Switch>
       </div>
     </div>

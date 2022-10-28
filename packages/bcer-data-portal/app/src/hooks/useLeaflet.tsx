@@ -242,6 +242,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       return;
     }
 
+    console.log(selectedLocations)
     const url = new BcRouteLinkBuilder()
       .addPoints(startingLocation, selectedLocations)
       .addOptions(routeOptions)
@@ -255,6 +256,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
    * @param {string} url BC routing link parameters
    */
   const fetchDirection = async (url: string) => {
+    console.log(url)
     setRouteData(null);
     setDirectionError(null);
     try {

@@ -1,4 +1,4 @@
-import { Box, IconButton } from '@material-ui/core';
+import { Box, IconButton, makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import LeftPanel from './LeftPanel';
@@ -8,11 +8,30 @@ import useLeaflet from '@/hooks/useLeaflet';
 import Leaflet from '@/components/generic/Leaflet';
 import { LocationConfig } from '@/constants/localInterfaces';
 
+const useStyles = makeStyles((theme) => ({
+  menu_leftPanelDrawer: {
+    flex: '0.42 0 auto',
+    '& .MuiDrawer-paper': {
+      '& .MuiBox-root': {
+        paddingTop: 0
+      }
+    }
+  },
+  menu_MapWrap: {
+    marginTop: '0 !important',
+    '& .MuiDrawer-paper': {
+      top: 140
+    }
+  }
+}));
+
 interface MapProps {
   config: LocationConfig;
+  asMenu?: Boolean
 }
 
-function Map({config}: MapProps) {
+function Map({asMenu, config}: MapProps) {
+  const classes = useStyles();
   const search = useLocation().search;
   const history = useHistory();
   const locationIds = new URLSearchParams(search).get('locations');
@@ -44,12 +63,14 @@ function Map({config}: MapProps) {
     <Box
       display="flex"
       width="100%"
-      position="relative"
-      style={{ marginTop: '70px' }}
+      position="relative"      
+      style= {{ marginTop: '70px' }}
+      className={asMenu && classes.menu_MapWrap}
     >
-      <Drawer open={open} variant="persistent">
-        <Box minHeight="calc(100vh - 70px)" pt={8}>
+      <Drawer open={open} variant="persistent" className={asMenu && classes.menu_leftPanelDrawer}>
+        <Box minHeight="calc(100vh - 70px)" pt={8} >
           <LeftPanel
+            mapInMenu={asMenu}
             locations={selectedLocations}
             setLocations={setSelectedLocations}
             startingLocation={startingLocation}
@@ -68,9 +89,9 @@ function Map({config}: MapProps) {
         </Box>
       </Drawer>
 
-      {open && <Box flex={0.35} />}
+      {open && !asMenu && <Box flex={0.35} />}
       <Box
-        flex={open ? 0.65 : 1}
+        flex={open ? (asMenu ? 0.77: 0.65) : 1}
         minHeight={open ? 'calc(100vh - 70px)' : 'calc(100vh - 115px)'}
       >
         {!open && (

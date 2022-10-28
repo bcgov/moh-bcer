@@ -1,6 +1,6 @@
-import { Box, IconButton, makeStyles, Typography } from '@material-ui/core';
-import React, { SetStateAction, useState } from 'react';
-import { StyledButton } from 'vaping-regulation-shared-components';
+import { Box, FormControl, IconButton, InputLabel, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
+import React, { SetStateAction, useEffect, useState } from 'react';
+import { StyledButton, StyledSelectField } from 'vaping-regulation-shared-components';
 import MapIcon from '@material-ui/icons/Map';
 import DragSort from '@/components/dragable';
 import LocationView from './LocationView';
@@ -19,6 +19,9 @@ import { useHistory } from 'react-router';
 import RouteStatics from './RouteStatics';
 import { AxiosError } from 'axios';
 import OptimizedOrder from './OptimizedOrder';
+import { healthAuthorityOptions } from '@/constants/arrays';
+import store from 'store';
+import { useAxiosGet } from '@/hooks/axios';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -39,9 +42,23 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
     fontWeight: 'bold',
   },
+  healthAuthoritySelectWrap: {
+    '& label':{
+      color: 'black',
+    },
+    '& .MuiInputBase-root': {
+      width: '50%',
+      background: '#f5f5f5',
+      height: 40,
+      padding: 10,
+      marginTop: 5,    
+    }
+  },
 }));
 
+
 interface LeftPanelProps {
+  mapInMenu: Boolean,
   locations: BusinessLocation[];
   setLocations: React.Dispatch<SetStateAction<BusinessLocation[]>>;
   startingLocation: BCGeocoderAutocompleteData;
@@ -61,6 +78,7 @@ interface LeftPanelProps {
 }
 
 function LeftPanel({
+  mapInMenu,
   locations,
   setLocations,
   startingLocation,
@@ -77,17 +95,39 @@ function LeftPanel({
   directionError,
 }: LeftPanelProps) {
   const classes = useStyles();
-  const history = useHistory();
-  const [state, setState] = useState();
+  const history = useHistory();  
+  const [healthAuthority, setHealthAuthority] = useState(store.get('KEYCLOAK_USER_HA')  || '');
+  const [{ data, loading }, getLocationsWithHealthAuthority] =
+    useAxiosGet(`data/location?page=1&numPerPage=1000&includes=business,noi,products,manufactures,sales&authority=${healthAuthority}`, { manual: true });
+
+  useEffect(() => {
+    if (mapInMenu && healthAuthority)      
+      getHealthAuthorityLocations(healthAuthority)
+  }, [healthAuthority])
+
+  // useEffect(() => {
+  //   //setLocations(healthAuthorityLocations)
+  //   setLocations(data?.rows || [])
+  //   console.log(data)
+  // }, [data])
+
+  const getHealthAuthorityLocations = async (healthAuthority: string) => {
+    //get all location with this health authority
+    //send the location to setLocations([])
+    console.log(healthAuthority);
+    await getLocationsWithHealthAuthority();
+  }
+
   return (
     <Box className={classes.container}>
+      {!mapInMenu &&
       <Box
         mb={1}
         display="flex"
         justifyContent="space-between"
         borderBottom="1px solid black"
-        alignItems="center"
-      >
+        alignItems="center"        
+      >        
         <Box>
           <StyledButton
             variant="small-outlined"
@@ -101,6 +141,7 @@ function LeftPanel({
           <KeyboardBackspaceIcon />
         </IconButton>
       </Box>
+      }
       <Typography className={classes.header}>Route</Typography>
       <Box mt={1} />
       <StyledButton
@@ -112,7 +153,28 @@ function LeftPanel({
         <Box ml={1} />
         Show in Google Map
       </StyledButton>
-      <Box mt={2} />
+      <Box mt={4} />
+      {mapInMenu &&       
+        <div className={classes.healthAuthoritySelectWrap}>
+          <InputLabel id="health-authority-label">Health Authority</InputLabel>
+          <Select
+            labelId="health-authority-label"
+            value={healthAuthority}
+            onChange={(e: any) => {
+              setHealthAuthority(e.target.value)
+            }}
+            displayEmpty
+          >
+            <MenuItem disabled value="">
+              <em>Select </em>
+            </MenuItem>
+            {healthAuthorityOptions.map(ha => {
+              return ha.value !== "all" && <MenuItem key={ha.value} value={ha.value}>{ha.label}</MenuItem>
+            })}          
+          </Select>
+          <Box mt={4} />
+        </div>
+      }
       <Box mt={2} mb={1}>
         <Typography className={classes.label}>Starting Address</Typography>
       </Box>

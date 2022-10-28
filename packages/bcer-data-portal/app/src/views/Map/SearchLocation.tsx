@@ -1,22 +1,8 @@
 import { useAxiosGet } from '@/hooks/axios';
 import {
-  Box,
-  CircularProgress,
-  InputAdornment,
   makeStyles,
-  TextField,
 } from '@material-ui/core';
-import {
-  Autocomplete,
-  AutocompleteChangeDetails,
-  AutocompleteChangeReason,
-} from '@material-ui/lab';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import {
-  StyledTextField,
-  StyledTextInput,
-} from 'vaping-regulation-shared-components';
-import SearchIcon from '@material-ui/icons/Search';
+import React, { useEffect, useState } from 'react';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 import AutocompleteSearch from '@/components/generic/AutocompleteSearch';
 

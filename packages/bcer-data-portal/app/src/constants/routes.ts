@@ -8,4 +8,5 @@ export const routes = Object.freeze({
     map: '/map',
     viewLocation: '/location',
     viewBusiness: '/business',
+    mapMenu: '/map-route',
 });
