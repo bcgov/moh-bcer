@@ -285,7 +285,7 @@ export default function Locations() {
   const buildSearchUrl = (): string => {
     let url = `/data/location?page=${searchTerms.page + 1 || 1}&numPerPage=${
       searchTerms.pageSize || 20
-    }&includes=business,noi,products,manufactures,sales`;
+    }&includes=business,noi`;
     searchTerms?.term && searchTerms.term.length > 3
       ? (url += `&search=${searchTerms.term}`)
       : null;
