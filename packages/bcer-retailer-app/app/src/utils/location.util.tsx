@@ -263,7 +263,7 @@ export class LocationUtil {
 
   private static readonly locationTableBaseColumns: LocationBaseColumnType = {
     locationType: {title: 'Type of Location', render: LocationUtil.renderLocationType, width: 150},
-    address1: {title: 'Address 1/URL', render: LocationUtil.renderAddressLine1, width: 150},
+    address1: {title: 'Address/URL', render: LocationUtil.renderAddressLine1, width: 150},
     address2: {title: 'Address 2', field: 'addressLine2', width: 150},
     postal: {title: 'Postal Code', field: 'postal', width: 150},
     city: {title: 'City', render: LocationUtil.renderCity, width: 150},

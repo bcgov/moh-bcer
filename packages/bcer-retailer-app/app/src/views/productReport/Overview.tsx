@@ -6,7 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import moment from 'moment';
 
-import { StyledTable, StyledButton, LocationTypeLabels } from 'vaping-regulation-shared-components';
+import { StyledTable, StyledButton, LocationTypeLabels, LocationType } from 'vaping-regulation-shared-components';
 import { BusinessLocationHeaders, SubmissionTypeEnum } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { ProductInfoContext } from '@/contexts/ProductReport';
@@ -299,7 +299,7 @@ export default function ProductOverview() {
                     title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`
                   },
                   {
-                    title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
+                    title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
                   },
                   {
                     title: 'Added Date', render: (rd: BusinessLocation) => rd.created_at ? `${moment(rd.created_at).format('MMM DD, YYYY')}` : ''
@@ -340,7 +340,7 @@ export default function ProductOverview() {
                     title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`
                   },
                   {
-                    title: 'Address 1', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
+                    title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
                   },
                   {
                     title: 'Status',
