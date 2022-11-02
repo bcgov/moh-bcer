@@ -121,7 +121,7 @@ function BusinessLocationForm({ entry }: { entry: string }) {
           onSubmit={async (values: IBusinessLocationValues) => {
             setBusinessInfo({
               ...businessInfo,
-              locations: [...businessInfo.locations, values],
+              locations: [...businessInfo.locations, LocationUtil.sanitizeSubmittedLocation(values)],
             });
             toggleManualEntryForm(false);
           }}

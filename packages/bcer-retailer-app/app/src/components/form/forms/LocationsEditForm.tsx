@@ -23,6 +23,7 @@ import { Initial } from '@/components/form/validations/vBusinessLocation';
 import BusinessLocationInputs from '@/components/form/inputs/BusinessLocationInputs';
 import ViewLocation from '@/components/MyBusiness/locations/ViewLocation';
 import { NoiStatus } from '@/constants/localEnums';
+import { LocationUtil } from '@/utils/location.util';
 
 const useStyles = makeStyles({
   addIcon: {
@@ -83,7 +84,7 @@ export default function LocationsEditForm({
   const addLocation = (values: IBusinessLocationValues) => {
     setBusinessInfo({
       ...businessInfo,
-      locations: [...businessInfo.locations, values],
+      locations: [...businessInfo.locations, LocationUtil.sanitizeSubmittedLocation(values)],
     });
     toggleOpen(false);
   };
@@ -102,8 +103,8 @@ export default function LocationsEditForm({
       const newAddedLocations = addedLocations.map(
         (element: IBusinessLocationValues, index: number) => {
           if (element.tableData.id === rowData.tableData.id) {
-            return values;
-          } else return element;
+            return LocationUtil.sanitizeSubmittedLocation(values);
+          } else return LocationUtil.sanitizeSubmittedLocation(element);
         }
       );
       newLocations = [...existingLocations, ...newAddedLocations];

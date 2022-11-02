@@ -47,7 +47,8 @@ export class LocationUtil {
   }
 
   static renderAddressLine1(l: BusinessLocation): React.ReactNode {
-    return <StyledTableColumn value={l.addressLine1} />;
+    const value = l.location_type === LocationType.online ? l.webpage : `${l.addressLine1}`
+    return <StyledTableColumn value={value} />;
   }
 
   static renderFullAddress(l: BusinessLocation) {
@@ -262,7 +263,7 @@ export class LocationUtil {
 
   private static readonly locationTableBaseColumns: LocationBaseColumnType = {
     locationType: {title: 'Type of Location', render: LocationUtil.renderLocationType, width: 150},
-    address1: {title: 'Address 1', render: LocationUtil.renderAddressLine1, width: 150},
+    address1: {title: 'Address 1/URL', render: LocationUtil.renderAddressLine1, width: 150},
     address2: {title: 'Address 2', field: 'addressLine2', width: 150},
     postal: {title: 'Postal Code', field: 'postal', width: 150},
     city: {title: 'City', render: LocationUtil.renderCity, width: 150},
@@ -280,5 +281,19 @@ export class LocationUtil {
     let columns: TableColumn[] = [];
     list?.forEach(l => columns.push(this.locationTableBaseColumns[l]));
     return columns;
+  }
+
+  static sanitizeSubmittedLocation = (values: IBusinessLocationValues) => {
+    let val:IBusinessLocationValues;
+
+    if (values.location_type === LocationType.physical) {
+      val = {...values, webpage: ""}
+    } else if (values.location_type === LocationType.online) {
+      val = {...values, addressLine1: "", city: "", postal: "", health_authority: "", health_authority_other: "", underage: "", underage_other: ""}
+    } else {
+      val = values;
+    }
+
+    return val;
   }
 }
