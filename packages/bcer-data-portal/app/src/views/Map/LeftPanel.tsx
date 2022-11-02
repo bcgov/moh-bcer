@@ -1,7 +1,9 @@
-import { Box, FormControl, IconButton, InputLabel, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
+import { Avatar, Box, Button, FormControl, IconButton, InputLabel, Link, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
 import React, { SetStateAction, useEffect, useState } from 'react';
 import { StyledButton, StyledSelectField } from 'vaping-regulation-shared-components';
 import MapIcon from '@material-ui/icons/Map';
+import DirectionsIcon from '@material-ui/icons/Directions';
+import ArrowRightIcon from '@material-ui/icons/ArrowRightAltOutlined';
 import DragSort from '@/components/dragable';
 import LocationView from './LocationView';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
@@ -75,6 +77,10 @@ interface LeftPanelProps {
   setRouteOptions: React.Dispatch<SetStateAction<RouteOptions>>;
   setShowHALayer: React.Dispatch<SetStateAction<boolean>>,
   directionError: AxiosError;
+  healthAuthorityLocations: BusinessLocation[],
+  setHealthAuthorityLocations: React.Dispatch<SetStateAction<BusinessLocation[]>>,
+  clickedLocation: BusinessLocation,
+  setDisplayItinerary: React.Dispatch<SetStateAction<boolean>>,
 }
 
 function LeftPanel({
@@ -93,33 +99,84 @@ function LeftPanel({
   setRouteOptions,
   setShowHALayer,
   directionError,
+  setHealthAuthorityLocations,
+  clickedLocation,
+  setDisplayItinerary
 }: LeftPanelProps) {
   const classes = useStyles();
   const history = useHistory();  
   const [healthAuthority, setHealthAuthority] = useState(store.get('KEYCLOAK_USER_HA')  || '');
+  const [itinerary, setItinerary] = useState<BusinessLocation>();
   const [{ data, loading }, getLocationsWithHealthAuthority] =
     useAxiosGet(`data/location?page=1&numPerPage=1000&includes=business,noi,products,manufactures,sales&authority=${healthAuthority}`, { manual: true });
 
   useEffect(() => {
-    if (mapInMenu && healthAuthority)      
+    if (mapInMenu && healthAuthority) {
       getHealthAuthorityLocations(healthAuthority)
+    }
   }, [healthAuthority])
 
-  // useEffect(() => {
-  //   //setLocations(healthAuthorityLocations)
-  //   setLocations(data?.rows || [])
-  //   console.log(data)
-  // }, [data])
+  useEffect(() => {
+    setHealthAuthorityLocations(data?.rows || [])
+  }, [data])
 
   const getHealthAuthorityLocations = async (healthAuthority: string) => {
-    //get all location with this health authority
-    //send the location to setLocations([])
-    console.log(healthAuthority);
     await getLocationsWithHealthAuthority();
   }
 
+  useEffect(() => {
+    if (itinerary)
+      setLocations([...locations, itinerary])
+  }, [itinerary])
+
   return (
-    <Box className={classes.container}>
+    <Box className={classes.container}>      
+      {mapInMenu &&  
+      <>
+        <Typography className={classes.header}>Map of Locations</Typography>
+        <Box mt={2} />           
+          <div className={classes.healthAuthoritySelectWrap}>
+            <InputLabel id="health-authority-label">Health Authority</InputLabel>
+            <Select
+              labelId="health-authority-label"
+              value={healthAuthority}
+              onChange={(e: any) => {
+                setHealthAuthority(e.target.value)
+              }}
+              displayEmpty
+            >
+              <MenuItem disabled value="">
+                <em>Select </em>
+              </MenuItem>
+              {healthAuthorityOptions.map(ha => {
+                return ha.value !== "all" && <MenuItem key={ha.value} value={ha.value}>{ha.label}</MenuItem>
+              })}          
+            </Select>
+            <ArrowRightIcon />
+            <Avatar style={{backgroundColor: "#002C71"}}>
+              <ArrowRightIcon />
+            </Avatar>
+          </div>
+
+          {clickedLocation &&
+          <Box mt={2} mb={1}>
+            <Typography className={classes.label}>Clicked Location</Typography>
+            {clickedLocation.addressLine1} <br/>
+            
+            <Link component="button" variant="body2" 
+              onClick={() => {history.push(`/location/${clickedLocation.id}`)}}>
+              See Location Details
+            </Link>|
+            <Link component="button" variant="body2" 
+              onClick={() => {setItinerary(clickedLocation)}}>
+              Add to Itinerary
+            </Link>
+          </Box>
+          }
+          <Box mt={4} mb={1} borderBottom="1px solid black" />
+      </>
+      }
+
       {!mapInMenu &&
       <Box
         mb={1}
@@ -144,44 +201,36 @@ function LeftPanel({
       }
       <Typography className={classes.header}>Route</Typography>
       <Box mt={1} />
-      <StyledButton
-        variant="small-outlined"
-        size="small"
-        onClick={() => window.open(createGoogleLink(), '_blank')}
-      >
-        <MapIcon fontSize="small" />
-        <Box ml={1} />
-        Show in Google Map
-      </StyledButton>
+        <StyledButton
+          variant="small-outlined"
+          size="small"
+          onClick={() => window.open(createGoogleLink(), '_blank')}
+        >
+          <MapIcon fontSize="small" />
+          <Box ml={1} />
+          Show in Google Map
+        </StyledButton>
+
+        {locations.length > 0 &&
+        <StyledButton
+          variant="small-outlined"
+          size="small"
+          style={{float: 'right'}}
+          onClick={() => setDisplayItinerary(true)}
+        >
+          <DirectionsIcon fontSize="small" />
+          <Box ml={1} />
+          Display Itinerary
+        </StyledButton>}
       <Box mt={4} />
-      {mapInMenu &&       
-        <div className={classes.healthAuthoritySelectWrap}>
-          <InputLabel id="health-authority-label">Health Authority</InputLabel>
-          <Select
-            labelId="health-authority-label"
-            value={healthAuthority}
-            onChange={(e: any) => {
-              setHealthAuthority(e.target.value)
-            }}
-            displayEmpty
-          >
-            <MenuItem disabled value="">
-              <em>Select </em>
-            </MenuItem>
-            {healthAuthorityOptions.map(ha => {
-              return ha.value !== "all" && <MenuItem key={ha.value} value={ha.value}>{ha.label}</MenuItem>
-            })}          
-          </Select>
-          <Box mt={4} />
-        </div>
-      }
+      
       <Box mt={2} mb={1}>
         <Typography className={classes.label}>Starting Address</Typography>
       </Box>
       <SearchLocation setSelect={setStartingLocation} />
       <Box mt={2} mb={1}>
         <Typography className={classes.label}>Retail Locations</Typography>
-      </Box>
+      </Box>      
       <DragSort
         setState={setLocations}
         state={locations}

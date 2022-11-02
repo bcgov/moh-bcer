@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import L from 'leaflet';
+import L, { Tooltip } from 'leaflet';
 import GeoJSON from 'geojson';
-
 import {
   BCDirectionData,
   BCGeocoderAutocompleteData,
@@ -17,6 +16,7 @@ import redMarker from '@/assets/images/marker-icon-2x-red.png';
 import markerShadow from '@/assets/images/marker-shadow.png'
 import { useAxiosPost } from './axios';
 import sanitizeHtml from 'sanitize-html';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // Map layer for Health Authority Boundaries
 const haLayer = createHealthAuthorityLayer();
@@ -32,6 +32,8 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   const [{}, getDirection] = useAxiosPost<BCDirectionData>('/data/location/direction', { manual: true });
 
+  const [healthAuthorityLocations, setHealthAuthorityLocations] = useState<BusinessLocation[]>();
+  const [clickedLocation, setClickedLocation] = useState<BusinessLocation>();
   const {
     selectedLocations,
     setSelectedLocations,
@@ -42,7 +44,8 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   const [map, setMap] = useState<L.Map>();
   const [markers, setMarkers] = useState<L.Marker[]>([]);
   const [geoJsonData, setGeoJsonData] = useState<L.GeoJSON>();
-  const [showHALayer, setShowHALayer] = useState<boolean>(false);
+  const [showHALayer, setShowHALayer] = useState<boolean>(false);  
+  const [displayItinerary, setDisplayItinerary] = useState<boolean>(false);  
   const [startingLocation, setStartingLocation] =
     useState<BCGeocoderAutocompleteData>();
 
@@ -88,7 +91,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     if (selectedLocations?.length && map) {
       selectedLocations.forEach((l) => {
         if (l.latitude && l.longitude) {
-          let mkr = L.marker([+l.latitude, +l.longitude]);
+          let mkr = L.marker([+l.latitude, +l.longitude]);          
           mkr.bindTooltip(makeMarkerToolTip(l)).openTooltip();
           mkrs.push(mkr);
           mkr.addTo(map);
@@ -173,7 +176,6 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       setMarkers([]);
     }
   };
-
 
   /**
    * Adds Tile style to map
@@ -308,6 +310,77 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   };
 
+  const onClickLocationMarkerTooltip = (l: BusinessLocation) => {
+
+    // const v = document.createElement("div");
+    
+    // //See Location Span
+    // var seeLocationSpan = document.createElement("span");
+
+    // const locationLink = document.createElement("a");
+    // locationLink.href = `#/location/${l.id}`;
+    // var locationLinkText = document.createTextNode("See Location Details");
+    // locationLink.appendChild(locationLinkText);
+
+    // seeLocationSpan.appendChild(locationLink);
+
+    // // Add Itinerary Span
+    // var itinerarySpan = document.createElement("div");
+
+    // //Link
+    // itinerarySpan.onclick = toggleItineraries(l);
+    // var itineraryText = document.createTextNode("Add to Itinerary");
+    // itinerarySpan.appendChild(itineraryText);
+
+    // v.appendChild(seeLocationSpan);
+    // v.appendChild("<hr />")
+    // v.appendChild(itinerarySpan);
+    // return v;
+    // return `<div>
+    //           <span><b><a href="portal/#/location/${l.id}">See Location Details</a></b></span>
+    //           <hr />
+    //           <span onClick='${toggleItineraries(l)}'><b>Add to Itinerary</b></span>
+    //         </div>`;
+  };
+
+  const drawHealthAuthorityLocationMarkers = () => {
+    const mkrs: L.Marker[] = [];
+    mkrs.push(...drawStartingMarker());
+
+    if (healthAuthorityLocations?.length && map) {
+      if (healthAuthorityLocations?.length && map) {
+        healthAuthorityLocations.forEach((l) => {
+        if (l.latitude && l.longitude) {
+          let mkr = L.marker([+l.latitude, +l.longitude]);
+          var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: iconShadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
+          let hasMissingReport = Object.values(l.reportStatus).includes("missing");
+          if (hasMissingReport)
+            mkr.setIcon(redIcon)
+        
+          mkr.bindTooltip(makeMarkerToolTip(l)).openTooltip();
+          mkr.addEventListener('click', () => {
+            // mkr.bindTooltip(onClickLocationMarkerTooltip(l), {
+            //   interactive: true,
+            // })//.openTooltip();
+            setClickedLocation(l)
+         });
+          mkrs.push(mkr);
+          mkr.addTo(map);
+        }
+      });
+    }
+    setMarkers(mkrs);
+    setMapBound(mkrs);
+  }
+}
+
   /**
    * If there is a change in locations or options it reinitialize all the markers and
    * gets fresh route data
@@ -317,7 +390,13 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     removeRouteOnMap();
     drawAllMarkers();
     getDirectionData();
-  }, [selectedLocations, startingLocation, routeOptions]);
+  }, [startingLocation, routeOptions]);
+
+  useEffect(() => {
+    removeAllMarkers();
+    removeRouteOnMap();
+    drawHealthAuthorityLocationMarkers();
+  }, [healthAuthorityLocations]);
 
   useEffect(() => {
     if (routeData) {
@@ -345,6 +424,17 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   }, [showHALayer]);
 
+  useEffect(() => {
+    if(displayItinerary) {      
+      setClickedLocation(null)
+
+      removeAllMarkers();
+      removeRouteOnMap();
+      drawAllMarkers();
+      getDirectionData();
+    }
+  }, [displayItinerary])
+
   return {
     selectedLocations,
     setSelectedLocations,
@@ -363,6 +453,10 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     setRouteOptions,
     setShowHALayer,
     directionError,
+    healthAuthorityLocations,
+    setHealthAuthorityLocations,
+    clickedLocation,
+    setDisplayItinerary
   };
 }
 

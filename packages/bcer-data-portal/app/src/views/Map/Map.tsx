@@ -53,6 +53,10 @@ function Map({asMenu, config}: MapProps) {
     setRouteOptions,
     setShowHALayer,
     directionError,
+    healthAuthorityLocations,
+    setHealthAuthorityLocations,
+    clickedLocation,
+    setDisplayItinerary
   } = useLeaflet(locationIds, config);
 
   useEffect(() => {
@@ -85,6 +89,10 @@ function Map({asMenu, config}: MapProps) {
             setRouteOptions={setRouteOptions}
             directionError={directionError}
             setShowHALayer={setShowHALayer}
+            healthAuthorityLocations={healthAuthorityLocations}
+            setHealthAuthorityLocations={setHealthAuthorityLocations}
+            clickedLocation={clickedLocation}
+            setDisplayItinerary={setDisplayItinerary}
           />
         </Box>
       </Drawer>

@@ -62,8 +62,9 @@ function useLocation(locationIds?: string) {
    * Updates the route parameters
    * @param {string} ids location ids to be set in the route query
    */
-  const setRouteParam = (ids: string[]) => {
-    history.push(`${routes.map}?locations=${ids.join(',')}`);
+  const setRouteParam =  (ids: string[]) => {
+    const route = history.location.pathname;
+    history.push(`${route}?locations=${ids.join(',')}`);
   };
 
   /**
@@ -78,6 +79,7 @@ function useLocation(locationIds?: string) {
   ): string[] => {
     return loc.reduce((prev, current) => [...prev, current?.id], initial);
   };
+
   return {
     selectedLocations,
     setSelectedLocations,
