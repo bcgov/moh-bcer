@@ -2,6 +2,8 @@ import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import {
+  LocationType,
+  LocationTypeLabels,
   StyledTextField,
   StyledWarning,
 } from 'vaping-regulation-shared-components';
@@ -23,11 +25,17 @@ export default function ViewLocation({
       )}
       <Grid item container spacing={1} xs={12}>
         <Grid item xs={12}>
+          <Typography variant="subtitle1">Location Type</Typography>
+          <Typography variant="body1">{LocationTypeLabels[rowData.location_type as keyof typeof LocationTypeLabels]}</Typography>
+        </Grid>
+        <Grid item xs={12}>
           <Typography variant="subtitle1">
             Address of sales premises from which restricted e-substances are
             sold
           </Typography>
         </Grid>
+        {rowData.location_type !== LocationType.online &&
+        <>
         <Grid item xs={6}>
           <Typography variant="subtitle2">Address 1</Typography>
           <Typography variant="body1">{rowData.addressLine1}</Typography>
@@ -40,6 +48,16 @@ export default function ViewLocation({
           <Typography variant="subtitle2">Postal Code</Typography>
           <Typography variant="body2">{rowData.postal}</Typography>
         </Grid>
+        </>}
+        {rowData.location_type === LocationType.online &&        
+        <Grid item xs={6}>
+          <Typography variant="subtitle2">Web page</Typography>
+          <Typography variant="body1">{rowData.webpage}</Typography>
+        </Grid>}
+        <Grid item xs={6}>
+          <Typography variant="subtitle2">Doing Businees As</Typography>
+          <Typography variant="body2">{rowData.doingBusinessAs}</Typography>
+        </Grid>      
       </Grid>
       <Grid item container spacing={1} xs={12}>
         <Grid item xs={12}>

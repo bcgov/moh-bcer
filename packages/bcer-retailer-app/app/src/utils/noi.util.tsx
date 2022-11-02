@@ -14,6 +14,7 @@ import moment from 'moment';
 import { ClassNameMap } from '@material-ui/styles';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { GeneralUtil } from './util';
+import { LocationType } from 'vaping-regulation-shared-components';
 
 export class NoiUtil {
   static outstandingNoi(l: BusinessLocation): boolean {
@@ -41,7 +42,7 @@ export class NoiUtil {
   }
 
   static renderAddressLine1(l: BusinessLocation): string {
-    return `${l.addressLine1}`;
+    return `${l.location_type === LocationType.online ? l.webpage: l.addressLine1}`;
   }
 
   static renderCity(l: BusinessLocation): string {

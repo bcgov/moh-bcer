@@ -113,14 +113,14 @@ export default function ExistingTableWrap() {
   const handleEditConfirm = async () => {
     const newExistingLocations = existingLocations.map((element: BusinessLocation) => {
       if (element.id === targetConfirmRow.id) {
-        return targetConfirmRow
-      } else return element;
+        return LocationUtil.sanitizeSubmittedLocation(targetConfirmRow)
+      } else return LocationUtil.sanitizeSubmittedLocation(element);
     });
     const newLocations = [...newExistingLocations, ...addedLocations];
     const newBusinessInfo = {...businessInfo, locations: newLocations }
     
     if (newBusinessInfo?.submissionId) {
-      await patch({ url: `/location/edit/${targetConfirmRow.id}`, data: targetConfirmRow });
+      await patch({ url: `/location/edit/${targetConfirmRow.id}`, data: LocationUtil.sanitizeSubmittedLocation(targetConfirmRow) });
     }
     await refreshData();
     setBusinessInfo(newBusinessInfo);
