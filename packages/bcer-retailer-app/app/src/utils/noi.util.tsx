@@ -14,7 +14,7 @@ import moment from 'moment';
 import { ClassNameMap } from '@material-ui/styles';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { GeneralUtil } from './util';
-import { LocationType } from 'vaping-regulation-shared-components';
+import { LocationType, LocationTypeLabels } from 'vaping-regulation-shared-components';
 
 export class NoiUtil {
   static outstandingNoi(l: BusinessLocation): boolean {
@@ -239,6 +239,9 @@ export class NoiPdfUtil {
       renewalDate: this.formatRenewalDate(location),
       expiryDate: this.formatExpiryDate(location),
       effectiveOperationDate: this.formatEffectiveOperationDate(location),
+      locationType: location.location_type,
+      formattedLocationType: LocationTypeLabels[location.location_type],
+      webpage: location.webpage
     };
   }
 
@@ -250,9 +253,10 @@ export class NoiPdfUtil {
   }
 
   static findAgeRestricted(location: BusinessLocation): string {
-    const underage = location.underage === 'other'
-      ? location.underage_other
-      : location.underage;
+    const underage = location.location_type === LocationType.online ? "No" :
+            location.underage === 'other'
+              ? location.underage_other
+              : location.underage;
 
     return underage === 'No' ? `${underage } (only 19+)` : underage;
   }
