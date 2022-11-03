@@ -159,6 +159,14 @@ function Pdf({ location, legalName }: PdfProps) {
       <Box className={responsiveClass.bodyWrapper}>
         <Box className={responsiveClass.infoWrapper}>
           <Typography className={responsiveClass.infoLabel}>
+            Type of Location:
+          </Typography>
+          <Typography className={responsiveClass.infoData}>
+            {formattedData.formattedLocationType}
+          </Typography>
+        </Box>
+        <Box className={responsiveClass.infoWrapper}>
+          <Typography className={responsiveClass.infoLabel}>
             Business Name:
           </Typography>
           <Typography className={responsiveClass.infoData}>
@@ -173,6 +181,15 @@ function Pdf({ location, legalName }: PdfProps) {
             {formattedData.legalName}
           </Typography>
         </Box>
+        {formattedData.locationType === 'online' ?
+        <Box className={responsiveClass.infoWrapper}>
+          <Typography className={responsiveClass.infoLabel}>
+            URL:
+          </Typography>
+          <Typography className={responsiveClass.infoData}>
+            {formattedData.webpage}            
+          </Typography>
+        </Box>:
         <Box className={responsiveClass.infoWrapper}>
           <Typography className={responsiveClass.infoLabel}>
             Location:
@@ -183,7 +200,7 @@ function Pdf({ location, legalName }: PdfProps) {
               {formattedData.postal}
             </span>
           </Typography>
-        </Box>
+        </Box>}
         <Box className={responsiveClass.infoWrapper}>
           <Typography className={responsiveClass.infoLabel}>
             Location permits all ages:
