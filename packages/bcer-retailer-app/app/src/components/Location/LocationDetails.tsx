@@ -4,6 +4,7 @@ import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/utils/formatting';
 import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
+import { LocationType } from 'vaping-regulation-shared-components';
 import LocationDetailsSkeleton from '../generic/skeletons/LocationDetailsSkeleton';
 
 const useStyles = makeStyles({
@@ -61,9 +62,10 @@ function LocationDetails({ id }: LocationDetailsProps) {
             </Typography>
             <Box>
               <Box className={classes.boxRow}>
-                <Box className={classes.rowTitle}>Address</Box>
+                <Box className={classes.rowTitle}>
+                  {location.location_type === LocationType.online ? "Webpage":"Address"}</Box>
                 <Box className={classes.rowContent}>
-                  {`${location?.addressLine1}, ${location?.postal}, ${location?.city}`}
+                  {location.location_type === LocationType.online ? location.webpage: `${location?.addressLine1}, ${location?.postal}, ${location?.city}`}
                 </Box>
               </Box>
               <Box className={classes.boxRow}>
@@ -74,24 +76,26 @@ function LocationDetails({ id }: LocationDetailsProps) {
                 <Box className={classes.rowTitle}>Phone number</Box>
                 <Box className={classes.rowContent}>{location?.phone}</Box>
               </Box>
+              {location.location_type !== LocationType.online &&
               <Box className={classes.boxRow}>
                 <Box className={classes.rowTitle}>
                   Persons under 19 permitted?
                 </Box>
                 <Box className={classes.rowContent}>{location?.underage}</Box>
-              </Box>
+              </Box>}
               <Box className={classes.boxRow}>
                 <Box className={classes.rowTitle}>Doing business as</Box>
                 <Box className={classes.rowContent}>
                   {location?.doingBusinessAs}
                 </Box>
               </Box>
+              {location.location_type !== LocationType.online &&
               <Box className={classes.boxRow}>
                 <Box className={classes.rowTitle}>Region</Box>
                 <Box className={classes.rowContent}>
                   {location?.health_authority}
                 </Box>
-              </Box>
+              </Box>}
               <Box className={classes.boxRow}>
                 <Box className={classes.rowTitle}>Intent to manufacture</Box>
                 <Box className={classes.rowContent}>
