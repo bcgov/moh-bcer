@@ -209,7 +209,9 @@ export default function Locations() {
     const filterParams = JSON.parse(localStorage.getItem('location_searchOptions'));
 
     if (filterParams) {
-      filterParams.authority = user_ha;
+      if (user_ha) {
+        filterParams.authority = user_ha;
+      }
 
       return filterParams
     }
@@ -531,7 +533,7 @@ export default function Locations() {
                       <StyledSelectField
                         name="location_type"
                         options={locationTypeOptions(true)}
-                        label="Location"
+                        label="Location Type"
                       />
                     </Grid>   
                     <Grid item md={3} xs={6}>

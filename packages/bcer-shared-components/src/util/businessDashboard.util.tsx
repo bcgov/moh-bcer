@@ -1,4 +1,4 @@
-import { LocationTypeLabels, ReportStatus } from "@/constants/enums/genericEnums";
+import { HealthAuthorities, LocationTypeLabels, ReportStatus } from "@/constants/enums/genericEnums";
 import { LocationReportStatus, LocationRO } from "@/constants/interfaces/genericInterfaces";
 import { Tooltip } from "@material-ui/core";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
@@ -11,6 +11,9 @@ export class BusinessDashboardUtil {
     {title: 'Type of Location', render: (l: LocationRO) => LocationTypeLabels[l.location_type]},
     {title: 'Location/URL', render: (l: LocationRO) => addressLine1(l)},
     {title: 'Doing Business As', render: (l: LocationRO) => l.doingBusinessAs || ''},
+    {title: 'Health Authority', render: (l: LocationRO) => l.health_authority && HealthAuthorities[l.health_authority] 
+                                                            || l.health_authority_other 
+                                                            || ''},
     {title: 'NOI', render: (l:LocationRO) => this.render(l, 'noi')},
     {title: 'Product Report', render: (l:LocationRO) => this.render(l, 'productReport')},
     {title: 'Manufacturing Report', render: (l:LocationRO) => this.render(l, 'manufacturingReport')},

@@ -31,3 +31,11 @@ export enum ProvinceLabels {
   'SK' = 'Saskatchewan',
   'YT' = 'Yukon',
 }
+
+export enum HealthAuthorities {
+  'fraser' = 'Fraser',
+  'interior' = 'Interior',
+  'island' = 'Island',
+  'northern' = 'Northern',
+  'coastal' = 'Coastal',
+}

@@ -34,7 +34,9 @@ function useBusiness() {
     const filterParams = JSON.parse(localStorage.getItem('searchOptions'));
 
     if (filterParams) {
-      filterParams.healthAuthority = user_ha;
+      if (user_ha) {
+        filterParams.healthAuthority = user_ha;
+      }
 
       return filterParams
     }

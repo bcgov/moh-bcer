@@ -68,6 +68,8 @@ export type LocationRO = {
   geoAddressConfidence: string;
   reportStatus?: LocationReportStatus;
   location_type: string;
+  health_authority: string;
+  health_authority_other: string;
 }
 
 export interface LocationReportStatus {
