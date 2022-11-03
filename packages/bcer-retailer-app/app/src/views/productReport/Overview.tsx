@@ -337,7 +337,7 @@ export default function ProductOverview() {
                 }}
                 columns={[
                   {
-                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`
+                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`, width: 50
                   },
                   {
                     title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`

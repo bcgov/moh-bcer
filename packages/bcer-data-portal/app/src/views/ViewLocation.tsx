@@ -353,6 +353,13 @@ function LocationsContent() {
                               </Box>
                             </Grid>
                             </>}
+                            {data.location_type === LocationType.online &&                            
+                            <Grid item xs={4}>
+                              <Box>
+                                <Typography variant="body2">Webpage</Typography>
+                                <Typography className={classes.rowContent}>{data.webpage}</Typography>
+                              </Box>
+                            </Grid>}
                             <Grid item xs={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>

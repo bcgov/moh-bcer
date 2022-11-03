@@ -11,7 +11,7 @@ import ManufacturingReportSubmitButton from '@/components/ManufacturingReports/S
 
 import { useAxiosGet } from '@/hooks/axios';
 
-import { StyledButton, StyledTable, LocationTypeLabels } from 'vaping-regulation-shared-components';
+import { StyledButton, StyledTable, LocationTypeLabels, LocationType } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
@@ -115,7 +115,7 @@ export default function ManufacturingSubmit() {
                 <StyledTable
                   columns={[
                     {title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
-                    {title: 'Address', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
+                    {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
                     {title: 'Email Address', field: 'email'},
                     {title: 'Phone Number', field: 'phone'},
                   ]}

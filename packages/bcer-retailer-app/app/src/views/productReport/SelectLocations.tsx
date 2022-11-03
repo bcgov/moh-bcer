@@ -5,7 +5,7 @@ import { makeStyles, Typography, Paper, Snackbar } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 
-import { StyledTable, StyledButton, StyledConfirmDialog } from 'vaping-regulation-shared-components';
+import { StyledTable, StyledButton, StyledConfirmDialog, LocationType, LocationTypeLabels } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { ProductInfoContext } from '@/contexts/ProductReport';
@@ -136,7 +136,8 @@ export default function SelectLocations() {
             <div style={{ overflowX: 'auto' }}>
               <StyledTable
                 columns={[
-                  {title: 'Address', render: (rd: BusinessLocation) => `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
+                  {title: 'Type of Location',  render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
+                  {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
                   {title: 'Email Address', field: 'email'},
                   {title: 'Phone Number', field: 'phone'},
                 ]}

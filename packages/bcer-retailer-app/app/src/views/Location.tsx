@@ -6,7 +6,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import SaveAltIcon from '@material-ui/icons/SaveAlt'
 import moment from 'moment';
 
-import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
+import { StyledTable, StyledButton, LocationType } from 'vaping-regulation-shared-components';
 import { Products, BusinessLocation, BusinessDetails, ManufacturingReport, Ingredient, Sale } from '@/constants/localInterfaces';
 import { ManufacturingReportHeaders, ProductReportHeaders, SalesReportHeaders } from '@/constants/localEnums';
 import { useAxiosGet } from '@/hooks/axios';
@@ -168,6 +168,14 @@ export default function ConfirmProducts() {
                 </div>
                 <div className={classes.boxRow}>
                   <div className={classes.rowTitle}>
+                    Province
+                  </div>
+                  <div className={classes.rowContent}>
+                    {business.province}
+                  </div>
+                </div>
+                <div className={classes.boxRow}>
+                  <div className={classes.rowTitle}>
                     Business phone number
                   </div>
                   <div className={classes.rowContent}>
@@ -197,10 +205,10 @@ export default function ConfirmProducts() {
               <div>
                 <div className={classes.boxRow}>
                   <div className={classes.rowTitle}>
-                    Address
+                    {location.location_type === LocationType.online ? "Webpage":"Address"}
                   </div>
                   <div className={classes.rowContent}>
-                    {`${location?.addressLine1}, ${location?.postal}, ${location?.city}`}
+                    {location.location_type === LocationType.online ? location.webpage: `${location?.addressLine1}, ${location?.postal}, ${location?.city}`}
                   </div>
                 </div>
                 <div className={classes.boxRow}>
@@ -219,6 +227,7 @@ export default function ConfirmProducts() {
                     {location?.phone}
                   </div>
                 </div>
+                {location.location_type !== LocationType.online &&
                 <div className={classes.boxRow}>
                   <div className={classes.rowTitle}>
                     Persons under 19 permitted?
@@ -228,7 +237,7 @@ export default function ConfirmProducts() {
                       location?.underage
                     }
                   </div>
-                </div>
+                </div>}
                 <div className={classes.boxRow}>
                   <div className={classes.rowTitle}>
                     Doing business as
@@ -237,6 +246,7 @@ export default function ConfirmProducts() {
                     {location?.doingBusinessAs}
                   </div>
                 </div>
+                {location.location_type !== LocationType.online &&
                 <div className={classes.boxRow}>
                   <div className={classes.rowTitle}>
                     Region
@@ -244,7 +254,7 @@ export default function ConfirmProducts() {
                   <div className={classes.rowContent}>
                     {location?.health_authority}
                   </div>
-                </div>
+                </div>}
                 <div className={classes.boxRow}>
                   <div className={classes.rowTitle}>
                     Intent to manufacture

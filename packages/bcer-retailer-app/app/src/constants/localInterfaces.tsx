@@ -45,6 +45,7 @@ export interface BusinessDetails {
   email: string;
   phone: string;
   webpage?: string;
+  province?: string;
 }
 
 export interface BusinessLocation {
