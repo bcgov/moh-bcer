@@ -1,6 +1,6 @@
-import { Avatar, Box, Button, FormControl, IconButton, InputLabel, Link, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
+import { Avatar, Box, IconButton, InputLabel, Link, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
 import React, { SetStateAction, useEffect, useState } from 'react';
-import { StyledButton, StyledSelectField } from 'vaping-regulation-shared-components';
+import { StyledButton } from 'vaping-regulation-shared-components';
 import MapIcon from '@material-ui/icons/Map';
 import DirectionsIcon from '@material-ui/icons/Directions';
 import ArrowRightIcon from '@material-ui/icons/ArrowRightAltOutlined';
@@ -53,7 +53,10 @@ const useStyles = makeStyles((theme) => ({
       background: '#f5f5f5',
       height: 40,
       padding: 10,
-      marginTop: 5,    
+      marginTop: 5, 
+      '& .MuiSelect-select:focus': {
+        backgroundColor: 'inherit'
+      }   
     }
   },
 }));
@@ -110,17 +113,17 @@ function LeftPanel({
   const [{ data, loading }, getLocationsWithHealthAuthority] =
     useAxiosGet(`data/location?page=1&numPerPage=1000&includes=business,noi,products,manufactures,sales&authority=${healthAuthority}`, { manual: true });
 
-  useEffect(() => {
-    if (mapInMenu && healthAuthority) {
-      getHealthAuthorityLocations(healthAuthority)
-    }
-  }, [healthAuthority])
+  // useEffect(() => {
+  //   if (mapInMenu && healthAuthority) {
+  //     getHealthAuthorityLocations(healthAuthority)
+  //   }
+  // }, [healthAuthority])
 
   useEffect(() => {
     setHealthAuthorityLocations(data?.rows || [])
   }, [data])
 
-  const getHealthAuthorityLocations = async (healthAuthority: string) => {
+  const getHealthAuthorityLocations = async () => {
     await getLocationsWithHealthAuthority();
   }
 
@@ -152,8 +155,9 @@ function LeftPanel({
                 return ha.value !== "all" && <MenuItem key={ha.value} value={ha.value}>{ha.label}</MenuItem>
               })}          
             </Select>
-            <ArrowRightIcon />
-            <Avatar style={{backgroundColor: "#002C71"}}>
+            <Avatar 
+                onClick={() => getHealthAuthorityLocations()} 
+                style={{backgroundColor: "#002C71", display: "inline-flex", top: "8px", marginLeft: 5, width: 35, height: 35, cursor: 'pointer'}}>
               <ArrowRightIcon />
             </Avatar>
           </div>

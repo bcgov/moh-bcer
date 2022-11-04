@@ -100,7 +100,7 @@ function Map({asMenu, config}: MapProps) {
       {open && !asMenu && <Box flex={0.35} />}
       <Box
         flex={open ? (asMenu ? 0.77: 0.65) : 1}
-        minHeight={open ? 'calc(100vh - 70px)' : 'calc(100vh - 115px)'}
+        minHeight={asMenu ? 'calc(100vh - 139px)' :open ? 'calc(100vh - 70px)' : 'calc(100vh - 115px)'}
       >
         {!open && (
           <IconButton onClick={() => setOpen(true)}>
