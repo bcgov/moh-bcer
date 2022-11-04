@@ -493,13 +493,14 @@ export default function Locations() {
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
               </Typography>
+              {/*
               <Link
                 className={classes.showMoreLink}
                 component="button"
                 variant="body2"
                 onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
                 {showMoreFilters ? "Show less filters" : "Show more filters"}
-              </Link>
+        </Link>*/}
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -555,6 +556,7 @@ export default function Locations() {
                         label="NOI Status"
                       />                     
                     </Grid>
+                    {/*
                     <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="product_report"
@@ -578,7 +580,7 @@ export default function Locations() {
                         label="Sales Report Status"
                       />                     
                     </Grid> 
-                    </>}
+                    </>}*/}
                     <Grid item md={1} xs={12}>                   
                       <Box
                         alignContent="center"
