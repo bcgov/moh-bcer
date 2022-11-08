@@ -642,7 +642,6 @@ export class LocationService {
   }
 
   async getDirection(uri: string) {
-    console.log("lateefah")
     console.log(process.env.BC_DIRECTION_API_KEY)
     const baseLink = 'https://router.api.gov.bc.ca';
     const { data } = await Axios.get(`${baseLink}${uri}`, {
@@ -650,8 +649,6 @@ export class LocationService {
         apiKey: process.env.BC_DIRECTION_API_KEY,
       },
     });
-    console.log("lateefah")
-    console.log(data)
     return data;
   }
 

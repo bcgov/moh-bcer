@@ -322,9 +322,6 @@ export class LocationDataPortalController {
   @AllowAnyRole()
   @Post('/direction')
   async getDirection(@Body() payload: DirectionDto){
-    console.log("Lattie")
-    console.log(payload)
-    console.log(payload.uri)
     if(!payload?.uri) throw UnprocessableEntityException;
     return await this.service.getDirection(payload.uri);
   }
