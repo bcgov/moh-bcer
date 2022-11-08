@@ -1,5 +1,4 @@
 import { BusinessLocation } from '@/constants/localInterfaces';
-import { routes } from '@/constants/routes';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
 import React, { useContext, useEffect, useState } from 'react';
@@ -18,8 +17,9 @@ function useLocation(locationIds?: string) {
     useAxiosGet(`/data/location/ids/${locationIds}`, { manual: true });
 
   useEffect(() => {
-    if (locationIds)
+    if (locationIds) {
       getLocationWithIds();
+    }
   }, []);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function useLocation(locationIds?: string) {
    * @param {BusinessLocation} l location to add in the selected location array 
    */
   const addLocationToSelectedHandler = (l: BusinessLocation) => {
-    setSelectedLocations([...selectedLocations, l]);
+    setSelectedLocations([...selectedLocations, l]);    
     const ids = getLocationIds(selectedLocations, [l.id]);
     setRouteParam(ids);
   };
@@ -85,6 +85,8 @@ function useLocation(locationIds?: string) {
     setSelectedLocations,
     removeSelectedLocationHandler,
     addLocationToSelectedHandler,
+    getLocationIds,
+    setRouteParam
   };
 }
 

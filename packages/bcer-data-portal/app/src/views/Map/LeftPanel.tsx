@@ -17,7 +17,7 @@ import {
   BusinessLocation,
   RouteOptions,
 } from '@/constants/localInterfaces';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import RouteStatics from './RouteStatics';
 import { AxiosError } from 'axios';
 import OptimizedOrder from './OptimizedOrder';
@@ -83,7 +83,7 @@ interface LeftPanelProps {
   healthAuthorityLocations: BusinessLocation[],
   setHealthAuthorityLocations: React.Dispatch<SetStateAction<BusinessLocation[]>>,
   clickedLocation: BusinessLocation,
-  setDisplayItinerary: React.Dispatch<SetStateAction<boolean>>,
+  setDisplayItinerary: React.Dispatch<SetStateAction<boolean>>
 }
 
 function LeftPanel({
@@ -108,29 +108,36 @@ function LeftPanel({
 }: LeftPanelProps) {
   const classes = useStyles();
   const history = useHistory();  
-  const [healthAuthority, setHealthAuthority] = useState(store.get('KEYCLOAK_USER_HA')  || '');
-  const [itinerary, setItinerary] = useState<BusinessLocation>();
+  const search = useLocation().search;
+  const routeHealthAuthority = new URLSearchParams(search).get('authority')
+  const [healthAuthority, setHealthAuthority] = useState(routeHealthAuthority || store.get('KEYCLOAK_USER_HA')  || '');
   const [{ data, loading }, getLocationsWithHealthAuthority] =
-    useAxiosGet(`data/location?page=1&numPerPage=1000&includes=business,noi,products,manufactures,sales&authority=${healthAuthority}`, { manual: true });
+    useAxiosGet(`data/location?page=1&numPerPage=1000&includes=business,noi&authority=${healthAuthority}`, { manual: true });
 
-  // useEffect(() => {
-  //   if (mapInMenu && healthAuthority) {
-  //     getHealthAuthorityLocations(healthAuthority)
-  //   }
-  // }, [healthAuthority])
+  useEffect(() => {   
+    if (healthAuthority) {
+      getHealthAuthorityLocations();
+    }
+  }, [])
 
   useEffect(() => {
     setHealthAuthorityLocations(data?.rows || [])
   }, [data])
 
-  const getHealthAuthorityLocations = async () => {
+  const getHealthAuthorityLocations = async () => {    
+    setHAParam();
     await getLocationsWithHealthAuthority();
   }
 
+  const setHAParam = () => {
+    const route = history.location.pathname;     
+    history.push(`${route}?authority=${healthAuthority}`);
+  }
+
   useEffect(() => {
-    if (itinerary)
-      setLocations([...locations, itinerary])
-  }, [itinerary])
+    if (clickedLocation)      
+      setLocations([...locations, clickedLocation])
+  }, [clickedLocation])
 
   return (
     <Box className={classes.container}>      
@@ -162,21 +169,6 @@ function LeftPanel({
             </Avatar>
           </div>
 
-          {clickedLocation &&
-          <Box mt={2} mb={1}>
-            <Typography className={classes.label}>Clicked Location</Typography>
-            {clickedLocation.addressLine1} <br/>
-            
-            <Link component="button" variant="body2" 
-              onClick={() => {history.push(`/location/${clickedLocation.id}`)}}>
-              See Location Details
-            </Link>|
-            <Link component="button" variant="body2" 
-              onClick={() => {setItinerary(clickedLocation)}}>
-              Add to Itinerary
-            </Link>
-          </Box>
-          }
           <Box mt={4} mb={1} borderBottom="1px solid black" />
       </>
       }

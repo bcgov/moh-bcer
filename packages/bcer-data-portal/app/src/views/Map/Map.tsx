@@ -33,7 +33,6 @@ interface MapProps {
 function Map({asMenu, config}: MapProps) {
   const classes = useStyles();
   const search = useLocation().search;
-  const history = useHistory();
   const locationIds = new URLSearchParams(search).get('locations');
   const [open, setOpen] = useState<boolean>(true);
 

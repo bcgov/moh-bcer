@@ -250,13 +250,14 @@ export class LocationService {
     if (authority) {
       locationsQb.andWhere(`location.health_authority = :authority`, { authority });
     }
-    locationsQb.andWhere('location."noiId" IS NOT NULL');
+    //locationsQb.andWhere('location."noiId" IS NOT NULL');
     const locations = await locationsQb.getMany();
 
     const noisDictionary = locations.reduce((dict, location) => {
       dict[location.id] = location.noi;
       return dict;
     }, {});
+    
     return locations.map((location) => {
       location.noi = noisDictionary[location.id];
       return location;
