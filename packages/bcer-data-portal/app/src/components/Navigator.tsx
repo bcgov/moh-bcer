@@ -2,14 +2,8 @@ import { routes } from '@/constants/routes';
 import {
   AppBar,
   Box,
-  makeStyles,
-  Typography,
-  Toolbar,
-  Tabs,
-  Tab,
+  makeStyles
 } from '@material-ui/core';
-import { TabPanel } from '@material-ui/lab';
-import { withStyles } from '@material-ui/styles';
 import { useKeycloak } from '@react-keycloak/web';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router';
@@ -116,7 +110,13 @@ function Navigator() {
                   {...a11yProps(4)}
                   value={routes.sendNotification}
                 />
-              )}
+              )}              
+              <StyledTab
+                disableRipple
+                label="Map"
+                {...a11yProps(4)}
+                value={routes.mapMenu}
+              />              
             </StyledTabs>
           </Box>
           <Box className={classes.buttonWrapper}>

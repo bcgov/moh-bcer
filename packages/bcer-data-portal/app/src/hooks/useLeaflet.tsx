@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import L from 'leaflet';
+import * as ReactDOMServer from 'react-dom/server';
+import L, { Tooltip } from 'leaflet';
 import GeoJSON from 'geojson';
-
 import {
   BCDirectionData,
   BCGeocoderAutocompleteData,
@@ -17,6 +17,8 @@ import redMarker from '@/assets/images/marker-icon-2x-red.png';
 import markerShadow from '@/assets/images/marker-shadow.png'
 import { useAxiosPost } from './axios';
 import sanitizeHtml from 'sanitize-html';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import { useHistory } from 'react-router';
 
 // Map layer for Health Authority Boundaries
 const haLayer = createHealthAuthorityLayer();
@@ -25,6 +27,7 @@ const haLayer = createHealthAuthorityLayer();
 const haLegend = createHealthAuthorityLegend();
 
 function useLeaflet(locationIds: string, config: LocationConfig) {
+  const history = useHistory();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
 
   const [routeData, setRouteData] = useState<BCDirectionData>();
@@ -32,17 +35,22 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
 
   const [{}, getDirection] = useAxiosPost<BCDirectionData>('/data/location/direction', { manual: true });
 
+  const [healthAuthorityLocations, setHealthAuthorityLocations] = useState<BusinessLocation[]>();
   const {
     selectedLocations,
     setSelectedLocations,
     removeSelectedLocationHandler,
     addLocationToSelectedHandler,
+    getLocationIds,
+    setRouteParam
   } = useLocation(locationIds);
 
   const [map, setMap] = useState<L.Map>();
   const [markers, setMarkers] = useState<L.Marker[]>([]);
   const [geoJsonData, setGeoJsonData] = useState<L.GeoJSON>();
-  const [showHALayer, setShowHALayer] = useState<boolean>(false);
+  const [showHALayer, setShowHALayer] = useState<boolean>(false);  
+  const [displayItinerary, setDisplayItinerary] = useState<boolean>(false);    
+  const [clickedLocation, setClickedLocation] = useState<BusinessLocation>();
   const [startingLocation, setStartingLocation] =
     useState<BCGeocoderAutocompleteData>();
 
@@ -88,7 +96,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     if (selectedLocations?.length && map) {
       selectedLocations.forEach((l) => {
         if (l.latitude && l.longitude) {
-          let mkr = L.marker([+l.latitude, +l.longitude]);
+          let mkr = L.marker([+l.latitude, +l.longitude]);          
           mkr.bindTooltip(makeMarkerToolTip(l)).openTooltip();
           mkrs.push(mkr);
           mkr.addTo(map);
@@ -173,7 +181,6 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
       setMarkers([]);
     }
   };
-
 
   /**
    * Adds Tile style to map
@@ -306,6 +313,76 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   };
 
+  const onClickLocationPopupContent = () => ReactDOMServer.renderToString(
+      <div>        
+        <b><a id = "see-location-details">See Location Details</a></b>
+        <hr />
+        <b><a id = "add-to-itinerary">Add to Itinerary</a></b>
+      </div>
+  );
+
+  const onClickLocationMarker = (l: BusinessLocation) => {
+    const clickedLocationLink = document.getElementById("see-location-details");
+    const addToItineraryLink = document.getElementById("add-to-itinerary");
+
+    clickedLocationLink.style.cursor = "pointer"
+    addToItineraryLink.style.cursor = "pointer"
+
+    if (clickedLocationLink) {
+      clickedLocationLink.addEventListener("click", () => goToClickedLocation(l));
+    }
+    if (addToItineraryLink) {
+      addToItineraryLink.addEventListener("click", () => setClickedLocation(l));
+    }
+  }
+
+  const goToClickedLocation = (l: BusinessLocation) => {    
+    history.push(`location/${l.id}`);
+  }
+
+  const drawHealthAuthorityLocationMarkers = () => {
+    const mkrs: L.Marker[] = [];
+    mkrs.push(...drawStartingMarker());
+
+    if (healthAuthorityLocations?.length && map) {
+      if (healthAuthorityLocations?.length && map) {
+        healthAuthorityLocations.forEach((l) => {
+        if (l.latitude && l.longitude) {
+          let mkr = L.marker([+l.latitude, +l.longitude]);
+          var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: iconShadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
+          let hasMissingReport = Object.values(l.reportStatus).includes("missing");
+          if (hasMissingReport)
+            mkr.setIcon(redIcon)
+        
+          mkr.bindTooltip(makeMarkerToolTip(l)).openTooltip();
+
+          // onClick marker listener activities
+          mkr.addEventListener('click', () => {
+            mkr.clearAllEventListeners();
+            mkr
+            .bindPopup(onClickLocationPopupContent)
+            .addEventListener("popupopen", () => onClickLocationMarker(l))
+            .togglePopup();
+            
+          });
+
+          mkrs.push(mkr);
+          mkr.addTo(map);
+        }
+      });
+    }
+    setMarkers(mkrs);
+    setMapBound(mkrs);
+    }
+  }
+
   /**
    * If there is a change in locations or options it reinitialize all the markers and
    * gets fresh route data
@@ -315,7 +392,13 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     removeRouteOnMap();
     drawAllMarkers();
     getDirectionData();
-  }, [selectedLocations, startingLocation, routeOptions]);
+  }, [startingLocation, routeOptions]);
+
+  useEffect(() => {
+    removeAllMarkers();
+    removeRouteOnMap();
+    drawHealthAuthorityLocationMarkers();
+  }, [healthAuthorityLocations]);
 
   useEffect(() => {
     if (routeData) {
@@ -343,6 +426,28 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   }, [showHALayer]);
 
+  useEffect(() => {    
+    if(displayItinerary) {
+      //add the Ids of location selected from Health Authority view
+      const ids = getLocationIds(selectedLocations);
+      setRouteParam(ids);
+
+      removeAllMarkers();
+      removeRouteOnMap();
+      drawAllMarkers();
+      getDirectionData();
+      setDisplayItinerary(false);
+    }
+  }, [displayItinerary])
+
+  useEffect(() => {
+    if(locationIds) {
+      setTimeout(() => {
+        setDisplayItinerary(true);
+      }, 2000)      
+    }   
+  }, [])
+
   return {
     selectedLocations,
     setSelectedLocations,
@@ -361,6 +466,10 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     setRouteOptions,
     setShowHALayer,
     directionError,
+    healthAuthorityLocations,
+    setHealthAuthorityLocations,
+    clickedLocation,
+    setDisplayItinerary,
   };
 }
 
