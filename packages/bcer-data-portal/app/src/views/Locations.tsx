@@ -254,9 +254,11 @@ export default function Locations() {
       sorting: true,
     },
     {
-      title: 'NOI Submitted Date',
+      title: 'Latest NOI Date',
       render: (rd: BusinessLocation) =>
-        rd.noi?.created_at
+        rd.noi?.renewed_at ? 
+          `${moment(rd.noi.created_at).format('MMM DD, YYYY')}`
+        : rd.noi?.created_at 
           ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}`
           : '',          
       sortTitle: "Submitted Date",
@@ -492,15 +494,14 @@ export default function Locations() {
             <Paper className={classes.box} variant="outlined">
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
-              </Typography>
-              {/*
-              <Link
+              </Typography>              
+              {/* <Link
                 className={classes.showMoreLink}
                 component="button"
                 variant="body2"
                 onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
                 {showMoreFilters ? "Show less filters" : "Show more filters"}
-        </Link>*/}
+              </Link> */}
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -552,7 +553,7 @@ export default function Locations() {
                     <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="noi_report"
-                        options={reportingStatusOptions(false)}
+                        options={reportingStatusOptions(true)}
                         label="NOI Status"
                       />                     
                     </Grid>

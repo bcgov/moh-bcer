@@ -142,45 +142,61 @@ export class LocationService {
     if (query.underage) {
       qb.andWhere(`location.underage = :underage`, { underage: query.underage });
     }
+
+    const noiExpiryDate = CronConfig.getNoiExpiryDate().toDate();
+
     if (query.noi_report) {
-      if (query.noi_report === "Submitted") {
+      if (query.noi_report === "Submitted") { //valid noi
         qb.andWhere('location.noi IS NOT NULL')
-      } else {
-        qb.andWhere('location.noi IS NULL')
-      }
-    }
-    if (query.product_report) {
-      if (query.product_report === "Submitted") {
-        qb.andWhere(`"location_products"."locationId" IS NOT NULL`)
-      } else {        
-        qb.andWhere(`"location_products"."locationId" IS NULL`)
-      }
-    }
-    if (query.manufacturing_report) {
-      if (query.manufacturing_report === "NotRequired") {
-        qb.andWhere(`location.manufacturing = :manufacturing`, { manufacturing: false });
-      } else if (query.manufacturing_report === "NotSubmitted") {
-        qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NULL`, { manufacturing: true });
-      } else {
-        qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NOT NULL`, { manufacturing: true });
-      }
-    }
-    if (query.sales_report) {
-      const {startReport, endReport} = getSalesReportingPeriod();
-      if (query.sales_report === "NotRequired") {
-        
-        qb.andWhere('location.created_at BETWEEN :start AND :end', {start: startReport, end: endReport})
-      } else if (query.sales_report === "NotSubmitted") {
-        qb.andWhere('location.created_at NOT BETWEEN :start AND :end', {start: startReport, end: endReport})
-        qb.andWhere(`"sales"."locationId" IS NULL`);
-      } else {
-        qb.andWhere(`"sales"."locationId" IS NOT NULL`);
+        .andWhere('COALESCE(noi.renewed_at, noi.created_at) > :expiryDate', {
+          expiryDate: noiExpiryDate,
+        })     
+      } else if (query.noi_report === "NotRequired") { //closed and expires
+        qb.andWhere('(location.noi IS NULL AND location.status = :status) OR (location.noi IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) < :expiryDate AND location.status = :status)', {
+          expiryDate: noiExpiryDate, 
+          status: 'closed'
+        })
+      } else { //expired noi
+        qb.andWhere('location.noi IS NULL OR (location.noi IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) < :expiryDate AND location.status = :status)', {
+          expiryDate: noiExpiryDate, 
+          status: 'active'
+        })
       }
     }
 
+    // if (query.product_report) {
+    //   if (query.product_report === "Submitted") {
+    //     qb.andWhere(`"location_products"."locationId" IS NOT NULL`)
+    //   } else {        
+    //     qb.andWhere(`"location_products"."locationId" IS NULL`)
+    //   }
+    // }
+
+    // if (query.manufacturing_report) {
+    //   if (query.manufacturing_report === "NotRequired") {
+    //     qb.andWhere(`location.manufacturing = :manufacturing`, { manufacturing: false });
+    //   } else if (query.manufacturing_report === "NotSubmitted") {
+    //     qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NULL`, { manufacturing: true });
+    //   } else {
+    //     qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NOT NULL`, { manufacturing: true });
+    //   }
+    // }
+    // if (query.sales_report) {
+    //   const {startReport, endReport} = getSalesReportingPeriod();
+    //   if (query.sales_report === "NotRequired") {
+        
+    //     qb.andWhere('location.created_at BETWEEN :start AND :end', {start: startReport, end: endReport})
+    //   } else if (query.sales_report === "NotSubmitted") {
+    //     qb.andWhere('location.created_at NOT BETWEEN :start AND :end', {start: startReport, end: endReport})
+    //     qb.andWhere(`"sales"."locationId" IS NULL`);
+    //   } else {
+    //     qb.andWhere(`"sales"."locationId" IS NOT NULL`);
+    //   }
+    // }
+
     // Counting the number of submitted reports
-    if(addCount){
-      ['products', 'manufactures', 'sales'].forEach((colToCount) =>{
+    if(addCount) {      
+      ['products', 'manufactures', 'sales'].forEach((colToCount) => {
         qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
       })
     }
