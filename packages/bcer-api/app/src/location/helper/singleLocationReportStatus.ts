@@ -99,8 +99,8 @@ export class SingleLocationReportStatus {
       l.noi &&
       !moment(l.noi.renewed_at || l.noi.created_at).isAfter(
         CronConfig.getNoiExpiryDate(),
-      ) &&
-      l.status === LocationStatus.Active
+      ) 
+      //&& l.status === LocationStatus.Active
     );
   }
 
