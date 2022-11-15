@@ -2,45 +2,61 @@ import React from 'react';
 import store from 'store';
 import { useKeycloak } from '@react-keycloak/web';
 import { Link, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import { Box, Grid, makeStyles } from '@material-ui/core';
 
 import logo from '@/assets/images/logo-banner.svg';
 
-const useStyles = makeStyles({
-  header: {
-    position: 'fixed',
-    zIndex: 1500,
-    alignItems: 'center',
-    backgroundColor: '#036',
+const useStyles = makeStyles(theme => ({
+  headerBox: {    
+    height: 70,
     width: '100%',
-    maxWidth: '100vw',
-    boxSizing: 'border-box',
-    borderBottom: '2px solid #fcba19',
-    padding: '0 65px 0 10px',
+    display: 'flex',    
+    padding: '20px 65px 20px 10px',
     color: '#fff',
-    display: 'flex',
-    height: '70px',
+    backgroundColor: '#036',
+    borderBottom: '2px solid #fcba19',
+    zIndex: 1500,
+    position: 'fixed',
+    boxSizing: 'border-box',
+    maxWidth: '100vw',
+    [theme.breakpoints.down('xs')]: {
+      boxSizing: 'inherit',
+      height: 20,
+      position: 'inherit'      
+    }    
   },
-  titleWrapper: {
-    height: '45px',
-    width: '100%',
+  logoWrap: {    
+    borderRight: '1px solid #F3B229',
+    maxWidth: 209,
+    height: 45,
+    paddingTop: '4px !important',
+    [theme.breakpoints.down('xs')]: {
+      height: 40,
+      maxWidth: 117,
+      '& img': {
+        width: 100
+      }
+    }
+  },
+  titleWrap: {    
+    paddingLeft: '20px !important',
+    paddingTop: '0px !important',
+    [theme.breakpoints.down('xs')]: {
+      paddingLeft: '10px !important',
+    }
   },
   topTitle: {
     fontSize: '10px',
-    lineHeight: '10px',
+    lineHeight: '10px',    
   },
   bottomTitle: {
     fontSize: '27px',
     lineHeight: '32px',
     whiteSpace: 'nowrap',
-  },
-  logoWrapper: {
-    height: '45px',
-    display: 'flex',
-    alignItems: 'center',
-    borderRight: '1px solid #F3B229',
-    marginRight: '20px',
-  },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 14
+    }
+  },  
   logo: {
     height: '37px',
     width: '200px',
@@ -52,49 +68,35 @@ const useStyles = makeStyles({
     color: '#F3B229',
     fontWeight: 'bold',
   },
-  accountType: {
-    color: 'white',
-  },
-  authButton: {
-    color: '#181818',
-    textDecoration: 'none',
-    padding: '0.5rem 1rem',
-    margin: '1rem 2rem',
-    border: 'solid 1px white',
-    borderRadius: '5px',
-    fontWeight: 600,
-    backgroundColor: 'whitesmoke',
-    boxShadow: 'grey 1px 1px',
-    '&:hover': {
-      cursor: 'pointer',
-    },
-  }
-});
+}));
 
 export default function Header() {
-  const history = useHistory();
   const classes = useStyles();
   const [keycloak] = useKeycloak();
 
   return (
-    <div className={classes.header}>
-      <div className={classes.logoWrapper} >
-        <img className={classes.logo} src={logo} alt="BC Government Logo" />
-      </div>
-      <div className={classes.titleWrapper} >
-        <div className={classes.topTitle} >
-          E-Substances Regulation
-        </div>
-        <div className={classes.bottomTitle} >
-          BC E-Substances Regulation Data Portal
-        </div>
-      </div>
+    <>
+    <Box className={classes.headerBox}>
+      <Grid container spacing={2}>
+        <Grid item xs={4} md={2} className={classes.logoWrap}>
+          <img className={classes.logo} src={logo} alt="BC Government Logo" />
+        </Grid>
+        <Grid item xs={7} md={9} className={classes.titleWrap}>
+          <div className={classes.topTitle} >
+            E-Substances Regulation
+          </div>
+          <div className={classes.bottomTitle} >
+            BC E-Substances Regulation Data Portal
+          </div>
+        </Grid>
+      </Grid>
       {
-        keycloak.authenticated &&
-        <div className={classes.help}>
-          Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>
-        </div>
+      keycloak.authenticated &&
+      <Grid className={classes.help}>
+          Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>      
+      </Grid>
       }
-    </div>
+    </Box>    
+    </>
   );
 }

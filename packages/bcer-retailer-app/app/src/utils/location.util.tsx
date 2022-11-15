@@ -277,7 +277,7 @@ export class LocationUtil {
     webpage: {title: 'webpage', field: 'webpage', width: 150},
   }
 
-  static getTableColumns(list: LocationBaseColumnsHeader[] = ['locationType', 'address1', 'postal', 'city', 'phone', 'email', 'healthAuthority', 'doingBusinessAs', 'minor', 'manufacturing', 'webpage' ]){
+  static getTableColumns(list: LocationBaseColumnsHeader[] = ['locationType', 'address1', 'postal', 'city', 'phone', 'email', 'healthAuthority', 'doingBusinessAs', 'minor', 'manufacturing' ]){
     let columns: TableColumn[] = [];
     list?.forEach(l => columns.push(this.locationTableBaseColumns[l]));
     return columns;

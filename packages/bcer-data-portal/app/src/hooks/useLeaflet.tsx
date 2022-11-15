@@ -313,17 +313,28 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   };
 
-  const onClickLocationPopupContent = () => ReactDOMServer.renderToString(
-      <div>        
-        <b><a id = "see-location-details">See Location Details</a></b>
-        <hr />
-        <b><a id = "add-to-itinerary">Add to Itinerary</a></b>
-      </div>
-  );
+  // const onClickLocationPopupContent = (l: BusinessLocation) => ReactDOMServer.renderToString(
+  //     <div>        
+  //       <b><a id = "see-location-details-${l.id}">See Location Details</a></b>
+  //       <hr />
+  //       <b><a id = "add-to-itinerary">Add to Itinerary</a></b>
+  //     </div>
+  // );
+
+  const onClickLocationPopupContent = (l: BusinessLocation): string => {
+    return `<div>
+              <b><a id = "see-location-details-${l.id}">See Location Details</a></b>
+              <hr />
+              <b><a id = "add-to-itinerary-${l.id}">Add to Itinerary</a></b>
+            </div>`;
+  };
 
   const onClickLocationMarker = (l: BusinessLocation) => {
-    const clickedLocationLink = document.getElementById("see-location-details");
-    const addToItineraryLink = document.getElementById("add-to-itinerary");
+    const locationId = `see-location-details-${l.id}`
+    const itineraryId = `add-to-itinerary-${l.id}`
+    
+    const clickedLocationLink = document.getElementById(locationId);
+    const addToItineraryLink = document.getElementById(itineraryId);
 
     clickedLocationLink.style.cursor = "pointer"
     addToItineraryLink.style.cursor = "pointer"
@@ -357,21 +368,28 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
             popupAnchor: [1, -34],
             shadowSize: [41, 41]
           });
+
+          var greenIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: iconShadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
+
           let hasMissingReport = Object.values(l.reportStatus).includes("missing");
+
           if (hasMissingReport)
             mkr.setIcon(redIcon)
+          else 
+            mkr.setIcon(greenIcon)
         
           mkr.bindTooltip(makeMarkerToolTip(l)).openTooltip();
-
-          // onClick marker listener activities
-          mkr.addEventListener('click', () => {
-            mkr.clearAllEventListeners();
-            mkr
-            .bindPopup(onClickLocationPopupContent)
-            .addEventListener("popupopen", () => onClickLocationMarker(l))
-            .togglePopup();
-            
-          });
+                     
+          mkr                        
+          .addEventListener("popupopen", () => onClickLocationMarker(l))
+          .bindPopup(() => onClickLocationPopupContent(l));
 
           mkrs.push(mkr);
           mkr.addTo(map);

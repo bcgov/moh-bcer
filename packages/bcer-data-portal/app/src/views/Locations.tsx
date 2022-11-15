@@ -553,7 +553,7 @@ export default function Locations() {
                     <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="noi_report"
-                        options={reportingStatusOptions(true)}
+                        options={reportingStatusOptions(false)}
                         label="NOI Status"
                       />                     
                     </Grid>
