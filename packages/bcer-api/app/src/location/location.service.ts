@@ -147,19 +147,12 @@ export class LocationService {
 
     if (query.noi_report) {
       if (query.noi_report === "Submitted") { //valid noi
-        qb.andWhere('location.noi IS NOT NULL')
-        .andWhere('COALESCE(noi.renewed_at, noi.created_at) > :expiryDate', {
+        qb.andWhere('location.noiId IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) > :expiryDate', { expiryDate: noiExpiryDate })   
+        qb.orWhere('location.status = :status', { status: 'closed' })  
+      } else { //expired noi  
+        qb.andWhere('(location.noiId IS NULL AND location.status = :status) OR (location.status = :status AND location.noiId IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) < :expiryDate)', {
           expiryDate: noiExpiryDate,
-        })     
-      } else if (query.noi_report === "NotRequired") { //closed and expires
-        qb.andWhere('(location.noi IS NULL AND location.status = :status) OR (location.noi IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) < :expiryDate AND location.status = :status)', {
-          expiryDate: noiExpiryDate, 
-          status: 'closed'
-        })
-      } else { //expired noi
-        qb.andWhere('location.noi IS NULL OR (location.noi IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) < :expiryDate AND location.status = :status)', {
-          expiryDate: noiExpiryDate, 
-          status: 'active'
+          status: 'active' 
         })
       }
     }

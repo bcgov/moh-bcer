@@ -1,14 +1,12 @@
 import React from 'react';
 import { useKeycloak } from '@react-keycloak/web';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Container, makeStyles, Typography } from '@material-ui/core';
 
 import Header from '@/components/Header';
 import userLoginLogo from '@/assets/images/user-check-1.png';
-import userSignupLogo from '@/assets/images/user-plus.png';
 import arrowRight from '@/assets/images/arrow-right.png';
-import { Link } from 'react-router-dom';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   splashContainer: {
     display: 'flex',
     width: '100%',
@@ -17,7 +15,12 @@ const useStyles = makeStyles({
     justifyContent: 'center'
   },
   splashWrapper: {
-    maxWidth: '950px'
+    maxWidth: '950px',
+    [theme.breakpoints.down('xs')]: {
+      '& h5': {
+        fontSize: 24
+      }     
+    }    
   },
   authButtonContainer: {
     color: '#1E5DB1',
@@ -38,6 +41,12 @@ const useStyles = makeStyles({
       background: '#E5EDF5',
       cursor: 'pointer',
     },
+    [theme.breakpoints.down('xs')]: {
+      width: 340,
+      height: 50,
+      fontSize: 16,
+      lineHeight: '22px',      
+    }    
   },
   authButtonIcon: {
     height: '50px',
@@ -46,11 +55,21 @@ const useStyles = makeStyles({
     border: 'solid 1px #0053A4',
     borderRadius: '4px',
     float: 'left',
+    [theme.breakpoints.down('xs')]: {
+      width: 32,
+      height: 32,
+      margin: 10
+    }
   },
   buttonImage: {
     height: '24px',
     width: '24px',
-    margin: '15px '
+    margin: '15px',
+    [theme.breakpoints.down('xs')]: {
+      width: 20,
+      height: 20,
+      margin: 7
+    }
   },
   arrowRight: {
     height: '24px',
@@ -60,6 +79,10 @@ const useStyles = makeStyles({
     height: '20px',
     width: '300px',
     margin: '32px 0px 0px 0px',
+    [theme.breakpoints.down('xs')]: {
+      height: 10,
+      margin: '18px 0px 0px 0px'
+    }
   },
   authArrow: {
     height: '14px',
@@ -69,21 +92,29 @@ const useStyles = makeStyles({
   },
   splashVerbiage: {
     padding: '30px 0px 30px 0px',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 14      
+    } 
   },
   splashVerbiageBold: {
-    color: '#0053A4',
+    color: '#0053A4',    
   },
   splashVerbiageLastParagraph: {
-    paddingBottom: '30px',
+    paddingBottom: '30px',    
   },
   getHelp: {
     clear: 'both'
   },
   authContainer: {
     borderTop: '1px solid gray',
-    paddingTop: '20px'
+    paddingTop: '20px',
+    [theme.breakpoints.down('xs')]: {
+      '& p.MuiTypography-body1': {
+        fontSize: 14
+      }
+    }
   }
-});
+}));
 
 const Login = () => {
   const classes = useStyles();
@@ -91,16 +122,15 @@ const Login = () => {
   return (
     <>
       <Header />
-
-      <div className={classes.splashContainer}>
-        <div className={classes.splashWrapper}>
+      <Container maxWidth="lg" className={classes.splashContainer}>
+        <Container maxWidth="md" className={classes.splashWrapper}>
           <Typography variant='h5'>BC E-Substances Regulation Data Portal</Typography>
           <Typography variant='body1' className={classes.splashVerbiage}>
-            The new <b className={classes.splashVerbiageBold}>E-Substances Regulation</b> introduced requirements for all businesses who currently
-            sell E-substances or intend to sell E-substances in British Columbia. This application provides access to all reports submitted through the
-            BC Vaping Regulation application.
-            <br />
-            <br />
+              The new <b className={classes.splashVerbiageBold}>E-Substances Regulation</b> introduced requirements for all businesses who currently
+              sell E-substances or intend to sell E-substances in British Columbia. This application provides access to all reports submitted through the
+              BC Vaping Regulation application.
+              <br />
+              <br />
           </Typography>
           {
             initialized
@@ -133,8 +163,8 @@ const Login = () => {
               :
               <span>Connecting to KeyCloak</span>
           }
-        </div>
-      </div>
+        </Container>
+      </Container>
     </>
   );
 };
