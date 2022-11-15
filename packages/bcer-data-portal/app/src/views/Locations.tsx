@@ -11,7 +11,9 @@ import {
   SnackbarContent,
   Tooltip,
   Link,
+  TextField
 } from '@material-ui/core';
+
 import { useHistory } from 'react-router-dom';
 import { Form, Formik } from 'formik';
 import { useAxiosGet, useAxiosPostFormData } from '@/hooks/axios';
@@ -19,6 +21,11 @@ import { useKeycloak } from '@react-keycloak/web';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 import moment from 'moment';
 import store from 'store';
 import {
@@ -34,11 +41,16 @@ import {
   StyledTableColumn,
   BusinessDashboardUtil,
   ReportStatusLegend,
-  reportingStatusOptions
+  reportingStatusOptions,
+  StyledConfirmDateDialog
 } from 'vaping-regulation-shared-components';
+
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { healthAuthorityOptions} from '../constants/arrays'
+
+
+
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -186,6 +198,23 @@ const useStyles = makeStyles({
     float: 'right',
     textDecoration: 'underline',
     fontWeight: 'bold'
+  },
+  root: {
+    backgroundColor: '#F5F5F5',
+    height: '40px',
+    width: '100%',
+    borderRadius: '2px',
+    '& .MuiInput-underline::before': {
+      display: 'none',
+    },
+    cursor: 'pointer',
+  },
+  picker: {
+    color: '#535353',
+    fontSize: '16px',
+    marginLeft: '9px',
+    minWidth: '56px',
+    height: '19px',
   }
 });
 
@@ -454,6 +483,26 @@ export default function Locations() {
     }
   }
 
+  const TextFieldComponent = (props: any) => {
+    return <TextField {...props} disabled={true} />;
+  };
+
+  const [selectedFromDate, setFromDate] = useState(moment());
+  const [selectedToDate, setToDate] = useState(moment());
+
+  const [inputFromValue, setInputFromValue] = useState(moment().format("YYYY-MM-DD"));
+  const [inputToValue, setInputToValue] = useState(moment().format("YYYY-MM-DD"));
+
+  const onFromDateChange = (date:any, value:any) => {
+    setFromDate(date);
+    setInputFromValue(value);
+  };
+
+  const onToDateChange = (date:any, value:any) => {
+    setToDate(date);
+    setInputToValue(value);
+  };
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -538,7 +587,7 @@ export default function Locations() {
                         label="Location Type"
                       />
                     </Grid>   
-                    <Grid item md={3} xs={6}>
+                    <Grid item md={2} xs={6}>
                       <StyledSelectField
                         name="underage"
                         options={[
@@ -550,7 +599,7 @@ export default function Locations() {
                         label="Underage Allowed"
                       />
                     </Grid>                 
-                    <Grid item md={3} xs={6}>
+                    <Grid item md={2} xs={6}>
                       <StyledSelectField
                         name="noi_report"
                         options={reportingStatusOptions(true)}
@@ -582,6 +631,38 @@ export default function Locations() {
                       />                     
                     </Grid> 
                     </>}*/}
+                    <Grid item md={2} xs={6}>
+                      From
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                          className={classes.root}
+                          inputProps={{ className: classes.picker }}
+                          TextFieldComponent={TextFieldComponent}
+                          format="LLLL dd, yyyy"
+                          value={selectedFromDate}
+                          onChange={onFromDateChange}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </MuiPickersUtilsProvider>
+                    </Grid>   
+                    <Grid item md={2} xs={6}>
+                      To
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                          className={classes.root}
+                          inputProps={{ className: classes.picker }}
+                          TextFieldComponent={TextFieldComponent}
+                          format="LLLL dd, yyyy"
+                          value={selectedToDate}
+                          onChange={onToDateChange}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </MuiPickersUtilsProvider>
+                    </Grid>
                     <Grid item md={1} xs={12}>                   
                       <Box
                         alignContent="center"
