@@ -112,7 +112,7 @@ function LeftPanel({
   const routeHealthAuthority = new URLSearchParams(search).get('authority')
   const [healthAuthority, setHealthAuthority] = useState(routeHealthAuthority || store.get('KEYCLOAK_USER_HA')  || '');
   const [{ data, loading }, getLocationsWithHealthAuthority] =
-    useAxiosGet(`data/location?page=1&numPerPage=1000&includes=business,noi&authority=${healthAuthority}`, { manual: true });
+    useAxiosGet(`data/location?all=true&includes=business,noi&authority=${healthAuthority}`, { manual: true });
 
   useEffect(() => {   
     if (healthAuthority) {

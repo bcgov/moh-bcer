@@ -313,14 +313,6 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   };
 
-  // const onClickLocationPopupContent = (l: BusinessLocation) => ReactDOMServer.renderToString(
-  //     <div>        
-  //       <b><a id = "see-location-details-${l.id}">See Location Details</a></b>
-  //       <hr />
-  //       <b><a id = "add-to-itinerary">Add to Itinerary</a></b>
-  //     </div>
-  // );
-
   const onClickLocationPopupContent = (l: BusinessLocation): string => {
     return `<div>
               <b><a id = "see-location-details-${l.id}">See Location Details</a></b>
