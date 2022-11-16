@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsIn, IsOptional, IsNumber, Min } from 'class-validator';
+import { IsString, IsIn, IsOptional, IsNumber, Min, IsBoolean } from 'class-validator';
 
 export class LocationSearchDTO {
   @ApiProperty({
@@ -30,6 +30,11 @@ export class LocationSearchDTO {
   @IsNumber()
   @IsOptional()
   numPerPage?: number = 10;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  all?: boolean = false;
 
   @ApiProperty({
     description: 'Comma-separated values, business, noi, products, manufactures',
