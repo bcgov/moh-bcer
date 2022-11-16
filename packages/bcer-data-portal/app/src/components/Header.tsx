@@ -1,8 +1,7 @@
 import React from 'react';
-import store from 'store';
 import { useKeycloak } from '@react-keycloak/web';
-import { Link, useHistory } from 'react-router-dom';
-import { Box, Grid, makeStyles } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { Box, Grid, Hidden, makeStyles } from '@material-ui/core';
 
 import logo from '@/assets/images/logo-banner.svg';
 
@@ -92,9 +91,11 @@ export default function Header() {
       </Grid>
       {
       keycloak.authenticated &&
-      <Grid className={classes.help}>
-          Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>      
-      </Grid>
+      <Hidden smDown>
+        <Grid className={classes.help}>
+            Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>      
+        </Grid>
+      </Hidden>
       }
     </Box>    
     </>
