@@ -1,4 +1,4 @@
-import { Box, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import {
@@ -10,6 +10,37 @@ import SearchIcon from '@material-ui/icons/Search';
 import { healthAuthorityOptions } from '@/constants/arrays';
 import { SearchQueryBuilder } from '@/constants/localInterfaces';
 import useBusiness from '@/hooks/useBusiness';
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles((theme) => ({
+  searchWrap: {
+    [theme.breakpoints.down('xs')]: {
+      '& p.MuiTypography-body1': {
+        fontSize: 14
+      }
+    }
+  },
+  search: {
+    
+  },
+  searchText: {
+    [theme.breakpoints.down('xs')]: {
+      marginTop: -23
+    }
+  },
+  haFilter: {
+    [theme.breakpoints.down('xs')]: {
+      paddingTop: '0 !important'
+    }
+  },
+  searchButton: {
+    [theme.breakpoints.down('xs')]: {
+      paddingTop: '0 !important',
+      marginTop: -17,
+      textAlign: 'center'
+    }
+  }
+}))
 
 export type BusinessSearchProps = {
   onSubmit: (v: Partial<SearchQueryBuilder>) => void;
@@ -26,16 +57,11 @@ function BusinessSearch({
   initialCategory,
   categoryOptions,
   showHealthAuthority,
-}: BusinessSearchProps) {
-  let inputFlexAmount = 0.86;
-
+}: BusinessSearchProps) {  
+  const classes = useStyles();
   const {
     searchOptions,
-  } = useBusiness();
-
-  if (showHealthAuthority) {
-    inputFlexAmount -= 0.2;
-  }
+  } = useBusiness();  
   
   return (
     <Box my={2}>
@@ -48,50 +74,48 @@ function BusinessSearch({
         }}
       >
         <Form>
-          <Box display="flex" alignItems="flex-end">
-            <Box flex={inputFlexAmount}>
-              <Typography>Search (Address, Business Name, Legal Name etc.)</Typography>
-              <Box display="flex">
-                {categoryOptions && (
-                  <Box flex={0.2}>
-                    <StyledSelectField
-                      name="category"
-                      variant="outlined"
-                      options={categoryOptions}
-                    />
-                  </Box>
-                )}
-                <Box flex={categoryOptions ? 0.8 : 1}>
-                  <StyledTextField
-                    variant="outlined"
-                    name="search"
-                    placeholder="Type in keyword.."
-                  />
-                </Box>
-              </Box>
-            </Box>
-            <Box flex={0.01} />
-            {showHealthAuthority && (
-              <Box flex={0.19}>
+          <Grid container spacing={2} className={classes.searchWrap}>            
+            <Grid item container spacing={0} xs={12} lg={8} className={classes.search}>
+              <Grid item lg={12}>
+                <Typography>Search (Address, Business Name, Legal Name etc.)</Typography>     
+              </Grid>
+              {categoryOptions &&
+              <Grid item lg={3} xs={12}>                  
+                <StyledSelectField
+                  name="category"
+                  variant="outlined"
+                  options={categoryOptions}                  
+                />
+              </Grid>}
+              <Grid item lg={9} xs={12} className={classes.searchText}>
+                <StyledTextField
+                  variant="outlined"
+                  name="search"
+                  placeholder="Type in keyword.."
+                />
+              </Grid>              
+            </Grid>
+
+            <Grid item xs={12} lg={2} className={classes.haFilter}>   
+              {showHealthAuthority && (
                 <StyledSelectField
                   name="healthAuthority"
                   options={healthAuthorityOptions}
                   label="Health Authority"
                   variant="outlined"
-                />
-              </Box>
-            )}
-            {showHealthAuthority && <Box flex={0.01} />}
+                />  
+              )}
+            </Grid>
 
-            <Box flex={0.13}>
+            <Grid item xs={12} lg={2} className={classes.searchButton}>
+              <Grid>&nbsp;</Grid>
               <StyledButton variant="dialog-accept" type="submit">
                 <SearchIcon />
                 <Box mr={1} />
                 Search
               </StyledButton>
-              <Box pb={3}/>
-            </Box>
-          </Box>
+            </Grid>
+          </Grid>          
         </Form>
       </Formik>
     </Box>

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { useHistory } from 'react-router';
-import { makeStyles } from '@material-ui/core';
+import { Hidden, makeStyles } from '@material-ui/core';
 
 import Header from '@/components/Header';
 import Locations from './views/Locations';
@@ -9,7 +9,7 @@ import ViewLocation from './views/ViewLocation';
 import GetHelp from './views/GetHelp';
 import FAQManagement from './views/FAQManagement';
 import UserManagement from './views/UserManagement/Overview';
-import Navigator from './components/Navigator';
+import Navigator from './components/nav/Navigator';
 import { routes } from './constants/routes';
 import SendNotification from './views/SendNotification';
 import Map from './views/Map/Overview';
@@ -20,8 +20,9 @@ import { useAxiosPost } from './hooks/axios';
 import { AppGlobalContext } from './contexts/AppGlobal';
 import { formatError } from './util/formatting';
 import MapMenu from './views/MapMenu';
+import MobileNav from './components/nav/MobileNav';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     minHeight: '100vh',
   },
@@ -29,13 +30,16 @@ const useStyles = makeStyles({
     paddingTop: '70px',
     flex: '1',
     maxWidth: '100%',
+    [theme.breakpoints.down('xs')]: {
+      paddingTop: 0
+    }
   },
   appBody: {
     display: 'flex',
     flex: '1',
     maxWidth: '100%',
   },
-});
+}));
 
 const App = () => {
   const classes = useStyles();
@@ -61,7 +65,12 @@ const App = () => {
         <Header />
         {history.location.pathname != routes.map && (
           <div className={classes.nav}>
-            <Navigator />
+            <Hidden smDown>
+              <Navigator />
+            </Hidden>
+            <Hidden smUp>
+              <MobileNav />
+            </Hidden>
           </div>
         )}
       </div>

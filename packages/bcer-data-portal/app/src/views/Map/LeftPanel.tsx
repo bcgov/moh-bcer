@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, InputLabel, Link, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
+import { Avatar, Box, CircularProgress, IconButton, InputLabel, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
 import React, { SetStateAction, useEffect, useState } from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import MapIcon from '@material-ui/icons/Map';
@@ -164,8 +164,8 @@ function LeftPanel({
             </Select>
             <Avatar 
                 onClick={() => getHealthAuthorityLocations()} 
-                style={{backgroundColor: "#002C71", display: "inline-flex", top: "8px", marginLeft: 5, width: 35, height: 35, cursor: 'pointer'}}>
-              <ArrowRightIcon />
+                style={{backgroundColor: "#002C71", display: "inline-flex", top: "8px", marginLeft: 5, width: 35, height: 35, cursor: 'pointer'}}>              
+              {loading ? <CircularProgress  size={24} style={{color: 'white'}}/> : <ArrowRightIcon />}
             </Avatar>
           </div>
 
