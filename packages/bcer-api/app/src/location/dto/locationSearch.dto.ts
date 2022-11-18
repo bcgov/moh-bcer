@@ -98,4 +98,18 @@ export class LocationSearchDTO {
   @IsString()
   @IsOptional()
   sales_report?: string;
+
+  @ApiProperty({
+    description: 'From_Date of the Date Filter',
+  })
+  @IsString()
+  @IsOptional()
+  fromdate?: string;
+
+  @ApiProperty({
+    description: 'To_Date of the Date Filter',
+  })
+  @IsString()
+  @IsOptional()
+  todate?: string;
 }
