@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, CircularProgress, Dialog, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
+import { Box, CircularProgress, Dialog, Grid, Hidden, makeStyles, Paper, Typography } from '@material-ui/core'
 import { useHistory, useParams } from 'react-router-dom';
 import { Formik, useFormikContext } from 'formik';
 import moment from 'moment';
@@ -24,7 +24,7 @@ import LocationSalesTable from '@/components/tables/LocationSalesTable';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import { LocationReportStatus } from '@/components/location/LocationReportStatus';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   contentWrapper: {
     display: 'flex',
     width: '100%',
@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   content: {
     maxWidth: '1440px',
     width: '95%',
-    padding: '20px 30px',
+    padding: '20px 30px'
   },
   clickBack: {
     cursor: 'pointer',
@@ -51,13 +51,68 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     padding: '1.4rem',
     boxShadow: 'none',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',    
   },
   toc: {
     display: 'block',
     position: 'fixed',
     height: '270px',
     width: '15%',
+    [theme.breakpoints.down('xs')] : {
+      width: '100%',
+      height: 'fit-content',
+      position: 'unset',
+      '& h6.MuiTypography-subtitle2': {
+        display: 'none'
+      },
+      '& div.MuiFormGroup-root' : {
+        flexDirection: 'row',
+        position: 'fixed',
+        marginTop: -8,
+        zIndex: 1000,
+        background: 'white',
+        marginLeft: -32,
+        paddingLeft: 25,
+        width: '100%',
+        height: 90,
+        boxShadow: "0 4px 6px -6px #222",
+        marginRight: -20,
+        '& label.MuiFormControlLabel-root': {
+          display: 'block',
+          width: 'min-content',
+          textAlign: 'center',
+          '& span.MuiIconButton-label': {
+            // '& input': {
+            //   position: 'relative',
+            // },
+            // '& span' : {
+
+            //   '&:after': {
+            //     content: "''",
+            //     display: "block",
+            //     borderBottom: "5px solid #ccc",
+            //     width: "100%",
+            //     /* height: 10px; */
+            //     position: "absolute",
+            //     top: "56%",
+            //     left: "76%",
+            //     transform: "translate(0, -100%)",
+            //     zIndex: -1,
+            //   },
+            //   // '&:last-child:after': {
+            //   //   display: "none",
+            //   // }
+            // }
+          },
+          '& span p.MuiTypography-body2':{
+            fontSize: 12
+          },
+          '&:last-child span.MuiIconButton-label span:after': {
+            display: 'none'
+          }
+        }
+      }
+    }
   },
   rowContent: {
     fontSize: '14px',
@@ -66,8 +121,12 @@ const useStyles = makeStyles({
   tableBox: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
-    padding: '1.4rem',
+    padding: '1.4rem !important',
     boxShadow: 'none',
+    [theme.breakpoints.down('xs')] : {
+      border: 0,
+      paddingTop: 0
+    }
   },
   dialogWrap: {
     marginTop: '100px',
@@ -93,7 +152,34 @@ const useStyles = makeStyles({
   mapBox: {
     height: '540px',
   },
-})
+  breadcrumbWrap: {
+    [theme.breakpoints.down('xs')]: {
+      position: 'fixed',
+      zIndex: 1300,
+      width: '100%',
+      background: 'white',
+      marginTop: -8,
+      height: 30,
+      padding: '4px 12px 0',
+      marginLeft: -10
+    }
+  },
+  businessName: {
+    [theme.breakpoints.down('xs')]: {
+      position: 'fixed',
+      zIndex: 1000,
+      width: '100%',
+      background: 'white',
+      height: 25,
+    }
+  },
+  rightDivWrap: {
+    [theme.breakpoints.down('xs')]: {
+      position: 'relative',
+      paddingTop: '65px !important'
+    }
+  }
+}));
 
 export default function ViewLocations() {
   return (
@@ -143,7 +229,7 @@ function LocationsContent() {
   let options: any = {
     root: null,
     rootMargin: "0px",
-    threshold: [1.0]
+    threshold: 0.9 // [1.0]
   };
 
   useEffect(() => {
@@ -222,7 +308,7 @@ function LocationsContent() {
         label: <Typography variant="body2">Location Information</Typography>, value: 'locationInformation'
       },
       {
-        label: <Typography variant="body2">ProductReport</Typography>, value: 'productReport'
+        label: <Typography variant="body2">Product Report</Typography>, value: 'productReport'
       },
       {
         label: <Typography variant="body2">Manufacturing Report</Typography>, value: 'manufacturingReport'
@@ -251,18 +337,18 @@ function LocationsContent() {
             <CircularProgress/>
           :
             <>
-              <Typography variant="body1"><span className={classes.clickBack} onClick={() => history.goBack()}>{getBreadcrumb()}</span> / Location Details</Typography>
+              <Typography variant="body1" className={classes.breadcrumbWrap}><span className={classes.clickBack} onClick={() => history.goBack()}>{getBreadcrumb()}</span> / Location Details</Typography>
               {
                 data
                   &&
                 authConfig
                   &&
                 <>
-                  <Typography variant="h5">{data.doingBusinessAs} </Typography>
-                  <Grid container spacing={1}>
-                    <Grid item xs={3}>
+                  <Typography variant="h5" className={classes.businessName}>{data.doingBusinessAs} </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item lg={3} xs= {12} className={classes.rightDivWrap}>
                       <Box className={`${classes.tableBox} ${classes.toc}`}>
-                        <Typography variant="subtitle2">Table of Contents</Typography>
+                        <Typography variant="subtitle2">Table of Contents</Typography>                        
                         <StyledRadioGroup
                           name="content"
                           options={getOptions()}
@@ -270,31 +356,35 @@ function LocationsContent() {
                         />
                       </Box>
                     </Grid>
-                    <Grid container item xs={9} spacing={3}>
+                    <Grid container item xs={12} lg={9} spacing={3} className={classes.rightDivWrap}>
+
                       <Grid item xs={12} id="locationStatus" ref={locationStatusRef} >
                         <Typography className={classes.cellTitle}>Location Status</Typography>
                         <Paper className={classes.box} style={{ display: 'block'}}>
-                          <Box display="flex" justifyContent="space-between">
-                            <Box>
-                              <Typography variant="body2">Business Status</Typography>
-                              <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
-                            </Box>
-                            {
-                              data.closedAt 
-                                && 
-                              <Box>
+                          <Hidden smUp>
+                          {
+                            authConfig.permissions.SEND_TEXT_MESSAGES &&
+                            <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)} style={{float: 'right', minWidth: 50, padding: 6, marginTop: -8}}>Permanently Delete</StyledButton>}
+                          </Hidden>
+                          <Grid container>
+                            <Grid item xs={6} md={4}>
+                                <Typography variant="body2">Business Status</Typography>
+                                <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
+                            </Grid>
+                            <Grid item xs={6} md={4}>
+                              {data.closedAt && 
+                              <>
                                 <Typography variant="body2">Closed At</Typography>
                                 <Typography className={classes.rowContent}>{data.closedAt}</Typography>
-                              </Box>
-                            }
-
-                            {
-                              authConfig.permissions.SEND_TEXT_MESSAGES
-                                &&
-                              <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)}>Permanently Delete</StyledButton>
-                            }
-                            
-                          </Box>
+                              </>}
+                            </Grid>
+                            <Hidden smDown>
+                            {authConfig.permissions.SEND_TEXT_MESSAGES &&
+                              <Grid item xs={6} md={4}>
+                                  <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)} style={{float: 'right'}}>Permanently Delete</StyledButton>
+                              </Grid>}
+                            </Hidden>
+                          </Grid>                          
                           <Box mt={3}>
                             <LocationReportStatus id={id}/>
                           </Box>
@@ -303,20 +393,21 @@ function LocationsContent() {
 
                       <Grid item xs={12} id="userInformation" >
                         <Typography className={classes.cellTitle}>User Information</Typography>
-                        <Paper className={classes.box}>
-                          <Box>
+
+                        <Grid container spacing={2} className={classes.box} style={{margin: 0, width: '100%', padding: 8}}>                          
+                          <Grid item xs={12} md={4}>
                             <Typography variant="body2">User Name</Typography>
                             <Typography className={classes.rowContent}>{`${businessOwner?.firstName} ${businessOwner?.lastName}`}</Typography>
-                          </Box>
-                          <Box>
+                          </Grid>
+                          <Grid item xs={12} md={4}>
                             <Typography variant="body2">Email Address</Typography>
                             <Typography className={classes.rowContent}>{businessOwner?.email}</Typography>
-                          </Box>
-                          <Box>
+                          </Grid>
+                          <Grid item xs={12} md={4}>
                             <Typography variant="body2">User's BCeId</Typography>
                             <Typography className={classes.rowContent}>{businessOwner?.bceidUser}</Typography>
-                          </Box>
-                        </Paper>
+                          </Grid>
+                        </Grid>                      
                       </Grid>
 
                       <Grid item xs={12} id="locationInformation" ref={locationInformationRef} >
@@ -333,20 +424,19 @@ function LocationsContent() {
                             </Grid>
                             {data.location_type !== LocationType.online &&
                             <>
-                            <Grid item xs={4}>
+                            <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Address</Typography>
                                 <Typography className={classes.rowContent}>{data.addressLine1}</Typography>
                               </Box>
-                            </Grid>
-                            
-                            <Grid item xs={4}>
+                            </Grid>                            
+                            <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">City</Typography>
                                 <Typography className={classes.rowContent}>{data.city}</Typography>
                               </Box>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Postal Code</Typography>
                                 <Typography className={classes.rowContent}>{data.postal}</Typography>
@@ -354,19 +444,19 @@ function LocationsContent() {
                             </Grid>
                             </>}
                             {data.location_type === LocationType.online &&                            
-                            <Grid item xs={4}>
+                            <Grid item xs={12} md={4}>
                               <Box>
                                 <Typography variant="body2">Webpage</Typography>
                                 <Typography className={classes.rowContent}>{data.webpage}</Typography>
                               </Box>
                             </Grid>}
-                            <Grid item xs={4}>
+                            <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
                                 <Typography className={classes.rowContent}>{data.phone}</Typography>
                               </Box>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6} md = {4}>
                               <Box>
                                 <Typography variant="body2">Business Email</Typography>
                                 <Typography className={classes.rowContent}>{data.email}</Typography>
@@ -393,19 +483,19 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.manufacturing === true ? 'Yes' : 'No'}</Typography>
                               </Box>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item md={4} xs={12}>
                               <Box>
                                 <Typography variant="body2">NOI Original Submission Date</Typography>
                                 <Typography className={classes.rowContent}>{data.noi ? moment(data.noi.created_at).format('YYYY-MM-DD') : 'N/A'}</Typography>
                               </Box>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item md={4} xs={12}>
                               <Box>
                                 <Typography variant="body2">NOI Renewal Date</Typography>
                                 <Typography className={classes.rowContent}>{data.noi ? data.noi.renewed_at ? moment(data.noi.renewed_at).format('YYYY-MM-DD') : 'Not Renewed' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item md={4} xs={12}>
                               <Box>
                                 <Typography variant="body2">Location Creation Date</Typography>
                                 <Typography className={classes.rowContent}>{data ? data.created_at ? moment(data.created_at).utc(true).format('YYYY-MM-DD hh:mm:ss a') : '' : 'N/A'}</Typography>

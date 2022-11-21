@@ -9,7 +9,7 @@ import { routes } from '@/constants/routes';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
-import { Box, CircularProgress, makeStyles, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Grid, makeStyles, Typography, withStyles } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import {
@@ -24,7 +24,7 @@ import { Form, Formik } from 'formik';
 import SearchIcon from '@material-ui/icons/Search';
 import { SearchQueryBuilder } from '@/constants/localInterfaces';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   link: {
     color: 'blue',
     textDecoration: 'underline',
@@ -37,6 +37,12 @@ const useStyles = makeStyles(() => ({
     cursor: 'pointer',
     color: 'rgba(51, 51, 51, 0.5)',
   },
+  submitButtonGrid: {
+    [theme.breakpoints.down("xs")] : {
+      marginTop: -30,
+      marginBottome: 10
+    }
+  }
 }));
 
 function BusinessDetails() {
@@ -131,7 +137,7 @@ interface BusinessLocationSearch {
 export function BusinessLocationSearch(
   {onSubmit}: BusinessLocationSearch,
 ) {
-
+  const classes = useStyles();
   return (
       <Box my={2}>
         <Formik
@@ -142,34 +148,29 @@ export function BusinessLocationSearch(
           }}
         >
           <Form>
-            <Box display="flex" alignItems="flex-end">
-              <Box flex={0.66}>
-                <Box flex={1}>
-                  <StyledTextField
-                    name="search"
-                    placeholder="Type in keyword.."
-                    label = "Search (Address, Doing Business As.)"
-                  />
-                </Box>
-              </Box>
-              <Box flex={0.01} />
-              <Box flex={0.19}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} lg={7}>
+                <StyledTextField
+                  name="search"
+                  placeholder="Type in keyword.."
+                  label = "Search (Address, Doing Business As.)"
+                />
+              </Grid>
+              <Grid item xs={12} lg={3}>
                 <StyledSelectField
                   name="healthAuthority"
                   options={healthAuthorityOptions}
                   label="Health Authority"
                 />
-              </Box>
-              <Box flex={0.01} />
-              <Box flex={0.13}>
-              <StyledButton variant="dialog-accept" type="submit">
-                <SearchIcon />
-                <Box mr={1} />
-                Search
-              </StyledButton>
-              <Box pb={3}/>
-            </Box>
-            </Box>
+              </Grid>
+              <Grid item xs={12} lg={2} className={classes.submitButtonGrid}>
+                <Grid >&nbsp;</Grid>
+                <StyledButton variant="dialog-accept" type="submit" >
+                  <SearchIcon />
+                  Search
+                </StyledButton>
+              </Grid>
+            </Grid>
           </Form> 
         </Formik>
       </Box>

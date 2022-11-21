@@ -1,6 +1,7 @@
 import {
   Box,
   Collapse,
+  Grid,
   ListItem,
   makeStyles,
   Paper,
@@ -25,7 +26,6 @@ const useStyles = makeStyles(() => ({
     fontSize: '13px',
   },
   rightPanel: {
-    width: '350px',
     height: '210px',
   },
   noNotes: {
@@ -106,32 +106,38 @@ function Note({ targetId, type, showHideButton }: NoteProps) {
       <Paper variant="outlined" className={classes.box}>
         <Collapse in={showNotes}>
           <Box display={'flex'}>
-            <NoteForm
-              submit={submit}
-              getInitialValues={getInitialValue}
-              loading={postLoading || noteLoading}
-            />
-            <Box pr={3} />
-            <Paper variant="outlined" className={classes.rightPanel}>
-              {!!noteData?.length ? (
-                <FixedSizeList
-                  height={210}
-                  itemSize={45}
-                  itemCount={noteData.length}
-                  width={350}
-                >
-                  {RenderRow}
-                </FixedSizeList>
-              ) : noteError ? (
-                <Typography className={classes.error}>
-                  Notwork error: Could not fetch existing notes
-                </Typography>
-              ) : (
-                <Typography className={classes.noNotes}>
-                  No one has made an edit on this note yet
-                </Typography>
-              )}
-            </Paper>
+            <Grid container spacing={3}>
+              <Grid item xs={12} lg={9}>
+                <NoteForm
+                  submit={submit}
+                  getInitialValues={getInitialValue}
+                  loading={postLoading || noteLoading}
+                />
+              </Grid>
+            
+              <Grid item xs={12} lg={3}>
+                <Paper variant="outlined" className={classes.rightPanel}>
+                  {!!noteData?.length ? (
+                    <FixedSizeList
+                      height={210}
+                      itemSize={45}
+                      itemCount={noteData.length}
+                      width={"inherit"}
+                    >
+                      {RenderRow}
+                    </FixedSizeList>
+                  ) : noteError ? (
+                    <Typography className={classes.error}>
+                      Notwork error: Could not fetch existing notes
+                    </Typography>
+                  ) : (
+                    <Typography className={classes.noNotes}>
+                      No one has made an edit on this note yet
+                    </Typography>
+                  )}
+                </Paper>
+              </Grid>
+            </Grid>
           </Box>
         </Collapse>
       </Paper>
