@@ -5,7 +5,7 @@ import {
   LocationRO,
 } from '@/constants/interfaces/genericInterfaces';
 import { BusinessDashboardUtil } from '@/util/businessDashboard.util';
-import { Box, LinearProgress, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { StyledStatusMessage, StyledTable, StyledTextWithStatusIcon } from '..';
 
@@ -18,7 +18,7 @@ export type BusinessDashboardProps = {
   renderAddress: (l: Partial<LocationRO>) => React.ReactNode;
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   box: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
@@ -32,7 +32,10 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     border: '1px solid #CDCED2',
     borderRadius: '4px',
-    padding: '12px 18px'
+    padding: '12px 18px',
+    [theme.breakpoints.down('xs')]: {
+      display: 'block',
+    }
   },
   legendTitle: {
     fontWeight: 600
@@ -46,6 +49,18 @@ const useStyles = makeStyles(() => ({
   retailerText: {
     fontSize: '16px'
   },
+  locationReportStatWrap: {
+    [theme.breakpoints.down('xs')]: {
+      '& th': {
+        whiteSpace: 'pre-wrap !important',
+        textAlign: 'center',
+        padding: '0 5px'
+      },
+      '& td': {
+        textAlign: 'center'
+      }
+    }
+  }
 }));
 
 export function BusinessDashboard({
@@ -272,20 +287,23 @@ export function ReportStatusLegend() {
 }
 
 export function LocationReportStatusTable({status, loading}: {status: LocationReportStatus, loading?: boolean}){
+  const classes = useStyles();
   return(
     <>
       <Box py={1}>
         <ReportStatusLegend />
       </Box>
-      <StyledTable 
-        columns={BusinessDashboardUtil.getLocationColumn()}
-        data={ status? [status] : []}
-        options={{
-          paging: false,
-          loadingType: 'linear',
-        }}
-        isLoading={loading}
-      />
+      <span className={classes.locationReportStatWrap}>
+        <StyledTable 
+          columns={BusinessDashboardUtil.getLocationColumn()}
+          data={ status? [status] : []}
+          options={{
+            paging: false,
+            loadingType: 'linear',
+          }}
+          isLoading={loading}
+        />
+      </span>
     </>
   )
 }

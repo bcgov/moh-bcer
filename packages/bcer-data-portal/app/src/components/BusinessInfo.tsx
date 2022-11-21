@@ -54,7 +54,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
           </Typography>
           <Paper className={classes.box}>
             <Grid container spacing={2}>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Business legal name</Typography>
                   <Typography className={classes.rowContent}>
@@ -62,7 +62,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">
                     Name under which business is conducted
@@ -72,7 +72,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Address line 1</Typography>
                   <Typography className={classes.rowContent}>
@@ -80,7 +80,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Address line 2</Typography>
                   <Typography className={classes.rowContent}>
@@ -88,7 +88,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">City</Typography>
                   <Typography className={classes.rowContent}>
@@ -96,7 +96,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">Province</Typography>
                   <Typography className={classes.rowContent}>
@@ -104,7 +104,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">Postal code</Typography>
                   <Typography className={classes.rowContent}>
@@ -112,7 +112,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">Phone number</Typography>
                   <Typography className={classes.rowContent}>
@@ -120,7 +120,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Email</Typography>
                   <Typography className={classes.rowContent}>
@@ -128,7 +128,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Web page</Typography>
                   <Typography className={classes.rowContent}>

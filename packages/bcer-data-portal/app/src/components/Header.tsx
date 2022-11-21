@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('xs')]: {
       boxSizing: 'inherit',
       height: 20,
-      position: 'inherit'      
+      zIndex: 99999999    
     }    
   },
   logoWrap: {    

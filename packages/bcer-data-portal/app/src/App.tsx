@@ -31,13 +31,19 @@ const useStyles = makeStyles(theme => ({
     flex: '1',
     maxWidth: '100%',
     [theme.breakpoints.down('xs')]: {
-      paddingTop: 0
+      paddingTop: 62,
+      position: 'fixed',
+      width: '100%',
+      zIndex: 99999999
     }
   },
   appBody: {
     display: 'flex',
     flex: '1',
     maxWidth: '100%',
+    [theme.breakpoints.down('xs')] : {
+      paddingTop: 90
+    }
   },
 }));
 

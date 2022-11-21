@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
       marginTop: 64,
       backgroundColor: '#F2F0F3',
       width: '70%',
-      paddingLeft:20
+      paddingLeft:20,
+      zIndex: 1000000,
     },
     '& button': {
       justifyContent: 'left',
@@ -53,7 +54,7 @@ const MobileNav = () => {
         <IconButton onClick={() => setOpenDrawer(!openDrawer)}><MenuIcon fontSize="large"/></IconButton>
       </div>}
             
-      <Drawer anchor="left" variant="persistent" open={openDrawer} onClose={() => setOpenDrawer(false)} className={classes.drawer}> 
+      <Drawer anchor="left"  open={openDrawer} onClose={() => setOpenDrawer(false)} className={classes.drawer}> 
         <IconButton onClick={() => setOpenDrawer(false)} style={{justifyContent: 'left'}}><MenuIcon fontSize="large" style={{color: '#003466'}}/></IconButton>
         
         <AppMenu orientation = "vertical" />
