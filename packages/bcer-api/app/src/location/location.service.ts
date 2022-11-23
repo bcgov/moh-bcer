@@ -140,7 +140,12 @@ export class LocationService {
       qb.andWhere(`location.location_type = :location_type`, { location_type: query.location_type });
     }
     if (query.underage) {
-      qb.andWhere(`location.underage = :underage`, { underage: query.underage });
+      const underage = query.underage.toLowerCase();
+      if (underage === 'yes' || underage === 'no') {
+        qb.andWhere(`LOWER(location.underage) = :underage`, { underage: underage });
+      } else {
+        qb.andWhere(`LOWER(location.underage) <> 'yes' AND LOWER(location.underage) <> 'no'`);
+      }
     }
 
     const noiExpiryDate = CronConfig.getNoiExpiryDate().toDate();
