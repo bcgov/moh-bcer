@@ -187,6 +187,15 @@ export class LocationService {
     //   }
     // }
 
+    //date filter for submitted locations 
+    if (query.fromdate) {
+      qb.andWhere(`location.created_at >= :fromdate`, { fromdate: query.fromdate });
+    }
+
+    if (query.todate) {
+      qb.andWhere(`location.created_at <= :todate`, { todate: query.todate });
+    }
+
     // Counting the number of submitted reports
     if(addCount) {      
       ['products', 'manufactures', 'sales'].forEach((colToCount) => {
