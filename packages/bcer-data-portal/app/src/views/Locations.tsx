@@ -11,7 +11,9 @@ import {
   SnackbarContent,
   Tooltip,
   Link,
+  TextField
 } from '@material-ui/core';
+
 import { useHistory } from 'react-router-dom';
 import { Form, Formik } from 'formik';
 import { useAxiosGet, useAxiosPostFormData } from '@/hooks/axios';
@@ -19,6 +21,11 @@ import { useKeycloak } from '@react-keycloak/web';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 import moment from 'moment';
 import store from 'store';
 import {
@@ -34,8 +41,10 @@ import {
   StyledTableColumn,
   BusinessDashboardUtil,
   ReportStatusLegend,
-  reportingStatusOptions
+  reportingStatusOptions,
+  StyledConfirmDateDialog
 } from 'vaping-regulation-shared-components';
+
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { healthAuthorityOptions} from '../constants/arrays'
@@ -186,6 +195,23 @@ const useStyles = makeStyles({
     float: 'right',
     textDecoration: 'underline',
     fontWeight: 'bold'
+  },
+  root: {
+    backgroundColor: '#F5F5F5',
+    height: '40px',
+    width: '100%',
+    borderRadius: '2px',
+    '& .MuiInput-underline::before': {
+      display: 'none',
+    },
+    cursor: 'pointer',
+  },
+  picker: {
+    color: '#535353',
+    fontSize: '16px',
+    marginLeft: '9px',
+    minWidth: '56px',
+    height: '19px',
   }
 });
 
@@ -320,7 +346,12 @@ export default function Locations() {
     searchTerms?.orderDirection
       ? (url += `&order=${searchTerms.orderDirection.toUpperCase()}`)
       : null;
-    
+    searchTerms?.fromdate
+      ? (url += `&fromdate=${searchTerms.fromdate}`)
+      : null;
+    searchTerms.todate
+      ? (url += `&todate=${searchTerms.todate}`)
+      : null;
     return url;
   };
 
@@ -337,6 +368,12 @@ export default function Locations() {
     history.push('/');
   };
 
+  //date filter
+  const [selectedFromDate, setFromDate] = useState(null);
+  const [selectedToDate, setToDate] = useState(null);
+  const onFromDateChange = (date:any, value:any) => {setFromDate(date);};
+  const onToDateChange = (date:any, value:any) => {setToDate(date); };
+
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
     const location_type = e.location_type !== 'all' ? e.location_type : undefined;
@@ -345,17 +382,21 @@ export default function Locations() {
     const product_report = e.product_report !== 'all' ? e.product_report : undefined;
     const manufacturing_report = e.manufacturing_report !== 'all' ? e.manufacturing_report : undefined;
     const sales_report = e.sales_report !== 'all' ? e.sales_report : undefined;
+    const fromdate = e.fromdate = selectedFromDate !== null? moment(selectedFromDate.setHours(0,0,0,0)).format("MM/DD/YYYY HH:mm:ss"): null;
+    const todate = e.todate = selectedToDate !== null? moment(selectedToDate.setHours(23,59,59,0)).format("MM/DD/YYYY HH:mm:ss"): null;
     setSearchTerms({
       ...searchTerms,
       page: 0,
-      term: e. search,
+      term: e.search,
       authority,
       location_type,
       underage,
       noi_report,
       product_report,
       manufacturing_report,
-      sales_report
+      sales_report,
+      fromdate,
+      todate
     });
   };
 
@@ -454,6 +495,10 @@ export default function Locations() {
     }
   }
 
+  const TextFieldComponent = (props: any) => {
+    return <TextField {...props} disabled={true} />;
+  };
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -513,11 +558,13 @@ export default function Locations() {
                   noi_report: searchTerms.noi_report ? searchTerms.noi_report: 'all',
                   product_report: searchTerms.product_report ? searchTerms.product_report: 'all',
                   manufacturing_report: searchTerms.manufacturing_report ? searchTerms.manufacturing_report: 'all',
-                  sales_report: searchTerms.sales_report ? searchTerms.sales_report: 'all'
+                  sales_report:  searchTerms.sales_report ? searchTerms.sales_report: 'all',
+                  fromdate: searchTerms.fromdate ? searchTerms.fromdate : null,
+                  todate: searchTerms.todate ? searchTerms.todate : null
                 }}
               >
                 <Form>
-                  <Grid id="first_row" container spacing={2}>
+                  <Grid container spacing={2}>
                     <Grid item md={6} xs={12}>
                       <StyledTextField
                         name="search"
@@ -538,7 +585,7 @@ export default function Locations() {
                         label="Location Type"
                       />
                     </Grid>   
-                    <Grid item md={3} xs={6}>
+                    <Grid item md={2} xs={6}>
                       <StyledSelectField
                         name="underage"
                         options={[
@@ -550,7 +597,7 @@ export default function Locations() {
                         label="Underage Allowed"
                       />
                     </Grid>                 
-                    <Grid item md={3} xs={6}>
+                    <Grid item md={2} xs={6}>
                       <StyledSelectField
                         name="noi_report"
                         options={reportingStatusOptions(false)}
@@ -582,6 +629,42 @@ export default function Locations() {
                       />                     
                     </Grid> 
                     </>}*/}
+                    <Grid item md={2} xs={6}>
+                      From
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                          className={classes.root}
+                          inputProps={{ className: classes.picker }}
+                          TextFieldComponent={TextFieldComponent}
+                          format="MM/dd/yyyy"
+                          value={selectedFromDate ? moment(selectedFromDate) : null}
+                          onChange={onFromDateChange}
+                          showTodayButton={true}
+                          clearable={true}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </MuiPickersUtilsProvider>
+                    </Grid>   
+                    <Grid item md={2} xs={6}>
+                      To
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                          className={classes.root}
+                          inputProps={{ className: classes.picker }}
+                          TextFieldComponent={TextFieldComponent}
+                          format="MM/dd/yyyy"
+                          value={selectedToDate ? moment(selectedToDate) : null}
+                          onChange={onToDateChange}
+                          showTodayButton={true}
+                          clearable={true}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </MuiPickersUtilsProvider>
+                    </Grid>
                     <Grid item md={1} xs={12}>                   
                       <Box
                         alignContent="center"
