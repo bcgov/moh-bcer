@@ -1,5 +1,5 @@
 import { BusinessLocation } from '@/constants/localInterfaces';
-import { Box, makeStyles, Typography } from '@material-ui/core';
+import { Box, Hidden, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import MyLocationIcon from '@material-ui/icons/MyLocation';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -7,7 +7,7 @@ import HorizontalSplitIcon from '@material-ui/icons/HorizontalSplit';
 import StyledToolTip from '@/components/generic/StyledToolTip';
 import { CSSProperties } from '@material-ui/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     border: '1px solid #CDCED2',
@@ -33,11 +33,19 @@ const useStyles = makeStyles(() => ({
   locationText: {
     color: '#333',
     fontSize: '1rem',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '0.9rem',
+      lineHeight: 1.2
+    }
   },
   businessText: {
     color: '#333',
     fontWeight: 'bold',
     fontSize: '1rem',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '0.9rem',
+      lineHeight: 1.2
+    }
   },
   toolTip: {
     fontSize: '14px',
@@ -55,7 +63,6 @@ export interface LocationViewProps {
   removeLocationHandler: (l: BusinessLocation) => void;
 }
 
-
 function LocationView({
   content,
   showOnMapHandler,
@@ -69,11 +76,17 @@ function LocationView({
   const formattedAddress =
     address.length > 28 ? `${address.slice(0, 24)} ...` : address;
 
+  const mobileFormattedAddress =
+    address.length > 19 ? `${address.slice(0, 15)} ...` : address;
+
   const businessName = `${
     content.business?.businessName ?? content.business?.legalName
   }`;
   const formattedBusinessName =
     businessName.length > 10 ? `${businessName.slice(0, 7)} ...` : businessName;
+
+  const mobileFormattedBusinessName =
+    businessName.length > 7 ? `${businessName.slice(0, 5)} ...` : businessName;
 
   const { latitude, longitude, geoAddressConfidence } = content;
   let showStyle = classes.textContainer;
@@ -91,14 +104,16 @@ function LocationView({
         <Box flex={0.3}  className={classes.businessContainer} pl={1}>
           <StyledToolTip title={businessName}>
             <Typography className={classes.businessText}>
-              {formattedBusinessName}
+              <Hidden smDown>{formattedBusinessName}</Hidden>
+              <Hidden smUp>{mobileFormattedBusinessName}</Hidden>
             </Typography>
           </StyledToolTip>
         </Box>
         <Box flex={0.7} pl={1}>
           <StyledToolTip title={address}>
             <Typography className={classes.locationText}>
-              {formattedAddress}
+              <Hidden smDown>{formattedAddress}</Hidden>
+              <Hidden smUp>{mobileFormattedAddress}</Hidden>
             </Typography>
           </StyledToolTip>
         </Box>

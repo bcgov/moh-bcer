@@ -1,4 +1,4 @@
-import { Avatar, Box, CircularProgress, IconButton, InputLabel, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
+import { Avatar, Box, CircularProgress, Hidden, IconButton, InputLabel, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
 import React, { SetStateAction, useEffect, useState } from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import MapIcon from '@material-ui/icons/Map';
@@ -24,16 +24,24 @@ import OptimizedOrder from './OptimizedOrder';
 import { healthAuthorityOptions } from '@/constants/arrays';
 import store from 'store';
 import { useAxiosGet } from '@/hooks/axios';
+import Leaflet from '@/components/generic/Leaflet';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
   container: {
     padding: '20px',
     minWidth: '32vw',
+    [theme.breakpoints.down('xs')]: {
+
+    }
   },
   header: {
     color: '#002C71',
     fontWeight: 'bold',
     fontSize: '27px',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 20,
+    }
   },
   buttonText: {
     size: '13px',
@@ -49,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
       color: 'black',
     },
     '& .MuiInputBase-root': {
-      width: '50%',
+      width: '100%',
       background: '#f5f5f5',
       height: 40,
       padding: 10,
@@ -59,8 +67,13 @@ const useStyles = makeStyles((theme) => ({
       }   
     }
   },
+  mapWrap: {
+    height: 330,
+    marginTop: 20,
+    border: "1px solid #CDCED2",
+    borderRadius: 4
+  }
 }));
-
 
 interface LeftPanelProps {
   mapInMenu: Boolean,
@@ -83,7 +96,8 @@ interface LeftPanelProps {
   healthAuthorityLocations: BusinessLocation[],
   setHealthAuthorityLocations: React.Dispatch<SetStateAction<BusinessLocation[]>>,
   clickedLocation: BusinessLocation,
-  setDisplayItinerary: React.Dispatch<SetStateAction<boolean>>
+  setDisplayItinerary: React.Dispatch<SetStateAction<boolean>>,
+  onRender: () => void,
 }
 
 function LeftPanel({
@@ -104,7 +118,8 @@ function LeftPanel({
   directionError,
   setHealthAuthorityLocations,
   clickedLocation,
-  setDisplayItinerary
+  setDisplayItinerary,
+  onRender,
 }: LeftPanelProps) {
   const classes = useStyles();
   const history = useHistory();  
@@ -113,7 +128,7 @@ function LeftPanel({
   const [healthAuthority, setHealthAuthority] = useState(routeHealthAuthority || store.get('KEYCLOAK_USER_HA')  || '');
   const [{ data, loading }, getLocationsWithHealthAuthority] =
     useAxiosGet(`data/location?all=true&includes=business,noi&authority=${healthAuthority}`, { manual: true });
-
+ 
   useEffect(() => {   
     if (healthAuthority) {
       getHealthAuthorityLocations();
@@ -139,13 +154,15 @@ function LeftPanel({
       setLocations([...locations, clickedLocation])
   }, [clickedLocation])
 
-  return (
+  return (     
     <Box className={classes.container}>      
       {mapInMenu &&  
       <>
         <Typography className={classes.header}>Map of Locations</Typography>
-        <Box mt={2} />           
-          <div className={classes.healthAuthoritySelectWrap}>
+        <Box mt={2} />         
+
+        <Grid container spacing={2} className={classes.healthAuthoritySelectWrap}>
+          <Grid item xs={10} md={6}>
             <InputLabel id="health-authority-label">Health Authority</InputLabel>
             <Select
               labelId="health-authority-label"
@@ -162,14 +179,17 @@ function LeftPanel({
                 return ha.value !== "all" && <MenuItem key={ha.value} value={ha.value}>{ha.label}</MenuItem>
               })}          
             </Select>
+          </Grid>
+          <Grid item xs={2} md={2}>
+            <Grid>&nbsp;</Grid>
             <Avatar 
                 onClick={() => getHealthAuthorityLocations()} 
-                style={{backgroundColor: "#002C71", display: "inline-flex", top: "8px", marginLeft: 5, width: 35, height: 35, cursor: 'pointer'}}>              
+                style={{backgroundColor: "#002C71", cursor: 'pointer'}}>              
               {loading ? <CircularProgress  size={24} style={{color: 'white'}}/> : <ArrowRightIcon />}
             </Avatar>
-          </div>
-
-          <Box mt={4} mb={1} borderBottom="1px solid black" />
+          </Grid>
+        </Grid>
+          <Box mt={4} mb={1} borderBottom="1px solid black" /> 
       </>
       }
 
@@ -195,29 +215,32 @@ function LeftPanel({
         </IconButton>
       </Box>
       }
+
       <Typography className={classes.header}>Route</Typography>
       <Box mt={1} />
-        <StyledButton
-          variant="small-outlined"
-          size="small"
-          onClick={() => window.open(createGoogleLink(), '_blank')}
-        >
-          <MapIcon fontSize="small" />
-          <Box ml={1} />
-          Show in Google Map
-        </StyledButton>
-
-        {locations.length > 0 &&
-        <StyledButton
-          variant="small-outlined"
-          size="small"
-          style={{float: 'right'}}
-          onClick={() => setDisplayItinerary(true)}
-        >
-          <DirectionsIcon fontSize="small" />
-          <Box ml={1} />
-          Display Itinerary
-        </StyledButton>}
+      <Grid container spacing={2}>
+        <Grid item xs={5}>
+          <StyledButton
+            variant="small-outlined"
+            size="small"
+            onClick={() => window.open(createGoogleLink(), '_blank')}>
+            <MapIcon fontSize="small" />
+            <Hidden smDown><Box ml={1} /></Hidden> Show in Google Map
+          </StyledButton>
+        </Grid>
+        <Grid item xs={2}>&nbsp;</Grid>
+        <Grid item xs={5}>
+          {locations.length > 0 &&
+            <StyledButton
+              variant="small-outlined"
+              size="small"
+              style={{float: 'right'}}
+              onClick={() => setDisplayItinerary(true)}>
+              <DirectionsIcon fontSize="small" />
+              <Hidden smDown><Box ml={1} /></Hidden> Display Itinerary
+            </StyledButton>}
+        </Grid>
+      </Grid>
       <Box mt={4} />
       
       <Box mt={2} mb={1}>
@@ -253,7 +276,16 @@ function LeftPanel({
           startingLocation={startingLocation}
         />
       )}
+      <Hidden smUp>
+        <div className={classes.mapWrap}>          
+          <Leaflet onRender={onRender} />
+        </div>
+      </Hidden>
       {routeData && <Itinerary directionData={routeData} />}
+      <Hidden smUp>
+        <Box mt={15} />
+        Not to be seen        
+      </Hidden>
     </Box>
   );
 }
