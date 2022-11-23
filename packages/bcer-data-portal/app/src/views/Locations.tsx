@@ -49,9 +49,6 @@ import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { healthAuthorityOptions} from '../constants/arrays'
 
-
-
-
 const useStyles = makeStyles({
   loadingWrapper: {
     display: 'flex',
@@ -562,8 +559,8 @@ export default function Locations() {
                   product_report: searchTerms.product_report ? searchTerms.product_report: 'all',
                   manufacturing_report: searchTerms.manufacturing_report ? searchTerms.manufacturing_report: 'all',
                   sales_report:  searchTerms.sales_report ? searchTerms.sales_report: 'all',
-                  fromdate: searchTerms.fromdate ? searchTerms.fromdate : 'all',
-                  todate: searchTerms.todate ? searchTerms.todate : 'all'
+                  fromdate: searchTerms.fromdate ? searchTerms.fromdate : null,
+                  todate: searchTerms.todate ? searchTerms.todate : null
                 }}
               >
                 <Form>
