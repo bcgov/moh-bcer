@@ -9,7 +9,7 @@ import {
   StyledCheckboxInput,
 } from 'vaping-regulation-shared-components';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   routeOption: {
     padding: '5px 15px',
@@ -18,12 +18,22 @@ const useStyles = makeStyles(() => ({
     border: '1px solid #CDCED2',
     borderRadius: '4px',
     display: 'flex',
+    [theme.breakpoints.down('xs')]: {
+      '& .MuiTypography-body1': {
+        fontSize: 14
+      }
+    }
   },
   otherOptions: {
     padding: '5px 15px',
     border: '1px solid #CDCED2',
     borderRadius: '4px',
     display: 'flex',
+    [theme.breakpoints.down('xs')]: {
+      '& .MuiTypography-body1': {
+        fontSize: 14
+      }
+    }
   },
   text: {
     fontSize: '16px',

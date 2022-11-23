@@ -1,4 +1,4 @@
-import { Box, IconButton, makeStyles } from '@material-ui/core';
+import { Box, Hidden, IconButton, makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import LeftPanel from './LeftPanel';
@@ -70,7 +70,11 @@ function Map({asMenu, config}: MapProps) {
       style= {{ marginTop: '70px' }}
       className={asMenu && classes.menu_MapWrap}
     >
-      <Drawer open={open} variant="persistent" className={asMenu && classes.menu_leftPanelDrawer}>
+      <Drawer open={open} variant="persistent" 
+         ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        className={asMenu && classes.menu_leftPanelDrawer}>
         <Box minHeight="calc(100vh - 70px)" pt={8} >
           <LeftPanel
             mapInMenu={asMenu}
@@ -92,8 +96,9 @@ function Map({asMenu, config}: MapProps) {
             setHealthAuthorityLocations={setHealthAuthorityLocations}
             clickedLocation={clickedLocation}
             setDisplayItinerary={setDisplayItinerary}
+            onRender={onRender}
           />
-        </Box>
+        </Box>       
       </Drawer>
 
       {open && !asMenu && <Box flex={0.35} />}
@@ -106,7 +111,10 @@ function Map({asMenu, config}: MapProps) {
             <MenuIcon />
           </IconButton>
         )}
-        <Leaflet onRender={onRender} />
+        <Hidden smDown>
+          <Leaflet onRender={onRender} />
+        </Hidden>
+        
       </Box>
     </Box>
   );
