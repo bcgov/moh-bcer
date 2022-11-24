@@ -11,7 +11,7 @@ export const locationTypeOptions = (includeAll: boolean = false) => {
     return locationTypes; 
 }
 
-export const reportingStatusOptions = (hasNotRequired: boolean = false) => {
+export const reportingStatusOptions = (hasNotRequired: boolean = false, hasPendingReview: boolean = false) => {
     let reportingStatusOption =  [
         { value: 'all', label: 'All' },
         { value: 'Submitted', label: 'Submitted' },
@@ -20,6 +20,8 @@ export const reportingStatusOptions = (hasNotRequired: boolean = false) => {
 
     if (hasNotRequired)
         reportingStatusOption.push({ value: 'NotRequired', label: 'Not Required' });
+    if (hasPendingReview)
+        reportingStatusOption.push({ value: 'PendingReview', label: 'Needs to be Renewed' });
 
     return reportingStatusOption; 
 }

@@ -540,13 +540,13 @@ export default function Locations() {
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
               </Typography>              
-              {/* <Link
+              <Link
                 className={classes.showMoreLink}
                 component="button"
                 variant="body2"
                 onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
                 {showMoreFilters ? "Show less filters" : "Show more filters"}
-              </Link> */}
+              </Link> 
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -585,7 +585,7 @@ export default function Locations() {
                         label="Location Type"
                       />
                     </Grid>   
-                    <Grid item md={2} xs={6}>
+                    <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="underage"
                         options={[
@@ -597,14 +597,14 @@ export default function Locations() {
                         label="Underage Allowed"
                       />
                     </Grid>                 
-                    <Grid item md={2} xs={6}>
+                    <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="noi_report"
-                        options={reportingStatusOptions(false)}
+                        options={reportingStatusOptions(false, true)}
                         label="NOI Status"
                       />                     
                     </Grid>
-                    {/*
+                    
                     <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="product_report"
@@ -612,6 +612,7 @@ export default function Locations() {
                         label="Product Report Status"
                       />                     
                     </Grid> 
+                    
                     {showMoreFilters && 
                     <>             
                     <Grid item md={3} xs={6}>
@@ -628,8 +629,8 @@ export default function Locations() {
                         label="Sales Report Status"
                       />                     
                     </Grid> 
-                    </>}*/}
-                    <Grid item md={2} xs={6}>
+                    
+                    <Grid item md={3} xs={6}>
                       From
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <KeyboardDatePicker
@@ -647,7 +648,7 @@ export default function Locations() {
                         />
                       </MuiPickersUtilsProvider>
                     </Grid>   
-                    <Grid item md={2} xs={6}>
+                    <Grid item md={3} xs={6}>
                       To
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <KeyboardDatePicker
@@ -665,6 +666,7 @@ export default function Locations() {
                         />
                       </MuiPickersUtilsProvider>
                     </Grid>
+                    </> }
                     <Grid item md={1} xs={12}>                   
                       <Box
                         alignContent="center"
@@ -682,8 +684,9 @@ export default function Locations() {
                         </StyledButton>
                       </Box>
                     </Grid>
-                  </Grid>                  
-                  
+                   
+                  </Grid> 
+                 
                 </Form>
               </Formik>
               <div>

@@ -275,6 +275,10 @@ export function ReportStatusLegend() {
         &nbsp; Submitted
       </div>
       <div className={classes.legendItem}>
+        {BusinessDashboardUtil.renderStatus(ReportStatus.PendingReview)}
+        &nbsp; Needs to be Renewed
+      </div>
+      <div className={classes.legendItem}>
         {BusinessDashboardUtil.renderStatus(ReportStatus.Missing)}
         &nbsp; Not Submitted
       </div>
