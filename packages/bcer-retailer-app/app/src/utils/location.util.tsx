@@ -289,7 +289,7 @@ export class LocationUtil {
     if (values.location_type === LocationType.physical) {
       val = {...values, webpage: ""}
     } else if (values.location_type === LocationType.online) {
-      val = {...values, addressLine1: "", city: "", postal: "", health_authority: "", health_authority_other: "", underage: "", underage_other: ""}
+      val = {...values, addressLine1: "", city: "", postal: "", health_authority: "", health_authority_other: "", underage: "Yes", underage_other: ""}
     } else {
       val = values;
     }

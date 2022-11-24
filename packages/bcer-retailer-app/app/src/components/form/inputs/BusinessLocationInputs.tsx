@@ -260,8 +260,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         <div >
           {values.underage === 'other' && <StyledTextField name="underage_other" placeholder="Please Specify" fullWidth={false}/>}
         </div>
-      </div>
-      
+      </div>      
 
       <div className={classes.groupHeader}>
         Which regional health authority is the sales premises located in? A map of the regional health authorities can be found at the&nbsp;
