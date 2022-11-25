@@ -5,7 +5,7 @@ export class CronConfig {
     private static closeLocationCronTime: string = process.env.CLOSE_LOCATION_CRON_TIME || '0 1 16 1 *';
 
     // Expiry date indicated when the businesses can start renewing the NOI 
-    private static noiExpiryDate =  process.env.NOI_EXPIRY_DATE || '12-01'; // MM-DD
+    private static noiExpiryDate =  process.env.NOI_EXPIRY_DATE || '10-01'; // MM-DD
 
     // Valid Till indicated till the actual date until which the NOI is valid for legal purposes.
     private static noiValidTill = process.env.NOI_VALID_TILL || '01-15'; // MM-DD

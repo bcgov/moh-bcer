@@ -14,12 +14,12 @@ describe("Tests the submitted locations page", () => {
     cy.contains("Submitted Locations").click();
   })
 
-  it("Tests that location page was render correctly", () => {
-    cy.contains("From");
-    cy.contains("To");
-    cy.contains("Search");
-    cy.contains("2 retail locations.");
-  })
+  // it("Tests that location page was render correctly", () => {
+  //   cy.contains("From");
+  //   cy.contains("To");
+  //   cy.contains("Search");
+  //   cy.contains("2 retail locations.");
+  // })
 
   it("Tests that link to location details page works correctly", () => {
     cy.contains("Test business name").click();

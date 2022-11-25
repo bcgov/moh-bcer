@@ -36,11 +36,14 @@ export class SingleLocationReportStatus {
     // } else if (!l.noi || this.noiNotRenewed(l)) {
     //   result = ReportStatus.Missing;
     // }
-    if (l.status === 'closed') {
+    if (l.status === 'closed') { //this removes the NotRequired implementation
       result = ReportStatus.Reported
+    } else if (this.noiPendingRenewal(l)) {
+      result = ReportStatus.PendingReview;
     } else if (!l.noi || this.noiNotRenewed(l)) {
       result = ReportStatus.Missing;
     }
+
     return result;
   }
 
@@ -99,11 +102,11 @@ export class SingleLocationReportStatus {
    * @param l `LocationEntity`
    * @returns `boolean`
    */
-  protected noiNotRenewed(l: LocationEntity): boolean {
+  protected noiNotRenewed(l: LocationEntity): boolean {      
     return (
       l.noi &&
       !moment(l.noi.renewed_at || l.noi.created_at).isAfter(
-        CronConfig.getNoiExpiryDate(),
+        CronConfig.getNoiValidTill(),
       ) 
       && l.status === LocationStatus.Active
     );
@@ -133,5 +136,21 @@ export class SingleLocationReportStatus {
     return (
       l.noi && moment(l.noi.created_at).isAfter(this.currentReportingStart)
     );
+  }
+
+  /**
+   * finds out if Noi is between Oct 1st and Jan 15th
+   *
+   * @param l `LocationEntity`
+   * @returns `boolean`
+  */
+  protected noiPendingRenewal(l: LocationEntity): boolean {    
+    return (
+      l.noi &&
+      moment(l.noi.renewed_at || l.noi.created_at).isBetween(
+        CronConfig.getNoiExpiryDate(), CronConfig.getNoiValidTill(),
+      )
+      && l.status === LocationStatus.Active
+    )
   }
 }

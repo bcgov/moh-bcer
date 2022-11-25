@@ -1,7 +1,7 @@
 import { HealthAuthorities, LocationTypeLabels, ReportStatus } from "@/constants/enums/genericEnums";
 import { LocationReportStatus, LocationRO } from "@/constants/interfaces/genericInterfaces";
 import { Tooltip } from "@material-ui/core";
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import Icon from '@material-ui/core/Icon';
 import moment from "moment";
 import React from 'react';
 
@@ -27,16 +27,23 @@ export class BusinessDashboardUtil {
   static renderStatus(r: ReportStatus){
     let color = '#16C92E' //green
     let tooltip = 'Submitted'
+    let shape = "circle"
     if(r === ReportStatus.Missing){
       color = '#FF534A' //red
       tooltip = 'Not Submitted'
-    }else if(r === ReportStatus.NotRequired){
+      shape = 'square'
+    } else if(r === ReportStatus.NotRequired){
       color = '#aaa' //light grey
       tooltip = 'Not Required'
+      shape = "pentagon"
+    } else if(r === ReportStatus.PendingReview) {
+      color = '#F69C12' //orange
+      tooltip = 'Needs to be Reviewed'
+      shape = "pentagon"
     }
     return (
       <Tooltip title={tooltip} placement="right">
-        <FiberManualRecordIcon htmlColor={color} />
+        <Icon style={{color: color, lineHeight: 1.2, fontSize: '1.2rem'}}>{shape}</Icon>
       </Tooltip>
     )
   }

@@ -148,13 +148,21 @@ export class LocationService {
       }
     }
 
+    const validTillDate = CronConfig.getNoiValidTill().toDate();
     const noiExpiryDate = CronConfig.getNoiExpiryDate().toDate();
 
     if (query.noi_report) {
       if (query.noi_report === "Submitted") { //valid noi
-        qb.andWhere('location.noiId IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) > :expiryDate', { expiryDate: noiExpiryDate })   
-        qb.orWhere('location.status = :status', { status: 'closed' })  
-      } else { //expired noi  
+        qb.andWhere(`location.noiId IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) > :validTillDate`, { 
+          validTillDate: validTillDate
+        })   
+        qb.orWhere(`location.status = 'closed'`)  
+      } else if (query.noi_report === "PendingReview") {
+        qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) BETWEEN :expiryDate AND :validTillDate`, { 
+          expiryDate: noiExpiryDate,
+          validTillDate: validTillDate          
+        })   
+      } else { 
         qb.andWhere('(location.noiId IS NULL AND location.status = :status) OR (location.status = :status AND location.noiId IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) < :expiryDate)', {
           expiryDate: noiExpiryDate,
           status: 'active' 
@@ -162,35 +170,40 @@ export class LocationService {
       }
     }
 
-    // if (query.product_report) {
-    //   if (query.product_report === "Submitted") {
-    //     qb.andWhere(`"location_products"."locationId" IS NOT NULL`)
-    //   } else {        
-    //     qb.andWhere(`"location_products"."locationId" IS NULL`)
-    //   }
-    // }
+    if (query.product_report) {  
+      qb.leftJoin(`location.products`, 'products');
+      if (query.product_report === "Submitted") {      
+        qb.andWhere(`"location_products"."locationId" IS NOT NULL`)
+      } else {        
+        qb.andWhere(`"location_products"."locationId" IS NULL`)
+      }
+    }
 
-    // if (query.manufacturing_report) {
-    //   if (query.manufacturing_report === "NotRequired") {
-    //     qb.andWhere(`location.manufacturing = :manufacturing`, { manufacturing: false });
-    //   } else if (query.manufacturing_report === "NotSubmitted") {
-    //     qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NULL`, { manufacturing: true });
-    //   } else {
-    //     qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NOT NULL`, { manufacturing: true });
-    //   }
-    // }
-    // if (query.sales_report) {
-    //   const {startReport, endReport} = getSalesReportingPeriod();
-    //   if (query.sales_report === "NotRequired") {
-        
-    //     qb.andWhere('location.created_at BETWEEN :start AND :end', {start: startReport, end: endReport})
-    //   } else if (query.sales_report === "NotSubmitted") {
-    //     qb.andWhere('location.created_at NOT BETWEEN :start AND :end', {start: startReport, end: endReport})
-    //     qb.andWhere(`"sales"."locationId" IS NULL`);
-    //   } else {
-    //     qb.andWhere(`"sales"."locationId" IS NOT NULL`);
-    //   }
-    // }
+    if (query.manufacturing_report) {
+      qb.leftJoin(`location.manufactures`, 'manufactures');
+      if (query.manufacturing_report === "NotRequired") {
+        qb.andWhere(`location.manufacturing = :manufacturing`, { manufacturing: false });
+      } else if (query.manufacturing_report === "NotSubmitted") {
+        qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NULL`, { manufacturing: true });
+      } else {
+        qb.andWhere(`location.manufacturing = :manufacturing AND "location_manufactures"."locationId" IS NOT NULL`, { manufacturing: true });
+      }
+    }
+
+    if (query.sales_report) {
+      qb.leftJoin(`location.sales`, 'sales');
+      const {startReport, endReport} = getSalesReportingPeriod();
+      if (query.sales_report === "NotRequired") {        
+        qb.andWhere(`location.noiId IS NULL OR noi.created_at > :startReport`, {startReport: startReport})
+      } else if (query.sales_report === "NotSubmitted") {
+        qb.andWhere(`location.noiId IS NOT NULL AND "sales"."locationId" IS NULL AND noi.created_at NOT BETWEEN :startReport AND :endReport`, {
+          startReport: startReport,
+          endReport: endReport
+        });
+      } else {
+        qb.andWhere(`"sales"."locationId" IS NOT NULL`);
+      }
+    }
 
     //date filter for submitted locations 
     if (query.fromdate) {
@@ -202,7 +215,7 @@ export class LocationService {
     }
 
     // Counting the number of submitted reports
-    if(addCount) {      
+    if(addCount) {            
       ['products', 'manufactures', 'sales'].forEach((colToCount) => {
         qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
       })
