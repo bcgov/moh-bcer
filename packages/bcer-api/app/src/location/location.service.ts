@@ -206,11 +206,11 @@ export class LocationService {
     }
 
     //date filter for submitted locations 
-    if (query.fromdate) {
+    if (query.fromdate && query.todate){
+      qb.andWhere(`location.created_at between :fromdate and :todate`, { fromdate: query.fromdate, todate: query.todate});
+    } else if (query.fromdate) {
       qb.andWhere(`location.created_at >= :fromdate`, { fromdate: query.fromdate });
-    }
-
-    if (query.todate) {
+    } else if (query.todate) {
       qb.andWhere(`location.created_at <= :todate`, { todate: query.todate });
     }
 
