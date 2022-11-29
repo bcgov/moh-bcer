@@ -630,41 +630,53 @@ export default function Locations() {
                       />                     
                     </Grid> 
                     
-                    <Grid item md={3} xs={6}>
-                      From
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          className={classes.root}
-                          inputProps={{ className: classes.picker }}
-                          TextFieldComponent={TextFieldComponent}
-                          format="MM/dd/yyyy"
-                          value={selectedFromDate ? moment(selectedFromDate) : null}
-                          onChange={onFromDateChange}
-                          showTodayButton={true}
-                          clearable={true}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                    </Grid>   
-                    <Grid item md={3} xs={6}>
-                      To
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          className={classes.root}
-                          inputProps={{ className: classes.picker }}
-                          TextFieldComponent={TextFieldComponent}
-                          format="MM/dd/yyyy"
-                          value={selectedToDate ? moment(selectedToDate) : null}
-                          onChange={onToDateChange}
-                          showTodayButton={true}
-                          clearable={true}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
+                    
+                    <Grid container md={3} xs={12}>
+                    Location created between
+                      <Grid container spacing={1}>
+                        <Grid item md={6} xs={6}>
+                          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <KeyboardDatePicker
+                              className={classes.root}
+                              inputProps={{ className: classes.picker }}
+                              TextFieldComponent={TextFieldComponent}
+                              format="MM/dd/yyyy"
+                              label="From"
+                              maxDate = {selectedToDate? selectedToDate : moment()}
+                              maxDateMessage = 'Date should not be after the To date'
+                              minDate = {new Date(1900,1,1)}
+                              value={selectedFromDate ? moment(selectedFromDate) : null}
+                              onChange={onFromDateChange}
+                              showTodayButton={true}
+                              clearable={true}
+                              KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                              }}
+                            />
+                          </MuiPickersUtilsProvider>
+                        </Grid>
+                        <Grid item md={6} xs={6}>
+                          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <KeyboardDatePicker
+                              className={classes.root}
+                              inputProps={{ className: classes.picker }}
+                              TextFieldComponent={TextFieldComponent}
+                              format="MM/dd/yyyy"
+                              label="To"
+                              value={selectedToDate ? moment(selectedToDate) : null}
+                              maxDate = {moment()}
+                              minDate = {selectedFromDate ? selectedFromDate: new Date(1900,1,1)}
+                              maxDateMessage = 'Date should not be before the From date'
+                              onChange={onToDateChange}
+                              showTodayButton={true}
+                              clearable={true}
+                              KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                              }}
+                            />
+                          </MuiPickersUtilsProvider>
+                        </Grid>
+                      </Grid>
                     </Grid>
                     </> }
                     <Grid item md={1} xs={12}>                   
