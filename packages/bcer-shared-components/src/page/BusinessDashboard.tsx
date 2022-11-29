@@ -276,7 +276,7 @@ export function ReportStatusLegend() {
       </div>
       <div className={classes.legendItem}>
         {BusinessDashboardUtil.renderStatus(ReportStatus.PendingReview)}
-        &nbsp; Needs to be Renewed
+        &nbsp; Needs to be renewed
       </div>
       <div className={classes.legendItem}>
         {BusinessDashboardUtil.renderStatus(ReportStatus.Missing)}

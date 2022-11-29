@@ -35,15 +35,15 @@ export class BusinessDashboardUtil {
     } else if(r === ReportStatus.NotRequired){
       color = '#aaa' //light grey
       tooltip = 'Not Required'
-      shape = "pentagon"
+      shape = "hexagon"
     } else if(r === ReportStatus.PendingReview) {
       color = '#F69C12' //orange
-      tooltip = 'Needs to be Reviewed'
+      tooltip = 'Needs to be renewed'
       shape = "pentagon"
     }
     return (
       <Tooltip title={tooltip} placement="right">
-        <Icon style={{color: color, lineHeight: 1.2, fontSize: '1.2rem'}}>{shape}</Icon>
+        <Icon style={{color: color, lineHeight: 1.2, fontSize: '1.1rem'}}>{shape}</Icon>
       </Tooltip>
     )
   }
