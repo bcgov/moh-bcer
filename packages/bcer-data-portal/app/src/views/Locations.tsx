@@ -202,8 +202,11 @@ const useStyles = makeStyles({
     fontSize: '16px',
     fontFamily: 'BCSans,Raleway,-apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif',
     fontWeight: 400,
-    height: 1.5,
+    lineHeight: 1.5,
     margin: 0,
+    width: '100%',
+    height: 'auto',
+    minHeight : '16px',
   },
   root: {
     backgroundColor: '#F5F5F5',
@@ -639,7 +642,7 @@ export default function Locations() {
                     
                     
                     <Grid container item md={3} xs={12}>
-                    <p className={classes.date_filter_title}>Location created between</p>
+                      <p className={classes.date_filter_title}>Location Created</p>
                       <Grid container spacing={1}>
                         <Grid item md={6} xs={6}>
                           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -685,6 +688,7 @@ export default function Locations() {
                           </MuiPickersUtilsProvider>
                         </Grid>
                       </Grid>
+                      <p className={classes.date_filter_title}/>
                     </Grid>
                     </> }
                     <Grid item md={1} xs={12}>                   
