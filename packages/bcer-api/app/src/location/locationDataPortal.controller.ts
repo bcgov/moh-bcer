@@ -295,7 +295,7 @@ export class LocationDataPortalController {
       })
     }
     const location = await this.service.getLocation(id, includes || defaultRelations);
-    return location.toResponseObject();
+    return location;
   }
 
   @ApiOperation({ summary: 'Deletes a location by id' })
