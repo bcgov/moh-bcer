@@ -11,7 +11,8 @@ import {
   SnackbarContent,
   Tooltip,
   Link,
-  TextField
+  TextField,
+  Dialog
 } from '@material-ui/core';
 
 import { useHistory } from 'react-router-dom';
@@ -201,8 +202,11 @@ const useStyles = makeStyles({
     fontSize: '16px',
     fontFamily: 'BCSans,Raleway,-apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif',
     fontWeight: 400,
-    height: 1.5,
+    lineHeight: 1.5,
     margin: 0,
+    width: '100%',
+    height: 'auto',
+    minHeight : '16px',
   },
   root: {
     backgroundColor: '#F5F5F5',
@@ -237,7 +241,7 @@ export default function Locations() {
     const initialState = {
       authority: store.get('KEYCLOAK_USER_HA') || undefined,
       page: 0,
-      pageSize: 20      
+      pageSize: 20
     }
 
     const filterParams = JSON.parse(localStorage.getItem('location_searchOptions'));
@@ -377,10 +381,8 @@ export default function Locations() {
   };
 
   //date filter
-  const [selectedFromDate, setFromDate] = useState(new Date(searchTerms.fromdate) || null);
-  const [selectedToDate, setToDate] = useState(new Date(searchTerms.todate) || null);
-  const onFromDateChange = (date:any, value:any) => {setFromDate(date);};
-  const onToDateChange = (date:any, value:any) => {setToDate(date); };
+  const [selectedFromDate, setFromDate] = useState(searchTerms.fromdate? new Date(searchTerms.fromdate) : null);
+  const [selectedToDate, setToDate] = useState(searchTerms.todate ? new Date(searchTerms.todate) : null);
 
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
@@ -638,54 +640,50 @@ export default function Locations() {
                       />                     
                     </Grid>  */}
                     
-                    
-                    <Grid container item md={3} xs={12}>
-                    <p className={classes.date_filter_title}>Location created between</p>
-                      <Grid container spacing={1}>
-                        <Grid item md={6} xs={6}>
-                          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <KeyboardDatePicker
-                              className={classes.root}
-                              inputProps={{ className: classes.picker }}
-                              TextFieldComponent={TextFieldComponent}
-                              format="MM/dd/yyyy"
-                              label="From"
-                              maxDate = {selectedToDate? selectedToDate : moment()}
-                              maxDateMessage = 'Date should not be after the To date'
-                              minDate = {new Date(1900,1,1)}
-                              value={selectedFromDate ? moment(selectedFromDate) : searchTerms.fromdate ? moment(searchTerms.from) : null}
-                              onChange={onFromDateChange}
-                              showTodayButton={true}
-                              clearable={true}
-                              KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                              }}
-                            />
-                          </MuiPickersUtilsProvider>
-                        </Grid>
-                        <Grid item md={6} xs={6}>
-                          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <KeyboardDatePicker
-                              className={classes.root}
-                              inputProps={{ className: classes.picker }}
-                              TextFieldComponent={TextFieldComponent}
-                              format="MM/dd/yyyy"
-                              label="To"
-                              value={selectedToDate ? moment(selectedToDate) : (searchTerms.todate ? moment(searchTerms.todate) : null)}
-                              maxDate = {moment()}
-                              minDate = {selectedFromDate ? selectedFromDate: new Date(1900,1,1)}
-                              maxDateMessage = 'Date should not be before the From date'
-                              onChange={onToDateChange}
-                              showTodayButton={true}
-                              clearable={true}
-                              KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                              }}
-                            />
-                          </MuiPickersUtilsProvider>
-                        </Grid>
-                      </Grid>
+                    <Grid item md={3} xs={6}>
+                      <p className={classes.date_filter_title}>Location Creation Start Date</p>
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                          className={classes.root}
+                          inputProps={{ className: classes.picker }}
+                          TextFieldComponent={TextFieldComponent}
+                          format="MM/dd/yyyy"
+                          maxDate = {selectedToDate? selectedToDate : moment()}
+                          maxDateMessage = 'Date should not be after the To date'
+                          minDate = {new Date(1900,1,1)}
+                          value={selectedFromDate ? moment(selectedFromDate) : null}
+                          onChange={setFromDate}
+                          showTodayButton={true}
+                          clearable={true}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </MuiPickersUtilsProvider>
+                      <p className={classes.date_filter_title}/>
                     </Grid>
+                    <Grid item md={3} xs={6}>
+                    <p className={classes.date_filter_title}>Location Creation End Date</p>
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                          className={classes.root}
+                          inputProps={{ className: classes.picker }}
+                          TextFieldComponent={TextFieldComponent}
+                          format="MM/dd/yyyy"
+                          value={selectedToDate ? moment(selectedToDate) : null}
+                          maxDate = {moment()}
+                          minDate = {selectedFromDate ? selectedFromDate: new Date(1900,1,1)}
+                          maxDateMessage = 'Date should not be before the From date'
+                          onChange={setToDate}
+                          showTodayButton={true}
+                          clearable={true}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </MuiPickersUtilsProvider>
+                      <p className={classes.date_filter_title}/>
+                    </Grid>               
                     </> }
                     <Grid item md={1} xs={12}>                   
                       <Box
