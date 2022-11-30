@@ -272,6 +272,7 @@ export default function ProductOverview() {
               </div>
           <Typography variant='body1' className={classes.pageDescription}>If any of the above information changes for a restricted E-substance product, the business owner must report this change to the Ministry within 7 days of selling the changed product.</Typography>
           <Typography variant='body1'><span className={classes.highlightedText}>Note:</span> If you are resubmitting a product report that was previously submitted before December 16, 2020, you are not required to wait 6 weeks before selling. You are only required to wait 6 weeks for any new products that you intend to sell and have not yet been reported.</Typography>
+          <Typography variant='body1'><span className={classes.highlightedText}>Note:</span> Submission of your product reports does not confirm compliance of the products. Enforcement efforts will verify if the products are compliant under the E-Substances Regulation.</Typography>
         </div>
         <FullScreen fullScreenProp={viewProductlessFullscreenTable}>
           <TableWrapper

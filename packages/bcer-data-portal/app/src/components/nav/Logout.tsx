@@ -4,6 +4,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import React from "react";
 import { useHistory } from "react-router";
 import { StyledButton } from "vaping-regulation-shared-components";
+import store from 'store';
 
 const useStyles = makeStyles((theme) => ({    
     buttonWrapper: {

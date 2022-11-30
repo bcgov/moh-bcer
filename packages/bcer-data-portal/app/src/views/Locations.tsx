@@ -629,13 +629,13 @@ export default function Locations() {
                         label="Manufacturing Report Status"
                       />                     
                     </Grid> 
-                    <Grid item md={3} xs={6}>
+                    {/* <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="sales_report"
                         options={reportingStatusOptions(true)}
                         label="Sales Report Status"
                       />                     
-                    </Grid> 
+                    </Grid>  */}
                     
                     
                     <Grid container item md={3} xs={12}>
