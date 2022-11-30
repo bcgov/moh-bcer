@@ -497,6 +497,12 @@ function LocationsContent() {
                             </Grid>
                             <Grid item md={4} xs={12}>
                               <Box>
+                                <Typography variant="body2">NOI Expiry Date</Typography>
+                                <Typography className={classes.rowContent}>{data.noi ? data.noi.expiry_date ? moment(data.noi.expiry_date).format('YYYY-MM-DD') : 'N/A' : 'N/A'}</Typography>
+                              </Box>
+                            </Grid>
+                            <Grid item md={4} xs={12}>
+                              <Box>
                                 <Typography variant="body2">Location Creation Date</Typography>
                                 <Typography className={classes.rowContent}>{data ? data.created_at ? moment(data.created_at).utc(true).format('YYYY-MM-DD hh:mm:ss a') : '' : 'N/A'}</Typography>
                               </Box>

@@ -17,7 +17,6 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import {
-  ApiParam,
   ApiQuery,
   ApiTags,
   ApiOperation,

@@ -27,7 +27,7 @@ export class BusinessDashboardUtil {
   static renderStatus(r: ReportStatus){
     let color = '#16C92E' //green
     let tooltip = 'Submitted'
-    let shape = "circle"
+    let shape = "star_rate"
     if(r === ReportStatus.Missing){
       color = '#FF534A' //red
       tooltip = 'Not Submitted'
@@ -35,7 +35,7 @@ export class BusinessDashboardUtil {
     } else if(r === ReportStatus.NotRequired){
       color = '#aaa' //light grey
       tooltip = 'Not Required'
-      shape = "hexagon"
+      shape = "circle"
     } else if(r === ReportStatus.PendingReview) {
       color = '#F69C12' //orange
       tooltip = 'Needs to be renewed'
