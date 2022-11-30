@@ -17,7 +17,6 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import {
-  ApiParam,
   ApiQuery,
   ApiTags,
   ApiOperation,
@@ -296,7 +295,7 @@ export class LocationDataPortalController {
       })
     }
     const location = await this.service.getLocation(id, includes || defaultRelations);
-    return location;
+    return location.toResponseObject();
   }
 
   @ApiOperation({ summary: 'Deletes a location by id' })
