@@ -607,13 +607,13 @@ export default function Locations() {
                         label="Underage Allowed"
                       />
                     </Grid>                 
-                    <Grid item md={3} xs={6}>
+                    {/* <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="noi_report"
                         options={reportingStatusOptions(false, true)}
                         label="NOI Status"
                       />                     
-                    </Grid>
+                    </Grid> */}
                     
                     <Grid item md={3} xs={6}>
                       <StyledSelectField
@@ -632,13 +632,13 @@ export default function Locations() {
                         label="Manufacturing Report Status"
                       />                     
                     </Grid> 
-                    {/* <Grid item md={3} xs={6}>
+                    <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="sales_report"
                         options={reportingStatusOptions(true)}
                         label="Sales Report Status"
                       />                     
-                    </Grid>  */}
+                    </Grid> 
                     
                     <Grid item md={3} xs={6}>
                       <p className={classes.date_filter_title}>Location Creation Start Date</p>

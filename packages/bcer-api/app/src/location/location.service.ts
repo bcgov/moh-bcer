@@ -151,6 +151,11 @@ export class LocationService {
     const validTillDate = CronConfig.getNoiValidTill().toDate();
     const noiExpiryDate = CronConfig.getNoiExpiryDate().toDate();
 
+    console.log(validTillDate);
+    console.log(noiExpiryDate);
+
+    //determine expiry date
+
     if (query.noi_report) {
       if (query.noi_report === "Submitted") { //valid noi
         qb.andWhere(`location.noiId IS NOT NULL AND COALESCE(noi.renewed_at, noi.created_at) > :validTillDate`, { 
@@ -190,9 +195,9 @@ export class LocationService {
       }
     }
 
-    if (query.sales_report) {
-      qb.leftJoin(`location.sales`, 'sales');
+    if (query.sales_report) {      
       const {startReport, endReport} = getSalesReportingPeriod();
+      qb.leftJoin(`location.sales`, 'sales');
       if (query.sales_report === "NotRequired") {        
         qb.andWhere(`location.noiId IS NULL OR noi.created_at > :startReport`, {startReport: startReport})
       } else if (query.sales_report === "NotSubmitted") {
@@ -613,7 +618,7 @@ export class LocationService {
   /**
    * Get all location for a business
    * @param businessId
-   * @reutrns
+   * @returns
    */
   async getLocationsWithBusinessId(businessId: string){
     return await this.locationRepository.find({ businessId });
