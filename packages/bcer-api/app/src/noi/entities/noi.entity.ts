@@ -37,6 +37,9 @@ export class NoiEntity {
   @Column({type: 'timestamp', nullable: true, default: null})
   renewed_at: Date;
 
+  @Column({type: 'timestamp', nullable: true, default: null})
+  expiry_date: Date;
+
   toResponseObject(): NoiRO {
     const assignStatus = (created: Date, renewed: Date): NoiStatus => {
       const renewDate = renewed ? renewed : created;
