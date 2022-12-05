@@ -7,6 +7,7 @@ import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { BusinessService } from 'src/business/business.service';
 import { LocationService } from 'src/location/location.service';
 import moment from 'moment';
+import { CronConfig } from 'src/cron/config/cron.config';
 
 @Injectable()
 export class NoiService {
@@ -27,10 +28,13 @@ export class NoiService {
       if (location.business.id !== businessId) {
         throw new ForbiddenException(`This user does not have access to location ${locationId}`);
       }
-      if(location.noi?.id){
-        await this.noiRepository.update({ id: location.noi.id }, { renewed_at: moment().toDate() });
-      }else{
+      
+      const expiryDate =  CronConfig.assignNextExpiryDate(moment().toDate())
+      if(location.noi?.id) {
+        await this.noiRepository.update({ id: location.noi.id }, { renewed_at: moment().toDate(), expiry_date: expiryDate });
+      } else {
         const noi = this.noiRepository.create({ location, business });
+        noi.expiry_date = expiryDate;
         await this.noiRepository.save(noi);
       }
       
