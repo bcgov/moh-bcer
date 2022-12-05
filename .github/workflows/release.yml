@@ -32,44 +32,44 @@ jobs:
           dist/*/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Send Slack Notification
-      uses: 8398a7/action-slack@v3
-      env:
-        VERSION: ${{ github.event.inputs.version }}
-        ENVIRONMENT: ${{ github.event.inputs.environment }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-      with:
-        status: custom
-        custom_payload: |
-          {
-            text: `New ${ process.env.ENVIRONMENT } release ready: ${process.env.VERSION}`,
-            attachments: [{
-              "author_name": "Github",
-              fallback: "fallback",
-              color: "good",
-              title: "New release",
-              text: "Created",
-              fields: [{
-                title: "Author",
-                value: process.env.GITHUB_ACTOR,
-                short: true
-              },
-              {
-                title: "Url",
-                value: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/releases/tag/${process.env.VERSION}-${process.env.ENVIRONMENT}`,
-                short: true
-              },
-              {
-                title: "Environment",
-                value: process.env.ENVIRONMENT,
-                short: false
-              },
-              {
-                title: "Version",
-                value: process.env.VERSION,
-                short: false
-              }],
-              actions: [{
-              }]
-            }]
-          }
+    # - name: Send Slack Notification
+      # uses: 8398a7/action-slack@v3
+      # env:
+      #   VERSION: ${{ github.event.inputs.version }}
+      #   ENVIRONMENT: ${{ github.event.inputs.environment }}
+      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+      # with:
+      #   status: custom
+      #   custom_payload: |
+      #     {
+      #       text: `New ${ process.env.ENVIRONMENT } release ready: ${process.env.VERSION}`,
+      #       attachments: [{
+      #         "author_name": "Github",
+      #         fallback: "fallback",
+      #         color: "good",
+      #         title: "New release",
+      #         text: "Created",
+      #         fields: [{
+      #           title: "Author",
+      #           value: process.env.GITHUB_ACTOR,
+      #           short: true
+      #         },
+      #         {
+      #           title: "Url",
+      #           value: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/releases/tag/${process.env.VERSION}-${process.env.ENVIRONMENT}`,
+      #           short: true
+      #         },
+      #         {
+      #           title: "Environment",
+      #           value: process.env.ENVIRONMENT,
+      #           short: false
+      #         },
+      #         {
+      #           title: "Version",
+      #           value: process.env.VERSION,
+      #           short: false
+      #         }],
+      #         actions: [{
+      #         }]
+      #       }]
+      #     }
