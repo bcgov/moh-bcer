@@ -4,7 +4,7 @@ export class AddProductSold1631689948434 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`CREATE TABLE IF NOT EXISTS product_sold
         (
-            id uuid NOT NULL DEFAULT gen_random_uuid(),
+            id uuid NOT NULL DEFAULT uuid_generate_v4(),
             concentration character varying,
             flavour character varying,
             upc character varying,
