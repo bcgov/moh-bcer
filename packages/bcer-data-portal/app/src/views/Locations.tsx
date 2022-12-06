@@ -294,11 +294,9 @@ export default function Locations() {
     {
       title: 'Latest NOI Date',
       render: (rd: BusinessLocation) =>
-        rd.noi?.renewed_at ? 
-          `${moment(rd.noi.created_at).format('MMM DD, YYYY')}`
-        : rd.noi?.created_at 
-          ? `${moment(rd.noi.created_at).format('MMM DD, YYYY')}`
-          : '',          
+        rd.noi?.renewed_at ?? rd.noi?.created_at 
+        ? `${moment(rd.noi?.renewed_at ?? rd.noi?.created_at).format('MMM DD, YYYY')}`
+        : '',
       sortTitle: "Submitted Date",
       sorting: true,
     },

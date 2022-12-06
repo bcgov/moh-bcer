@@ -38,7 +38,7 @@ export class SingleLocationReportStatus {
     // }
     if (l.status === 'closed') { //this removes the NotRequired implementation
       result = ReportStatus.Reported
-    } else if (this.noiPendingRenewal(l)) {
+    } else if (l.noi && this.noiPendingRenewal(l)) {
       result = ReportStatus.PendingReview;
     } else if (!l.noi || this.noiNotRenewed(l)) {
       result = ReportStatus.Missing;
@@ -105,7 +105,7 @@ export class SingleLocationReportStatus {
   protected noiNotRenewed(l: LocationEntity): boolean {      
     return (
       l.noi &&
-      !moment(l.noi.renewed_at || l.noi.created_at).isAfter(
+      !moment(l.noi.expiry_date).isAfter(
         CronConfig.getNoiExpiryDate(),
       ) 
       && l.status === LocationStatus.Active
@@ -144,12 +144,9 @@ export class SingleLocationReportStatus {
    * @param l `LocationEntity`
    * @returns `boolean`
   */
-  protected noiPendingRenewal(l: LocationEntity): boolean {    
+  protected noiPendingRenewal(l: LocationEntity): boolean {   
     return (
-      l.noi &&
-      moment(l.noi.expiry_date).isBetween(
-        CronConfig.getNoiExpiryDate(), CronConfig.getNoiValidTill(),
-      )
+      moment(l.noi.expiry_date).isSame(CronConfig.getNoiValidTill())
       && l.status === LocationStatus.Active
     )
   }
