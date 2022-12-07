@@ -102,8 +102,7 @@ export class SingleLocationReportStatus {
    * @param l `LocationEntity`
    * @returns `boolean`
    */
-  protected noiNotRenewed(l: LocationEntity): boolean {
-    console.log("Expiry Date: "+l.noi.expiry_date+" is not before "+ CronConfig.getNoiExpiryDate().toDate())
+  protected noiNotRenewed(l: LocationEntity): boolean {    
     return (
       l.noi &&
       moment(l.noi.expiry_date).isBefore(
