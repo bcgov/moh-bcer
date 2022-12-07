@@ -102,10 +102,10 @@ export class SingleLocationReportStatus {
    * @param l `LocationEntity`
    * @returns `boolean`
    */
-  protected noiNotRenewed(l: LocationEntity): boolean {      
+  protected noiNotRenewed(l: LocationEntity): boolean {
     return (
       l.noi &&
-      !moment(l.noi.expiry_date).isAfter(
+      !moment(l.noi.renewed_at || l.noi.created_at).isAfter(
         CronConfig.getNoiExpiryDate(),
       ) 
       && l.status === LocationStatus.Active
