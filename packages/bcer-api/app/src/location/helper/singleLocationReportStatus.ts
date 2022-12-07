@@ -105,9 +105,16 @@ export class SingleLocationReportStatus {
   protected noiNotRenewed(l: LocationEntity): boolean {    
     return (
       l.noi &&
-      moment(l.noi.expiry_date).isBefore(
-        CronConfig.getNoiExpiryDate(),
-      ) 
+
+      (l.noi.expiry_date ?
+        moment(l.noi.expiry_date).isBefore(
+          CronConfig.getNoiExpiryDate(),
+        ) :
+        !moment(l.noi.renewed_at || l.noi.created_at).isAfter(
+          CronConfig.getNoiExpiryDate(),
+        )
+      )
+
       && l.status === LocationStatus.Active
     );
   }
