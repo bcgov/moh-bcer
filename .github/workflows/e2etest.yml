@@ -35,10 +35,10 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           wait-on-timeout: 200
-          wait-on: 'http://localhost:3000/retailer',
+          wait-on: 'http://localhost:3000/retailer'
           record: true
         env:
-          CYPRESS_RECORD_KEY: '747e3ff2-ce56-45fa-988c-3bd235dfa4d7',
+          CYPRESS_RECORD_KEY: '747e3ff2-ce56-45fa-988c-3bd235dfa4d7'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Sleep for 30 seconds
