@@ -153,21 +153,24 @@ export class LocationService {
 
     if (query.noi_report) {
       if (query.noi_report === "Submitted") { //valid noi
-        qb.andWhere(`location.noiId IS NOT NULL AND noi.expiry_date > :validTillDate`, { 
-          validTillDate: validTillDate
+        qb.andWhere(`(location.noiId IS NOT NULL AND noi.expiry_date > :validTillDate) OR (location.status = :status)`, { 
+          validTillDate: validTillDate,
+          status: LocationStatus.Closed
         })   
-        qb.orWhere(`location.status = 'closed'`)  
       } else if (query.noi_report === "PendingReview") {
-        qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND noi.expiry_date BETWEEN :expiryDate AND :validTillDate`, { 
+        qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND noi.expiry_date = :validTillDate`, { 
           expiryDate: noiExpiryDate,
           validTillDate: validTillDate          
         })   
-      } else { 
-        qb.andWhere('(location.noiId IS NULL AND location.status = :status) OR (location.status = :status AND location.noiId IS NOT NULL AND noi.expiry_date < :expiryDate)', {
-          expiryDate: noiExpiryDate,
-          status: 'active' 
+      } else {         
+        qb.andWhere("location.status = :status", {
+          status: LocationStatus.Active
+        })
+        qb.andWhere("((location.noiId IS NOT NULL AND noi.expiry_date < :expiryDate) OR (location.noiId IS NULL))", {
+          expiryDate: noiExpiryDate
         })
       }
+      
     }
 
     if (query.product_report) {  

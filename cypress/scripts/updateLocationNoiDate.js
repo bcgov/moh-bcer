@@ -11,12 +11,13 @@ const client = new Client({
 
 (async () => {
   const now = moment();
-  const newCreationDate = now.subtract(1, 'year').toISOString();
+  const newCreationDate = now.subtract(1, 'year').toISOString();  
 
   await client.connect();
 
   await client.query('UPDATE location SET created_at = $1 WHERE id IS NOT NULL', [newCreationDate]);
   await client.query('UPDATE noi SET created_at = $1 WHERE id IS NOT NULL', [newCreationDate]);
+  await client.query('UPDATE noi SET expiry_date = $1 WHERE id IS NOT NULL', [newCreationDate]);
 
   await client.end()
 })()
