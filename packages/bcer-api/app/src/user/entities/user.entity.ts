@@ -1,5 +1,6 @@
 import {
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
@@ -16,7 +17,7 @@ import { NoteEntity } from 'src/note/entities/note.entity';
 
 @Entity('user')
 export class UserEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column('int', {

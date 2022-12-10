@@ -1,5 +1,6 @@
 import {
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
@@ -18,7 +19,7 @@ import { CronConfig } from 'src/cron/config/cron.config';
 
 @Entity('noi')
 export class NoiEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @OneToOne(() => LocationEntity, (location: LocationEntity) => location.noi)

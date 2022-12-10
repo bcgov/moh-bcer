@@ -9,6 +9,7 @@ import {
   OneToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
@@ -29,7 +30,7 @@ import { LocationType } from '../enums/location_type.enum';
 
 @Entity('location')
 export class LocationEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column('varchar')

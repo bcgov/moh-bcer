@@ -1,5 +1,6 @@
 import {
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
@@ -10,7 +11,7 @@ import { IngredientRO } from 'src/manufacturing/ro/ingredient.ro';
 
 @Entity('ingredient')
 export class IngredientEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column('varchar')

@@ -25,7 +25,7 @@ import { NoteEntity } from 'src/note/entities/note.entity';
 @Entity('business')
 export class BusinessEntity {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column('varchar', { nullable: true, default: '' })

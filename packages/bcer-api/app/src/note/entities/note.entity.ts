@@ -7,6 +7,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,7 +15,7 @@ import { NoteRO } from '../ro/note.ro';
 
 @Entity('note')
 export class NoteEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column({

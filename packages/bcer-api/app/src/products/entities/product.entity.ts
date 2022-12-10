@@ -1,5 +1,6 @@
 import {
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
@@ -19,7 +20,7 @@ import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 
 @Entity('product')
 export class ProductEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column('varchar', { nullable: true })

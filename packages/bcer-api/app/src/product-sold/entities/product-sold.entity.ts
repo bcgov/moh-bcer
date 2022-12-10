@@ -1,5 +1,6 @@
 import {
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
@@ -20,7 +21,7 @@ import { ProductSoldRO } from '../ro/product-sold.ro';
 
 @Entity('product_sold')
 export class ProductSoldEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column('varchar', { nullable: true, name: 'brand_name' })

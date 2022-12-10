@@ -1,5 +1,6 @@
 import {
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
@@ -18,7 +19,7 @@ import { IngredientEntity } from 'src/manufacturing/entities/ingredient.entity';
 
 @Entity('manufacturing')
 export class ManufacturingEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   id: string;
 
   @Column('varchar')
