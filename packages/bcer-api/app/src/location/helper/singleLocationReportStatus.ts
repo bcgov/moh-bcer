@@ -1,5 +1,5 @@
-import { ForbiddenException, NotImplementedException } from '@nestjs/common';
 import moment from 'moment';
+import { getSalesReportYear } from 'src/common/common.utils';
 import { CronConfig } from 'src/cron/config/cron.config';
 import { ConfigDates } from 'src/utils/configDates';
 import { LocationEntity } from '../entities/location.entity';
@@ -82,7 +82,7 @@ export class SingleLocationReportStatus {
    * @param l `LocationEntity`
    * @returns `ReportStatus` = 'reported' | 'notRequired' | 'missing'
    */
-  getSalesReportStatus(l: LocationEntity): ReportStatus {
+  getSalesReportStatus(l: LocationEntity): ReportStatus { 
     let result = ReportStatus.Reported;
     if (
       this.closedBeforeLastReportingYear(l) ||
@@ -90,7 +90,8 @@ export class SingleLocationReportStatus {
       !l.noi
     ) {
       result = ReportStatus.NotRequired;
-    } else if (!l.salesCount) {
+    } else if (!l.salesCount || 
+              (l.salesCount > 0 && l.sales && l.sales.some(report => report.year !==  getSalesReportYear().year.toString()))) {
       result = ReportStatus.Missing;
     }
     return result;
