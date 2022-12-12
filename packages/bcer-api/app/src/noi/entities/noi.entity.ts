@@ -17,15 +17,12 @@ import { BusinessEntity } from 'src/business/entities/business.entity';
 import { NoiStatus } from '../enums/status.enum';
 import moment from 'moment';
 import { CronConfig } from 'src/cron/config/cron.config';
-import { generate } from 'rxjs';
 
 @Entity('noi')
 export class NoiEntity {
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
   @Generated()
   id: string;
-  // @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
-  // id: string;
 
   @OneToOne(() => LocationEntity, (location: LocationEntity) => location.noi)
   location: LocationEntity;
