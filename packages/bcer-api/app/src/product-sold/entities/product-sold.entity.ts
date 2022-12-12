@@ -12,6 +12,7 @@ import {
   OneToMany,
   DeleteDateColumn,
   Index,
+  Generated
 } from 'typeorm';
 
 import { BusinessEntity } from 'src/business/entities/business.entity';
@@ -22,6 +23,7 @@ import { ProductSoldRO } from '../ro/product-sold.ro';
 @Entity('product_sold')
 export class ProductSoldEntity {
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar', { nullable: true, name: 'brand_name' })

@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn, Generated } from "typeorm";
 import { NotificationRO } from "../ro/notification.ro";
 
 @Entity('notification')
 export class NotificationEntity {
     @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+    @Generated()
     id: string;
 
     @Column('varchar', {

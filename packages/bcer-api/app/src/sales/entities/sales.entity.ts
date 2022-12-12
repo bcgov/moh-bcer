@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
+  Generated
 } from 'typeorm';
 
 import { LocationEntity } from 'src/location/entities/location.entity';
@@ -18,6 +19,7 @@ import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity
 @Entity('salesreport')
 export class SalesReportEntity {
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @ManyToOne(

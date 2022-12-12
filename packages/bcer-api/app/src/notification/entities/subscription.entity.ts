@@ -8,12 +8,14 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Generated
 } from 'typeorm';
 import { SubscriptionRO } from '../ro/subscription.ro';
 
 @Entity('subscription')
 export class SubscriptionEntity {
     @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+    @Generated()
     id: string;
 
     @OneToOne(

@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Generated
 } from 'typeorm';
 
 import { SubmissionRO } from 'src/submission/ro/submission.ro';
@@ -16,6 +17,7 @@ import { BusinessEntity } from 'src/business/entities/business.entity';
 @Entity('submission')
 export class SubmissionEntity {
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar')

@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  Generated
 } from 'typeorm';
 
 import { UserTypeEnum } from '../enums/user-type.enum'
@@ -18,6 +19,7 @@ import { NoteEntity } from 'src/note/entities/note.entity';
 @Entity('user')
 export class UserEntity {
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('int', {

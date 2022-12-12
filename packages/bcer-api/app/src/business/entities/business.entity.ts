@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   OneToOne,
+  Generated
 } from 'typeorm';
 
 import { BusinessRO } from 'src/business/ro/business.ro';
@@ -26,6 +27,7 @@ import { NoteEntity } from 'src/note/entities/note.entity';
 export class BusinessEntity {
 
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar', { nullable: true, default: '' })

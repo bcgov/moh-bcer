@@ -10,12 +10,14 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Generated
 } from 'typeorm';
 import { NoteRO } from '../ro/note.ro';
 
 @Entity('note')
 export class NoteEntity {
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column({

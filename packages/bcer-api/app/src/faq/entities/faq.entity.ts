@@ -10,12 +10,14 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Generated
 } from 'typeorm';
 import { FaqRO } from '../ro/faq.ro';
 
 @Entity('faq')
 export class FaqEntity {
   @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column({
