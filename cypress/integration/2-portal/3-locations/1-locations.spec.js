@@ -14,12 +14,20 @@ describe("Tests the submitted locations page", () => {
     cy.contains("Submitted Locations").click();
   })
 
-  // it("Tests that location page was render correctly", () => {
-  //   cy.contains("From");
-  //   cy.contains("To");
-  //   cy.contains("Search");
-  //   cy.contains("2 retail locations.");
-  // })
+  it("Tests that Business Locations filter was render correctly", () => {
+    cy.contains("Show more filter").click();
+    cy.contains("Search (Address, Business Name, Legal Name, Doing Business As)");
+    cy.contains("Health Authority");
+    cy.contains("Location Type");
+    cy.contains("Underage Allowed");
+    cy.contains("NOI Status");
+    cy.contains("Product Report Status");
+    cy.contains("Manufacturing Report Status");
+    cy.contains("Location Creation Start Date");
+    cy.contains("Location Creation End Date");
+    cy.contains("Search");
+    cy.contains("2 retail locations.");
+  })
 
   it("Tests that link to location details page works correctly", () => {
     cy.contains("Test business name").click();

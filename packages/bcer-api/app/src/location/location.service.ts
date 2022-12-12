@@ -194,17 +194,40 @@ export class LocationService {
     }
 
     if (query.sales_report) {
-      qb.leftJoin(`location.sales`, 'sales');
       const {startReport, endReport} = getSalesReportingPeriod();
-      if (query.sales_report === "NotRequired") {        
-        qb.andWhere(`location.noiId IS NULL OR noi.created_at > :startReport`, {startReport: startReport})
-      } else if (query.sales_report === "NotSubmitted") {
-        qb.andWhere(`location.noiId IS NOT NULL AND "sales"."locationId" IS NULL AND noi.created_at NOT BETWEEN :startReport AND :endReport`, {
-          startReport: startReport,
-          endReport: endReport
-        });
-      } else {
-        qb.andWhere(`"sales"."locationId" IS NOT NULL`);
+      
+      if (query.sales_report === "NotRequired") { //no noi, or noi created after this period or closed before last report(crren)
+        qb.andWhere(`location.noiId IS NULL OR (noi.created_at > :startReport) OR (location.status = 'closed' AND location.closed_at < :previousReportingStart)` , {
+          startReport: startReport.toDate(), 
+          previousReportingStart: endReport.subtract(1, 'year').toDate()
+        })
+      } else if (query.sales_report === "NotSubmitted") { //valid noi, but no sales count for current year
+        qb.andWhere(`location.noiId IS NOT NULL`)
+        .andWhere('noi.created_at NOT BETWEEN :start AND :end', {start: startReport.toDate(), end: endReport.toDate()}) 
+        .andWhere(`(location.status = 'active' OR location.closed_at > :previousReportingStart)`, {
+          previousReportingStart: endReport.subtract(1, 'year').toDate()
+        })  
+        .andWhere(qb => {
+          const subQuery = qb.subQuery()
+          .select('sr.locationId')
+          .from(SalesReportEntity, 'sr')
+          .where('sr.year = :year', { year: getSalesReportYear().year })
+          .groupBy('sr.locationId')
+          .getQuery();
+          return `location.id NOT IN ${subQuery}`
+        })
+              
+      } else { 
+        qb.andWhere(`location.noiId IS NOT NULL`)
+        .andWhere(qb => {
+          const subQuery = qb.subQuery()
+          .select('sr.locationId')
+          .from(SalesReportEntity, 'sr')
+          .where('sr.year = :year', { year: getSalesReportYear().year })
+          .groupBy('sr.locationId')
+          .getQuery();
+          return `location.id IN ${subQuery}`
+        })
       }
     }
 
@@ -230,6 +253,7 @@ export class LocationService {
     if (!query.all) 
       qb.limit(query.numPerPage);
     
+      console.log(qb.getQueryAndParameters())
     return await qb.getManyAndCount();
   }
 
