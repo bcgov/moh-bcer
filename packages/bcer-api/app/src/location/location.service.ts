@@ -219,6 +219,10 @@ export class LocationService {
               
       } else { 
         qb.andWhere(`location.noiId IS NOT NULL`)
+        .andWhere('noi.created_at NOT BETWEEN :start AND :end', {start: startReport.toDate(), end: endReport.toDate()}) 
+        .andWhere(`(location.status = 'active' OR location.closed_at > :previousReportingStart)`, {
+          previousReportingStart: endReport.subtract(1, 'year').toDate()
+        }) 
         .andWhere(qb => {
           const subQuery = qb.subQuery()
           .select('sr.locationId')
