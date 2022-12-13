@@ -128,9 +128,8 @@ export class LocationDataPortalController {
     
     let salesReport: Record<string, SalesReportEntity[]>;
     
-    if (query.sales_report && 
-          (query.sales_report === "NotSubmitted" || query.sales_report === "Submitted")) {
-          salesReport = await this.salesReportService.getLocationsWithSalesReports(locations.map((location) => { if(location.salesCount > 0) return location.id } ))
+    if (query.sales_report) {
+      salesReport = await this.salesReportService.getLocationsWithSalesReports(locations.map((location) => { if(location.salesCount > 0) return location.id } ))
     }
 
     const locationsRO = locations.map((l) => {
