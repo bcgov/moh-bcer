@@ -8,7 +8,6 @@ import {
   ManyToOne,
   OneToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   PrimaryColumn,
   UpdateDateColumn,
   DeleteDateColumn,

@@ -1,17 +1,13 @@
 import {
   Entity,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
   ManyToOne,
   OneToOne,
   JoinColumn,
-  OneToMany,
   DeleteDateColumn,
-  Index,
   Generated
 } from 'typeorm';
 

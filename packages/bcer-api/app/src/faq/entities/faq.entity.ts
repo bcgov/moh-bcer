@@ -3,13 +3,8 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Column,
-  CreateDateColumn,
-  DeleteDateColumn,
   Entity,
-  ManyToOne,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Generated
 } from 'typeorm';
 import { FaqRO } from '../ro/faq.ro';

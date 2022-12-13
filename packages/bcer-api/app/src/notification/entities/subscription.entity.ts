@@ -6,7 +6,6 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
   Generated
 } from 'typeorm';

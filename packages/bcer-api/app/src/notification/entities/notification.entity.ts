@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn, Generated } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn, Generated } from "typeorm";
 import { NotificationRO } from "../ro/notification.ro";
 
 @Entity('notification')
