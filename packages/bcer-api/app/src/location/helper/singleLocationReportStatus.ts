@@ -91,7 +91,7 @@ export class SingleLocationReportStatus {
     ) {
       result = ReportStatus.NotRequired;
     } else if (!l.salesCount || 
-              (l.salesCount > 0 && l.sales && l.sales.some(report => report.year !==  getSalesReportYear().year.toString()))) {
+              (l.salesCount > 0 && l.sales.length > 0 && !l.sales.some(report => report.year ===  getSalesReportYear().year.toString()))) {
       result = ReportStatus.Missing;
     }
     return result;
