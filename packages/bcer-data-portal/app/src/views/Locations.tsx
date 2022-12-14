@@ -12,7 +12,8 @@ import {
   Tooltip,
   Link,
   TextField,
-  Dialog
+  Dialog,
+  LinearProgress
 } from '@material-ui/core';
 
 import { useHistory } from 'react-router-dom';
@@ -630,13 +631,13 @@ export default function Locations() {
                         label="Manufacturing Report Status"
                       />                     
                     </Grid> 
-                    <Grid item md={3} xs={6}>
+                    {/* <Grid item md={3} xs={6}>
                       <StyledSelectField
                         name="sales_report"
                         options={reportingStatusOptions(true)}
                         label="Sales Report Status"
                       />                     
-                    </Grid>
+                    </Grid> */}
                     
                     <Grid item md={3} xs={6}>
                       <p className={classes.date_filter_title}>Location Creation Start Date</p>
@@ -699,10 +700,8 @@ export default function Locations() {
                           Search
                         </StyledButton>
                       </Box>
-                    </Grid>
-                   
-                  </Grid> 
-                 
+                    </Grid>                   
+                  </Grid>                  
                 </Form>
               </Formik>
               <div>
@@ -727,6 +726,7 @@ export default function Locations() {
                 </Box>
               </div>
               <ReportStatusLegend /> <br/>
+              {loading ? <LinearProgress /> : <Box pt={0.5}/>}
               <div className={'tableDiv'}>
                 <StyledTable
                   columns={tableColumns}
