@@ -15,24 +15,24 @@ const client = new Client({
 
   const validUntil = '01-15';  
                 
-  let thisYear = new Date().getFullYear();
-  let thisMonth = new Date().getMonth();
-  let thisDay = new Date().getDay();
+  const newCreationDateYear = moment(newCreationDate).year();
+  const newCreationDateMonth = moment(newCreationDate).month();
+  const newCreationDateDay = moment(newCreationDate).date();
   let expiryYear;
 	
-  if ([10, 11, 12].includes(thisMonth) || (thisMonth = 1 && thisDay <= 15)) {
-    expiryYear = thisYear + 2;
+  if ([10, 11, 12].includes(newCreationDateMonth) || (newCreationDateMonth === 1 && newCreationDateDay <= 15)) {
+    expiryYear = newCreationDateYear + 2;
   }  else {
-    expiryYear = thisYear + 1;
+    expiryYear = newCreationDateYear + 1;
   }
 
-  const expiryDate = moment(`${expiryYear}-,${validUntil}`);
+  const expiryDate = moment(`${expiryYear}-${validUntil}`);
 
   await client.connect();
 
   await client.query('UPDATE location SET created_at = $1 WHERE id IS NOT NULL', [newCreationDate]);
   await client.query('UPDATE noi SET created_at = $1 WHERE id IS NOT NULL', [newCreationDate]);
-  await client.query('UPDATE noi SET expiry_date = $1 WHERE id IS NOT NULL', [expiryDate]);
+  await client.query('UPDATE noi SET expiry_date = $1 WHERE id IS NOT NULL', [expiryDate.toISOString()]);
 
   await client.end()
 })()
