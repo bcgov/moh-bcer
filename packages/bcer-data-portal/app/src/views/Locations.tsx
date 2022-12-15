@@ -12,7 +12,8 @@ import {
   Tooltip,
   Link,
   TextField,
-  Dialog
+  Dialog,
+  LinearProgress
 } from '@material-ui/core';
 
 import { useHistory } from 'react-router-dom';
@@ -699,10 +700,8 @@ export default function Locations() {
                           Search
                         </StyledButton>
                       </Box>
-                    </Grid>
-                   
-                  </Grid> 
-                 
+                    </Grid>                   
+                  </Grid>                  
                 </Form>
               </Formik>
               <div>
@@ -727,6 +726,7 @@ export default function Locations() {
                 </Box>
               </div>
               <ReportStatusLegend /> <br/>
+              {loading ? <LinearProgress /> : <Box pt={0.5}/>}
               <div className={'tableDiv'}>
                 <StyledTable
                   columns={tableColumns}

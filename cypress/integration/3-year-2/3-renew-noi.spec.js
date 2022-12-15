@@ -7,6 +7,7 @@ const { insideDialog, clickButton } = require("../utils/util");
 describe("Tests renewal of NOI", () => {
   beforeEach(() => {
     Navigate.loginRetailer();
+    cy.wait(1000);
   })
 
   it("Contains correct number of missing reports", () => {
