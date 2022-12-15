@@ -23,6 +23,7 @@ describe("Tests the submitted locations page", () => {
     cy.contains("NOI Status");
     cy.contains("Product Report Status");
     cy.contains("Manufacturing Report Status");
+    cy.contains("Sales Report Status");
     cy.contains("Location Creation Start Date");
     cy.contains("Location Creation End Date");
     cy.contains("Search");
