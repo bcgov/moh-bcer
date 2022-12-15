@@ -11,7 +11,7 @@ const client = new Client({
 
 (async () => {
   const now = moment();
-  const newCreationDate = now.subtract(1, 'year').toISOString();  
+  const newCreationDate = now.subtract(18, 'month').toISOString();  
 
   const validUntil = '01-15';  
                 
