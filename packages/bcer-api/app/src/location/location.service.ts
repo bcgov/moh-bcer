@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
 import moment from 'moment';
+import * as XLSX from "xlsx";
 
 import { BusinessEntity } from 'src/business/entities/business.entity';
 import { haTranslation, HealthAuthority } from 'src/business/enums/health-authority.enum'
@@ -354,40 +355,57 @@ export class LocationService {
   }
 
   public packageAsZip(locations: LocationEntity[]): NodeJS.ReadableStream {
-    let zip = new JSZip()
-    const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date,Renewed Date\n';
-    const productHeaders = 'Type,Brand Name,Product Name,Manufacturer Name,Manufacturer Contact,Manufacturer Address,Manufacturer Phone,Manufacturer Email,Concentration (mg/mL),Container Capacity,Cartridge Capacity,Ingredients,Flavour\n';
-    const manufacturesHeaders = 'Ingredient Name,Scientific Name,Manufacturer Name,Manufacturer Address,Manufacturer Phone,Manufacturer Email\n';
+    let zip = new JSZip();
 
-    zip.folder('Locations');
+    let noiHeader = ['Business Name', 'Business Legal Name', 'Address', 'Address 2', 'Postal Code', 'City', 'Buiness Email', 'Phone Number', 'Underage Permitted',
+          'Health Authority','Doing Business As','Manufacturing','Submitted Date','Renewed Date']
+
+    let productReportHeader = ['Type', 'Brand Name',' Product Name', 'Manufacturer Name', 'Manufacturer Contact', 'Manufacturer Address', 'Manufacturer Phone', 'Manufacturer Email',
+        'Concentration (mg/mL)',' Container Capacity',' Cartridge Capacity',' Ingredients', 'Flavour']
+
+    let manufacturingReportHeader = ['Ingredient Name', 'Scientific Name', 'Manufacturer Name', 'Manufacturer Address', 'Manufacturer Phone',' Manufacturer Email']
+    
 
     locations.map(location => {
-      const noiRow = `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}","${location.noi.renewed_at? moment(location.noi.renewed_at).format('ll'): ''}"\n`;
-      let productRows = '';
+      const fileName = `${location.business.businessName} - ${location.addressLine1}`;
+      const workBook = XLSX.utils.book_new();  
 
-      zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}`)
-        .file('Noi.csv', noiHeaders + noiRow);
+      if (location.noi.created_at) {
+        const noi = [noiHeader];
+        noi.push([location.business.businessName, location.business.legalName, location.addressLine1, location.addressLine2, location.postal, location.city, location.email,
+            location.phone, location.underage, location.ha, location.doingBusinessAs, location.manufacturing.toString(), moment(location.noi.created_at).format('ll'),
+            location.noi.renewed_at? moment(location.noi.renewed_at).format('ll'): ''
+        ])
+
+        const noiWorkSheet = XLSX.utils.aoa_to_sheet(noi);
+        XLSX.utils.book_append_sheet(workBook, noiWorkSheet, 'NOI');
+      }
 
       if (location.products?.length) {
+        let productReport = [productReportHeader];
         location.products.map(product => {
-          productRows += `"${product.type}","${product.brandName}","${product.productName}","${product.manufacturerName}","${product.manufacturerContact}","${product.manufacturerAddress}","${product.manufacturerPhone}","${product.manufacturerEmail}","${product.concentration}","${product.containerCapacity}","${product.cartridgeCapacity}","${product.ingredients}","${product.flavour}"\n`
+          productReport.push([product.type, product.brandName, product.productName, product.manufacturerName, product.manufacturerContact, product.manufacturerAddress, product.manufacturerPhone, 
+            product.manufacturerEmail, product.concentration, product.containerCapacity, product.cartridgeCapacity, product.ingredients, product.flavour])
         });
-        zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Product Report`)
-          .file(`ProductReport.csv`, productHeaders + productRows);
+        const productReportWorkSheet = XLSX.utils.aoa_to_sheet(productReport);
+        XLSX.utils.book_append_sheet(workBook, productReportWorkSheet, 'Product Report');
       }
 
       if (location.manufactures?.length) {
+        let manufacturingReport = [manufacturingReportHeader];
         location.manufactures.map((report) => {
-          let reportRows = '';
           report.ingredients.map((ingredient) => {
-            reportRows += `"${ingredient.name}","${ingredient.scientificName}","${ingredient.manufacturerName}","${ingredient.manufacturerAddress}","${ingredient.manufacturerPhone}","${ingredient.manufacturerEmail}"\n`;
-          });
-          zip.folder(`Locations/${location.business.businessName} - ${location.addressLine1}/Manufacturing Reports`)
-            .file(`${report.productName}.csv`, manufacturesHeaders + reportRows);
+            manufacturingReport.push([ingredient.name, ingredient.scientificName, ingredient.manufacturerName, ingredient.manufacturerAddress, ingredient.manufacturerPhone, ingredient.manufacturerEmail])
+          });          
         });
+        const manufacturingReportWorkSheet = XLSX.utils.aoa_to_sheet(manufacturingReport);
+        XLSX.utils.book_append_sheet(workBook, manufacturingReportWorkSheet, 'Manufacturing Report');
       }
-    })
 
+      const workBookBuffer = XLSX.write(workBook, { bookType: 'xlsx', type: 'array' });      
+      zip.file(`${fileName}.xlsx`, workBookBuffer);
+    })
+    
     return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
       .on('finish', () => {
         Logger.log('zip written.');
@@ -579,39 +597,39 @@ export class LocationService {
       const result = await this.locationRepository.softDelete({id: In(locationIds)});
     }
 
-    /**
-   * Delete locations with ids,
-   * This is a hard delete by location ID, fully removing the location and associated resources
-   * @param locationIds 
-   */
-     async hardDeleteLocation(location: LocationEntity): Promise<void>{
-      const connection = getConnection();
-      const queryRunner = connection.createQueryRunner();
-      const locationId = location.id;
+  /**
+ * Delete locations with ids,
+ * This is a hard delete by location ID, fully removing the location and associated resources
+ * @param locationIds 
+ */
+    async hardDeleteLocation(location: LocationEntity): Promise<void>{
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    const locationId = location.id;
 
-      await queryRunner.startTransaction();
-      try {
+    await queryRunner.startTransaction();
+    try {
 
-        await queryRunner.manager.delete('location_manufactures_manufacturing', { locationId });
-        await queryRunner.manager.delete('location_products_product', { locationId });
-        await queryRunner.manager.delete('salesreport', { locationId });
-        await queryRunner.manager.delete('product_sold', { location });
-        await queryRunner.manager.delete('note', { location });
-        await queryRunner.manager.delete('location', { id: locationId });
-        await queryRunner.manager.delete('noi', { id: location.noi.id });
+      await queryRunner.manager.delete('location_manufactures_manufacturing', { locationId });
+      await queryRunner.manager.delete('location_products_product', { locationId });
+      await queryRunner.manager.delete('salesreport', { locationId });
+      await queryRunner.manager.delete('product_sold', { location });
+      await queryRunner.manager.delete('note', { location });
+      await queryRunner.manager.delete('location', { id: locationId });
+      await queryRunner.manager.delete('noi', { id: location.noi.id });
 
-        await queryRunner.commitTransaction();
-      } catch (err) {
-        Logger.error(err)
-        // rollback transaction on error
-        await queryRunner.rollbackTransaction();
-        throw  `Cannot delete location ${location.doingBusinessAs} with id  ${locationId}`;
-      } finally {
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      Logger.error(err)
+      // rollback transaction on error
+      await queryRunner.rollbackTransaction();
+      throw  `Cannot delete location ${location.doingBusinessAs} with id  ${locationId}`;
+    } finally {
           
-          // release queryRunner
-          await queryRunner.release();
-      }
+      // release queryRunner
+        await queryRunner.release();
     }
+  }
 
   /**
    * Update a location
