@@ -70,6 +70,7 @@
     "typeorm": "0.2.41",
     "winston": "3.4.0",
     "winston-daily-rotate-file": "4.5.5",
+    "xlsx": "0.18.5",
     "zlib": "1.0.5"
   },
   "devDependencies": {
