@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import { Navigate } from "../../utils/navigate";
+import { clickButton, insideDialog } from "../../utils/util";
 
 describe("Tests the location details page", () => {
   Cypress.on("uncaught:exception", () => {
