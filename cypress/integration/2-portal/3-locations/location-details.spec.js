@@ -2,6 +2,7 @@
 
 import { Navigate } from "../../utils/navigate";
 import { clickButton, insideDialog } from "../../utils/util";
+import { UserAction } from "../../utils/userAction";
 
 describe("Tests the location details page", () => {
   Cypress.on("uncaught:exception", () => {
