@@ -378,4 +378,25 @@ export class LocationDataPortalController {
     }
     return await this.service.getLocationReportingStatus(id);
    }
+
+  /**
+   * 
+   * Close location
+  */
+  @ApiOperation({ summary: 'Close Single Location' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+  @AllowAnyRole()
+  @Patch('/close/:locationId')
+  async closeSingleLocation(
+    @Param('locationId') id: string,
+    @Query('closedTime') closedTime: number
+  ): Promise<void> {
+    const location = await this.service.getLocation(id);    
+    if (!location) throw NotFoundException;
+    // close location
+    await this.service.closeLocation([id], closedTime);
+  }
 }

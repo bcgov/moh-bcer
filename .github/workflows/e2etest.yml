@@ -38,7 +38,7 @@ jobs:
           wait-on: 'http://localhost:3000/retailer'
           record: true
         env:
-          CYPRESS_RECORD_KEY: 'dfd568c1-3ec9-4d1e-a647-8e547b680443'
+          CYPRESS_RECORD_KEY: 'f89f5784-9f69-4445-ae27-951ee12a2b9a'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Sleep for 30 seconds

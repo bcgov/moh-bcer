@@ -14,7 +14,8 @@
   "scripts": {
     "test:run": "./node_modules/.bin/cypress run --config video=false screenshotOnRunFailure=false",
     "test:open": "./node_modules/.bin/cypress open",
-    "update:date": "node ./cypress/scripts/updateLocationNoiDate.js"
+    "update:date": "node ./cypress/scripts/updateLocationNoiDate.js",
+    "update:LocationCloseStatus": "node ./cypress/scripts/updateLocationCloseStatus.js"
   },
   "repository": {
     "type": "git",

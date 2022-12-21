@@ -3,16 +3,18 @@ import { Box, CircularProgress, Dialog, Grid, Hidden, makeStyles, Paper, Typogra
 import { useHistory, useParams } from 'react-router-dom';
 import { Formik, useFormikContext } from 'formik';
 import moment from 'moment';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-import { routes } from '@/constants/routes';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { GroupedSalesRO, LocationConfig, ManufacturesRO, SalesRO, UserRO } from '@/constants/localInterfaces';
+import { LocationConfig, UserRO } from '@/constants/localInterfaces';
 import { 
   StyledButton,
   LocationTypeLabels, 
   StyledRadioGroup,
   StyledConfirmDialog, 
-  LocationType
+  LocationType,
+  StyledConfirmDateDialog
 } from 'vaping-regulation-shared-components';
 import { ConfigContext } from '@/contexts/Config';
 import LocationViewMap from './Map/LocationViewMap';
@@ -23,6 +25,7 @@ import LocationManufacturingTable from '@/components/tables/LocationManufacturin
 import LocationSalesTable from '@/components/tables/LocationSalesTable';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import { LocationReportStatus } from '@/components/location/LocationReportStatus';
+import { LocationUtil } from '@/util/location.util';
 
 const useStyles = makeStyles((theme) => ({
   contentWrapper: {
@@ -203,6 +206,7 @@ function LocationsContent() {
   const [businessOwner, setBusinessOwner] = useState<UserRO>();
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState<boolean>();
+  const [isConfirmCloseDialogOpen, setConfirmCloseDialogOpen] = useState<boolean>();
   const [currentContent, setCurrentContent] = useState<string>('locationStatus');
   const { id } = useParams<{id: string}>();
   const { config: authConfig } = useContext(ConfigContext);
@@ -221,6 +225,13 @@ function LocationsContent() {
     manual: true,
   });
 
+  const [{ response: closeResponse, loading: closeLoading, error: closeError }, closePatch] = useAxiosPatch(`/data/location/close/`, { manual: true });
+
+  const closeLocation = async ({ date }: { date: Date }) => {
+    await closePatch({
+      url: `/data/location/close/${id}?closedTime=${moment(date).unix()}`,
+    });    
+  };
 
   const [{ data: config, error: configError, loading: configLoading }, getData] = useAxiosGet<LocationConfig>(
     '/data/location/config'
@@ -245,8 +256,16 @@ function LocationsContent() {
   }, [deleteData])
 
   useEffect(() => {
-    showNetworkErrorMessage(deleteError)
-  }, [deleteError])
+    if(closeResponse) {
+      setConfirmCloseDialogOpen(false);
+      get();
+    }
+  }, [closeResponse])
+
+  useEffect(() => {
+    showNetworkErrorMessage(deleteError ?? closeError);    
+    isConfirmCloseDialogOpen ?? setConfirmCloseDialogOpen(false);
+  }, [deleteError, closeError])
 
   useEffect(() => {
     showNetworkErrorMessage(error)
@@ -332,7 +351,7 @@ function LocationsContent() {
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
         {
-          deleteLoading
+          deleteLoading || closeLoading
           ? 
             <CircularProgress/>
           :
@@ -368,7 +387,7 @@ function LocationsContent() {
                           </Hidden>
                           <Grid container>
                             <Grid item xs={6} md={4}>
-                                <Typography variant="body2">Business Status</Typography>
+                                <Typography variant="body2">Business Location Status</Typography>
                                 <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
                             </Grid>
                             <Grid item xs={6} md={4}>
@@ -378,12 +397,22 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data.closedAt}</Typography>
                               </>}
                             </Grid>
+                            {!data.closedAt &&
                             <Hidden smDown>
-                            {authConfig.permissions.SEND_TEXT_MESSAGES &&
+                              <Grid item xs={6} md={4} style={{display: 'flex', gap: 12, justifyContent: 'end'}}> 
+                                {/* <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 150, fontWeight: 600}}>
+                                  <ExitToAppIcon />&nbsp;&nbsp; Transfer 
+                                </StyledButton> */}
+
+                                <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 150, backgroundColor: '#FF534A', fontWeight: 600}}>
+                                  <HighlightOffIcon />&nbsp;&nbsp; Close  
+                                </StyledButton>
+                              </Grid>
+                              {/* {authConfig.permissions.SEND_TEXT_MESSAGES &&
                               <Grid item xs={6} md={4}>
-                                  <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)} style={{float: 'right'}}>Permanently Delete</StyledButton>
-                              </Grid>}
-                            </Hidden>
+                                  <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)} style={{float: 'right'}}>Permanentlys Delete</StyledButton>
+                              </Grid>} */}
+                            </Hidden>}
                           </Grid>                          
                           <Box mt={3}>
                             <LocationReportStatus id={id}/>
@@ -574,6 +603,20 @@ function LocationsContent() {
                   setOpen={() => setConfirmDialogOpen(false)}
                   confirmHandler={patch}
                 />
+              }
+              {
+                isConfirmCloseDialogOpen
+                  &&
+                  <StyledConfirmDateDialog
+                    open={isConfirmCloseDialogOpen}
+                    confirmHandler={closeLocation}
+                    dialogTitle="Confirm Your Closing Location"
+                    setOpen={() => setConfirmCloseDialogOpen(false)}
+                    dialogMessage="You are about to close this location. Please provide the Closing Date."
+                    checkboxLabel="I confirm that I wish to close this location. I understand that I will still be required to submit a Sales Report for the sales that occurred prior to closing."
+                    maxDate={LocationUtil.getLocationCloseWindow().max}
+                    minDate={LocationUtil.getLocationCloseWindow().min}
+                  />                
               }
             </>
         }
