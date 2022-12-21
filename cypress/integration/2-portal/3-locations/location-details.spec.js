@@ -53,13 +53,11 @@ describe("Tests the location details page", () => {
     });    
     cy.contains("Closed");
     cy.contains("Closed At");
-  })
+  });
 
-  before(() => {
-    cy.exec('npm run update:LocationCloseStatus').its('code').should('eq', 0)
-  })
-
-  it("Validate location was re-activated", () => {    
+  it("Reactivate and validate location re-activation", () => {   
+    cy.exec('npm run update:LocationCloseStatus').its('code').should('eq', 0);    
+    cy.wait(1000);
     cy.contains("Business Location Status");
     cy.contains("Open");
     cy.contains("Close");
