@@ -8,9 +8,10 @@ import {
   ManyToOne,
   OneToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  Generated,
 } from 'typeorm';
 
 import { HealthAuthority } from 'src/business/enums/health-authority.enum';
@@ -29,7 +30,8 @@ import { LocationType } from '../enums/location_type.enum';
 
 @Entity('location')
 export class LocationEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar')

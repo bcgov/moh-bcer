@@ -1,6 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
@@ -9,6 +9,7 @@ import {
   JoinColumn,
   JoinTable,
   DeleteDateColumn,
+  Generated
 } from 'typeorm';
 
 import { ManufacturingRO } from 'src/manufacturing/ro/manufacturing.ro';
@@ -18,7 +19,8 @@ import { IngredientEntity } from 'src/manufacturing/entities/ingredient.entity';
 
 @Entity('manufacturing')
 export class ManufacturingEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar')

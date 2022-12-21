@@ -1,12 +1,12 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   PrimaryColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
   OneToOne,
+  Generated
 } from 'typeorm';
 
 import { BusinessRO } from 'src/business/ro/business.ro';
@@ -25,7 +25,8 @@ import { NoteEntity } from 'src/note/entities/note.entity';
 @Entity('business')
 export class BusinessEntity {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar', { nullable: true, default: '' })

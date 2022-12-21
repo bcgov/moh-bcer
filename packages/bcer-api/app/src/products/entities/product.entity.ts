@@ -1,6 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
@@ -10,6 +10,7 @@ import {
   OneToMany,
   DeleteDateColumn,
   Index,
+  Generated
 } from 'typeorm';
 
 import { ProductRO } from 'src/products/ro/product.ro';
@@ -19,7 +20,8 @@ import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 
 @Entity('product')
 export class ProductEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar', { nullable: true })

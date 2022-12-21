@@ -5,14 +5,16 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
+  Generated
 } from 'typeorm';
 import { SubscriptionRO } from '../ro/subscription.ro';
 
 @Entity('subscription')
 export class SubscriptionEntity {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+    @Generated()
     id: string;
 
     @OneToOne(

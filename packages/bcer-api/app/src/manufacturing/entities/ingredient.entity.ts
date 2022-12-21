@@ -1,8 +1,9 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   ManyToMany,
+  Generated
 } from 'typeorm';
 
 import { ManufacturingEntity } from 'src/manufacturing/entities/manufacturing.entity';
@@ -10,7 +11,8 @@ import { IngredientRO } from 'src/manufacturing/ro/ingredient.ro';
 
 @Entity('ingredient')
 export class IngredientEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column('varchar')

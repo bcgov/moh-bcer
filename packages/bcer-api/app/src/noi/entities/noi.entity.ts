@@ -1,12 +1,13 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
   ManyToOne,
   JoinColumn,
   Column,
+  Generated,
 } from 'typeorm';
 
 import { NoiRO } from 'src/noi/ro/noi.ro';
@@ -18,7 +19,8 @@ import { CronConfig } from 'src/cron/config/cron.config';
 
 @Entity('noi')
 export class NoiEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @OneToOne(() => LocationEntity, (location: LocationEntity) => location.noi)

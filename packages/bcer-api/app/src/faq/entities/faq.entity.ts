@@ -3,18 +3,16 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Column,
-  CreateDateColumn,
-  DeleteDateColumn,
   Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  PrimaryColumn,
+  Generated
 } from 'typeorm';
 import { FaqRO } from '../ro/faq.ro';
 
 @Entity('faq')
 export class FaqEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({default:() =>'gen_random_uuid()', type:'uuid'})
+  @Generated()
   id: string;
 
   @Column({
