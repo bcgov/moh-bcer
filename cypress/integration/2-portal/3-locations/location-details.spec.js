@@ -34,7 +34,7 @@ describe("Tests the location details page", () => {
   })
 
   it("Click and Close the Close Location Dialog box", () => {
-    cy.contains("Business Location Status");
+    cy.contains("Location Status");
     cy.contains("Open");
     cy.contains("Close").click();
     insideDialog(() => {
@@ -44,7 +44,7 @@ describe("Tests the location details page", () => {
   })
 
   it("Close a location", () => {
-    cy.contains("Business Location Status");
+    cy.contains("Location Status");
     cy.contains("Open");
     cy.contains("Close").click();
     insideDialog(() => {
@@ -58,7 +58,7 @@ describe("Tests the location details page", () => {
   it("Reactivate and validate location re-activation", () => {   
     cy.exec('npm run update:LocationCloseStatus').its('code').should('eq', 0);    
     cy.wait(1000);
-    cy.contains("Business Location Status");
+    cy.contains("Location Status");
     cy.contains("Open");
     cy.contains("Close");
   })
