@@ -365,9 +365,10 @@ export class LocationService {
 
     let manufacturingReportHeader = ['Ingredient Name', 'Scientific Name', 'Manufacturer Name', 'Manufacturer Address', 'Manufacturer Phone',' Manufacturer Email']
     
+    let index = 1;
 
     locations.map(location => {
-      const fileName = `${location.business.businessName} - ${location.addressLine1}`;
+      const fileName = `${index} - ${location.business.businessName} - ${location.addressLine1} `;
       const workBook = XLSX.utils.book_new();  
 
       if (location.noi.created_at) {
@@ -394,7 +395,7 @@ export class LocationService {
       if (location.manufactures?.length) {
         let manufacturingReport = [manufacturingReportHeader];
         location.manufactures.map((report) => {
-          report.ingredients.map((ingredient) => {
+          report && report.ingredients && report.ingredients.map((ingredient) => {
             manufacturingReport.push([ingredient.name, ingredient.scientificName, ingredient.manufacturerName, ingredient.manufacturerAddress, ingredient.manufacturerPhone, ingredient.manufacturerEmail])
           });          
         });
@@ -404,6 +405,7 @@ export class LocationService {
 
       const workBookBuffer = XLSX.write(workBook, { bookType: 'xlsx', type: 'array' });      
       zip.file(`${fileName}.xlsx`, workBookBuffer);
+      index++;
     })
     
     return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
