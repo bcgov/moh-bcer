@@ -429,7 +429,7 @@ function LocationsContent() {
                               </Grid>
                             </Hidden>}
                             <Grid item xs={12} md={4}>
-                                <Typography variant="body2">Location Status</Typography>
+                                <Typography variant="body2">Status</Typography>
                                 <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
                             </Grid>
                             <Grid item xs={12} md={4}>
