@@ -33,19 +33,21 @@ describe("Tests the location details page", () => {
     cy.contains("0 sales reports submitted");
   })
 
-  it("Click and Close the Close Location Dialog box", () => {
-    cy.contains("Business Location Status");
-    cy.contains("Open");
+  it("Click and Close the `Close Location` Dialog box", () => {
+    //has transfer and close button
+    cy.contains("button", "Transfer");
+    cy.contains("button", "Close");
     cy.contains("Close").click();
     insideDialog(() => {
       clickButton("Cancel");
-    });
-    cy.contains("Open");
+    });    
+    cy.contains("button", "Transfer");
+    cy.contains("button", "Close");
   })
 
   it("Close a location", () => {
-    cy.contains("Business Location Status");
-    cy.contains("Open");
+    cy.contains("button", "Transfer");
+    cy.contains("button", "Close");
     cy.contains("Close").click();
     insideDialog(() => {
       UserAction.clickFirstCheckBox("confirmed");
@@ -53,13 +55,15 @@ describe("Tests the location details page", () => {
     });    
     cy.contains("Closed");
     cy.contains("Closed At");
+    cy.contains("button", "Transfer").should('not.exist')
+    cy.contains("button", "Close").should('not.exist')
   });
 
   it("Reactivate and validate location re-activation", () => {   
     cy.exec('npm run update:LocationCloseStatus').its('code').should('eq', 0);    
     cy.wait(1000);
-    cy.contains("Business Location Status");
     cy.contains("Open");
-    cy.contains("Close");
+    cy.contains("button", "Transfer");
+    cy.contains("button", "Close");
   })
 });

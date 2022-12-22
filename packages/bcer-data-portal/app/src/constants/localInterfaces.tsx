@@ -22,6 +22,7 @@ export interface Business {
   phone: string;
   underage: string;
   ha: string;
+  status: string;
 }
 
 export interface KeycloakComponentProps {
