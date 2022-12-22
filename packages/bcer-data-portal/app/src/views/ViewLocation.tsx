@@ -7,14 +7,16 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { LocationConfig, UserRO } from '@/constants/localInterfaces';
+import { Business, LocationConfig, UserRO } from '@/constants/localInterfaces';
 import { 
   StyledButton,
   LocationTypeLabels, 
   StyledRadioGroup,
   StyledConfirmDialog, 
   LocationType,
-  StyledConfirmDateDialog
+  StyledConfirmDateDialog,
+  StyledDialog,
+  StyledAutocomplete
 } from 'vaping-regulation-shared-components';
 import { ConfigContext } from '@/contexts/Config';
 import LocationViewMap from './Map/LocationViewMap';
@@ -207,6 +209,8 @@ function LocationsContent() {
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState<boolean>();
   const [isConfirmCloseDialogOpen, setConfirmCloseDialogOpen] = useState<boolean>();
+  const [isConfirmTransferDialogOpen, setConfirmTransferDialogOpen] = useState<boolean>();
+  const [selectedBusiness, setSelectedBusiness] = useState<string>();
   const [currentContent, setCurrentContent] = useState<string>('locationStatus');
   const { id } = useParams<{id: string}>();
   const { config: authConfig } = useContext(ConfigContext);
@@ -237,6 +241,18 @@ function LocationsContent() {
     '/data/location/config'
   );
 
+  const [{ data: businesses, loading: businessLoading, error: businessError }, getBusinesses] = useAxiosGet<Business[]>('/data/business', {
+    manual: true,
+  });
+
+  const [{ response: completeTransferResponse, loading: completingTransfer, error: completingTransferError }, transferLocation] = useAxiosPatch(`/data/location/transfer/${id}`, { manual: true });
+
+  const completeLocationTransfer = async () => {
+    await transferLocation({
+      url: `/data/location/transfer/${id}?businessId=${selectedBusiness}`,
+    }); 
+  }
+
   let options: any = {
     root: null,
     rootMargin: "0px",
@@ -257,15 +273,22 @@ function LocationsContent() {
 
   useEffect(() => {
     if(closeResponse) {
-      setConfirmCloseDialogOpen(false);
+      if (isConfirmCloseDialogOpen) setConfirmCloseDialogOpen(false);
       get();
     }
   }, [closeResponse])
 
+  useEffect(() => {    
+    if (completeTransferResponse && completeTransferResponse.status == 200) {
+      if (isConfirmTransferDialogOpen) setConfirmTransferDialogOpen(false);
+      get();          
+    }
+  }, [completeTransferResponse])
+
   useEffect(() => {
-    showNetworkErrorMessage(deleteError ?? closeError);    
-    isConfirmCloseDialogOpen ?? setConfirmCloseDialogOpen(false);
-  }, [deleteError, closeError])
+    showNetworkErrorMessage(deleteError ?? closeError ?? completingTransferError);    
+    if (isConfirmCloseDialogOpen) setConfirmCloseDialogOpen(false); 
+  }, [deleteError, closeError, completingTransferError])
 
   useEffect(() => {
     showNetworkErrorMessage(error)
@@ -300,6 +323,12 @@ function LocationsContent() {
       options
     ]
   )
+
+  useEffect(() => {
+    if (isConfirmTransferDialogOpen) {
+      getBusinesses();
+    }
+  }, [isConfirmTransferDialogOpen])
 
   const handleTocSelection = (field: string) => {
     const element = document.getElementById(field)
@@ -380,17 +409,30 @@ function LocationsContent() {
                       <Grid item xs={12} id="locationStatus" ref={locationStatusRef} >
                         <Typography className={classes.cellTitle}>Location Status</Typography>
                         <Paper className={classes.box} style={{ display: 'block'}}>
-                          <Hidden smUp>
+                          {/* <Hidden smUp>
                           {
                             authConfig.permissions.SEND_TEXT_MESSAGES &&
                             <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)} style={{float: 'right', minWidth: 50, padding: 6, marginTop: -8}}>Permanently Delete</StyledButton>}
-                          </Hidden>
-                          <Grid container>
-                            <Grid item xs={6} md={4}>
-                                <Typography variant="body2">Business Location Status</Typography>
+                          </Hidden> */}
+                          <Grid container spacing={2}>
+                          {!data.closedAt &&
+                            <Hidden smUp>
+                              <Grid item xs={6}> 
+                                  <StyledButton variant="contained" onClick={() => setConfirmTransferDialogOpen(true)} style={{minWidth: 100, fontWeight: 600}}>
+                                    <ExitToAppIcon />&nbsp;&nbsp; Transfer 
+                                  </StyledButton>                                  
+                              </Grid>
+                              <Grid item xs={6}>  
+                                  <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 100, backgroundColor: '#FF534A', fontWeight: 600}}>
+                                    <HighlightOffIcon />&nbsp;&nbsp; Close  
+                                  </StyledButton>
+                              </Grid>
+                            </Hidden>}
+                            <Grid item xs={12} md={4}>
+                                <Typography variant="body2">Location Status</Typography>
                                 <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
                             </Grid>
-                            <Grid item xs={6} md={4}>
+                            <Grid item xs={12} md={4}>
                               {data.closedAt && 
                               <>
                                 <Typography variant="body2">Closed At</Typography>
@@ -400,9 +442,9 @@ function LocationsContent() {
                             {!data.closedAt &&
                             <Hidden smDown>
                               <Grid item xs={6} md={4} style={{display: 'flex', gap: 12, justifyContent: 'end'}}> 
-                                {/* <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 150, fontWeight: 600}}>
+                                <StyledButton variant="contained" onClick={() => setConfirmTransferDialogOpen(true)} style={{minWidth: 150, fontWeight: 600}}>
                                   <ExitToAppIcon />&nbsp;&nbsp; Transfer 
-                                </StyledButton> */}
+                                </StyledButton>
 
                                 <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 150, backgroundColor: '#FF534A', fontWeight: 600}}>
                                   <HighlightOffIcon />&nbsp;&nbsp; Close  
@@ -617,6 +659,40 @@ function LocationsContent() {
                     maxDate={LocationUtil.getLocationCloseWindow().max}
                     minDate={LocationUtil.getLocationCloseWindow().min}
                   />                
+              }
+              {
+                isConfirmTransferDialogOpen 
+                &&
+                <StyledDialog
+                  open={isConfirmTransferDialogOpen}
+                  cancelButtonText="Cancel"
+                  acceptButtonText="Transfer"
+                  acceptHandler={() => completeLocationTransfer()}
+                  cancelHandler={() => setConfirmTransferDialogOpen(false)}
+                  title="Transfer Location"
+                  acceptDisabled={businessLoading || !selectedBusiness || completingTransfer}
+                >
+                  <Typography>
+                    Please select the business you wish to transfer this location to:
+                  </Typography>
+                  <br/>
+                  {businessLoading || completingTransfer ? 
+                  <CircularProgress />
+                  :
+                  <StyledAutocomplete                  
+                    placeholder="Start typing or select..."
+                    options= {
+                      businesses?.filter(
+                        (b) => b.id != id 
+                                && (b.businessName !== "" || b.legalName !== "") //&& b.status === 'active'
+                      ) || []
+                    }
+                    getOptionLabel={(b: Business) => b.businessName || b.legalName}
+                    onChange={(e: any, newValue: Business) => {
+                      setSelectedBusiness(newValue.id);
+                    }}
+                  />}
+                </StyledDialog>
               }
             </>
         }

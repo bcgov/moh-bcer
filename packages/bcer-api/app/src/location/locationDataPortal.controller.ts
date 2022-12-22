@@ -399,4 +399,36 @@ export class LocationDataPortalController {
     // close location
     await this.service.closeLocation([id], closedTime);
   }
+
+    /**
+   * 
+   * Transfer a location to another business
+  */
+    @ApiOperation({ summary: 'Transfer Location' })
+    @ApiResponse({ status: HttpStatus.OK })
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(AuthDataGuard)
+    @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+    @AllowAnyRole()
+    @Patch('/transfer/:locationId')
+    async transferLocation(
+      @Param('locationId') id: string,
+      @Query('businessId') businessId: string
+    ): Promise<void> {
+      if(!id)
+        throw new ForbiddenException("location ID is required");
+
+      if(!businessId)
+        throw new ForbiddenException("New Business ID is required");
+
+      const location = await this.service.getLocation(id);    
+      const business = await this.businessService.getBusinessById(businessId); 
+
+      if (!location || !business) throw NotFoundException;
+
+      // if (business.status !== 'active')
+      //   throw new ForbiddenException('Cannot transfer location to a closed business')
+      
+      await this.service.transferLocation(id, businessId);
+    }
 }

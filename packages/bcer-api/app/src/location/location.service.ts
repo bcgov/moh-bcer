@@ -593,9 +593,9 @@ export class LocationService {
    * This is a soft-delete by manipulating the location status.
    * @param locationIds 
    */
-     async deleteLocation(locationIds: string[]){
-      const result = await this.locationRepository.softDelete({id: In(locationIds)});
-    }
+  async deleteLocation(locationIds: string[]){
+    const result = await this.locationRepository.softDelete({id: In(locationIds)});
+  }
 
   /**
  * Delete locations with ids,
@@ -826,4 +826,18 @@ export class LocationService {
     const location = await qb.getOne();
     return new SingleLocationReportStatus().getStatus(location);
   }
+
+    /**
+   * transfer a location to another business
+   * @param locationId 
+   * @returns 
+   */
+    async transferLocation(locationId: string, businessId: string): Promise<UpdateResult> {
+      return await this.locationRepository.update(
+        { id: locationId},
+        { 
+          businessId: businessId,
+        },
+      );
+    }
 }
