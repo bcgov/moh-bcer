@@ -106,6 +106,11 @@ export class UserService {
     await this.update({id: userId, businessId});
   }
 
+  async unassignBusiness(businessId: string) {
+    const user = await this.userRepository.findOne({ businessId });
+    return await this.update({id: user.id, businessId: null});
+  }
+
   getConfig(){
     return new UserConfigRO();
   }

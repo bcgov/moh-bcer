@@ -6,7 +6,8 @@ import {
   UpdateDateColumn,
   OneToMany,
   OneToOne,
-  Generated
+  Generated,
+  ManyToOne
 } from 'typeorm';
 
 import { BusinessRO } from 'src/business/ro/business.ro';
@@ -21,6 +22,7 @@ import { ProductSoldEntity } from 'src/product-sold/entities/product-sold.entity
 import { SubscriptionEntity } from 'src/notification/entities/subscription.entity';
 import { BusinessReportingStatusRO } from '../ro/businessReportingStatus.ro';
 import { NoteEntity } from 'src/note/entities/note.entity';
+import { BusinessStatus } from '../enums/business-status.enum';
 
 @Entity('business')
 export class BusinessEntity {
@@ -92,6 +94,24 @@ export class BusinessEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Column('enum', {
+    enum: BusinessStatus,
+    nullable: false,
+    default: BusinessStatus.Active,
+  })
+  status: BusinessStatus;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+    default: null,
+    name: 'closed_at',
+  })
+  closed_at: Date;
+
+  @ManyToOne(() => UserEntity, (user: UserEntity) => user.business)
+  closed_by: UserEntity;
+
   reportingStatus?: BusinessReportingStatusRO;
 
   complianceStatus?: BusinessReportingStatusRO;
@@ -124,6 +144,7 @@ export class BusinessEntity {
       updated_at: this.updated_at,
       reportingStatus: this.reportingStatus,
       complianceStatus: this.complianceStatus,
+      status: this.status
     };
   }
 }
