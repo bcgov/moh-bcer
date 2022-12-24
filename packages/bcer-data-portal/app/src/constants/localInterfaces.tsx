@@ -1,4 +1,4 @@
-import { UserType, HealthAuthority, HealthAuthorities, ReportStatus } from '@/constants/localEnums';
+import { UserType, HealthAuthority, HealthAuthorities, ReportStatus, BusinessStatus } from '@/constants/localEnums';
 import { BusinessFilter } from '@/hooks/useBusiness';
 import { LocationType } from 'vaping-regulation-shared-components';
 
@@ -302,6 +302,7 @@ export type BusinessRO = {
     province: string;
     users: Array<UserRO>;
     reportingStatus: BusinessReportStatus;
+    status: BusinessStatus;
 }
 
 export type UserRO = {

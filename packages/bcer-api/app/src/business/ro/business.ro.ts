@@ -4,6 +4,7 @@ import { ManufacturingRO } from 'src/manufacturing/ro/manufacturing.ro';
 import { NoiRO } from 'src/noi/ro/noi.ro';
 import { ProductRO } from 'src/products/ro/product.ro';
 import { BusinessReportingStatusRO } from './businessReportingStatus.ro';
+import { BusinessStatus } from '../enums/business-status.enum';
 
 export class BusinessRO {
 
@@ -69,4 +70,7 @@ export class BusinessRO {
 
   @ApiProperty()
   complianceStatus?: BusinessReportingStatusRO;
+
+  @ApiProperty()
+  status: BusinessStatus;
 }

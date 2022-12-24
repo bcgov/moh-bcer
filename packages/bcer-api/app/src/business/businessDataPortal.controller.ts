@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -34,6 +35,8 @@ import { BusinessOverviewDto } from './dto/businessOverview.dto';
 import { SearchDto } from './dto/search.dto';
 import { BusinessRO } from './ro/business.ro';
 import { BusinessReportingStatusRO } from './ro/businessReportingStatus.ro';
+import { LocationStatus } from 'src/location/enums/location-status.enum';
+import { UserService } from 'src/user/user.service';
 
 @ApiBearerAuth()
 @ApiTags('Business')
@@ -47,6 +50,7 @@ export class BusinessDataPortalController {
     private readonly productsService: ProductsService,
     private readonly manufacturingService: ManufacturingService,
     private readonly productSoldService: ProductSoldService,
+    private readonly userService: UserService,
   ) {}
   @ApiOperation({ summary: 'Retrieve all businesses' })
   @HttpCode(HttpStatus.OK)
@@ -171,5 +175,42 @@ export class BusinessDataPortalController {
     }
     const business = await this.businessService.getBusinessById(businessId, includes);
     return business?.toResponseObject();
+  }
+
+  @ApiOperation({ summary: 'Close a business.' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK, type: String })
+  @Roles(ROLES.MOH_ADMIN)
+  @Patch('/close/:businessId')
+  async closeBusiness(
+    @Param('businessId') businessId: string,
+    @Query('closedTime') closedTime: number,
+    @Request() req: RequestWithUser) {    
+    const user = await this.userService.findByBCeID(req.user.bceidGuid);
+    if (!user) {
+      throw new ForbiddenException('User was not found in database');
+    }
+
+    const business = await this.businessService.getBusinessById(businessId);
+    if (!business)
+      throw new NotFoundException(
+        null,
+        'Close Failed: Business Not Found',
+      );
+    
+    const businessLocations = await this.locationService.getBusinessLocations(businessId);
+
+    const hasActiveLocation = businessLocations.some(location => location.status === LocationStatus.Active)
+
+    if (hasActiveLocation) {
+      throw new ForbiddenException('Cannot close a business with any active locations.')
+    }
+
+    try {
+      await this.businessService.closeBusiness(businessId, closedTime, user);   
+      await this.userService.unassignBusiness(businessId)
+    } catch (err) {
+      throw err;
+    }
   }
 }

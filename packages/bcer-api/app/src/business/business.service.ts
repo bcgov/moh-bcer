@@ -10,6 +10,9 @@ import { BusinessReportType } from './enums/businessReportType.enum';
 import { HealthAuthority } from './enums/health-authority.enum';
 import { SearchDto } from './dto/search.dto';
 import { BusinessSearchCategory } from './enums/businessSearchCategory.enum';
+import { BusinessStatus } from './enums/business-status.enum';
+import moment from 'moment';
+import { UserEntity } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class BusinessService {
@@ -181,4 +184,15 @@ export class BusinessService {
     return businesses;
   }
   
+  async closeBusiness(businessId: string, closedTime: number, user: UserEntity) {
+    const result = await this.businessRepository.update(
+      { id: businessId },
+      { 
+        status: BusinessStatus.Closed,
+        closed_at: closedTime ? moment(closedTime).toDate(): moment().toDate(),
+        closed_by: user
+      },
+    );
+    return result;
+  }
 }

@@ -40,7 +40,7 @@ import { LocationConfig } from './config/dataLocation.config';
 import { DirectionDto } from './dto/direction.dto';
 import { DownloadSaleDTO } from 'src/sales/dto/download-sale.dto';
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
-import { SalesReportEntity } from 'src/sales/entities/sales.entity';
+import { BusinessStatus } from 'src/business/enums/business-status.enum';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -126,12 +126,8 @@ export class LocationDataPortalController {
   ): Promise<LocationSearchRO> {
     const [locations, count] = await this.service.getCommonLocations(query, true);
     
-    let salesReport: Record<string, SalesReportEntity[]>;
+    const salesReport = await this.salesReportService.getLocationsWithSalesReports(locations.map((location) => { if(location.salesCount > 0) return location.id } ))
     
-    if (query.sales_report) {
-      salesReport = await this.salesReportService.getLocationsWithSalesReports(locations.map((location) => { if(location.salesCount > 0) return location.id } ))
-    }
-
     const locationsRO = locations.map((l) => {
       l.sales = salesReport ? salesReport[l.id] : []; 
       l.reportStatus = new SingleLocationReportStatus().getStatus(l);
@@ -426,8 +422,8 @@ export class LocationDataPortalController {
 
       if (!location || !business) throw NotFoundException;
 
-      // if (business.status !== 'active')
-      //   throw new ForbiddenException('Cannot transfer location to a closed business')
+      if (business.status !== BusinessStatus.Active)
+        throw new ForbiddenException('Cannot transfer location to a closed business')
       
       await this.service.transferLocation(id, businessId);
     }

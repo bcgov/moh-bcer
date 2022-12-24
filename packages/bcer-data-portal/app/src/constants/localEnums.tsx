@@ -152,3 +152,8 @@ export enum LocationClosingWindow {
   Max = '09-30',
   Min = '10-01'
 }
+
+export enum BusinessStatus {
+  Active = 'active',
+  Closed = 'closed'
+}
