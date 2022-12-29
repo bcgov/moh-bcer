@@ -28,6 +28,7 @@ import { SingleLocationComplianceStatus } from './helper/singleLocationComplianc
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
 import { LocationContactDTO } from './dto/locationContact.dto';
 import { LocationType } from './enums/location_type.enum';
+import { ConfigDates } from 'src/utils/configDates';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -134,12 +135,15 @@ export class LocationService {
         )
       `, { search: `%${query.search.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}%` });
     }
+
     if (query.authority) {
       qb.andWhere(`location.health_authority = :authority`, { authority: query.authority });
     }
+
     if (query.location_type) {
       qb.andWhere(`location.location_type = :location_type`, { location_type: query.location_type });
     }
+
     if (query.underage) {
       const underage = query.underage.toLowerCase();
       if (underage === 'yes' || underage === 'no') {
@@ -195,18 +199,19 @@ export class LocationService {
     }
 
     if (query.sales_report) {
-      const {startReport, endReport} = getSalesReportingPeriod();
+      const currentReportingStart = ConfigDates.getCurrentReportingStartDate();
+      const previousReportingStart = moment(currentReportingStart).subtract(1, 'year');
       
       if (query.sales_report === "NotRequired") { //no noi, or noi created after this period or closed before last report(crren)
         qb.andWhere(`location.noiId IS NULL OR (noi.created_at > :startReport) OR (location.status = 'closed' AND location.closed_at < :previousReportingStart)` , {
-          startReport: startReport.toDate(), 
-          previousReportingStart: endReport.subtract(1, 'year').toDate()
+          startReport: currentReportingStart.toDate(), 
+          previousReportingStart: previousReportingStart.toDate()
         })
       } else if (query.sales_report === "NotSubmitted") { //valid noi, but no sales count for current year
         qb.andWhere(`location.noiId IS NOT NULL`)
-        .andWhere('noi.created_at NOT BETWEEN :start AND :end', {start: startReport.toDate(), end: endReport.toDate()}) 
+        .andWhere('noi.created_at < :start', {start: currentReportingStart.toDate()}) 
         .andWhere(`(location.status = 'active' OR location.closed_at > :previousReportingStart)`, {
-          previousReportingStart: endReport.subtract(1, 'year').toDate()
+          previousReportingStart: previousReportingStart.toDate()
         })  
         .andWhere(qb => {
           const subQuery = qb.subQuery()
@@ -216,13 +221,12 @@ export class LocationService {
           .groupBy('sr.locationId')
           .getQuery();
           return `location.id NOT IN ${subQuery}`
-        })
-              
+        })              
       } else { 
         qb.andWhere(`location.noiId IS NOT NULL`)
-        .andWhere('noi.created_at NOT BETWEEN :start AND :end', {start: startReport.toDate(), end: endReport.toDate()}) 
+        .andWhere('noi.created_at < :start AND :end', {start: currentReportingStart.toDate()}) 
         .andWhere(`(location.status = 'active' OR location.closed_at > :previousReportingStart)`, {
-          previousReportingStart: endReport.subtract(1, 'year').toDate()
+          previousReportingStart: previousReportingStart.toDate()
         }) 
         .andWhere(qb => {
           const subQuery = qb.subQuery()
@@ -248,7 +252,10 @@ export class LocationService {
     // Counting the number of submitted reports
     if(addCount) {            
       ['products', 'manufactures', 'sales'].forEach((colToCount) => {
-        qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
+        if (colToCount === "sales") 
+          qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`, 'sales', (qb) => qb.where(`sales.year = :year`, {year: getSalesReportYear().year}));
+        else 
+          qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
       })
     }
 
@@ -820,6 +827,9 @@ export class LocationService {
      .leftJoinAndSelect('location.noi', 'noi');
 
     ['products', 'manufactures', 'sales'].forEach(colToCount => {
+      if (colToCount === "sales") 
+        qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`, 'sales', (qb) => qb.where(`sales.year = :year`, {year: getSalesReportYear().year}));
+      else 
       qb.loadRelationCountAndMap(`location.${colToCount}Count`, `location.${colToCount}`);
     })
 
@@ -829,17 +839,17 @@ export class LocationService {
     return new SingleLocationReportStatus().getStatus(location);
   }
 
-    /**
-   * transfer a location to another business
-   * @param locationId 
-   * @returns 
-   */
-    async transferLocation(locationId: string, businessId: string): Promise<UpdateResult> {
-      return await this.locationRepository.update(
-        { id: locationId},
-        { 
-          businessId: businessId,
-        },
-      );
-    }
+  /**
+ * transfer a location to another business
+ * @param locationId 
+ * @returns 
+ */
+  async transferLocation(locationId: string, businessId: string): Promise<UpdateResult> {
+    return await this.locationRepository.update(
+      { id: locationId},
+      { 
+        businessId: businessId,
+      },
+    );
+  }
 }

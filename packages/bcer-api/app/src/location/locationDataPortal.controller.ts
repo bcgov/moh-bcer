@@ -125,11 +125,8 @@ export class LocationDataPortalController {
     @Query() query: LocationSearchDTO,
   ): Promise<LocationSearchRO> {
     const [locations, count] = await this.service.getCommonLocations(query, true);
-    
-    const salesReport = await this.salesReportService.getLocationsWithSalesReports(locations.map((location) => { if(location.salesCount > 0) return location.id } ))
-    
+
     const locationsRO = locations.map((l) => {
-      l.sales = salesReport ? salesReport[l.id] : []; 
       l.reportStatus = new SingleLocationReportStatus().getStatus(l);
       return l.toResponseObject();
     })
