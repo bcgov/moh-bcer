@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { getSalesReportYear } from 'src/common/common.utils';
 import { CronConfig } from 'src/cron/config/cron.config';
 import { ConfigDates } from 'src/utils/configDates';
 import { LocationEntity } from '../entities/location.entity';
@@ -90,8 +89,7 @@ export class SingleLocationReportStatus {
       !l.noi
     ) {
       result = ReportStatus.NotRequired;
-    } else if (!l.salesCount || 
-              (l.salesCount > 0 && l.sales && !l.sales.some(report => report.year ===  getSalesReportYear().year.toString()))) {
+    } else if (!l.salesCount) {
       result = ReportStatus.Missing;
     }
     return result;
@@ -120,10 +118,11 @@ export class SingleLocationReportStatus {
    * @returns `boolean`
    */
   protected closedBeforeLastReportingYear(l: LocationEntity): boolean {    
+    const currentReportingStart = ConfigDates.getCurrentReportingStartDate();
     return (
       l.status === LocationStatus.Closed &&
       moment(l.closedAt).isBefore(
-        this.currentReportingStart.subtract(1, 'year'),
+        currentReportingStart.subtract(1, 'year'),
       )
     );
   }
@@ -134,8 +133,10 @@ export class SingleLocationReportStatus {
    * @returns `boolean`
    */
   protected noiCreatedAfterThisReportingStart(l: LocationEntity): boolean {
+    const currentReportingStart = ConfigDates.getCurrentReportingStartDate();
+
     return (
-      l.noi && moment(l.noi.created_at).isAfter(this.currentReportingStart)
+      l.noi && moment(l.noi.created_at).isAfter(currentReportingStart)
     );
   }
 
