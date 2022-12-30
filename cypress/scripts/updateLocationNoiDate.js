@@ -17,10 +17,10 @@ const client = new Client({
                 
   const newCreationDateYear = moment(newCreationDate).year();
   const newCreationDateMonth = moment(newCreationDate).month();
-  const newCreationDateDay = moment(newCreationDate).date();
+  
   let expiryYear;
 	
-  if ([10, 11, 12].includes(newCreationDateMonth) || (newCreationDateMonth === 1 && newCreationDateDay <= 15)) {
+  if ([10, 11, 12].includes(newCreationDateMonth)) {
     expiryYear = newCreationDateYear + 2;
   }  else {
     expiryYear = newCreationDateYear + 1;
