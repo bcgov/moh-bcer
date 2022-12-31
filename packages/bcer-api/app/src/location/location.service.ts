@@ -224,7 +224,7 @@ export class LocationService {
         })              
       } else { 
         qb.andWhere(`location.noiId IS NOT NULL`)
-        .andWhere('noi.created_at < :start AND :end', {start: currentReportingStart.toDate()}) 
+        .andWhere('noi.created_at < :start', {start: currentReportingStart.toDate()}) 
         .andWhere(`(location.status = 'active' OR location.closed_at > :previousReportingStart)`, {
           previousReportingStart: previousReportingStart.toDate()
         }) 
