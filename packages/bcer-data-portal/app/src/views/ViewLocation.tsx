@@ -562,13 +562,13 @@ function LocationsContent() {
                             </Grid>
                             <Grid item md={4} xs={12}>
                               <Box>
-                                <Typography variant="body2">NOI Renewal Date</Typography>
+                                <Typography variant="body2">Date of Last NOI Renewal</Typography>
                                 <Typography className={classes.rowContent}>{data.noi ? data.noi.renewed_at ? moment(data.noi.renewed_at).format('YYYY-MM-DD') : 'Not Renewed' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
                             <Grid item md={4} xs={12}>
                               <Box>
-                                <Typography variant="body2">NOI Expiry Date</Typography>
+                                <Typography variant="body2">Next NOI Renewal Date</Typography>
                                 <Typography className={classes.rowContent}>{data.noi ? data.noi.expiry_date ? moment(data.noi.expiry_date).format('YYYY-MM-DD') : 'N/A' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
