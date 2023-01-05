@@ -1,10 +1,10 @@
 import moment from 'moment';
-import { CronConfig } from 'src/cron/config/cron.config';
 import { ConfigDates } from 'src/utils/configDates';
 import { LocationEntity } from '../entities/location.entity';
 import { LocationStatus } from '../enums/location-status.enum';
 import { ReportStatus } from '../enums/report-status.enum';
 import { LocationReportingStatusRO } from '../ro/locationReportingStatus.ro';
+import { getSalesReportingPeriod } from 'src/common/common.utils';
 
 export class SingleLocationReportStatus {
   protected readonly currentReportingStart =
@@ -37,7 +37,7 @@ export class SingleLocationReportStatus {
     // }
     if (l.status === 'closed') { //this removes the NotRequired implementation
       result = ReportStatus.Reported
-    } else if (l.noi && this.noiPendingRenewal(l)) {
+    } else if (this.isReportingPeriod() && l.noi && this.noiExpiringReportingEnd(l)) {
       result = ReportStatus.PendingReview;
     } else if (!l.noi || this.noiNotRenewed(l)) {
       result = ReportStatus.Missing;
@@ -101,12 +101,10 @@ export class SingleLocationReportStatus {
    * @param l `LocationEntity`
    * @returns `boolean`
    */
-  protected noiNotRenewed(l: LocationEntity): boolean {    
+  protected noiNotRenewed(l: LocationEntity): boolean {   
     return (
-      l.noi &&
-      moment(l.noi.expiry_date).isBefore(
-        CronConfig.getNoiExpiryDate(),
-      ) 
+      l.noi 
+      && moment().isAfter(l.noi.expiry_date)
       && l.status === LocationStatus.Active
     );
   }
@@ -141,15 +139,25 @@ export class SingleLocationReportStatus {
   }
 
   /**
-   * finds out if Noi is between Oct 1st and Jan 15th
+   * finds out if Noi expiry is between Oct 1st and Jan 15th
    *
    * @param l `LocationEntity`
    * @returns `boolean`
   */
-  protected noiPendingRenewal(l: LocationEntity): boolean {   
+  protected noiExpiringReportingEnd(l: LocationEntity): boolean {   
+    const { endReport } = getSalesReportingPeriod();
+
+    const expiryDateYear = moment(l.noi.expiry_date).year();
+    const reportEndYear = endReport.year();
+
     return (
-      moment(l.noi.expiry_date).isSame(CronConfig.getNoiValidTill())
+      expiryDateYear === reportEndYear
       && l.status === LocationStatus.Active
     )
+  }
+
+  protected isReportingPeriod(): boolean {
+    const { startReport, endReport } = getSalesReportingPeriod();
+    return moment().isBetween(startReport, endReport);
   }
 }

@@ -92,6 +92,7 @@ export class LocationService {
         qb.leftJoinAndSelect(`location.${relation}`, relation);
       });
     }
+    
     if (!relations.includes('noi')) {
       qb.leftJoinAndSelect('location.noi', 'noi');
     } else if (!relations.includes('business') && query.orderBy === 'Business Legal Name') {
@@ -153,29 +154,33 @@ export class LocationService {
       }
     }
 
-    const validTillDate = CronConfig.getNoiValidTill().toDate();
-    const noiExpiryDate = CronConfig.getNoiExpiryDate().toDate();
-
     if (query.noi_report) {
-      if (query.noi_report === "Submitted") { //valid noi
-        qb.andWhere(`(location.noiId IS NOT NULL AND noi.expiry_date > :validTillDate) OR (location.status = :status)`, { 
-          validTillDate: validTillDate,
-          status: LocationStatus.Closed
-        })   
+      const { startReport, endReport } = getSalesReportingPeriod();
+      const isReportingPeriod = moment().isBetween(startReport, endReport);
+
+      if (query.noi_report === "Submitted") {
+        if (isReportingPeriod) {
+          qb.andWhere(`(location.noiId IS NOT NULL AND noi.expiry_date > :endReport) OR (location.status = :status)`, { 
+            endReport: endReport.toDate(),
+            status: LocationStatus.Closed
+          })  
+        } else {
+          qb.andWhere(`(location.noiId IS NOT NULL AND noi.expiry_date > :today) OR (location.status = :status)`, { 
+            today: moment().toDate(),
+            status: LocationStatus.Closed
+          }) 
+        }  
       } else if (query.noi_report === "PendingReview") {
-        qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND noi.expiry_date = :validTillDate`, { 
-          expiryDate: noiExpiryDate,
-          validTillDate: validTillDate          
+        qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND noi.expiry_date between :start AND :end`, { 
+          start: endReport.subtract(2, 'day').toDate(),       
+          end: endReport.add(1, 'day').toDate()
         })   
       } else {         
-        qb.andWhere("location.status = :status", {
-          status: LocationStatus.Active
-        })
-        qb.andWhere("((location.noiId IS NOT NULL AND noi.expiry_date < :expiryDate) OR (location.noiId IS NULL))", {
-          expiryDate: noiExpiryDate
+        qb.andWhere("location.status = :status AND ((location.noiId IS NULL) OR (location.noiId IS NOT NULL AND noi.expiry_date < :today))", {
+          status: LocationStatus.Active,
+          today: moment().toDate()
         })
       }
-      
     }
 
     if (query.product_report) {  
