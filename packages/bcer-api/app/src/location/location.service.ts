@@ -271,6 +271,8 @@ export class LocationService {
     if (!query.all) 
       qb.limit(query.numPerPage);
 
+    console.log(qb.getQueryAndParameters())
+
     return await qb.getManyAndCount();
   }
 
