@@ -13,7 +13,8 @@ import {
   Link,
   TextField,
   Dialog,
-  LinearProgress
+  LinearProgress,
+  Divider
 } from '@material-ui/core';
 
 import { useHistory } from 'react-router-dom';
@@ -225,6 +226,11 @@ const useStyles = makeStyles({
     marginLeft: '9px',
     minWidth: '56px',
     height: '19px',
+  },
+  clearFilterLink: {
+    color: 'red',
+    textDecoration: 'underline',
+    fontWeight: 'bold'
   }
 });
 
@@ -508,6 +514,10 @@ export default function Locations() {
     return <TextField {...props} disabled={true} />;
   };
 
+  const clearAllFilter = () => {
+    
+  }
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -548,14 +558,33 @@ export default function Locations() {
             <Paper className={classes.box} variant="outlined">
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
-              </Typography>              
-              <Link
-                className={classes.showMoreLink}
-                component="button"
-                variant="body2"
-                onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
-                {showMoreFilters ? "Show less filters" : "Show more filters"}
-              </Link> 
+              </Typography>  
+              <Box
+                alignContent="center"
+                alignItems="center"
+                justifyContent="end"
+                display="flex"
+                minHeight="100%"
+                padding="0 0 12px"
+                style = {{gap: 6}}
+              >
+                <Link
+                  className={classes.showMoreLink}
+                  component="button"
+                  variant="body2"
+                  onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
+                  {showMoreFilters ? "Show less filters" : "Show more filters"}
+                </Link>
+                <Divider orientation="vertical" flexItem />
+                <Link
+                  className={classes.clearFilterLink}
+                  component="button"
+                  variant="body2"
+                  onClick={() => clearAllFilter()}                  >
+                  Clear all filters
+                </Link>  
+              </Box>   
+              
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -684,7 +713,7 @@ export default function Locations() {
                       <p className={classes.date_filter_title}/>
                     </Grid>               
                     </> }
-                    <Grid item md={1} xs={12}>                   
+                    <Grid item md={2} xs={12}>                   
                       <Box
                         alignContent="center"
                         alignItems="center"
@@ -698,7 +727,7 @@ export default function Locations() {
                           type="submit"
                         >
                           Search
-                        </StyledButton>
+                        </StyledButton>                        
                       </Box>
                     </Grid>                   
                   </Grid>                  
