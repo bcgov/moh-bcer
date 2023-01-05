@@ -157,6 +157,9 @@ export class LocationService {
     if (query.noi_report) {
       const { startReport, endReport } = getSalesReportingPeriod();
       const isReportingPeriod = moment().isBetween(startReport, endReport);
+      
+      Logger.log(`Reporting Period: ${startReport} - ${endReport}`)
+      Logger.log(`Is reporting period: ${isReportingPeriod}`)
 
       if (query.noi_report === "Submitted") {
         if (isReportingPeriod) {
@@ -271,7 +274,7 @@ export class LocationService {
     if (!query.all) 
       qb.limit(query.numPerPage);
 
-    console.log(qb.getQueryAndParameters())
+    Logger.log(qb.getQueryAndParameters())
 
     return await qb.getManyAndCount();
   }
