@@ -171,9 +171,11 @@ export class LocationService {
           }) 
         }  
       } else if (query.noi_report === "PendingReview") {
-        qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND noi.expiry_date = :endReport`, { 
-          endReport: endReport.format('YYYY-MM-DD')  
-        })   
+        if (isReportingPeriod) {
+          qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND date_part('year', noi.expiry_date) = :endReportYear`, { 
+            endReportYear: endReport.year() 
+          })  
+        } 
       } else {         
         qb.andWhere("location.status = :status AND ((location.noiId IS NULL) OR (location.noiId IS NOT NULL AND noi.expiry_date < :today))", {
           status: LocationStatus.Active,
