@@ -4,7 +4,7 @@ import { LocationEntity } from '../entities/location.entity';
 import { LocationStatus } from '../enums/location-status.enum';
 import { ReportStatus } from '../enums/report-status.enum';
 import { LocationReportingStatusRO } from '../ro/locationReportingStatus.ro';
-import { getSalesReportingPeriod } from 'src/common/common.utils';
+import { getNoiReportingPeriod } from 'src/common/common.utils';
 
 export class SingleLocationReportStatus {
   protected readonly currentReportingStart =
@@ -37,7 +37,7 @@ export class SingleLocationReportStatus {
     // }
     if (l.status === 'closed') { //this removes the NotRequired implementation
       result = ReportStatus.Reported
-    } else if (this.isReportingPeriod() && l.noi && this.noiExpiringReportingEnd(l)) {
+    } else if (this.isNoiReportingPeriod() && l.noi && this.noiExpiringReportingEnd(l)) {
       result = ReportStatus.PendingReview;
     } else if (!l.noi || this.noiNotRenewed(l)) {
       result = ReportStatus.Missing;
@@ -145,7 +145,7 @@ export class SingleLocationReportStatus {
    * @returns `boolean`
   */
   protected noiExpiringReportingEnd(l: LocationEntity): boolean {   
-    const { endReport } = getSalesReportingPeriod();
+    const { endReport } = getNoiReportingPeriod();
 
     const expiryDateYear = moment(l.noi.expiry_date).year();
     const reportEndYear = endReport.year();
@@ -156,8 +156,8 @@ export class SingleLocationReportStatus {
     )
   }
 
-  protected isReportingPeriod(): boolean {
-    const { startReport, endReport } = getSalesReportingPeriod();
+  protected isNoiReportingPeriod(): boolean {
+    const { startReport, endReport } = getNoiReportingPeriod();
     return moment().isBetween(startReport, endReport);
   }
 }

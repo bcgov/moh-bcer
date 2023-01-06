@@ -12,7 +12,7 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
-import { getSalesReportingPeriod, getSalesReportYear } from 'src/common/common.utils';
+import { getNoiReportingPeriod, getSalesReportingPeriod, getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString, sleep } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { CronConfig } from 'src/cron/config/cron.config';
@@ -155,7 +155,7 @@ export class LocationService {
     }
 
     if (query.noi_report) {
-      const { startReport, endReport } = getSalesReportingPeriod();
+      const { startReport, endReport } = getNoiReportingPeriod();
       const isReportingPeriod = moment().isBetween(startReport, endReport);
       
       Logger.log(`Reporting Period: ${startReport} - ${endReport}`)

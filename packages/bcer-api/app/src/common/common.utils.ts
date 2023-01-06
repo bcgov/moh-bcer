@@ -36,3 +36,17 @@ export const getSalesReportingPeriod = () => {
 
   return { startReport, endReport};
 }
+
+export const getNoiReportingPeriod = () => {
+  const current = moment();
+  const currentYear = current.year();
+  const startReport = moment(`${currentYear - 1}-10-01`);
+  const endReport = moment(`${currentYear}-01-15T23:59:59-07:00`);
+
+  if(current.isAfter(endReport)){
+    startReport.add(1, 'year');
+    endReport.add(1, 'year');
+  }
+
+  return { startReport, endReport};
+}
