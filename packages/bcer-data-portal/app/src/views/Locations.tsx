@@ -515,7 +515,11 @@ export default function Locations() {
   };
 
   const clearAllFilter = () => {
-    
+    console.log("clearAlFIlter")
+    setSearchTerms({
+      page:0,
+      pageSize: 20
+    })
   }
 
   return (
@@ -572,7 +576,7 @@ export default function Locations() {
                   className={classes.showMoreLink}
                   component="button"
                   variant="body2"
-                  onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
+                  onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}>
                   {showMoreFilters ? "Show less filters" : "Show more filters"}
                 </Link>
                 <Divider orientation="vertical" flexItem />
@@ -580,7 +584,7 @@ export default function Locations() {
                   className={classes.clearFilterLink}
                   component="button"
                   variant="body2"
-                  onClick={() => clearAllFilter()}                  >
+                  onClick={() => clearAllFilter()}>
                   Clear all filters
                 </Link>  
               </Box>   
