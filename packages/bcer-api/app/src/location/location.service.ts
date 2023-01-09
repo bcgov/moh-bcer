@@ -12,7 +12,7 @@ import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { QuerySaleDTO } from 'src/sales/dto/query-sale.dto';
-import { getSalesReportingPeriod, getSalesReportYear } from 'src/common/common.utils';
+import { getNoiReportingPeriod, getSalesReportingPeriod, getSalesReportYear } from 'src/common/common.utils';
 import { convertNullToEmptyString, sleep } from 'src/utils/util';
 import { NoiEntity } from 'src/noi/entities/noi.entity';
 import { CronConfig } from 'src/cron/config/cron.config';
@@ -155,8 +155,11 @@ export class LocationService {
     }
 
     if (query.noi_report) {
-      const { startReport, endReport } = getSalesReportingPeriod();
+      const { startReport, endReport } = getNoiReportingPeriod();
       const isReportingPeriod = moment().isBetween(startReport, endReport);
+      
+      Logger.log(`Reporting Period: ${startReport} - ${endReport}`)
+      Logger.log(`Is reporting period: ${isReportingPeriod}`)
 
       if (query.noi_report === "Submitted") {
         if (isReportingPeriod) {
@@ -171,10 +174,11 @@ export class LocationService {
           }) 
         }  
       } else if (query.noi_report === "PendingReview") {
-        qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND noi.expiry_date between :start AND :end`, { 
-          start: endReport.subtract(2, 'day').toDate(),       
-          end: endReport.add(1, 'day').toDate()
-        })   
+        if (isReportingPeriod) {
+          qb.andWhere(`location.status = 'active' AND location.noiId IS NOT NULL AND date_part('year', noi.expiry_date) = :endReportYear`, { 
+            endReportYear: endReport.year() 
+          })  
+        } 
       } else {         
         qb.andWhere("location.status = :status AND ((location.noiId IS NULL) OR (location.noiId IS NOT NULL AND noi.expiry_date < :today))", {
           status: LocationStatus.Active,
@@ -269,6 +273,8 @@ export class LocationService {
 
     if (!query.all) 
       qb.limit(query.numPerPage);
+
+    Logger.log(qb.getQueryAndParameters())
 
     return await qb.getManyAndCount();
   }
