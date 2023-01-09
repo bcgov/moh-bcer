@@ -12,7 +12,6 @@ import {
   Tooltip,
   Link,
   TextField,
-  Dialog,
   LinearProgress,
   Divider
 } from '@material-ui/core';
@@ -45,13 +44,11 @@ import {
   BusinessDashboardUtil,
   ReportStatusLegend,
   reportingStatusOptions,
-  StyledConfirmDateDialog
 } from 'vaping-regulation-shared-components';
 
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { healthAuthorityOptions} from '../constants/arrays'
-import { date } from 'yup';
+import { healthAuthorityOptions} from '../constants/arrays';
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -515,7 +512,6 @@ export default function Locations() {
   };
 
   const clearAllFilter = () => {
-    console.log("clearAlFIlter")
     setSearchTerms({
       page:0,
       pageSize: 20
@@ -563,32 +559,7 @@ export default function Locations() {
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
               </Typography>  
-              <Box
-                alignContent="center"
-                alignItems="center"
-                justifyContent="end"
-                display="flex"
-                minHeight="100%"
-                padding="0 0 12px"
-                style = {{gap: 6}}
-              >
-                <Link
-                  className={classes.showMoreLink}
-                  component="button"
-                  variant="body2"
-                  onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}>
-                  {showMoreFilters ? "Show less filters" : "Show more filters"}
-                </Link>
-                <Divider orientation="vertical" flexItem />
-                <Link
-                  className={classes.clearFilterLink}
-                  component="button"
-                  variant="body2"
-                  onClick={() => clearAllFilter()}>
-                  Clear all filters
-                </Link>  
-              </Box>   
-              
+                 
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -605,7 +576,35 @@ export default function Locations() {
                   todate: searchTerms.todate ? searchTerms.todate : null
                 }}
               >
+                
                 <Form>
+                  <Box
+                    alignContent="center"
+                    alignItems="center"
+                    justifyContent="end"
+                    display="flex"
+                    minHeight="100%"
+                    padding="0 0 12px"
+                    style = {{gap: 6}}
+                  >
+                    <Link
+                      className={classes.showMoreLink}
+                      component="button"
+                      variant="body2"
+                      type="button"
+                      onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}>
+                    {showMoreFilters ? "Show less filters" : "Show more filters"}
+                    </Link>
+                  <Divider orientation="vertical" flexItem />
+                  <Link
+                    className={classes.clearFilterLink}
+                    component="button"
+                    variant="body2"
+                    type="reset"
+                    onClick={() => clearAllFilter()}>
+                    Clear all filters
+                  </Link>  
+                  </Box>   
                   <Grid container spacing={2}>
                     <Grid item md={6} xs={12}>
                       <StyledTextField
@@ -655,7 +654,8 @@ export default function Locations() {
                       />                     
                     </Grid> 
                     
-                    {showMoreFilters && 
+                    {(showMoreFilters || searchTerms.sales_report || searchTerms.todate || searchTerms.fromdate)
+                    && 
                     <>             
                     <Grid item md={3} xs={6}>
                       <StyledSelectField
