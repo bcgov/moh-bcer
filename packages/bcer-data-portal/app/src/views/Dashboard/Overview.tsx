@@ -23,10 +23,9 @@ function Dashboard() {
 
   const {
     businessList,
-    businessError,
     businessLoading,
     onChangeSearch,
-    searchOptions,
+    clearAllFilters
   } = useBusiness();
 
   return (
@@ -38,6 +37,7 @@ function Dashboard() {
           categoryOptions={businessSearchCategoryOptions}
           initialCategory="businessName"
           showHealthAuthority={true}
+          onReset = {clearAllFilters}
         />
         <BusinessTable
           data={businessList}
