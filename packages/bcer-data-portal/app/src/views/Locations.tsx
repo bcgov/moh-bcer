@@ -595,15 +595,15 @@ export default function Locations() {
                       onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}>
                     {showMoreFilters ? "Show less filters" : "Show more filters"}
                     </Link>
-                  <Divider orientation="vertical" flexItem />
-                  <Link
-                    className={classes.clearFilterLink}
-                    component="button"
-                    variant="body2"
-                    type="reset"
-                    onClick={() => clearAllFilter()}>
-                    Clear all filters
-                  </Link>  
+                    <Divider orientation="vertical" flexItem />
+                    <Link
+                      className={classes.clearFilterLink}
+                      component="button"
+                      variant="body2"
+                      type="reset"
+                      onClick={() => clearAllFilter()}>
+                      Clear all filters
+                    </Link>
                   </Box>   
                   <Grid container spacing={2}>
                     <Grid item md={6} xs={12}>

@@ -98,7 +98,7 @@ function useBusiness() {
     businessError,
     onChangeSearch,
     searchOptions,
-    clearAllFilters
+    clearAllFilters 
   });
 }
 
