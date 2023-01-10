@@ -19,6 +19,7 @@ import { useAxiosPost } from './axios';
 import sanitizeHtml from 'sanitize-html';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { useHistory } from 'react-router';
+import moment from 'moment';
 
 // Map layer for Health Authority Boundaries
 const haLayer = createHealthAuthorityLayer();
@@ -370,9 +371,21 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
             shadowSize: [41, 41]
           });
 
-          let hasMissingReport = Object.values(l.reportStatus).includes("missing");
+          var blueIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+            shadowUrl: iconShadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
 
-          if (hasMissingReport)
+          let hasMissingReport = Object.values(l.reportStatus).includes("missing");
+          const isLocationCreatedLessThanThreeMonthAgo = moment().diff(l.created_at, "days") < 90;
+
+          if (isLocationCreatedLessThanThreeMonthAgo) {
+            mkr.setIcon(blueIcon)
+          } else if (hasMissingReport)
             mkr.setIcon(redIcon)
           else 
             mkr.setIcon(greenIcon)
