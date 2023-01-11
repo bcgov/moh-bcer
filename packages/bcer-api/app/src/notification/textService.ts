@@ -36,9 +36,6 @@ export class TextService {
         reference: this.reference,
       },
     );
-    
-    Logger.log(`Status: ${response.status} ${response.status}`)
-    Logger.log(`ConfigData: ${response.config.data}`)
   }
 
   async sendMessage(
