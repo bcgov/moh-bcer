@@ -1,4 +1,4 @@
-import { Box, Grid, Link, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import {
@@ -39,11 +39,6 @@ const useStyles = makeStyles((theme) => ({
       marginTop: -17,
       textAlign: 'center'
     }
-  },
-  clearFilterLink: {
-    color: 'red',
-    textDecoration: 'underline',
-    fontWeight: 'bold'
   }
 }))
 
@@ -55,7 +50,6 @@ export type BusinessSearchProps = {
     label: string;
   }>;
   showHealthAuthority?: boolean;
-  onReset: () => void
 };
 
 function BusinessSearch({
@@ -63,7 +57,6 @@ function BusinessSearch({
   initialCategory,
   categoryOptions,
   showHealthAuthority,
-  onReset
 }: BusinessSearchProps) {  
   const classes = useStyles();
   const {
@@ -80,25 +73,7 @@ function BusinessSearch({
           healthAuthority: showHealthAuthority ? searchOptions.healthAuthority : 'all',
         }}
       >
-        
         <Form>
-          <Box
-            alignContent="center"
-            alignItems="center"
-            justifyContent="end"
-            display="flex"
-            minHeight="100%"
-            padding="0 0 12px">            
-            <Link
-              className={classes.clearFilterLink}
-              component="button"
-              variant="body2"
-              type = "reset"
-              onClick={onReset}
-              >
-              Clear all filters
-            </Link>  
-          </Box> 
           <Grid container spacing={2} className={classes.searchWrap}>            
             <Grid item container spacing={0} xs={12} lg={8} className={classes.search}>
               <Grid item lg={12}>

@@ -83,22 +83,12 @@ function useBusiness() {
     }
   }, [businessError])
   
-  const clearAllFilters = () => {
-    setSearchOptions({
-      search: '',
-      category: 'businessName',
-      healthAuthority: 'all',
-      additionalFilter: 'all',
-    })
-  }
-
   return ({
     businessList,
     businessLoading,
     businessError,
     onChangeSearch,
     searchOptions,
-    clearAllFilters
   });
 }
 

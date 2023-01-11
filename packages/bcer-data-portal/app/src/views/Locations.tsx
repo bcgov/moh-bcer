@@ -13,8 +13,7 @@ import {
   Link,
   TextField,
   Dialog,
-  LinearProgress,
-  Divider
+  LinearProgress
 } from '@material-ui/core';
 
 import { useHistory } from 'react-router-dom';
@@ -226,11 +225,6 @@ const useStyles = makeStyles({
     marginLeft: '9px',
     minWidth: '56px',
     height: '19px',
-  },
-  clearFilterLink: {
-    color: 'red',
-    textDecoration: 'underline',
-    fontWeight: 'bold'
   }
 });
 
@@ -514,13 +508,6 @@ export default function Locations() {
     return <TextField {...props} disabled={true} />;
   };
 
-  const clearAllFilter = () => {
-    setSearchTerms({
-      page:0,
-      pageSize: 20
-    })
-  }
-
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -562,7 +549,13 @@ export default function Locations() {
               <Typography className={classes.boxTitle} variant="subtitle1">
                 Business Locations
               </Typography>              
-             
+              <Link
+                className={classes.showMoreLink}
+                component="button"
+                variant="body2"
+                onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}                  >
+                {showMoreFilters ? "Show less filters" : "Show more filters"}
+              </Link> 
               <Formik
                 onSubmit={search}
                 initialValues={{
@@ -580,33 +573,6 @@ export default function Locations() {
                 }}
               >
                 <Form>
-                  <Box
-                    alignContent="center"
-                    alignItems="center"
-                    justifyContent="end"
-                    display="flex"
-                    minHeight="100%"
-                    padding="0 0 12px"
-                    style = {{gap: 6}}
-                  >
-                    <Link
-                      className={classes.showMoreLink}
-                      component="button"
-                      variant="body2"
-                      type="button"
-                      onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}>
-                      {showMoreFilters ? "Show less filters" : "Show more filters"}
-                    </Link>
-                    <Divider orientation="vertical" flexItem />
-                    <Link
-                      className={classes.clearFilterLink}
-                      component="button"
-                      variant="body2"
-                      type="reset"
-                      onClick={() => clearAllFilter()}>
-                      Clear all filters
-                    </Link>  
-                  </Box>   
                   <Grid container spacing={2}>
                     <Grid item md={6} xs={12}>
                       <StyledTextField
@@ -656,8 +622,7 @@ export default function Locations() {
                       />                     
                     </Grid> 
                     
-                    {(showMoreFilters || searchTerms.sales_report || searchTerms.todate || searchTerms.fromdate) 
-                    && 
+                    {showMoreFilters && 
                     <>             
                     <Grid item md={3} xs={6}>
                       <StyledSelectField
