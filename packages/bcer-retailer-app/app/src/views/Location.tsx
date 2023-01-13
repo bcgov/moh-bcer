@@ -95,7 +95,6 @@ export default function ConfirmProducts() {
     getBusiness()
   }, [])
 
-
   const formatDate = (year: string) => {
     const startDate = moment(`10-01-${year}`, 'MM-DD-YYYY').format('LL');
     const endDate = moment(`09-30-${year}`, 'MM-DD-YYYY').add(1, 'year').format('LL');

@@ -6,6 +6,7 @@ import { UserModule } from 'src/user/user.module';
 import { NoteEntity } from './entities/note.entity';
 import { NoteService } from './note.service';
 import { NoteDataPortalController } from './noteDataPortal.controller';
+import { EmailService } from './emailService';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { NoteDataPortalController } from './noteDataPortal.controller';
     forwardRef(() => LocationModule),
     BusinessModule,
   ],
-  providers: [NoteService],
+  providers: [NoteService, EmailService],
   controllers: [NoteDataPortalController],
   exports: [NoteService],
 })
