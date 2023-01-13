@@ -16,6 +16,9 @@ export interface NoteFormProps {
   submit: (v: string) => void;
   getInitialValues: () => { content: string };
   loading: boolean;
+  showFlag: boolean;
+  flagForReview: (v: string) => void;
+  flagForReviewLoading: boolean
 }
 
 const useStyles = makeStyles(() => ({
@@ -24,10 +27,18 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     bottom: '-40px',
   },
+  flagForReviewButton: {
+    marginLeft: 'auto', 
+    backgroundColor: 'red',
+    "& .Mui-disabled": {
+      background: "grey"
+    }
+  }
 }));
 
-function NoteForm({ submit, getInitialValues, loading }: NoteFormProps) {
+function NoteForm({ submit, getInitialValues, loading, showFlag, flagForReview, flagForReviewLoading }: NoteFormProps) {
   const classes = useStyles();
+  
   return (
     <Box flexGrow={1}>
       <Formik
@@ -77,6 +88,17 @@ function NoteForm({ submit, getInitialValues, loading }: NoteFormProps) {
               >
                 cancel
               </StyledButton>
+              {showFlag &&
+              <StyledButton
+                variant="small-contained"
+                onClick={() => flagForReview(values.content)}
+                disabled={
+                  values.content === getInitialValues().content || flagForReviewLoading
+                }
+                className={classes.flagForReviewButton}
+              >
+                {flagForReviewLoading ? <CircularProgress size={24} /> : 'Flag for review'}
+              </StyledButton>}
             </Box>
           </Form>
         )}

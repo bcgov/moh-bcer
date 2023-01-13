@@ -376,6 +376,7 @@ function LocationsContent() {
     )
     return options
   }
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -583,7 +584,7 @@ function LocationsContent() {
                       </Grid>
 
                       <Grid item xs={12} id="notes">
-                          <Note targetId={id} type='location' showHideButton={true}/>
+                          <Note targetId={id} type='location' showHideButton={true} showFlag={true} />
                       </Grid>
 
                       <Grid item xs={12} id="productReport" ref={productReportRef}>
@@ -610,7 +611,6 @@ function LocationsContent() {
                           </Paper>
                         </Grid>
                       }
-
 
                       <Grid item xs={12} >
                         <Box style={{display: 'flex', justifyContent: 'space-between'}}>

@@ -85,4 +85,28 @@ export class NoteDataPortalController {
     const notes = await this.noteService.getNoteForLocationOrBusiness(targetId);
     return notes.map((n) => n.toResponseObject());
   }
+
+  @ApiOperation({ summary: 'Create a new Note' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
+  @AllowAnyRole()
+  @Post("/flag")
+  async flag(@Body() payload: NoteDTO, @Request() req: RequestWithUser) {
+    const user = await this.userService.findByBCeID(req.user.bceidGuid);
+    if (!user) {
+      throw new ForbiddenException('User was not found in database');
+    }
+    let location: LocationEntity;
+    
+    if (payload.locationId) {
+      location = await this.locationService.getLocation(payload.locationId);
+      if (!location) {
+        throw new NotFoundException(
+          `Location with id: ${payload.locationId} not found!`,
+        );
+      }
+    }
+    return await this.noteService.flag(payload.content, user, location);
+  }
 }

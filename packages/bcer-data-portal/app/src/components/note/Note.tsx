@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Note({ targetId, type, showHideButton }: NoteProps) {
+function Note({ targetId, type, showHideButton, showFlag }: NoteProps) {
   const classes = useStyles();
   const [showNotes, setShowNotes] = useState(true);
 
@@ -57,6 +57,8 @@ function Note({ targetId, type, showHideButton }: NoteProps) {
     submit,
     noteError,
     postLoading,
+    flagForReview,
+    flagForReviewLoading
   } = useNote({ targetId, type });
 
   function RenderRow(props: any) {
@@ -111,7 +113,10 @@ function Note({ targetId, type, showHideButton }: NoteProps) {
                 <NoteForm
                   submit={submit}
                   getInitialValues={getInitialValue}
-                  loading={postLoading || noteLoading}
+                  loading={postLoading || noteLoading }
+                  showFlag={showFlag}
+                  flagForReview = {flagForReview}
+                  flagForReviewLoading = {flagForReviewLoading}
                 />
               </Grid>
             

@@ -8,19 +8,29 @@ export interface NoteProps {
   targetId: string;
   type: 'business' | 'location';
   showHideButton?: boolean;
+  showFlag?: boolean;
 }
 
 function useNote({ targetId, type }: NoteProps) {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [initialValue, setInitialValue] = useState('');
+  const [flagforReviewError, setFlagforReviewError] = useState("");
   const [{ error: postError, loading: postLoading }, post] = useAxiosPost(
     '/data/note',
     {
       manual: true,
     }
   );
+
   const [{ data: noteData, loading: noteLoading, error: noteError }, get] =
     useAxiosGet<NoteRO[]>(`/data/note/get/${targetId}`);
+
+  const [{ loading: flagForReviewLoading }, flag] = useAxiosPost(
+    '/data/note/flag',
+    {
+      manual: true,
+    }
+  );
 
   const submit = async (content: string) => {
     let body: NoteDTO = {
@@ -48,13 +58,30 @@ function useNote({ targetId, type }: NoteProps) {
   }, [noteData]);
 
   useEffect(() => {
-    if (postError) {
+    console.log(flagforReviewError)
+    if (postError || flagforReviewError) {
       setAppGlobal({
         ...appGlobal,
-        networkErrorMessage: formatError(postError),
+        networkErrorMessage: flagforReviewError || formatError(postError),
       });
     }
-  }, [postError]);
+  }, [postError, flagforReviewError]);
+
+  const flagForReview = async (content: string) => {
+    let body: NoteDTO = {
+      content,
+      locationId: targetId
+    };
+
+    const response = await flag({
+        data: body,
+      });
+
+    if (response.data !== 'ok') {
+      setFlagforReviewError(response.data)
+    }
+    get();
+  }
 
   return {
     initialValue,
@@ -64,6 +91,9 @@ function useNote({ targetId, type }: NoteProps) {
     noteLoading,
     noteError,
     postLoading,
+    flagForReview,
+    flagForReviewLoading,
+    flagforReviewError
   };
 }
 

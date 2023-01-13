@@ -10,6 +10,7 @@ import { ProvinceLabels, StyledButton, StyledConfirmDateDialog } from 'vaping-re
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { LocationUtil } from '@/util/location.util';
 import moment from 'moment';
+import { ConfigContext } from '@/contexts/Config';
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -36,7 +37,8 @@ function BusinessInfo({ businessId }: { businessId: string }) {
   const classes = useStyles();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [isConfirmCloseDialogOpen, setIsConfirmCloseDialogOpen] = useState<Boolean>(false);
-
+  const { config: authConfig } = useContext(ConfigContext);
+  
   const [{ data, error }, get] = useAxiosGet<BusinessRO>(
     '/data/business/' + businessId
   );
@@ -71,7 +73,7 @@ function BusinessInfo({ businessId }: { businessId: string }) {
         <Grid item xs={12} id="locationInformation">
           <Box display={'flex'}>
             <Typography className={classes.cellTitle}>Business Information</Typography>
-            {data.status === BusinessStatus.Active &&
+            {authConfig.permissions.SEND_TEXT_MESSAGES && data.status === BusinessStatus.Active &&
             <Box ml={3} style={{marginLeft: 'auto'}}>
               <StyledButton variant="contained" onClick={() => setIsConfirmCloseDialogOpen(true)} style={{minWidth: 150, backgroundColor: '#FF534A', fontWeight: 600 }}>
                 <HighlightOffIcon />&nbsp;&nbsp; Deactivate  
