@@ -40,8 +40,9 @@ export class EmailService {
               return 'ok'
             })
             .catch(function (error) {
-              Logger.log(`Status: ${error.response.status} ${error.response.statusText}`)
-              Logger.log(`Error Sending Email: ${error.response.config.data}`)
+              Logger.error(error)
+              Logger.error(`Status: ${error.response.status} ${error.response.statusText}`)
+              Logger.error(`Error Sending Email: ${error.response.config.data}`)
 
               return `Error Sending Email: ${error.response.status} ${error.response.statusText}`;
             });
