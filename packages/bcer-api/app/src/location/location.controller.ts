@@ -1,10 +1,8 @@
 import {
   Body,
   Controller,
-  Delete,
   ForbiddenException,
   Get,
-  Post,
   Patch,
   HttpCode,
   HttpStatus,
@@ -12,10 +10,6 @@ import {
   Query,
   Request,
   UseGuards,
-  UseInterceptors,
-  UsePipes,
-  ValidationPipe,
-  Res,
 } from '@nestjs/common';
 import {
   ApiParam,
@@ -28,17 +22,12 @@ import {
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { BusinessGuard } from 'src/user/guards/business.guard';
 import { RoleGuard } from 'src/auth/guards/role.guard';
-import { Roles, Unprotected } from 'src/auth/auth.module';
-import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
+import { Roles } from 'src/auth/auth.module';
 import { LocationService } from 'src/location/location.service';
 import { LocationRO } from 'src/location/ro/location.ro';
-import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
-import { Response } from 'express';
 import { ProductsService } from 'src/products/products.service';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
-import { LocationDTO } from './dto/location.dto';
-import { LocationEntity } from './entities/location.entity';
 import { GeoCodeService } from './geoCode.service';
 import { LocationContactDTO } from './dto/locationContact.dto';
 
@@ -49,8 +38,6 @@ import { LocationContactDTO } from './dto/locationContact.dto';
 export class LocationController {
   constructor(
     public service: LocationService,
-    private manufacturingService: ManufacturingService,
-    private productsService: ProductsService,
     private geoCodeService: GeoCodeService,
   ){}
 

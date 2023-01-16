@@ -37,7 +37,7 @@ export class TextService {
       },
     );
     
-    Logger.log(`Status: ${response.status} ${response.status}`)
+    Logger.log(`Status: ${response.status} ${response.statusText}`)
     Logger.log(`ConfigData: ${response.config.data}`)
   }
 
