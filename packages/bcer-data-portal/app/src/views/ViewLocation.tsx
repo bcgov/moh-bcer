@@ -16,9 +16,11 @@ import {
   LocationType,
   StyledConfirmDateDialog,
   StyledDialog,
-  StyledAutocomplete
+  StyledAutocomplete,
+  StyledTextField
 } from 'vaping-regulation-shared-components';
 import { ConfigContext } from '@/contexts/Config';
+import StyledEditableTextField from '@/components/generic/StyledEditableTextField';
 import LocationViewMap from './Map/LocationViewMap';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import Note from '@/components/note/Note';
@@ -376,6 +378,7 @@ function LocationsContent() {
     )
     return options
   }
+  console.log(data)
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -524,13 +527,15 @@ function LocationsContent() {
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
-                                <Typography className={classes.rowContent}>{data.phone}</Typography>
+                                {/* <Typography className={classes.rowContent}>{data.phone}</Typography> */}
+                                <StyledEditableTextField className={classes.rowContent} value={data.phone} />
                               </Box>
                             </Grid>
                             <Grid item xs={6} md = {4}>
                               <Box>
                                 <Typography variant="body2">Business Email</Typography>
-                                <Typography className={classes.rowContent}>{data.email}</Typography>
+                                {/* <Typography className={classes.rowContent}>{data.email}</Typography> */}
+                                <StyledEditableTextField className={classes.rowContent} value={data.email} />
                               </Box>
                             </Grid>
                             {data.location_type !== LocationType.online &&
