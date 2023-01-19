@@ -1,93 +1,75 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Edit from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import {makeStyles} from '@material-ui/core';
 
-const styles = (theme:any) => ({
-//   container: {
-//     display: "flex",
-//     // flexWrap: "wrap",
-//     padding: 50
-//   },
-//   textField: {
-//     marginLeft: theme.spacing.unit,
-//     marginRight: theme.spacing.unit,
-//     width: 300,
-//     color: "black",
-//     fontSize: 30,
-//     opacity: 1,
-//     borderBottom: 0,
-//     "&:before": {
-//       borderBottom: 0
-//     }
-//   },
+const useStyles = makeStyles(() => ({
+  textField: {
+    color: "black",
+    fontSize: '14px',
+    fontWeight: 600,
+  },
   disabled: {
     color: "black",
+    fontSize: '14px',
+    fontWeight: 600,
     borderBottom: 0,
     "&:before": {
       borderBottom: 0
     }
   },
   btnIcons: {
-    marginLeft: 10
+    marginLeft: 5
   }
-});
+}));
 
-class StyledEditableTextField extends React.Component <any, any> {
-  state = {
-    email: "johndoe@domain.com",
-    editMode: false,
-    mouseOver: false
+interface StyledEditableTextFieldProps {
+  value: any;
+  type?: string;
+}
+// type: webpage || phone || email || underage || manufacturing
+function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
+  const classes = useStyles();
+  const [content, setContent] = useState(value);
+  const [editMode, setEditMode] = useState(false);
+  const [mouseOver, setMouseOver] = useState(false);
+
+  function handleChange (event:any) {
+    console.log(content);
+    setContent({ [event.target.name]: event.target.value });
   };
 
-  handleChange = (event:any) => {
-    this.setState({ [event.target.name]: event.target.value });
+  function handleMouseOver() {
+    if (!mouseOver) setMouseOver(true);
   };
 
-  handleMouseOver = (event:any) => {
-    if (!this.state.mouseOver) {
-      this.setState({ mouseOver: true });
-    }
+  function handleMouseOut() {
+    if (mouseOver) setMouseOver(false);
   };
 
-  handleMouseOut = (event:any) => {
-    // The problem is here!!!
-    if (this.state.mouseOver) {
-      this.setState({ mouseOver: false });
-    }
+  function handleClick() {
+    setEditMode(true);
+    setMouseOver(false);
   };
-
-  handleClick = () => {
-    this.setState({
-      editMode: true,
-      mouseOver: false
-    });
-  };
-
-  render() {
-    const { classes, value } = this.props;
 
     return (
-    //   <div className={classes.container}>
         <TextField
-        //   name="email"
+          name = {type}
           defaultValue={value}
-        //   margin="normal"
-          error={this.state.email === ""}
-          onChange={this.handleChange}
-          disabled={!this.state.editMode}
+          onChange={handleChange}
+          disabled={!editMode}
           className={classes.textField}
-          onMouseEnter={this.handleMouseOver}
-          onMouseLeave={this.handleMouseOut}
+          onMouseEnter={handleMouseOver}
+          onMouseLeave={handleMouseOut}
           InputProps={{
             classes: {
               disabled: classes.disabled
             },
-            endAdornment: this.state.mouseOver ? (
+            endAdornment: mouseOver ? (
               <InputAdornment position="end">
-                <IconButton onClick={this.handleClick}>
+                <IconButton onClick={handleClick}>
                   <Edit />
                 </IconButton>
               </InputAdornment>
@@ -96,9 +78,6 @@ class StyledEditableTextField extends React.Component <any, any> {
             )
           }}
         />
-    //   </div>
-    );
-  }
+    );  
 }
-
-export default withStyles(styles)(StyledEditableTextField);
+export default StyledEditableTextField;
