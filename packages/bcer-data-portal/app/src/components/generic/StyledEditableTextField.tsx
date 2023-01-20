@@ -4,6 +4,7 @@ import Edit from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {makeStyles} from '@material-ui/core';
+import { locationInformationValidationSchema } from '@/constants/validate';
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -27,18 +28,53 @@ const useStyles = makeStyles(() => ({
 
 interface StyledEditableTextFieldProps {
   value: any;
-  type?: string;
+  type: string;
 }
-// type: webpage || phone || email || underage || manufacturing
+
+//This is the editable text filed component for the location information on Location Details page, it allows the user to update the location information and it stores the edit history into Notes
+//value: user's input
+//type: webpage || phone || email || underage || manufacturing
 function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
   const classes = useStyles();
   const [content, setContent] = useState(value);
+  const [textFildType, settextFildType] = useState(type);
   const [editMode, setEditMode] = useState(false);
   const [mouseOver, setMouseOver] = useState(false);
+  const [errorText, seterrorText] = useState('');
+
 
   function handleChange (event:any) {
-    console.log(content);
-    setContent({ [event.target.name]: event.target.value });
+    setContent(event.target.value); //update content vairable
+    {textFildType == 'phone' && 
+      locationInformationValidationSchema.isValid({phone: content,}).then((valid:any) => {
+          if(valid == true){
+            seterrorText('');
+          }else{
+            seterrorText('Please provide a valid phone number');
+          }
+        });
+    }
+    {textFildType == 'webpage' && 
+    locationInformationValidationSchema.isValid({webpage: content,}).then((valid:any) => {
+        if(valid == true){
+          seterrorText('');
+        }else{
+          seterrorText('URL is not valid');
+        }
+      });
+  }
+  {textFildType == 'email' && 
+  locationInformationValidationSchema.isValid({email: content,}).then((valid:any) => {
+      if(valid == true){
+        seterrorText('');
+      }else{
+        seterrorText('Email is not valid');
+      }
+    });
+}
+
+
+
   };
 
   function handleMouseOver() {
@@ -58,9 +94,11 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
         <TextField
           name = {type}
           defaultValue={value}
-          onChange={handleChange}
           disabled={!editMode}
           className={classes.textField}
+          onChange={handleChange}
+          error = {errorText===''? false : true}//validation
+          helperText={errorText} //validation
           onMouseEnter={handleMouseOver}
           onMouseLeave={handleMouseOut}
           InputProps={{
