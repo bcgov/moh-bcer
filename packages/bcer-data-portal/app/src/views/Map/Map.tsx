@@ -55,7 +55,8 @@ function Map({asMenu, config}: MapProps) {
     healthAuthorityLocations,
     setHealthAuthorityLocations,
     clickedLocation,
-    setDisplayItinerary
+    setDisplayItinerary,
+    takeScreenshot
   } = useLeaflet(locationIds, config);
 
   useEffect(() => {
@@ -97,6 +98,7 @@ function Map({asMenu, config}: MapProps) {
             clickedLocation={clickedLocation}
             setDisplayItinerary={setDisplayItinerary}
             onRender={onRender}
+            takeScreenshot={takeScreenshot}
           />
         </Box>       
       </Drawer>
