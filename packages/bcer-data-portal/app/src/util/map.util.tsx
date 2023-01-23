@@ -13,8 +13,8 @@ export class MapUtil {
                                         </div>
                                     </div>
                         }),
-            directions: routeData.directions.map(({ type, text, name}, index) => {
-                            return <div id={name+index} style={{paddingBottom: 10, fontSize: 12, width: '100%'}}>
+            directions: routeData.directions.map(({ type, text}, index) => {
+                            return <div key={index} style={{paddingBottom: 12, fontSize: 10, width: '100%'}}>
                                         <div style={{fontWeight: 'bold',  color: 'black', paddingBottom: 3}}>{type}</div>
                                         <div style={{color: 'grey'}}>
                                             {text}

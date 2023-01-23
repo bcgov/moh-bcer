@@ -1,10 +1,9 @@
 import { BCDirectionData, BusinessLocation } from '@/constants/localInterfaces';
-import { Grid, List, ListItem, ListItemText, Typography, makeStyles } from '@material-ui/core';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import React from 'react';
 import logo from '../../assets/images/bc-logo.png';
 import { MapUtil } from '@/util/map.util';
-import Itinerary from './Itinerary';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -22,11 +21,10 @@ const useStyles = makeStyles((theme) => ({
       paddingBottom: 20
     },
     itinerary: {
-        paddingBottom: 20
+      paddingBottom: 20
     },
     header: {
-      fontSize: '14px',
-      lineHeight: '20px',
+      fontSize: 14,
       color: '#002C71',
       fontWeight: 'bold',
     },
@@ -40,7 +38,6 @@ type ItineraryPdfProps = {
 
 function ItineraryPdf ({ routeData, locations, imageString }: ItineraryPdfProps) {
     const classes = useStyles();
-    console.log(routeData, locations, imageString);
     const formattedData = MapUtil.formatLocationsForPDF(locations, routeData);
     return (
         <Box className={classes.container}>
@@ -52,7 +49,7 @@ function ItineraryPdf ({ routeData, locations, imageString }: ItineraryPdfProps)
             <div className={classes.itinerary}>
                 <Typography className={classes.header}>Itinerary</Typography>
                 <Box mt={1} />
-                <img src={imageString} alt="Itinerary Map" style={{ height: '380px', width: '540px'}} />
+                <img src={imageString} alt="Itinerary Map" style={{ height: '330px', width: '540px'}} />
             </div>
 
             <Grid container spacing={2} >

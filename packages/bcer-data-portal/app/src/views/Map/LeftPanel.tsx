@@ -98,7 +98,8 @@ interface LeftPanelProps {
   clickedLocation: BusinessLocation,
   setDisplayItinerary: React.Dispatch<SetStateAction<boolean>>,
   onRender: () => void,
-  takeScreenshot: () => void
+  downloadItinerary: () => void,
+  downloadingItinerary: Boolean
 }
 
 function LeftPanel({
@@ -121,7 +122,8 @@ function LeftPanel({
   clickedLocation,
   setDisplayItinerary,
   onRender,
-  takeScreenshot
+  downloadItinerary,
+  downloadingItinerary
 }: LeftPanelProps) {
   const classes = useStyles();
   const history = useHistory();  
@@ -247,9 +249,16 @@ function LeftPanel({
               variant="small-contained"
               size="small"
               style={{float: 'right', padding: "4px 6px"}}
-              onClick={() => takeScreenshot()}>
+              onClick={() => downloadItinerary()}
+              >
               <DirectionsIcon fontSize="small" />
-               Export Itinerary to PDF
+              {downloadingItinerary ? 
+                <CircularProgress size={24} /> : 
+                <>
+                  <DirectionsIcon fontSize="small" /> Export Itinerary to PDF
+                </>
+              }
+               
             </StyledButton>}
         </Grid>
       </Grid>

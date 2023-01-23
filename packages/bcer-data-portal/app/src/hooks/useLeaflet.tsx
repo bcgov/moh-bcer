@@ -57,6 +57,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   const [clickedLocation, setClickedLocation] = useState<BusinessLocation>();
   const [startingLocation, setStartingLocation] =
     useState<BCGeocoderAutocompleteData>();
+  const [downloadingItinerary, setDownloadingItinerary] = useState(false);
 
   // Initial routing options in the map controller
   const initialRoutingOptions: RouteOptions = {
@@ -409,22 +410,23 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   }
 
-  const takeScreenshot = async () => {
+  const downloadItinerary = async () => {
+    setDownloadingItinerary(true)
     const simpleMapScreenshoter = new SimpleMapScreenshoter().addTo(map);
     await simpleMapScreenshoter.takeScreen('image', { mimeType: 'image/jpeg' }).then(image => {
-      console.log(image)
       generatePDF(image);
-      simpleMapScreenshoter.remove()
+      simpleMapScreenshoter.remove();
     }).catch(e => {
-      console.error(e);
-      simpleMapScreenshoter.remove()
+      simpleMapScreenshoter.remove();
+      setDownloadingItinerary(false)
     })
   }
 
   const generatePDF = async (image: any) => {
     const pdf = new jsPDF('p', 'pt', 'letter');
-    await pdf.html(ReactDOMServer.renderToStaticMarkup(<ItineraryPdf routeData={routeData} locations={selectedLocations} imageString = {image} />))
+    await pdf.html(ReactDOMServer.renderToStaticMarkup(<ItineraryPdf routeData={routeData} locations={selectedLocations} imageString = {image} />));
     pdf.save(`Itinerary-${selectedLocations[0].id}`)
+    setDownloadingItinerary(false);
   }
 
   /**
@@ -514,7 +516,8 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     setHealthAuthorityLocations,
     clickedLocation,
     setDisplayItinerary,
-    takeScreenshot
+    downloadItinerary,
+    downloadingItinerary
   };
 }
 
