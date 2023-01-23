@@ -55,7 +55,9 @@ function Map({asMenu, config}: MapProps) {
     healthAuthorityLocations,
     setHealthAuthorityLocations,
     clickedLocation,
-    setDisplayItinerary
+    setDisplayItinerary,
+    downloadItinerary,
+    downloadingItinerary
   } = useLeaflet(locationIds, config);
 
   useEffect(() => {
@@ -97,6 +99,8 @@ function Map({asMenu, config}: MapProps) {
             clickedLocation={clickedLocation}
             setDisplayItinerary={setDisplayItinerary}
             onRender={onRender}
+            downloadItinerary={downloadItinerary}
+            downloadingItinerary = {downloadingItinerary}
           />
         </Box>       
       </Drawer>

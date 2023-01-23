@@ -51,7 +51,6 @@ import {
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { healthAuthorityOptions} from '../constants/arrays'
-import { date } from 'yup';
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -514,13 +513,6 @@ export default function Locations() {
     return <TextField {...props} disabled={true} />;
   };
 
-  const clearAllFilter = () => {
-    setSearchTerms({
-      page:0,
-      pageSize: 20
-    })
-  }
-
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -578,7 +570,11 @@ export default function Locations() {
                   fromdate: searchTerms.fromdate ? searchTerms.fromdate : null,
                   todate: searchTerms.todate ? searchTerms.todate : null
                 }}
-              >
+              >{props => {
+                const {
+                  resetForm
+                } = props;
+                return (
                 <Form>
                   <Box
                     alignContent="center"
@@ -603,7 +599,17 @@ export default function Locations() {
                       component="button"
                       variant="body2"
                       type="reset"
-                      onClick={() => clearAllFilter()}>
+                      onClick={() => {
+                        resetForm({ values: {search: null,
+                          authority: 'all', location_type: 'all',
+                          reporting_status: 'all', underage: 'all', noi_report: 'all', product_report: 'all',
+                          manufacturing_report: 'all', sales_report: 'all', fromdate: null, todate: null}
+                          
+                        });
+                        setSearchTerms({ page:0, pageSize: 20 })
+                      }}
+                      >
+
                       Clear all filters
                     </Link>  
                   </Box>   
@@ -737,7 +743,8 @@ export default function Locations() {
                       </Box>
                     </Grid>                   
                   </Grid>                  
-                </Form>
+                </Form>)
+              }}
               </Formik>
               <div>
                 <Typography className={classes.tableRowCount} variant="body2">
