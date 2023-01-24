@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Edit from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
@@ -37,16 +37,13 @@ interface StyledEditableTextFieldProps {
 function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
   const classes = useStyles();
   const [content, setContent] = useState(value);
-  const [textFildType, settextFildType] = useState(type);
   const [editMode, setEditMode] = useState(false);
   const [mouseOver, setMouseOver] = useState(false);
   const [errorText, seterrorText] = useState('');
 
-
-  function handleChange (event:any) {
-    setContent(event.target.value); //update content vairable
-    {textFildType == 'phone' && 
-      locationInformationValidationSchema.isValid({phone: content,}).then((valid:any) => {
+  useEffect(() => { //verify the content once it's changed by the users
+    {type === 'phone' && 
+      locationInformationValidationSchema.isValid({phone: content}).then((valid:any) => {
           if(valid == true){
             seterrorText('');
           }else{
@@ -54,28 +51,25 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
           }
         });
     }
-    {textFildType == 'webpage' && 
-    locationInformationValidationSchema.isValid({webpage: content,}).then((valid:any) => {
+    {type === 'webpage' && 
+    locationInformationValidationSchema.isValid({webpage: content}).then((valid:any) => {
         if(valid == true){
           seterrorText('');
         }else{
           seterrorText('URL is not valid');
         }
       });
-  }
-  {textFildType == 'email' && 
-  locationInformationValidationSchema.isValid({email: content,}).then((valid:any) => {
-      if(valid == true){
-        seterrorText('');
-      }else{
-        seterrorText('Email is not valid');
-      }
-    });
-}
-
-
-
-  };
+    }
+    {type === 'email' && 
+    locationInformationValidationSchema.isValid({email: content}).then((valid:any) => {
+        if(valid == true){
+          seterrorText('');
+        }else{
+          seterrorText('Email is not valid');
+        }
+      });
+    }
+  }, [content])
 
   function handleMouseOver() {
     if (!mouseOver) setMouseOver(true);
@@ -96,7 +90,7 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
           defaultValue={value}
           disabled={!editMode}
           className={classes.textField}
-          onChange={handleChange}
+          onChange={(e:any) => setContent(e.target.value)}
           error = {errorText===''? false : true}//validation
           helperText={errorText} //validation
           onMouseEnter={handleMouseOver}

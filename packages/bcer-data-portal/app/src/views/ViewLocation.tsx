@@ -526,13 +526,13 @@ function LocationsContent() {
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
-                                <StyledEditableTextField value={data.phone} type={"phone"}/>
+                                <StyledEditableTextField value={data.phone} type="phone"/>
                               </Box>
                             </Grid>
                             <Grid item xs={6} md = {4}>
                               <Box>
                                 <Typography variant="body2">Business Email</Typography>
-                                <StyledEditableTextField value={data.email} type={"email"}/>
+                                <StyledEditableTextField value={data.email} type="email"/>
                               </Box>
                             </Grid>
                             {data.location_type !== LocationType.online &&
@@ -540,7 +540,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">If persons under 19 years of age are permitted on the sales premises</Typography>
-                                <StyledEditableTextField value={data.underage} type={"underage"}/>
+                                <StyledEditableTextField value={data.underage} type="underage"/>
                               </Box>
                             </Grid>
                             <Grid item xs={12}>
@@ -553,7 +553,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Intent to manufacture e-substances for sale at this business location</Typography>
-                                <StyledEditableTextField value={data.manufacturing === true ? 'Yes' : 'No'} type={"manufacturing"}/>
+                                <StyledEditableTextField value={data.manufacturing === true ? 'Yes' : 'No'} type="manufacturing"/>
                               </Box>
                             </Grid>
                             <Grid item md={4} xs={12}>
@@ -580,7 +580,7 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data ? data.created_at ? moment(data.created_at).utc(true).format('YYYY-MM-DD hh:mm:ss a') : '' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
-                          </Grid>    
+                          </Grid>
                         </Paper>
                       </Grid>
 
