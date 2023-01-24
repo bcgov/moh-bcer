@@ -251,7 +251,6 @@ function LeftPanel({
               style={{float: 'right', padding: "4px 6px"}}
               onClick={() => downloadItinerary()}
               >
-              <DirectionsIcon fontSize="small" />
               {downloadingItinerary ? 
                 <CircularProgress size={24} /> : 
                 <>

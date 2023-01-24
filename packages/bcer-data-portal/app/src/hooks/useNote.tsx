@@ -58,7 +58,6 @@ function useNote({ targetId, type }: NoteProps) {
   }, [noteData]);
 
   useEffect(() => {
-    console.log(flagforReviewError)
     if (postError || flagforReviewError) {
       setAppGlobal({
         ...appGlobal,
