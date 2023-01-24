@@ -53,6 +53,14 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
     });
   }, [content])
 
+  const handleOnBlur = (e:any) => { //once the errorText is changed to '' and the user stopped editing, confirm the change and update the value in the database
+    if(errorText === '' && editMode === true){
+      // alert("Left text box with the value: " + e.target.value);
+      console.log("the input is now valid and user stopped editing")
+      //POST TO DB
+    }
+  };
+
   function handleMouseOver() {
     if (!mouseOver) setMouseOver(true);
   };
@@ -75,6 +83,7 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
           onChange={(e:any) => setContent(e.target.value)}
           error = {errorText===''? false : true}//validation
           helperText={errorText} //validation
+          onBlur={handleOnBlur} //when the user clicked off the TextField
           onMouseEnter={handleMouseOver}
           onMouseLeave={handleMouseOut}
           InputProps={{
