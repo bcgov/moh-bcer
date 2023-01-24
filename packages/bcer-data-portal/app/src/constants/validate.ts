@@ -25,5 +25,7 @@ export const faqValidationSchema = yup.object({
 export const locationInformationValidationSchema = yup.object({
   webpage: yup.string().matches(/((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/),
   email: yup.string().email(),
-  phone: yup.string().matches(/^(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)$/)
+  phone: yup.string().matches(/^(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)$/),
+  manufacturing: yup.string().matches(/^(Yes|No)$/),
+  underage: yup.string().matches(/^(Yes|No)$/)
 });

@@ -42,33 +42,15 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
   const [errorText, seterrorText] = useState('');
 
   useEffect(() => { //verify the content once it's changed by the users
-    {type === 'phone' && 
-      locationInformationValidationSchema.isValid({phone: content}).then((valid:any) => {
-          if(valid == true){
-            seterrorText('');
-          }else{
-            seterrorText('Please provide a valid phone number');
-          }
-        });
-    }
-    {type === 'webpage' && 
-    locationInformationValidationSchema.isValid({webpage: content}).then((valid:any) => {
-        if(valid == true){
-          seterrorText('');
-        }else{
-          seterrorText('URL is not valid');
-        }
-      });
-    }
-    {type === 'email' && 
-    locationInformationValidationSchema.isValid({email: content}).then((valid:any) => {
-        if(valid == true){
-          seterrorText('');
-        }else{
-          seterrorText('Email is not valid');
-        }
-      });
-    }
+    const contentObj: {[type: string]:any} = {}
+    contentObj[type] = content;
+    locationInformationValidationSchema.isValid(contentObj).then((valid:any) => {
+      if(valid == true){
+        seterrorText('');
+      }else{
+        seterrorText('Input Not Valid');
+      }
+    });
   }, [content])
 
   function handleMouseOver() {
