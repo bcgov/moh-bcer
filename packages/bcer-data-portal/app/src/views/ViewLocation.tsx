@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, CircularProgress, Dialog, Grid, Hidden, makeStyles, Paper, Typography } from '@material-ui/core'
+import { Box, CircularProgress, Grid, Hidden, makeStyles, Paper, Typography } from '@material-ui/core'
 import { useHistory, useParams } from 'react-router-dom';
 import { Formik, useFormikContext } from 'formik';
 import moment from 'moment';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import PrintIcon from '@material-ui/icons/Print';
 
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
 import { Business, LocationConfig, UserRO } from '@/constants/localInterfaces';
@@ -29,6 +30,10 @@ import LocationSalesTable from '@/components/tables/LocationSalesTable';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import { LocationReportStatus } from '@/components/location/LocationReportStatus';
 import { LocationUtil } from '@/util/location.util';
+import ReactDOMServer from 'react-dom/server';
+import { LocationDetailsPdf } from '@/components/location/LocationDetailsPdf';
+import jsPDF from 'jspdf';
+import { useScreenshot } from "use-react-screenshot";
 
 const useStyles = makeStyles((theme) => ({
   contentWrapper: {
@@ -191,13 +196,11 @@ export default function ViewLocations() {
   return (
     <Formik 
       initialValues={{content: 'locationStatus'}}
-      onSubmit={() => {}}
-    >
+      onSubmit={() => {}}>
         <LocationsContent />
     </Formik>
   )
 }
-
 
 function LocationsContent() {
   const classes = useStyles();
@@ -219,6 +222,12 @@ function LocationsContent() {
   const manufacturingReportRef = useRef(null);
   const salesReportRef = useRef(null);
   const mapBoxRef = useRef(null);
+  const userInfoRef = useRef(null);
+
+  const [printing, setPrinting] = useState<Boolean>(false);
+  const [locationStatusScreenshot, takeLocationStatusScreenshot] = useScreenshot();
+  const [userInfoScreenshot, takeUserInfoScreenshot] = useScreenshot();
+  const [locationInfoScreenshot, takeLocationInfoScreenshot] = useScreenshot();
   
   const [{ data, loading, error }, get] = useAxiosGet(`/data/location/get-location/${id}?includes=business,business.users,noi`, {
     manual: false,
@@ -375,6 +384,35 @@ function LocationsContent() {
     )
     return options
   }
+<<<<<<< HEAD
+=======
+
+  const initiatePrintLocation = async () => {
+    setPrinting(true);
+    await takeLocationStatusScreenshot(locationStatusRef.current); 
+    await takeUserInfoScreenshot(userInfoRef.current);
+    await takeLocationInfoScreenshot(locationInformationRef.current);   
+  }
+
+  useEffect(() => {
+    if (locationStatusScreenshot && userInfoScreenshot && locationInfoScreenshot) {
+      generateLocationDetailsPdf();
+    }
+  }, [locationStatusScreenshot, userInfoScreenshot, locationInfoScreenshot]);
+
+  const generateLocationDetailsPdf = async () => {
+    const pdf = new jsPDF('p', 'pt', 'letter');
+    await pdf.html(ReactDOMServer.renderToStaticMarkup(<LocationDetailsPdf 
+                                                          location={data} 
+                                                          locationStatusImg = {locationStatusScreenshot} 
+                                                          userInfoImg = {userInfoScreenshot}
+                                                          locationInfoImg = {locationInfoScreenshot}
+                                                          />));
+    pdf.save(`Location-Details-${data.id}`)
+    setPrinting(false);
+  }
+
+>>>>>>> 6ebed1efdc3cb435cbdd9e382a444416dcce13fd
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -404,15 +442,16 @@ function LocationsContent() {
                       </Box>
                     </Grid>
                     <Grid container item xs={12} lg={9} spacing={3} className={classes.rightDivWrap}>
-
                       <Grid item xs={12} id="locationStatus" ref={locationStatusRef} >
-                        <Typography className={classes.cellTitle}>Location Status</Typography>
+                        <Box
+                          display='flex'
+                        >
+                          <Typography className={classes.cellTitle}>Location Status</Typography>
+                          <Box marginLeft='auto'>
+                            {printing ? <CircularProgress />:<PrintIcon color="action" onClick={initiatePrintLocation} />}
+                          </Box>
+                        </Box>
                         <Paper className={classes.box} style={{ display: 'block'}}>
-                          {/* <Hidden smUp>
-                          {
-                            authConfig.permissions.SEND_TEXT_MESSAGES &&
-                            <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)} style={{float: 'right', minWidth: 50, padding: 6, marginTop: -8}}>Permanently Delete</StyledButton>}
-                          </Hidden> */}
                           <Grid container spacing={2}>
                           {!data.closedAt &&
                             <Hidden smUp>
@@ -444,15 +483,10 @@ function LocationsContent() {
                                 <StyledButton variant="contained" onClick={() => setConfirmTransferDialogOpen(true)} style={{minWidth: 150, fontWeight: 600}}>
                                   <ExitToAppIcon />&nbsp;&nbsp; Transfer 
                                 </StyledButton>
-
                                 <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 150, backgroundColor: '#FF534A', fontWeight: 600}}>
                                   <HighlightOffIcon />&nbsp;&nbsp; Close  
                                 </StyledButton>
                               </Grid>
-                              {/* {authConfig.permissions.SEND_TEXT_MESSAGES &&
-                              <Grid item xs={6} md={4}>
-                                  <StyledButton variant="outlined" onClick={() => setConfirmDialogOpen(true)} style={{float: 'right'}}>Permanentlys Delete</StyledButton>
-                              </Grid>} */}
                             </Hidden>}
                           </Grid>                          
                           <Box mt={3}>
@@ -461,7 +495,7 @@ function LocationsContent() {
                         </Paper>
                       </Grid>
 
-                      <Grid item xs={12} id="userInformation" >
+                      <Grid item xs={12} id="userInformation" ref={userInfoRef} >
                         <Typography className={classes.cellTitle}>User Information</Typography>
 
                         <Grid container spacing={2} className={classes.box} style={{margin: 0, width: '100%', padding: 8}}>                          

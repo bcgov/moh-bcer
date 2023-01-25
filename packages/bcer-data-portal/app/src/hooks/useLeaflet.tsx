@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import * as ReactDOMServer from 'react-dom/server';
 import L, { Tooltip } from 'leaflet';
+import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import GeoJSON from 'geojson';
 import {
   BCDirectionData,
@@ -20,6 +20,9 @@ import sanitizeHtml from 'sanitize-html';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { useHistory } from 'react-router';
 import moment from 'moment';
+import ItineraryPdf from './../views/Map/ItineraryPdf';
+import jsPDF from 'jspdf';
+import ReactDOMServer from "react-dom/server";
 
 // Map layer for Health Authority Boundaries
 const haLayer = createHealthAuthorityLayer();
@@ -54,6 +57,7 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
   const [clickedLocation, setClickedLocation] = useState<BusinessLocation>();
   const [startingLocation, setStartingLocation] =
     useState<BCGeocoderAutocompleteData>();
+  const [downloadingItinerary, setDownloadingItinerary] = useState(false);
 
   // Initial routing options in the map controller
   const initialRoutingOptions: RouteOptions = {
@@ -406,6 +410,25 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   }
 
+  const downloadItinerary = async () => {
+    setDownloadingItinerary(true)
+    const simpleMapScreenshoter = new SimpleMapScreenshoter().addTo(map);
+    await simpleMapScreenshoter.takeScreen('image', { mimeType: 'image/jpeg' }).then(image => {
+      generatePDF(image);
+      simpleMapScreenshoter.remove();
+    }).catch(e => {
+      simpleMapScreenshoter.remove();
+      setDownloadingItinerary(false)
+    })
+  }
+
+  const generatePDF = async (image: any) => {
+    const pdf = new jsPDF('p', 'pt', 'letter');
+    await pdf.html(ReactDOMServer.renderToStaticMarkup(<ItineraryPdf routeData={routeData} locations={selectedLocations} imageString = {image} />));
+    pdf.save(`Itinerary-${selectedLocations[0].id}`)
+    setDownloadingItinerary(false);
+  }
+
   /**
    * If there is a change in locations or options it reinitialize all the markers and
    * gets fresh route data
@@ -493,6 +516,8 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     setHealthAuthorityLocations,
     clickedLocation,
     setDisplayItinerary,
+    downloadItinerary,
+    downloadingItinerary
   };
 }
 

@@ -98,6 +98,8 @@ interface LeftPanelProps {
   clickedLocation: BusinessLocation,
   setDisplayItinerary: React.Dispatch<SetStateAction<boolean>>,
   onRender: () => void,
+  downloadItinerary: () => void,
+  downloadingItinerary: Boolean
 }
 
 function LeftPanel({
@@ -120,6 +122,8 @@ function LeftPanel({
   clickedLocation,
   setDisplayItinerary,
   onRender,
+  downloadItinerary,
+  downloadingItinerary
 }: LeftPanelProps) {
   const classes = useStyles();
   const history = useHistory();  
@@ -219,7 +223,7 @@ function LeftPanel({
       <Typography className={classes.header}>Route</Typography>
       <Box mt={1} />
       <Grid container spacing={2}>
-        <Grid item xs={5}>
+        <Grid item xs={4}>
           <StyledButton
             variant="small-outlined"
             size="small"
@@ -228,8 +232,7 @@ function LeftPanel({
             <Hidden smDown><Box ml={1} /></Hidden> Show in Google Map
           </StyledButton>
         </Grid>
-        <Grid item xs={2}>&nbsp;</Grid>
-        <Grid item xs={5}>
+        <Grid item xs={4}>
           {locations.length > 0 &&
             <StyledButton
               variant="small-outlined"
@@ -238,6 +241,23 @@ function LeftPanel({
               onClick={() => setDisplayItinerary(true)}>
               <DirectionsIcon fontSize="small" />
               <Hidden smDown><Box ml={1} /></Hidden> Display Itinerary
+            </StyledButton>}
+        </Grid>
+        <Grid item xs={4}>
+        {locations.length > 0 && routeData &&
+            <StyledButton
+              variant="small-contained"
+              size="small"
+              style={{float: 'right', padding: "4px 6px"}}
+              onClick={() => downloadItinerary()}
+              >
+              {downloadingItinerary ? 
+                <CircularProgress size={24} /> : 
+                <>
+                  <DirectionsIcon fontSize="small" /> Export Itinerary to PDF
+                </>
+              }
+               
             </StyledButton>}
         </Grid>
       </Grid>
