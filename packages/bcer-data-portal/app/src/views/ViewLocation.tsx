@@ -195,9 +195,7 @@ export default function ViewLocations() {
     >
         <LocationsContent />
     </Formik>
-
   )
-
 }
 
 
@@ -377,7 +375,6 @@ function LocationsContent() {
     )
     return options
   }
-  // console.log(data)
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -520,19 +517,19 @@ function LocationsContent() {
                             <Grid item xs={12} md={4}>
                               <Box>
                                 <Typography variant="body2">Webpage</Typography>
-                                <StyledEditableTextField value={data.webpage} type={"webpage"}/>
+                                <StyledEditableTextField id={data.id} value={data.webpage} type={"webpage"}/>
                               </Box>
                             </Grid>}
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
-                                <StyledEditableTextField value={data.phone} type="phone"/>
+                                <StyledEditableTextField id={data.id} value={data.phone} type="phone"/>
                               </Box>
                             </Grid>
                             <Grid item xs={6} md = {4}>
                               <Box>
                                 <Typography variant="body2">Business Email</Typography>
-                                <StyledEditableTextField value={data.email} type="email"/>
+                                <StyledEditableTextField id={data.id} value={data.email} type="email"/>
                               </Box>
                             </Grid>
                             {data.location_type !== LocationType.online &&
@@ -540,7 +537,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">If persons under 19 years of age are permitted on the sales premises</Typography>
-                                <StyledEditableTextField value={data.underage} type="underage"/>
+                                <StyledEditableTextField id={data.id} value={data.underage} type="underage"/>
                               </Box>
                             </Grid>
                             <Grid item xs={12}>
@@ -553,7 +550,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Intent to manufacture e-substances for sale at this business location</Typography>
-                                <StyledEditableTextField value={data.manufacturing === true ? 'Yes' : 'No'} type="manufacturing"/>
+                                <StyledEditableTextField id={data.id} value={data.manufacturing === true ? 'Yes' : 'No'} type="manufacturing"/>
                               </Box>
                             </Grid>
                             <Grid item md={4} xs={12}>

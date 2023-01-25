@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {makeStyles} from '@material-ui/core';
 import { locationInformationValidationSchema } from '@/constants/validate';
+import useNote from '@/hooks/useNote';
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface StyledEditableTextFieldProps {
+  id: string;
   value: any;
   type: string;
 }
@@ -34,12 +36,13 @@ interface StyledEditableTextFieldProps {
 //This is the editable text filed component for the location information on Location Details page, it allows the user to update the location information and it stores the edit history into Notes
 //value: user's input
 //type: webpage || phone || email || underage || manufacturing
-function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
+function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProps) {
   const classes = useStyles();
   const [content, setContent] = useState(value);
   const [editMode, setEditMode] = useState(false);
   const [mouseOver, setMouseOver] = useState(false);
   const [errorText, seterrorText] = useState('');
+  const {submit} = useNote({ targetId:id, type:'location'});
 
   useEffect(() => { //verify the content once it's changed by the users
     const contentObj: {[type: string]:any} = {}
@@ -53,14 +56,6 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
     });
   }, [content])
 
-  const handleOnBlur = (e:any) => { //once the errorText is changed to '' and the user stopped editing, confirm the change and update the value in the database
-    if(errorText === '' && editMode === true){
-      // alert("Left text box with the value: " + e.target.value);
-      console.log("the input is now valid and user stopped editing")
-      //POST TO DB
-    }
-  };
-
   function handleMouseOver() {
     if (!mouseOver) setMouseOver(true);
   };
@@ -73,6 +68,18 @@ function StyledEditableTextField({value, type} : StyledEditableTextFieldProps) {
     setEditMode(true);
     setMouseOver(false);
   };
+
+  function handleOnBlur() { //once the errorText is changed to '' and the user stopped editing, confirm the change and update the value in the database
+    if(errorText === '' && editMode === true){
+      alert(type + " updated succesfully");
+      //POST TO DB
+
+      //Add the Note
+      const noteContent = type + ' changed from ' + value + ' to ' + content;
+      submit(noteContent);
+    }
+  }
+
 
     return (
         <TextField
