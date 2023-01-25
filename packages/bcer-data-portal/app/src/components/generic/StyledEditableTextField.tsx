@@ -6,6 +6,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import {makeStyles} from '@material-ui/core';
 import { locationInformationValidationSchema } from '@/constants/validate';
 import useNote from '@/hooks/useNote';
+import useLocation from '@/hooks/useLocation';
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -43,6 +44,7 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
   const [mouseOver, setMouseOver] = useState(false);
   const [errorText, seterrorText] = useState('');
   const {submit} = useNote({ targetId:id, type:'location'});
+  const {updateLocationInfo} = useLocation(id);
 
   useEffect(() => { //verify the content once it's changed by the users
     const contentObj: {[type: string]:any} = {}
@@ -73,7 +75,7 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
     if(errorText === '' && editMode === true){
       alert(type + " updated succesfully");
       //POST TO DB
-
+      updateLocationInfo(type, content);
       //Add the Note
       const noteContent = type + ' changed from ' + value + ' to ' + content;
       submit(noteContent);
