@@ -28,7 +28,7 @@ import { AuthDataGuard } from 'src/auth/guards/authData.guard';
 import { LocationEntity } from './entities/location.entity';
 import { BusinessService } from 'src/business/business.service';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
-import { LocationService } from 'src/location/location.service';
+import { LocationService, manufacturingLocationTranslation } from 'src/location/location.service';
 import { LocationRO } from 'src/location/ro/location.ro';
 import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
@@ -41,6 +41,7 @@ import { DirectionDto } from './dto/direction.dto';
 import { DownloadSaleDTO } from 'src/sales/dto/download-sale.dto';
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
 import { BusinessStatus } from 'src/business/enums/business-status.enum';
+import { LocationDTO } from './dto/location.dto';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -423,5 +424,32 @@ export class LocationDataPortalController {
         throw new ForbiddenException('Cannot transfer location to a closed business')
       
       await this.service.transferLocation(id, businessId);
+    }
+
+      
+    /**
+     * 
+     * Update a field of a location. (webpage || phone || email || underage || manufacturing)
+     */
+    @ApiOperation({ summary: 'Update a field of a Single Location' })
+    @ApiResponse({ status: HttpStatus.OK })
+    @HttpCode(HttpStatus.OK)
+    @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+    @UseGuards(AuthDataGuard)
+    @AllowAnyRole()
+    @Patch('/update/:locationId')
+    async editSingleLocation(
+      @Param('locationId') id: string,
+      @Body() payload: any
+    ){
+      const type = Object.keys(payload)[0] //type: webpage || phone || email || underage || manufacturing
+      const possibleTypes = ['webpage','phone','email','underage','manufacturing']
+      if(possibleTypes.includes(type)){
+        const location = await this.service.getLocation(id);
+        {type ==='manufacturing'? location[type] =  manufacturingLocationTranslation(payload[type].toLowerCase()) : location[type] = payload[type]}
+        await this.service.updateLocation(id, location.toResponseObject() as any);
+      }else{
+        throw new ForbiddenException("the type is not editable. allowed types: webpage || phone || email || underage || manufacturing");
+      }
     }
 }

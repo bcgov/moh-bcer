@@ -19,7 +19,7 @@ function useLocation(locationIds?: string) {
    * Update a single location info
    */
   const [{ loading: patchLocationLoading, error: patchLocationError},patchLocation] = 
-    useAxiosPatch(`/data/location/edit/${locationIds}`, { manual: true });
+    useAxiosPatch(`/data/location/update/${locationIds}`, { manual: true });
 
 
   useEffect(() => {
@@ -96,15 +96,11 @@ function useLocation(locationIds?: string) {
     let body : {[type: string]:any} = {}
     body[type] = content;
     if(locationIds !== undefined){
-      console.log("location id is: " +locationIds)
       await patchLocation({
         data: body,
       });
-      // getLocationWithIds()
     }
-
   };
-
 
   return {
     selectedLocations,

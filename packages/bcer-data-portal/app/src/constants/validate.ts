@@ -27,5 +27,5 @@ export const locationInformationValidationSchema = yup.object({
   email: yup.string().email(),
   phone: yup.string().matches(/^(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)$/),
   manufacturing: yup.string().matches(/^(Yes|No)$/),
-  underage: yup.string().matches(/^(Yes|No)$/)
+  underage: yup.string()
 });
