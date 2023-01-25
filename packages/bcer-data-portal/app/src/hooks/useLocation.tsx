@@ -19,7 +19,7 @@ function useLocation(locationIds?: string) {
    * Update a single location info
    */
   const [{ loading: patchLocationLoading, error: patchLocationError},patchLocation] = 
-    useAxiosPatch(`/data/location/update/${locationIds}`, { manual: true });
+    useAxiosPatch(`/data/location/update-fields/${locationIds}`, { manual: true });
 
 
   useEffect(() => {
