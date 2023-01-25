@@ -384,8 +384,6 @@ function LocationsContent() {
     )
     return options
   }
-<<<<<<< HEAD
-=======
 
   const initiatePrintLocation = async () => {
     setPrinting(true);
@@ -412,7 +410,6 @@ function LocationsContent() {
     setPrinting(false);
   }
 
->>>>>>> 6ebed1efdc3cb435cbdd9e382a444416dcce13fd
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>

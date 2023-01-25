@@ -74,12 +74,8 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
   async function handleOnBlur() { //once the errorText is changed to '' and the user stopped editing, confirm the change and update the value in the database
     if(errorText === '' && editMode === true){
       //POST TO DB
-      // if(type === 'underage' && !['yes','no'].includes(content.toLowerCase())){
-      //   await updateLocationInfo('underage_other', content);
-      // }else{
-        await updateLocationInfo(type, content);
-      // }
-      
+      await updateLocationInfo(type, content);
+
       //Add the Note
       const noteContent = type + ' changed from ' + value + ' to ' + content;
       submit(noteContent);
