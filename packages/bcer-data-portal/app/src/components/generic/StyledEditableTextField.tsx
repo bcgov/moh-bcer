@@ -44,13 +44,13 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
   const [mouseOver, setMouseOver] = useState(false);
   const [errorText, seterrorText] = useState('');
   const {submit} = useNote({ targetId:id, type:'location'});
-  const {updateLocationInfo} = useLocation(id);
+  const {updateLocationInfo, patchLocationError} = useLocation(id);
 
   useEffect(() => { //verify the content once it's changed by the users
     const contentObj: {[type: string]:any} = {}
     contentObj[type] = content;
     locationInformationValidationSchema.isValid(contentObj).then((valid:any) => {
-      if(valid == true){
+      if(valid === true){
         seterrorText('');
       }else{
         seterrorText('Input Not Valid');
@@ -59,11 +59,7 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
   }, [content])
 
   function handleMouseOver() {
-    if (!mouseOver) setMouseOver(true);
-  };
-
-  function handleMouseOut() {
-    if (mouseOver) setMouseOver(false);
+    setMouseOver(!mouseOver);
   };
 
   function handleClick() {
@@ -75,11 +71,14 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
     if(errorText === '' && editMode === true){
       //POST TO DB
       await updateLocationInfo(type, content);
-
-      //Add the Note
-      const noteContent = type + ' changed from ' + value + ' to ' + content;
-      submit(noteContent);
-      alert(type + " updated succesfully");
+      if(!patchLocationError){
+        //Add the Note
+        const noteContent = type + ' changed from ' + value + ' to ' + content;
+        submit(noteContent);
+        alert(type + " updated succesfully");
+      }else{
+        console.log("could not write the location content to the database")
+      }
     }
   }
 
@@ -95,7 +94,7 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
           helperText={errorText} //validation
           onBlur={handleOnBlur} //when the user clicked off the TextField
           onMouseEnter={handleMouseOver}
-          onMouseLeave={handleMouseOut}
+          onMouseLeave={handleMouseOver}
           InputProps={{
             classes: {
               disabled: classes.disabled

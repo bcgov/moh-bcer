@@ -429,20 +429,20 @@ export class LocationDataPortalController {
       
     /**
      * 
-     * Update a field of a location. (webpage || phone || email || underage || manufacturing)
+     * Update fields of a location. (webpage || phone || email || underage || manufacturing)
      */
-    @ApiOperation({ summary: 'Update a field of a Single Location' })
+    @ApiOperation({ summary: 'Update fields of a Single Location' })
     @ApiResponse({ status: HttpStatus.OK })
     @HttpCode(HttpStatus.OK)
     @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
     @UseGuards(AuthDataGuard)
     @AllowAnyRole()
-    @Patch('/update/:locationId')
+    @Patch('/update-fields/:locationId')
     async editSingleLocation(
       @Param('locationId') id: string,
       @Body() payload: any
     ){
-      const type = Object.keys(payload)[0] //type: webpage || phone || email || underage || manufacturing
+      const type = Object.keys(payload)[0]
       const possibleTypes = ['webpage','phone','email','underage','manufacturing']
       if(possibleTypes.includes(type)){
         const location = await this.service.getLocation(id);

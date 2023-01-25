@@ -109,7 +109,8 @@ function useLocation(locationIds?: string) {
     addLocationToSelectedHandler,
     getLocationIds,
     setRouteParam,
-    updateLocationInfo
+    updateLocationInfo,
+    patchLocationError
   };
 }
 
