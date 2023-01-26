@@ -21,3 +21,11 @@ export const faqValidationSchema = yup.object({
   title: yup.string().required('Question cannot be empty'),
   description: yup.string().required('Response cannot be empty')
 })
+
+export const locationInformationValidationSchema = yup.object({
+  webpage: yup.string().matches(/((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/),
+  email: yup.string().email(),
+  phone: yup.string().matches(/^(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)$/),
+  manufacturing: yup.string().matches(/^(Yes|No)$/),
+  underage: yup.string()
+});

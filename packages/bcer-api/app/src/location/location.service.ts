@@ -41,7 +41,7 @@ const manufacturingLocationDictionary = {
   '0': false
 }
 
-const manufacturingLocationTranslation = (manufacturing: string): boolean => {
+export const manufacturingLocationTranslation = (manufacturing: string): boolean => {
   if (typeof (manufacturing) === 'boolean') return manufacturing;
   return manufacturingLocationDictionary[manufacturing];
 }
