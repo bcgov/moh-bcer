@@ -7,6 +7,7 @@ import {makeStyles} from '@material-ui/core';
 import { locationInformationValidationSchema } from '@/constants/validate';
 import useNote from '@/hooks/useNote';
 import useLocation from '@/hooks/useLocation';
+import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -45,6 +46,7 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
   const [errorText, seterrorText] = useState('');
   const {submit} = useNote({ targetId:id, type:'location'});
   const {updateLocationInfo, patchLocationError} = useLocation(id);
+  const { showNetworkErrorMessage } = useNetworkErrorMessage();
 
   useEffect(() => { //verify the content once it's changed by the users
     const contentObj: {[type: string]:any} = {}
@@ -71,13 +73,13 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
     if(errorText === '' && editMode === true){
       //POST TO DB
       await updateLocationInfo(type, content);
-      if(!patchLocationError){
+      if(patchLocationError){
+        showNetworkErrorMessage(patchLocationError);
+      }else{
         //Add the Note
         const noteContent = type + ' changed from ' + value + ' to ' + content;
         submit(noteContent);
         alert(type + " updated succesfully");
-      }else{
-        console.log("could not write the location content to the database")
       }
     }
   }
@@ -113,3 +115,7 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
     );  
 }
 export default StyledEditableTextField;
+function showNetWorkErroeMessage() {
+  throw new Error('Function not implemented.');
+}
+
