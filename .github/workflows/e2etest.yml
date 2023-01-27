@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - fix-ci
+      - dev-env
+      - test-env
   workflow_dispatch:
 
 jobs:

@@ -91,29 +91,6 @@ const useStyles = makeStyles((theme) => ({
           display: 'block',
           width: 'min-content',
           textAlign: 'center',
-          '& span.MuiIconButton-label': {
-            // '& input': {
-            //   position: 'relative',
-            // },
-            // '& span' : {
-
-            //   '&:after': {
-            //     content: "''",
-            //     display: "block",
-            //     borderBottom: "5px solid #ccc",
-            //     width: "100%",
-            //     /* height: 10px; */
-            //     position: "absolute",
-            //     top: "56%",
-            //     left: "76%",
-            //     transform: "translate(0, -100%)",
-            //     zIndex: -1,
-            //   },
-            //   // '&:last-child:after': {
-            //   //   display: "none",
-            //   // }
-            // }
-          },
           '& span p.MuiTypography-body2':{
             fontSize: 12
           },

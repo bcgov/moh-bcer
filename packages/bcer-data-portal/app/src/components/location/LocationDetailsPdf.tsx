@@ -26,21 +26,28 @@ const useStyles = makeStyles((theme) => ({
     rowContent: {
         fontSize: '14px',
         fontWeight: 600,
-      },
-      cellTitle: {
+    },
+    cellTitle: {
         fontSize: '20px',
         fontWeight: 600,
         color: '#0053A4',
         paddingBottom: '12px'
-      },
-      box: {
+    },
+    box: {
         display: 'flex',
         border: 'solid 1px #CDCED2',
         borderRadius: '4px',
         padding: '1.4rem',
         boxShadow: 'none',
         justifyContent: 'space-between',    
-      },
+    },
+    locationStatusImg: {
+        height: 215, 
+        width: 540,
+        [theme.breakpoints.down('xs')] : {
+            height: 250
+        }
+    }
 }));
 
 type LocationDetailsPdfProps = {
@@ -61,7 +68,7 @@ export function LocationDetailsPdf({ location, locationStatusImg, userInfoImg, l
 
             <Typography className={classes.header}>{location.business.businessName}</Typography>
 
-            <img src={locationStatusImg} alt="Location Status Screenshot" style={{ height: '215px', width: '540px'}} />
+            <img src={locationStatusImg} alt="Location Status Screenshot" className={classes.locationStatusImg} />
 
             <img src={userInfoImg} alt="User Information Screenshot" style={{ height: '80px', width: '540px'}} />
 

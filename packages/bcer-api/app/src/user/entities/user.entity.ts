@@ -14,6 +14,7 @@ import { UserRO } from '../ro/user.ro';
 
 import { BusinessEntity } from 'src/business/entities/business.entity';
 import { NoteEntity } from 'src/note/entities/note.entity';
+import { FavouriteEntity } from 'src/favourite/entities/favourite.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -88,6 +89,12 @@ export class UserEntity {
     (note: NoteEntity) => note.user
   )
   notes: NoteEntity[];
+
+  @OneToMany(
+    () => FavouriteEntity,
+    (favourite: FavouriteEntity) => favourite.user
+  )
+  favourites: FavouriteEntity[];
 
   toResponseObject(): UserRO {
     return {
