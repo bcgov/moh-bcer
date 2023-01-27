@@ -51,6 +51,8 @@ import {
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { healthAuthorityOptions} from '../constants/arrays'
+import Favourite from '@/components/location/favourite';
+import { useFavourite } from '@/hooks/useFavourite';
 
 const useStyles = makeStyles({
   loadingWrapper: {
@@ -241,6 +243,13 @@ export default function Locations() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const {
+    onSubmit,
+    isSubmitting, 
+    submitError,
+    submitSuccess
+  } = useFavourite();
 
   const getInitialState = () => {
     const user_ha = store.get('KEYCLOAK_USER_HA') || '';
@@ -513,6 +522,27 @@ export default function Locations() {
     return <TextField {...props} disabled={true} />;
   };
 
+  const saveFavourite = (name: string) => {    
+    if (
+        (searchTerms.term && searchTerms.term !== "") ||
+        (searchTerms.authority && searchTerms.authority !== 'all') ||
+        (searchTerms.location_type && searchTerms.location_type !== 'all') ||
+        (searchTerms.reporting_status && searchTerms.reporting_status !=='all') ||
+        (searchTerms.underage && searchTerms.underage !=='all') ||
+        (searchTerms.noi_report && searchTerms.noi_report !== 'all') ||
+        (searchTerms.product_report && searchTerms.product_report !== 'all') ||
+        (searchTerms.manufacturing_report && searchTerms.manufacturing_report !== 'all') ||
+        (searchTerms.sales_report &&searchTerms.sales_report !== 'all') ||
+        (searchTerms.fromDate &&searchTerms.fromDate !== null) ||
+        (searchTerms.toDate &&searchTerms.toDate !== null)
+      ) {
+        const data = {title: name, searchParams: JSON.stringify(searchTerms)}
+        onSubmit(data);
+      } else {
+        console.log("No search")
+      }
+  }
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -725,23 +755,30 @@ export default function Locations() {
                       <p className={classes.date_filter_title}/>
                     </Grid>               
                     </> }
-                    <Grid item md={1} xs={12}>                   
+                    <Grid item md={3} xs={6}>                   
                       <Box
                         alignContent="center"
                         alignItems="center"
-                        justifyContent="center"
                         display="flex"
                         minHeight="100%"
+                        gridGap={15}
                       >
                         <StyledButton
                           fullWidth
                           variant="dialog-accept"
                           type="submit"
+                          style={{width: '65%'}}
                         >
                           Search
                         </StyledButton>
+                        <Favourite 
+                          handleSave={saveFavourite}
+                          isSubmitting =  {isSubmitting}
+                          submitSuccess = {submitSuccess}
+                          submitError = {submitError}
+                        />
                       </Box>
-                    </Grid>                   
+                    </Grid>
                   </Grid>                  
                 </Form>)
               }}
