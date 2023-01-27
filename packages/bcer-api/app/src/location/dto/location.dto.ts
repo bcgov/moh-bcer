@@ -69,7 +69,7 @@ export class LocationDTO {
   postal: string;
 
   @ApiProperty({
-    description: 'Business phone number',
+    description: 'Location phone number',
     example: faker.phone.phoneNumber()
   })
   @IsNotEmpty()
