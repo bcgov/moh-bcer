@@ -151,7 +151,7 @@ export class LocationController {
    * 
    * Edit location
    */
-  @ApiOperation({ summary: 'Close Single Location' })
+  @ApiOperation({ summary: 'Edit Single Location' })
   @ApiResponse({ status: HttpStatus.OK })
   @HttpCode(HttpStatus.OK)
   @Roles('user')
