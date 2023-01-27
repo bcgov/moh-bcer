@@ -20,7 +20,6 @@ import {
   StyledAutocomplete
 } from 'vaping-regulation-shared-components';
 import { ConfigContext } from '@/contexts/Config';
-import StyledEditableTextField from '@/components/generic/StyledEditableTextField';
 import LocationViewMap from './Map/LocationViewMap';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import Note from '@/components/note/Note';
@@ -548,19 +547,19 @@ function LocationsContent() {
                             <Grid item xs={12} md={4}>
                               <Box>
                                 <Typography variant="body2">Webpage</Typography>
-                                <StyledEditableTextField id={data.id} value={data.webpage} type={"webpage"}/>
+                                <Typography className={classes.rowContent}>{data.webpage}</Typography>
                               </Box>
                             </Grid>}
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
-                                <StyledEditableTextField id={data.id} value={data.phone} type="phone"/>
+                                <Typography className={classes.rowContent}>{data.phone}</Typography>
                               </Box>
                             </Grid>
                             <Grid item xs={6} md = {4}>
                               <Box>
                                 <Typography variant="body2">Business Email</Typography>
-                                <StyledEditableTextField id={data.id} value={data.email} type="email"/>
+                                <Typography className={classes.rowContent}>{data.email}</Typography>
                               </Box>
                             </Grid>
                             {data.location_type !== LocationType.online &&
@@ -568,7 +567,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">If persons under 19 years of age are permitted on the sales premises</Typography>
-                                <StyledEditableTextField id={data.id} value={data.underage} type="underage"/>
+                                <Typography className={classes.rowContent}>{data.underage}</Typography>
                               </Box>
                             </Grid>
                             <Grid item xs={12}>
@@ -581,7 +580,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Intent to manufacture e-substances for sale at this business location</Typography>
-                                <StyledEditableTextField id={data.id} value={data.manufacturing === true ? 'Yes' : 'No'} type="manufacturing"/>
+                                <Typography className={classes.rowContent}>{data.manufacturing === true ? 'Yes' : 'No'}</Typography>
                               </Box>
                             </Grid>
                             <Grid item md={4} xs={12}>
@@ -608,7 +607,7 @@ function LocationsContent() {
                                 <Typography className={classes.rowContent}>{data ? data.created_at ? moment(data.created_at).utc(true).format('YYYY-MM-DD hh:mm:ss a') : '' : 'N/A'}</Typography>
                               </Box>
                             </Grid>
-                          </Grid>
+                          </Grid>    
                         </Paper>
                       </Grid>
 
