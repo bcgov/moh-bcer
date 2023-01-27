@@ -3,24 +3,18 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { useAxiosGet, useAxiosPatch } from './axios';
+import { useAxiosGet } from './axios';
 
 function useLocation(locationIds?: string) {
   const history = useHistory();
   const [selectedLocations, setSelectedLocations] = useState<BusinessLocation[]>([]);
+
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   /**
    * Fetching location data based on the given locationIds
    */
   const [{ data: locationWithId, error, loading }, getLocationWithIds] =
     useAxiosGet(`/data/location/ids/${locationIds}`, { manual: true });
-
-  /**
-   * Update a single location info
-   */
-  const [{ loading: patchLocationLoading, error: patchLocationError},patchLocation] = 
-    useAxiosPatch(`/data/location/update-fields/${locationIds}`, { manual: true });
-
 
   useEffect(() => {
     if (locationIds) {
@@ -86,31 +80,13 @@ function useLocation(locationIds?: string) {
     return loc.reduce((prev, current) => [...prev, current?.id], initial);
   };
 
-  /**
-   * 
-   * @param {type} the type of content to update. e.g.  webpage || phone || email || underage || manufacturing
-   * @param {content} the new content to replace
-   * @Update the info for a location
-   */
-  const updateLocationInfo = async (type: string, content: string) => {
-    let body : {[type: string]:any} = {}
-    body[type] = content;
-    if(locationIds !== undefined){
-      await patchLocation({
-        data: body,
-      });
-    }
-  };
-
   return {
     selectedLocations,
     setSelectedLocations,
     removeSelectedLocationHandler,
     addLocationToSelectedHandler,
     getLocationIds,
-    setRouteParam,
-    updateLocationInfo,
-    patchLocationError
+    setRouteParam
   };
 }
 
