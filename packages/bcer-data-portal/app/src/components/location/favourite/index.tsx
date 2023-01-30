@@ -4,18 +4,19 @@ import Favourites from "./Favourites"
 import { Box } from "@material-ui/core"
 
 type FavouriteProps = {
+    enableAdd: boolean,
     handleSave: (name: string) => void,
     isSubmitting: boolean,
     submitSuccess: boolean,
     submitError: any
 }
 
-const Favourite = ({ handleSave, isSubmitting, submitSuccess, submitError }: FavouriteProps) => {
+const Favourite = ({ enableAdd, handleSave, isSubmitting, submitSuccess, submitError }: FavouriteProps) => {
     return (<Box
                 gridGap={10}
                 display="flex"
             >
-            <AddFavourite onSave={handleSave} isSubmitting={isSubmitting} submitSuccess={submitSuccess} submitError={submitError} />
+            <AddFavourite enableAdd ={enableAdd} onSave={handleSave} isSubmitting={isSubmitting} submitSuccess={submitSuccess} submitError={submitError} />
             <Favourites />
         </Box>
     )

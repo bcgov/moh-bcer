@@ -275,6 +275,7 @@ export default function Locations() {
   const [searchTerms, setSearchTerms] = useState(getInitialState());
   const [locations, setLocations] = useState([]);
   const [showMoreFilters, setShowMoreFilter] = useState(false);
+  const [hasSearchParams, setHasSearchParam] = useState(false);
 
   const handleRouteWithHistory = (locationId: string) => {
     setAppGlobalContext({
@@ -424,6 +425,23 @@ export default function Locations() {
   };
 
   useEffect(() => {
+    if (
+      (searchTerms.term && searchTerms.term !== "") ||
+      (searchTerms.authority && searchTerms.authority !== 'all') ||
+      (searchTerms.location_type && searchTerms.location_type !== 'all') ||
+      (searchTerms.reporting_status && searchTerms.reporting_status !=='all') ||
+      (searchTerms.underage && searchTerms.underage !=='all') ||
+      (searchTerms.noi_report && searchTerms.noi_report !== 'all') ||
+      (searchTerms.product_report && searchTerms.product_report !== 'all') ||
+      (searchTerms.manufacturing_report && searchTerms.manufacturing_report !== 'all') ||
+      (searchTerms.sales_report &&searchTerms.sales_report !== 'all') ||
+      (searchTerms.fromDate &&searchTerms.fromDate !== null) ||
+      (searchTerms.toDate &&searchTerms.toDate !== null)
+    ) {
+      setHasSearchParam(true);
+    } else {
+      setHasSearchParam(false);
+    }
     localStorage.setItem('location_searchOptions', JSON.stringify(searchTerms));
     get();
   }, [searchTerms]);
@@ -523,19 +541,7 @@ export default function Locations() {
   };
 
   const saveFavourite = (name: string) => {    
-    if (
-        (searchTerms.term && searchTerms.term !== "") ||
-        (searchTerms.authority && searchTerms.authority !== 'all') ||
-        (searchTerms.location_type && searchTerms.location_type !== 'all') ||
-        (searchTerms.reporting_status && searchTerms.reporting_status !=='all') ||
-        (searchTerms.underage && searchTerms.underage !=='all') ||
-        (searchTerms.noi_report && searchTerms.noi_report !== 'all') ||
-        (searchTerms.product_report && searchTerms.product_report !== 'all') ||
-        (searchTerms.manufacturing_report && searchTerms.manufacturing_report !== 'all') ||
-        (searchTerms.sales_report &&searchTerms.sales_report !== 'all') ||
-        (searchTerms.fromDate &&searchTerms.fromDate !== null) ||
-        (searchTerms.toDate &&searchTerms.toDate !== null)
-      ) {
+    if (hasSearchParams) {
         const data = {title: name, searchParams: JSON.stringify(searchTerms)}
         onSubmit(data);
       } else {
@@ -772,6 +778,7 @@ export default function Locations() {
                           Search
                         </StyledButton>
                         <Favourite 
+                          enableAdd = {hasSearchParams}
                           handleSave={saveFavourite}
                           isSubmitting =  {isSubmitting}
                           submitSuccess = {submitSuccess}

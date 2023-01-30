@@ -30,7 +30,7 @@ export class FavouriteService {
   }
 
   async findOne(id: string) {
-    return await this.favouriteRepository.findOne(id)
+    return await this.favouriteRepository.findOne(id, { relations: ['user'] })
   }
 
   async remove(id: string) {

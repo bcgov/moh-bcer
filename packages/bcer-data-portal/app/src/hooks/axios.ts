@@ -41,10 +41,19 @@ const axiosGet = axios.create({
   method: 'GET',
 })
 
+const axiosDelete = axios.create({
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+
 axiosPost.interceptors.request.use(successInterceptor)
 axiosPostForm.interceptors.request.use(successInterceptor)
 axiosPatch.interceptors.request.use(successInterceptor)
 axiosGet.interceptors.request.use(successInterceptor)
+axiosDelete.interceptors.request.use(successInterceptor);
 
 export const useAxiosPost = makeUseAxios({
   cache: false,
@@ -64,4 +73,9 @@ export const useAxiosPatch = makeUseAxios({
 export const useAxiosGet = makeUseAxios({
   cache: false,
   axios: axiosGet
+});
+
+export const useAxiosDelete = makeUseAxios({
+  cache: false,
+  axios: axiosDelete,
 });
