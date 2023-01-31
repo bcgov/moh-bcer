@@ -6,6 +6,7 @@ const useStyles = makeStyles(() => ({
     addBookmarkIcon: {
         fontSize: 35, 
         color: '#3F6991',
+        cursor: 'pointer',
         '&:hover': {
             background: '#e6eff7'
         },
@@ -29,13 +30,14 @@ const useStyles = makeStyles(() => ({
 }))
 
 type AddFavouriteProps = {
+    enableAdd: boolean,
     onSave: (name: string) => void,
     isSubmitting: boolean,
     submitSuccess: boolean,
     submitError: any
 }
 
-const AddFavourite = ({ onSave, isSubmitting, submitSuccess, submitError }: AddFavouriteProps) => {
+const AddFavourite = ({ enableAdd, onSave, isSubmitting, submitSuccess, submitError }: AddFavouriteProps) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [name, setName] = React.useState("");
@@ -58,7 +60,7 @@ const AddFavourite = ({ onSave, isSubmitting, submitSuccess, submitError }: AddF
             setHelperText("Added Successfully!");
             setTimeout(() => {
                 resetForm()
-            }, 5000)
+            }, 3000)
         }
         if (submitError) {
             setHelperText("Error saving favourite!");
@@ -68,15 +70,19 @@ const AddFavourite = ({ onSave, isSubmitting, submitSuccess, submitError }: AddF
 
     const resetForm = () => {
         setHelperText("");
-        setName("")
+        setName("");
     }
 
     return (
         <>  
+            {enableAdd ?
             <span 
                 onClick={handleClick}
                 className={`${classes.addBookmarkIcon} material-symbols-outlined ${open ? 'highlight': ''}`} 
-                aria-describedby={id}>bookmark_add</span>
+                aria-describedby={id}>bookmark_add</span>:
+            <span 
+                className={`material-symbols-outlined `} 
+                style={{fontSize: 35, color: 'grey'}}>bookmark_add</span>}
             <Popover
                 id={id}
                 open={open}
@@ -113,6 +119,7 @@ const AddFavourite = ({ onSave, isSubmitting, submitSuccess, submitError }: AddF
                                 shrink: true,
                             }}
                             variant="outlined"
+                            value={name}
                             onChange={(e)=> setName(e.target.value)}
                         />
                     </Box>

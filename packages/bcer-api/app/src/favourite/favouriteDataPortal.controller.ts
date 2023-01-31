@@ -55,7 +55,7 @@ export class FavouriteDataPortalController {
   @UseGuards(AuthDataGuard)
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
   @AllowAnyRole()
-  @Delete(':id')
+  @Delete('/:id')
   async remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     const user = await this.userService.findByBCeID(req.user.bceidGuid);
     if (!user) {
@@ -67,7 +67,7 @@ export class FavouriteDataPortalController {
       throw new NotFoundException('Favourite not found');
     }
 
-    if (favourite.user !== user) {
+    if (favourite.user.id !== user.id) {
       throw new ForbiddenException('User does not have permission to perform this action');
     }
 
