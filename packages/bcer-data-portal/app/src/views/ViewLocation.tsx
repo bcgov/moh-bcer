@@ -20,6 +20,7 @@ import {
   StyledAutocomplete
 } from 'vaping-regulation-shared-components';
 import { ConfigContext } from '@/contexts/Config';
+import StyledEditableTextField from '@/components/generic/StyledEditableTextField';
 import LocationViewMap from './Map/LocationViewMap';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import Note from '@/components/note/Note';
@@ -91,29 +92,6 @@ const useStyles = makeStyles((theme) => ({
           display: 'block',
           width: 'min-content',
           textAlign: 'center',
-          '& span.MuiIconButton-label': {
-            // '& input': {
-            //   position: 'relative',
-            // },
-            // '& span' : {
-
-            //   '&:after': {
-            //     content: "''",
-            //     display: "block",
-            //     borderBottom: "5px solid #ccc",
-            //     width: "100%",
-            //     /* height: 10px; */
-            //     position: "absolute",
-            //     top: "56%",
-            //     left: "76%",
-            //     transform: "translate(0, -100%)",
-            //     zIndex: -1,
-            //   },
-            //   // '&:last-child:after': {
-            //   //   display: "none",
-            //   // }
-            // }
-          },
           '& span p.MuiTypography-body2':{
             fontSize: 12
           },
@@ -547,19 +525,19 @@ function LocationsContent() {
                             <Grid item xs={12} md={4}>
                               <Box>
                                 <Typography variant="body2">Webpage</Typography>
-                                <Typography className={classes.rowContent}>{data.webpage}</Typography>
+                                <StyledEditableTextField id={data.id} value={data.webpage} type={"webpage"}/>
                               </Box>
                             </Grid>}
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
-                                <Typography className={classes.rowContent}>{data.phone}</Typography>
+                                <StyledEditableTextField id={data.id} value={data.phone} type="phone"/>
                               </Box>
                             </Grid>
                             <Grid item xs={6} md = {4}>
                               <Box>
                                 <Typography variant="body2">Business Email</Typography>
-                                <Typography className={classes.rowContent}>{data.email}</Typography>
+                                <StyledEditableTextField id={data.id} value={data.email} type="email"/>
                               </Box>
                             </Grid>
                             {data.location_type !== LocationType.online &&
@@ -567,7 +545,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">If persons under 19 years of age are permitted on the sales premises</Typography>
-                                <Typography className={classes.rowContent}>{data.underage}</Typography>
+                                <StyledEditableTextField id={data.id} value={data.underage} type="underage"/>
                               </Box>
                             </Grid>
                             <Grid item xs={12}>
@@ -580,7 +558,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Intent to manufacture e-substances for sale at this business location</Typography>
-                                <Typography className={classes.rowContent}>{data.manufacturing === true ? 'Yes' : 'No'}</Typography>
+                                <StyledEditableTextField id={data.id} value={data.manufacturing === true ? 'Yes' : 'No'} type="manufacturing"/>
                               </Box>
                             </Grid>
                             <Grid item md={4} xs={12}>

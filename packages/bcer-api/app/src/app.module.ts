@@ -30,6 +30,7 @@ import { CronModule } from './cron/cron.module';
 import { NotificationModule } from './notification/notification.module';
 import { NoteModule } from './note/note.module';
 import { FaqModule } from './faq/faq.module';
+import { FavouriteModule } from './favourite/favourite.module';
 
 const moduleImports = [
   AuthModule,
@@ -50,6 +51,7 @@ const moduleImports = [
   NotificationModule,
   NoteModule,
   FaqModule,
+  FavouriteModule
 ];
 
 @Module({
