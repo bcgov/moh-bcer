@@ -33,12 +33,13 @@ interface StyledEditableTextFieldProps {
   id: string;
   value: any;
   type: string;
+  onSuccesfullUpdate?: (data:string) => void 
 }
 
 //This is the editable text filed component for the location information on Location Details page, it allows the user to update the location information and it stores the edit history into Notes
 //value: user's input
 //type: webpage || phone || email || underage || manufacturing
-function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProps) {
+function StyledEditableTextField({id, value, type, onSuccesfullUpdate} : StyledEditableTextFieldProps) {
   const classes = useStyles();
   const [content, setContent] = useState(value);
   const [editMode, setEditMode] = useState(false);
@@ -69,6 +70,7 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
     setMouseOver(false);
   };
 
+
   async function handleOnBlur() { //once the errorText is changed to '' and the user stopped editing, confirm the change and update the value in the database
     if(errorText === '' && editMode === true){
       //POST TO DB
@@ -78,9 +80,11 @@ function StyledEditableTextField({id, value, type} : StyledEditableTextFieldProp
       }else{
         //Add the Note
         const noteContent = type + ' changed from ' + value + ' to ' + content;
-        submit(noteContent);
+        onSuccesfullUpdate(noteContent);
+        // submit(noteContent);
         alert(type + " updated succesfully");
       }
+      //send the value back to viewlocation
     }
   }
 

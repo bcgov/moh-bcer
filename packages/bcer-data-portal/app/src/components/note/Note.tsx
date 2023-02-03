@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StyledToolTip from '../generic/StyledToolTip';
 import { FixedSizeList } from 'react-window';
 import useNote, { NoteProps } from '@/hooks/useNote';
@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Note({ targetId, type, showHideButton, showFlag }: NoteProps) {
+function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) {
   const classes = useStyles();
   const [showNotes, setShowNotes] = useState(true);
 
@@ -60,6 +60,13 @@ function Note({ targetId, type, showHideButton, showFlag }: NoteProps) {
     flagForReview,
     flagForReviewLoading
   } = useNote({ targetId, type });
+
+  useEffect(() => {
+    console.log(refresh)
+     if (refresh) {
+      submit(refresh)
+     }
+  }, [refresh])
 
   function RenderRow(props: any) {
     const { index, style } = props;
