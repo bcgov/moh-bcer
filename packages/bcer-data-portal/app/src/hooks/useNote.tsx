@@ -93,8 +93,7 @@ function useNote({ targetId, type }: NoteProps) {
     postLoading,
     flagForReview,
     flagForReviewLoading,
-    flagforReviewError,
-    get
+    flagforReviewError
   };
 }
 

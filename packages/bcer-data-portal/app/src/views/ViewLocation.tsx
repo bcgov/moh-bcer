@@ -34,8 +34,6 @@ import ReactDOMServer from 'react-dom/server';
 import { LocationDetailsPdf } from '@/components/location/LocationDetailsPdf';
 import jsPDF from 'jspdf';
 import { useScreenshot } from "use-react-screenshot";
-import useNote from '@/hooks/useNote';
-
 
 const useStyles = makeStyles((theme) => ({
   contentWrapper: {
@@ -202,6 +200,7 @@ function LocationsContent() {
   const salesReportRef = useRef(null);
   const mapBoxRef = useRef(null);
   const userInfoRef = useRef(null);
+  const [locationInfoUpdates, updateLocationInfo] = useState("");
 
   const [printing, setPrinting] = useState<Boolean>(false);
   const [locationStatusScreenshot, takeLocationStatusScreenshot] = useScreenshot();
@@ -389,11 +388,8 @@ function LocationsContent() {
     setPrinting(false);
   }
 
-  const { submit } = useNote({ targetId:id, type:'location'});
-  const [showFlag, setShowFlag] = useState("");
-  const submitChangeToNote = async (data:string) => {
-    setShowFlag(data)
-    // get();
+  const submitChangeToNote = async (data:string) => { //data: the content to update in the Notes
+    updateLocationInfo(data)
   }
 
   return (
@@ -534,19 +530,19 @@ function LocationsContent() {
                             <Grid item xs={12} md={4}>
                               <Box>
                                 <Typography variant="body2">Webpage</Typography>
-                                <StyledEditableTextField id={data.id} value={data.webpage} type={"webpage"} onSuccesfullUpdate={submitChangeToNote}/>
+                                <StyledEditableTextField id={data.id} value={data.webpage} type={"webpage"} onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>}
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Business Phone Number</Typography>
-                                <StyledEditableTextField id={data.id} value={data.phone} type="phone" onSuccesfullUpdate={submitChangeToNote}/>
+                                <StyledEditableTextField id={data.id} value={data.phone} type="phone" onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>
                             <Grid item xs={6} md = {4}>
                               <Box>
                                 <Typography variant="body2">Business Email</Typography>
-                                <StyledEditableTextField id={data.id} value={data.email} type="email" onSuccesfullUpdate={submitChangeToNote}/>
+                                <StyledEditableTextField id={data.id} value={data.email} type="email" onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>
                             {data.location_type !== LocationType.online &&
@@ -554,7 +550,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">If persons under 19 years of age are permitted on the sales premises</Typography>
-                                <StyledEditableTextField id={data.id} value={data.underage} type="underage" onSuccesfullUpdate={submitChangeToNote}/>
+                                <StyledEditableTextField id={data.id} value={data.underage} type="underage" onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>
                             <Grid item xs={12}>
@@ -567,7 +563,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Intent to manufacture e-substances for sale at this business location</Typography>
-                                <StyledEditableTextField id={data.id} value={data.manufacturing === true ? 'Yes' : 'No'} type="manufacturing" onSuccesfullUpdate={submitChangeToNote}/>
+                                <StyledEditableTextField id={data.id} value={data.manufacturing === true ? 'Yes' : 'No'} type="manufacturing" onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>
                             <Grid item md={4} xs={12}>
@@ -599,7 +595,7 @@ function LocationsContent() {
                       </Grid>
 
                       <Grid item xs={12} id="notes">
-                          <Note targetId={id} type='location' showHideButton={true} showFlag={true} refresh={showFlag} />
+                          <Note targetId={id} type='location' showHideButton={true} showFlag={true} refresh={locationInfoUpdates} />
                       </Grid>
 
                       <Grid item xs={12} id="productReport" ref={productReportRef}>

@@ -62,7 +62,6 @@ function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) 
   } = useNote({ targetId, type });
 
   useEffect(() => {
-    console.log(refresh)
      if (refresh) {
       submit(refresh)
      }
