@@ -510,7 +510,7 @@ function LocationsContent() {
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Address</Typography>
-                                <Typography className={classes.rowContent}>{data.addressLine1}</Typography>
+                                <StyledEditableTextField id={data.id} value={data.addressLine1} type={"addressLine1"} onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>                            
                             <Grid item xs={6} md={4}>

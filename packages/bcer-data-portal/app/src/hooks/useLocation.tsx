@@ -87,7 +87,7 @@ function useLocation(locationIds?: string) {
 
     /**
    * 
-   * @param {type} the type of content to update. e.g.  postal || webpage || phone || email || underage || manufacturing
+   * @param {type} the type of content to update. e.g.  addressLine1 || postal || webpage || phone || email || underage || manufacturing
    * @param {content} the new content to replace
    * @Update the info for a location
    */

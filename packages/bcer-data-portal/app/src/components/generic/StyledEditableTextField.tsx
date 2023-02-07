@@ -32,12 +32,14 @@ interface StyledEditableTextFieldProps {
   id: string;
   value: any;
   type: string;
-  onSuccessfulUpdate?: (data:string) => void //the function to save the change to the note
+  onSuccessfulUpdate?: (data:string) => void
 }
 
 //This is the editable text filed component for the location information on Location Details page, it allows the user to update the location information and it stores the edit history into Notes
-//value: user's input
-//type: postal || webpage || phone || email || underage || manufacturing
+//  id: location id
+//  value: user's input
+//  type: addressLine1 || postal || webpage || phone || email || underage || manufacturing
+//  onSuccessfulUpdate: the function to save the change to the note
 function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledEditableTextFieldProps) {
   const classes = useStyles();
   const [content, setContent] = useState(value);
@@ -72,12 +74,22 @@ function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledE
     if(errorText === '' && editMode === true){
       //POST TO DB
       await updateLocationInfo(type, content);
+      // if address:
+      // update address
+      // change city
+      // reset postal to null
+      // change health_authority
+      // change longitude
+      // change latitude
+      // change geo_confidence ??
+
+
       if(patchLocationError){
         showNetworkErrorMessage(patchLocationError);
       }else{
         //Add the Note
-        const noteContent = type + ' changed from ' + value + ' to ' + content;
-        onSuccessfulUpdate(noteContent);
+        if(type === 'addressLine1') type = 'address';
+        onSuccessfulUpdate(type + ' changed from ' + value + ' to ' + content);
         alert(type + " updated succesfully");
       }
     }
