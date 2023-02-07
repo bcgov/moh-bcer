@@ -5,7 +5,6 @@ import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {makeStyles} from '@material-ui/core';
 import { locationInformationValidationSchema } from '@/constants/validate';
-import useNote from '@/hooks/useNote';
 import useLocation from '@/hooks/useLocation';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 
@@ -33,12 +32,12 @@ interface StyledEditableTextFieldProps {
   id: string;
   value: any;
   type: string;
-  onSuccessfulUpdate?: (data:string) => void 
+  onSuccessfulUpdate?: (data:string) => void //the function to save the change to the note
 }
 
 //This is the editable text filed component for the location information on Location Details page, it allows the user to update the location information and it stores the edit history into Notes
 //value: user's input
-//type: webpage || phone || email || underage || manufacturing
+//type: postal || webpage || phone || email || underage || manufacturing
 function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledEditableTextFieldProps) {
   const classes = useStyles();
   const [content, setContent] = useState(value);

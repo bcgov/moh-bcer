@@ -522,7 +522,7 @@ function LocationsContent() {
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">Postal Code</Typography>
-                                <Typography className={classes.rowContent}>{data.postal}</Typography>
+                                <StyledEditableTextField id={data.id} value={data.postal} type={"postal"} onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>
                             </>}

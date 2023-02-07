@@ -428,7 +428,7 @@ export class LocationDataPortalController {
 
       /**
      * 
-     * Update fields of a location. (webpage || phone || email || underage || manufacturing)
+     * Update fields of a location. (postall || webpage || phone || email || underage || manufacturing)
      */
       @ApiOperation({ summary: 'Update fields of a Single Location' })
       @ApiResponse({ status: HttpStatus.OK })
@@ -442,13 +442,13 @@ export class LocationDataPortalController {
         @Body() payload: any
       ){
         const type = Object.keys(payload)[0]
-        const possibleTypes = ['webpage','phone','email','underage','manufacturing']
+        const possibleTypes = ['postal','webpage','phone','email','underage','manufacturing']
         if(possibleTypes.includes(type)){
           const location = await this.service.getLocation(id);
           {type ==='manufacturing'? location[type] =  manufacturingLocationTranslation(payload[type].toLowerCase()) : location[type] = payload[type]}
           await this.service.updateLocation(id, location.toResponseObject() as any);
         }else{
-          throw new ForbiddenException("the type is not editable. allowed types: webpage || phone || email || underage || manufacturing");
+          throw new ForbiddenException("the type is not editable. allowed types: postal || webpage || phone || email || underage || manufacturing");
         }
       }
 }
