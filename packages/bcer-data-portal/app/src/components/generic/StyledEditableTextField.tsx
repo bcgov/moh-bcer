@@ -38,11 +38,19 @@ function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledE
   const [noteMessage, updateNoteMessage] = useState("");
   const {showNetworkErrorMessage} = useNetworkErrorMessage();
   const notInitialRender = useRef(false);
-  const updateContent = async (data:string) => {
+
+  const updateContent = async (data:string, city: string, health_authority:string, longitude: any, latitude:any, geo_confidence:string) => { //update the content returned from the StyledEditDialog
     if(data!== "") {
       updateNoteMessage(type + " changed from " + content);
       setContent(data)
     }
+    console.log("data: " + data)
+    console.log("city: " + city)
+    console.log("health_authority: " + health_authority)
+    console.log("longitude: " + longitude)
+    console.log("latitude: " + latitude)
+    console.log("geo address: " + geo_confidence)
+
     handleMouseOver()
   }
   
