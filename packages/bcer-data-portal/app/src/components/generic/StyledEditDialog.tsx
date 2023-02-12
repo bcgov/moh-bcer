@@ -22,8 +22,8 @@ interface StyledEditDialogProps {
     data:string, 
     city?:string,
     health_authority?:string,
-    longitude?: any,
-    latitude?: any,
+    longitude?: number,
+    latitude?: number,
     geo_confidence?:string
     ) => void
 }
@@ -39,6 +39,16 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
   const [geo_confidence, setGeo_confidence] = useState('');
 	const [open, setOpen] = useState(false);
   const [errorText, seterrorText] = useState('');
+  
+  const locationInfoType: { [key: string]: string } = {
+    addressLine1: 'Address',
+    webpage: 'Webpage',
+    email: 'Email',
+    phone: 'Phone',
+    manufacturing: 'Manufacturing',
+    underage: 'Underage',
+    postal: 'Postal'
+  };
 
   useEffect(() => { //input validation
     const contentObj: {[type: string]:any} = {}
@@ -64,51 +74,42 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
 
   //address auto complete
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
-  const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
   const [ predictions, setPredictions ] = useState<Array<BCGeocoderAutocompleteData>>([]);
+  const [{ data: suggestions, error:suggestionsError, loading:suggestionsLoading }, getSuggestions] = useAxiosGet('', { manual: true })
   const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
-  
-  // const HealthAuthorities: { [key: string]: string } = {
-  //   fraser: 'Fraser Health',
-  //   interior: 'Interior Health',
-  //   island: 'Island Health',
-  //   northern: 'Northern Health',
-  //   coastal: 'Vancouver Coastal Health',
-  //   other: 'Other (e.g. Out of Province)',
-  // };
-
-  // formikHelpers.setFieldValue('health_authority', healthAuthority.toLowerCase());
 
   useEffect(() => {
-    if (data && data.features?.length > 0) {
-      setPredictions(data.features)
-      setAutocompleteOptions(data.features.map((e: BCGeocoderAutocompleteData) => e.properties.fullAddress))
+    if (suggestions && suggestions.features?.length > 0) {
+      setPredictions(suggestions.features)
+      setAutocompleteOptions(suggestions.features.map((e: BCGeocoderAutocompleteData) => e.properties.fullAddress))
     }    
-  }, [data])
+  }, [suggestions])
+
+  useEffect(() => {
+    if(healthAuthority) {
+      setHealth_authority(healthAuthority.toLowerCase())
+    }
+  }, [healthAuthority]);
 
   const getAutocomplete = (e: any) => {
     getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
+  }
+
+  const doDetermineHealthAuthority = (long: number, lat: number) => {
+    determineHealthAuthority({url: `data/location/determine-health-authority-on-portal?lat=${lat}&long=${long}`})
   }
 
   const handleAutocompleteSelect = ( value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
     const fullLocation = predictions.find((e: { properties: { fullAddress: any; }; }) => e.properties.fullAddress === value)
     setContent(fullLocation ? fullLocation.properties.fullAddress : "")
     setCity(fullLocation.properties.localityName)
-    // setHealth_authority()
     setLongitude(fullLocation.geometry.coordinates[0])
     setLatitude(fullLocation.geometry.coordinates[1])
     setGeo_confidence(fullLocation.properties.precisionPoints)
     if (fullLocation) {
-      // setHealth_authority(doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1])) 
-      doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1])
-      console.log("ha is: " + healthAuthority);
-
+      doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
     }
   }
-  const doDetermineHealthAuthority = (long: number, lat: number) => {
-    determineHealthAuthority({url: `/location/determine-health-authority?lat=${lat}&long=${long}`})
-  }
-
 
   return (
     <Grid>
@@ -136,8 +137,8 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
               renderInput={(params: any) => (
                 <StyledTextField 
                   {...params}
-                  name={type}
-                  label={"Address"}
+                  name={locationInfoType[type]}
+                  label={locationInfoType[type]}
                   error = {errorText===''? false : true}
                   helperText={errorText}
                   autoComplete='off'
@@ -150,8 +151,8 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
             />
             :
             <StyledTextField
-              name={type}
-              label={type}
+              name={locationInfoType[type]}
+              label={locationInfoType[type]}
               value={content}
               onChange={(e:any) => setContent(e.target.value)}
               error = {errorText===''? false : true}

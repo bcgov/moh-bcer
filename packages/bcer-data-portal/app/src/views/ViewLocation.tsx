@@ -21,6 +21,7 @@ import {
 } from 'vaping-regulation-shared-components';
 import { ConfigContext } from '@/contexts/Config';
 import StyledEditableTextField from '@/components/generic/StyledEditableTextField';
+import RefreshableTypography from '@/components/generic/RefreshableTypography';
 import LocationViewMap from './Map/LocationViewMap';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import Note from '@/components/note/Note';
@@ -516,7 +517,8 @@ function LocationsContent() {
                             <Grid item xs={6} md={4}>
                               <Box>
                                 <Typography variant="body2">City</Typography>
-                                <Typography className={classes.rowContent}>{data.city}</Typography>
+                                <RefreshableTypography value={data.city} refresh={locationInfoUpdates}/>
+
                               </Box>
                             </Grid>
                             <Grid item xs={6} md={4}>
@@ -556,7 +558,7 @@ function LocationsContent() {
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Regional health authority the sales premises is located in</Typography>
-                                <Typography className={classes.rowContent}>{data.ha === 'other' ? data.ha_other : data.ha}</Typography>
+                                <RefreshableTypography value={data.ha === 'other' ? data.ha_other : data.ha} refresh={locationInfoUpdates}/>
                               </Box>
                             </Grid>
                             </>}

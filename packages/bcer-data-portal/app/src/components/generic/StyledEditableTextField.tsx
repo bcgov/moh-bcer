@@ -33,40 +33,48 @@ interface StyledEditableTextFieldProps {
 function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledEditableTextFieldProps) {
   const classes = useStyles();
   const [content, setContent] = useState(value);
+  const [city, setCity] = useState('');
+  const [health_authority, setHealth_authority] = useState('');
+  const [longitude, setLongitude] = useState(null);
+  const [latitude, setLatitude] = useState(null);
+  const [geo_confidence, setGeo_confidence] = useState('');
   const [mouseOver, setMouseOver] = useState(false);
   const {updateLocationInfo, patchLocationError} = useLocation(id);
   const [noteMessage, updateNoteMessage] = useState("");
   const {showNetworkErrorMessage} = useNetworkErrorMessage();
   const notInitialRender = useRef(false);
 
-  const updateContent = async (data:string, city: string, health_authority:string, longitude: any, latitude:any, geo_confidence:string) => { //update the content returned from the StyledEditDialog
+  const updateContent = async (data:string, city: string, health_authority:string, longitude: number, latitude:number, geo_confidence:string) => { //update the content returned from the StyledEditDialog
     if(data!== "") {
-      updateNoteMessage(type + " changed from " + content);
+      {type==='addressLine1'? updateNoteMessage("address changed from " + content): updateNoteMessage(type + " changed from " + content)}
       setContent(data)
+      setCity(city)
+      setHealth_authority(health_authority)
+      setLongitude(longitude)
+      setLatitude(latitude)
+      setGeo_confidence(geo_confidence)
     }
+
     console.log("data: " + data)
     console.log("city: " + city)
     console.log("health_authority: " + health_authority)
     console.log("longitude: " + longitude)
     console.log("latitude: " + latitude)
     console.log("geo address: " + geo_confidence)
-
     handleMouseOver()
   }
   
   useEffect(() => { //content changed => update the value in the database and add the change to the note
     if(notInitialRender.current){
       const sendToDB  = async() =>{ 
-        //POST TO DB
-        await updateLocationInfo(type, content);
-        // if address:
-        // update address
-        // change city
-        // reset postal to null
-        // change health_authority
-        // change longitude
-        // change latitude
-        // change geo_confidence ??
+        //POST the change to DB
+        await updateLocationInfo(type, content)
+        if(city) await updateLocationInfo('city', city)
+        if(health_authority) await updateLocationInfo('health_authority', health_authority)
+        if(longitude) await updateLocationInfo('longitude', longitude)
+        if(latitude) await updateLocationInfo('latitude', latitude)
+        if(geo_confidence) await updateLocationInfo('geo_confidence', geo_confidence)
+        
         if(patchLocationError){
           showNetworkErrorMessage(patchLocationError);
         }else{
