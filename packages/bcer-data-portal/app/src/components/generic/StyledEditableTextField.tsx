@@ -54,13 +54,6 @@ function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledE
       setLatitude(latitude)
       setGeo_confidence(geo_confidence)
     }
-
-    console.log("data: " + data)
-    console.log("city: " + city)
-    console.log("health_authority: " + health_authority)
-    console.log("longitude: " + longitude)
-    console.log("latitude: " + latitude)
-    console.log("geo address: " + geo_confidence)
     handleMouseOver()
   }
   
