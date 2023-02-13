@@ -85,21 +85,21 @@ function useLocation(locationIds?: string) {
     return loc.reduce((prev, current) => [...prev, current?.id], initial);
   };
 
-    /**
+  /**
    * 
-   * @param {type} the type of content to update. e.g.  webpage || phone || email || underage || manufacturing
+   * @param {type} the type of content to update. e.g.  addressLine1 || postal || webpage || phone || email || underage || manufacturing
    * @param {content} the new content to replace
    * @Update the info for a location
    */
-    const updateLocationInfo = async (type: string, content: string) => {
-      let body : {[type: string]:any} = {}
-      body[type] = content;
-      if(locationIds !== undefined){
-        await patchLocation({
-          data: body,
-        });
-      }
-    };
+  const updateLocationInfo = async (type: string, content: string) => {
+    let body : {[type: string]:any} = {}
+    body[type] = content;
+    if(locationIds !== undefined){
+      await patchLocation({
+        data: body,
+      });
+    }
+  };
 
   return {
     selectedLocations,
