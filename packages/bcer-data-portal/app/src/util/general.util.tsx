@@ -20,14 +20,6 @@ export class GeneralUtil {
       query = `${query}&pageSize=${options.pageSize}`
     }
 
-    if(options?.orderBy) {
-      query = `${query}&orderBy=${options.orderBy}`
-    }
-
-    if(options?.orderDirection) {
-      query = `${query}&order=${options.orderDirection}`
-    }
-
     return query;
   }
 }

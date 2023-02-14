@@ -80,6 +80,7 @@ function BusinessSearch({
           healthAuthority: showHealthAuthority ? searchOptions.healthAuthority : 'all',
         }}
       >
+        
         <Form>
           <Box
             alignContent="center"

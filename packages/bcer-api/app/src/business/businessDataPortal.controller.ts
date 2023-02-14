@@ -133,13 +133,12 @@ export class BusinessDataPortalController {
       }
     }
     const [businesses, count] = await this.businessService.listBusinesses(query, businessIds);
- 
+
     const data = businesses.map(b => {
       b.reportingStatus = this.locationService.checkLocationReportComplete(b.locations || []);
       b.locations = [];
       return b.toResponseObject();
     });
-   
     return { data, count}
   }
 
