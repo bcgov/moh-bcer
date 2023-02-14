@@ -12,7 +12,6 @@ import {
   Tooltip,
   Link,
   TextField,
-  Dialog,
   LinearProgress,
   Divider
 } from '@material-ui/core';
@@ -45,7 +44,6 @@ import {
   BusinessDashboardUtil,
   ReportStatusLegend,
   reportingStatusOptions,
-  StyledConfirmDateDialog
 } from 'vaping-regulation-shared-components';
 
 import { BusinessLocation } from '@/constants/localInterfaces';
@@ -549,6 +547,11 @@ export default function Locations() {
       }
   }
 
+  const deserializeSearchParam = (searchParam: string) => {
+    const search = JSON.parse(searchParam)
+    setSearchTerms(search);
+  }
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -606,6 +609,7 @@ export default function Locations() {
                   fromdate: searchTerms.fromdate ? searchTerms.fromdate : null,
                   todate: searchTerms.todate ? searchTerms.todate : null
                 }}
+                key = {JSON.stringify(searchTerms)}
               >{props => {
                 const {
                   resetForm
@@ -636,16 +640,18 @@ export default function Locations() {
                       variant="body2"
                       type="reset"
                       onClick={() => {
-                        resetForm({ values: {search: null,
-                          authority: 'all', location_type: 'all',
-                          reporting_status: 'all', underage: 'all', noi_report: 'all', product_report: 'all',
-                          manufacturing_report: 'all', sales_report: 'all', fromdate: null, todate: null}
-                          
+                        resetForm({ values: {
+                              search: null,
+                              authority: 'all', location_type: 'all',
+                              reporting_status: 'all', underage: 'all', 
+                              noi_report: 'all', product_report: 'all',
+                              manufacturing_report: 'all', sales_report: 'all', 
+                              fromdate: null, todate: null
+                            }
                         });
                         setSearchTerms({ page:0, pageSize: 20 })
                       }}
                       >
-
                       Clear all filters
                     </Link>  
                   </Box>   
@@ -779,10 +785,11 @@ export default function Locations() {
                         </StyledButton>
                         <Favourite 
                           enableAdd = {hasSearchParams}
-                          handleSave={saveFavourite}
+                          handleSave= {saveFavourite}
                           isSubmitting =  {isSubmitting}
                           submitSuccess = {submitSuccess}
                           submitError = {submitError}
+                          handleSetSearchParams = {deserializeSearchParam}
                         />
                       </Box>
                     </Grid>

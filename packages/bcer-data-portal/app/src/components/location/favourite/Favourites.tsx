@@ -26,10 +26,22 @@ const useStyles = makeStyles(() => ({
     },
     noResult: {
         padding: 10
+    },
+    favouriteItem: {
+        '& .MuiListItemText-root': {
+            cursor: 'pointer',
+            '& span': {
+                fontWeight: 600
+            }
+        }
     }
 }));
 
-const Favourites = () => {
+type FavouritesProps = {
+    handleSetSearchParams: (params: string) => void,
+}
+
+const Favourites = ({ handleSetSearchParams }: FavouritesProps) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -56,7 +68,6 @@ const Favourites = () => {
         if (open)
             fetchFavourites()
     }, [open])
-
 
     return (
         <>  
@@ -108,7 +119,7 @@ const Favourites = () => {
                             <List>
                                 {favourites.map((fav: FavouriteProps) => {
                                     const favItemPropData = {...fav, onDelete: removeFavourite}
-                                    return <FavouriteItem {...favItemPropData} key={fav.id} />
+                                    return <FavouriteItem {...favItemPropData} key={fav.id} setSearchParams={handleSetSearchParams} />
                                 })
                                 }
                             </List>:
@@ -123,11 +134,13 @@ const Favourites = () => {
 
 interface FavouriteItemProps extends FavouriteProps {
     onDelete: (id: string) => void,
+    setSearchParams: (params: string) => void
 }
 
-const FavouriteItem = ({ id, title, onDelete}: FavouriteItemProps) => {
-    return (<ListItem>
-                <ListItemText primary={title} />
+const FavouriteItem = ({ id, title, searchParams, onDelete, setSearchParams}: FavouriteItemProps) => {
+    const classes = useStyles();
+    return (<ListItem className={classes.favouriteItem}>
+                <ListItemText onClick={() => setSearchParams(searchParams)}  primary={title} style={{fontWeight: 600, cursor: 'pointer'}} />
                 <ListItemSecondaryAction>
                     <CloseIcon onClick={() => onDelete(id)} style={{fontSize: 14, cursor: 'pointer'}} /> 
                 </ListItemSecondaryAction>

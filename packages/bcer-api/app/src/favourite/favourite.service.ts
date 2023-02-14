@@ -23,9 +23,8 @@ export class FavouriteService {
 
   async findByUser(user: UserEntity) {
     return await this.favouriteRepository.find({
-                  where: {
-                    user
-                  }
+                  where: { user },
+                  order: { createdAt: 'DESC'}
                 })
   }
 
