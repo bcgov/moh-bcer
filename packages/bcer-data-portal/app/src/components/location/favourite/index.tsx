@@ -8,7 +8,7 @@ type FavouriteProps = {
     handleSave: (name: string) => void,
     isSubmitting: boolean,
     submitSuccess: boolean,
-    submitError: any,
+    submitError: any
 }
 
 const Favourite = ({ enableAdd, handleSave, isSubmitting, submitSuccess, submitError }: FavouriteProps) => {
