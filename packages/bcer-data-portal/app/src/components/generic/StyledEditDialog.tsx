@@ -163,6 +163,4 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
 			</StyledDialog>
     </Grid>
   );
-
-
 }

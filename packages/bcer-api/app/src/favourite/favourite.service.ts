@@ -25,7 +25,8 @@ export class FavouriteService {
     return await this.favouriteRepository.find({
                   where: {
                     user
-                  }
+                  },
+                  order: { createdAt: 'DESC'}
                 })
   }
 
