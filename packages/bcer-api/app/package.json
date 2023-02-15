@@ -79,6 +79,7 @@
     "@nestjs/testing": "8.2.4",
     "@types/bcryptjs": "2.4.2",
     "@types/cron": "1.7.3",
+    "@types/estree": "1.0.0",
     "@types/express": "4.17.13",
     "@types/faker": "5.5.9",
     "@types/jest": "27.4.0",
