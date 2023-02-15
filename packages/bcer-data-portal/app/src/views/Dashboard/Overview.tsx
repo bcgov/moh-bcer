@@ -3,7 +3,7 @@ import Page from '@/components/generic/Page';
 import { businessSearchCategoryOptions } from '@/constants/arrays';
 import { ConfigContext } from '@/contexts/Config';
 import useBusiness from '@/hooks/useBusiness';
-import { makeStyles, Paper } from '@material-ui/core';
+import { LinearProgress, makeStyles, Paper } from '@material-ui/core';
 import React, { useContext } from 'react';
 import BusinessTable from './BusinessTable';
 import ReportingSummary from './ReportingSummary';

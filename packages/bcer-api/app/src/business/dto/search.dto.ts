@@ -1,7 +1,6 @@
-import { IsEnum, IsIn, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsOptional } from "class-validator";
 import { HealthAuthority } from "src/location/enums/health-authority.enum";
 import { BusinessSearchCategory } from "../enums/businessSearchCategory.enum";
-import { ApiProperty } from "@nestjs/swagger";
 
 export class SearchDto {
   @IsOptional()
@@ -20,20 +19,4 @@ export class SearchDto {
 
   @IsOptional()
   pageSize: number;
-
-  @ApiProperty({
-    description: 'ASC or DESC'
-  })
-  @IsOptional()
-  @IsString()
-  @IsIn(['ASC', 'DESC'])
-  order?: 'ASC' | 'DESC' = 'ASC';
-
-  @ApiProperty({
-    description: 'Business Name, Address, City',
-  })
-  @IsOptional()
-  @IsString()
-  @IsIn(['Business Name', 'Address', 'City'])
-  orderBy?: string;
 }
