@@ -91,8 +91,7 @@ function EditDialog({
                     (b) => b.id != targetUser?.business?.id
                   ) || []
                 }
-                getOptionLabel={(b: Business) => b.businessName || b.legalName}
-                // getOptionLabel={(b: Business) => `${b.businessName || b.legalName} - ${b.addressLine1}`}
+                getOptionLabel={(b: Business) => `${b.businessName || b.legalName} - ${b.addressLine1}`}
                 defaultValue={targetUser.business}
                 onChange={(e: any, newValue: Business) => {
                   helpers.setFieldValue('selectedBusiness', newValue);
