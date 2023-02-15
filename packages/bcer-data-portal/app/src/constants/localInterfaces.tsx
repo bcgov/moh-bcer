@@ -23,6 +23,7 @@ export interface Business {
   underage: string;
   ha: string;
   status: string;
+  addressLine1: string;
 }
 
 export interface KeycloakComponentProps {
