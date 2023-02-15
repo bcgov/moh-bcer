@@ -9,7 +9,7 @@
     "pg": "8.7.3"
   },
   "devDependencies": {
-    "cypress": "^9.5.1"
+    "cypress": "^12.5.1"
   },
   "scripts": {
     "test:run": "./node_modules/.bin/cypress run --config video=false screenshotOnRunFailure=false",
