@@ -12,7 +12,6 @@ import {
   Tooltip,
   Link,
   TextField,
-  Dialog,
   LinearProgress,
   Divider
 } from '@material-ui/core';
@@ -44,8 +43,7 @@ import {
   StyledTableColumn,
   BusinessDashboardUtil,
   ReportStatusLegend,
-  reportingStatusOptions,
-  StyledConfirmDateDialog
+  reportingStatusOptions
 } from 'vaping-regulation-shared-components';
 
 import { BusinessLocation } from '@/constants/localInterfaces';
@@ -549,6 +547,11 @@ export default function Locations() {
       }
   }
 
+  const deserializeSearchParam = (searchParam: string) => {
+    const search = JSON.parse(searchParam)
+    setSearchTerms(search);
+  }
+
   return (
     <div className={classes.contentWrapper}>
       <div className={classes.content}>
@@ -606,6 +609,7 @@ export default function Locations() {
                   fromdate: searchTerms.fromdate ? searchTerms.fromdate : null,
                   todate: searchTerms.todate ? searchTerms.todate : null
                 }}
+                key = {JSON.stringify(searchTerms)}
               >{props => {
                 const {
                   resetForm
@@ -783,6 +787,7 @@ export default function Locations() {
                           isSubmitting =  {isSubmitting}
                           submitSuccess = {submitSuccess}
                           submitError = {submitError}
+                          handleSetSearchParams = {deserializeSearchParam}
                         />
                       </Box>
                     </Grid>

@@ -8,16 +8,17 @@ type FavouriteProps = {
     handleSave: (name: string) => void,
     isSubmitting: boolean,
     submitSuccess: boolean,
-    submitError: any
+    submitError: any,
+    handleSetSearchParams: (params: string) => void
 }
 
-const Favourite = ({ enableAdd, handleSave, isSubmitting, submitSuccess, submitError }: FavouriteProps) => {
+const Favourite = ({ enableAdd, handleSave, isSubmitting, submitSuccess, submitError, handleSetSearchParams }: FavouriteProps) => {
     return (<Box
                 gridGap={10}
                 display="flex"
             >
             <AddFavourite enableAdd ={enableAdd} onSave={handleSave} isSubmitting={isSubmitting} submitSuccess={submitSuccess} submitError={submitError} />
-            <Favourites />
+            <Favourites handleSetSearchParams={handleSetSearchParams} />
         </Box>
     )
 }
