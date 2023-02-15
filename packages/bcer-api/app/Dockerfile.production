@@ -1,4 +1,4 @@
-FROM node:16.19.0-slim
+FROM node:14.17.6-slim
 
 MAINTAINER FreshWorks <web@freshworks.io>
 
