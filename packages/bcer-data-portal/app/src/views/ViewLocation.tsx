@@ -699,7 +699,7 @@ function LocationsContent() {
                                 && (b.businessName !== "" || b.legalName !== "") //&& b.status === 'active'
                       ) || []
                     }
-                    getOptionLabel={(b: Business) => b.businessName || b.legalName}
+                    getOptionLabel={(b: Business) => `${b.businessName || b.legalName} - ${b.addressLine1}`}
                     onChange={(e: any, newValue: Business) => {
                       setSelectedBusiness(newValue.id);
                     }}
