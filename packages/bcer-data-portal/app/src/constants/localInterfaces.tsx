@@ -413,6 +413,8 @@ export interface SearchQueryBuilder {
   page?: number;
   pageSize?: number;
   additionalFilter?: string;
+  orderBy?: string;
+  orderDirection?: string;
 }
 
 export interface BusinessReportStatus {
