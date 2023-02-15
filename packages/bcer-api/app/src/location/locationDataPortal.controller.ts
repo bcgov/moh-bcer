@@ -28,7 +28,7 @@ import { AuthDataGuard } from 'src/auth/guards/authData.guard';
 import { LocationEntity } from './entities/location.entity';
 import { BusinessService } from 'src/business/business.service';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
-import { LocationService } from 'src/location/location.service';
+import { LocationService, manufacturingLocationTranslation } from 'src/location/location.service';
 import { LocationRO } from 'src/location/ro/location.ro';
 import { LocationSearchRO } from 'src/location/ro/locationSearch.ro';
 import { ManufacturingService } from 'src/manufacturing/manufacturing.service';
@@ -41,6 +41,8 @@ import { DirectionDto } from './dto/direction.dto';
 import { DownloadSaleDTO } from 'src/sales/dto/download-sale.dto';
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
 import { BusinessStatus } from 'src/business/enums/business-status.enum';
+import { LocationDTO } from './dto/location.dto';
+import { GeoCodeService } from './geoCode.service';
 
 @ApiBearerAuth()
 @ApiTags('Locations')
@@ -53,6 +55,7 @@ export class LocationDataPortalController {
     private manufacturingService: ManufacturingService,
     private productsService: ProductsService,
     private salesReportService: SalesReportService,
+    private geoCodeService: GeoCodeService,
   ) { }
   @ApiOperation({ summary: 'Get all locations as MoH' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationSearchRO })
@@ -393,35 +396,81 @@ export class LocationDataPortalController {
     await this.service.closeLocation([id], closedTime);
   }
 
-    /**
+  /**
    * 
    * Transfer a location to another business
   */
-    @ApiOperation({ summary: 'Transfer Location' })
-    @ApiResponse({ status: HttpStatus.OK })
-    @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthDataGuard)
-    @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
-    @AllowAnyRole()
-    @Patch('/transfer/:locationId')
-    async transferLocation(
-      @Param('locationId') id: string,
-      @Query('businessId') businessId: string
-    ): Promise<void> {
-      if(!id)
-        throw new ForbiddenException("location ID is required");
+  @ApiOperation({ summary: 'Transfer Location' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthDataGuard)
+  @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+  @AllowAnyRole()
+  @Patch('/transfer/:locationId')
+  async transferLocation(
+    @Param('locationId') id: string,
+    @Query('businessId') businessId: string
+  ): Promise<void> {
+    if(!id)
+      throw new ForbiddenException("location ID is required");
 
-      if(!businessId)
-        throw new ForbiddenException("New Business ID is required");
+    if(!businessId)
+      throw new ForbiddenException("New Business ID is required");
 
-      const location = await this.service.getLocation(id);    
-      const business = await this.businessService.getBusinessById(businessId); 
+    const location = await this.service.getLocation(id);    
+    const business = await this.businessService.getBusinessById(businessId); 
 
-      if (!location || !business) throw NotFoundException;
+    if (!location || !business) throw NotFoundException;
 
-      if (business.status !== BusinessStatus.Active)
-        throw new ForbiddenException('Cannot transfer location to a closed business')
-      
-      await this.service.transferLocation(id, businessId);
+    if (business.status !== BusinessStatus.Active)
+      throw new ForbiddenException('Cannot transfer location to a closed business')
+    
+    await this.service.transferLocation(id, businessId);
+  }
+
+  /**
+   * 
+   * Update fields of a location. (addressLine1 || postall || webpage || phone || email || underage || manufacturing || city || health_authority || longitude || latitude || geo_confidence)
+   */
+  @ApiOperation({ summary: 'Update fields of a Single Location' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @HttpCode(HttpStatus.OK)
+  @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+  @UseGuards(AuthDataGuard)
+  @AllowAnyRole()
+  @Patch('/update-fields/:locationId')
+  async editSingleLocation(
+    @Param('locationId') id: string,
+    @Body() payload: any
+  ){
+    const type = Object.keys(payload)[0]
+    const possibleTypes = ['addressLine1','postal','webpage','phone','email','underage','manufacturing', 'city', 'health_authority', 'longitude', 'latitude', 'geo_confidence']
+    if(possibleTypes.includes(type)){
+      const location = await this.service.getLocation(id);
+      {type ==='manufacturing'? location[type] =  manufacturingLocationTranslation(payload[type].toLowerCase()) : location[type] = payload[type]}
+      {type ==='health_authority'? location['ha'] = payload[type] : location[type] = payload[type]}
+      {type ==='geo_confidence'? location['geoAddressConfidence'] = payload[type] : location[type] = payload[type]}
+      await this.service.updateLocation(id, location.toResponseObject() as any);
+    }else{
+      throw new ForbiddenException("the type is not editable. allowed types: addressLine1 || postal || webpage || phone || email || underage || manufacturing || city || health_authority || longitude || latitude || geo_confidence)");
     }
+  }
+
+  /**
+   * 
+   * Determines the health authority the given coordinates is in
+   */
+  @ApiOperation({ summary: 'Determines the health authority the given coordinates is in' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @HttpCode(HttpStatus.OK)
+  @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
+  @UseGuards(AuthDataGuard)
+  @AllowAnyRole()
+  @Get('determine-health-authority-on-portal')
+  async determineHealthAuthority(
+    @Query('lat') lat: number,
+    @Query('long') lng: number
+  ){
+    return this.geoCodeService.determineHealthAuthority(lat, lng);
+  }
 }

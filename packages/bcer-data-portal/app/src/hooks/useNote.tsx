@@ -9,6 +9,7 @@ export interface NoteProps {
   type: 'business' | 'location';
   showHideButton?: boolean;
   showFlag?: boolean;
+  refresh?: string;
 }
 
 function useNote({ targetId, type }: NoteProps) {

@@ -21,3 +21,31 @@ export const faqValidationSchema = yup.object({
   title: yup.string().required('Question cannot be empty'),
   description: yup.string().required('Response cannot be empty')
 })
+
+export const addressValidationSchema = yup.object({
+addressLine1: yup.string().required('Content can not be empty').max(100)
+})
+
+export const webpageValidationSchema = yup.object({
+webpage: yup.string().required('Content can not be empty').matches(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi)
+})
+
+export const emailValidationSchema = yup.object({
+email: yup.string().required('Content can not be empty').email()
+})
+
+export const phoneValidationSchema = yup.object({
+phone: yup.string().required('Content can not be empty').matches(/^(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)$/)
+})
+
+export const manufacturingValidationSchema = yup.object({
+manufacturing: yup.string().required('Content can not be empty').matches(/^(Yes|No)$/)
+})
+
+export const underageValidationSchema = yup.object({
+underage: yup.string().required('Content can not be empty')
+})
+
+export const postalValidationSchema = yup.object({
+postal: yup.string().required('Content can not be empty').matches(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/)
+})
