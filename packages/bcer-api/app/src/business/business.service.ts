@@ -156,6 +156,16 @@ export class BusinessService {
       .loadRelationCountAndMap('location.manufacturesCount', 'location.manufactures')
       .where("coalesce(business.legalName, '') != ''")
     
+    if (query) {
+      if (query.orderBy === 'Business Name') {
+        qb.orderBy('LOWER("business"."businessName")', query.order);
+      } else if (query.orderBy === 'Address') {
+        qb.orderBy('LOWER("business"."addressLine1")', query.order);
+      } else if (query.orderBy === 'City') {
+        qb.orderBy('LOWER("business"."city")', query.order);
+      }
+    }
+
     if(search && Object.values(BusinessSearchCategory).includes(category) && category !== BusinessSearchCategory.Postal){
       qb.andWhere(`regexp_replace(LOWER(business.${category}), '[^a-zA-Z0-9]', '', 'g') LIKE :search`, {search: `%${search.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}%`})
     }else if(search && category === BusinessSearchCategory.Postal){
