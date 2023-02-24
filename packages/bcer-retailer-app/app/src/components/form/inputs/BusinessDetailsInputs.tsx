@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Typography, styled } from '@material-ui/core';
 import { StyledSelectField, StyledTextField } from 'vaping-regulation-shared-components'
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 import { provinceOptions } from '@/constants/arrays';
+import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
+import SubmitBusinessInfoButton from '@/components/MyBusiness/SubmitBusinessInfoButton';
 
 const FormBorderGrid = styled(Grid)({
   padding: '25px 20px 15px 20px',
@@ -18,6 +20,15 @@ const FormTitle = styled(Typography)({
 })
 
 function BusinessDetailsInputs() {
+  const [businessInfo, setBusinessInfo] = useContext<[BIContext, Function]>(BusinessInfoContext);
+  const [initialState, setInitialState] = useState(null);
+
+  useEffect(() => {
+    if (Object.keys(businessInfo.details).length > 0) {
+      setInitialState(businessInfo.details);
+    }
+  },[businessInfo])
+
   return (
     <FormBorderGrid container spacing={2}>
       <Grid item xs={12}>
@@ -108,6 +119,12 @@ function BusinessDetailsInputs() {
           fullWidth
         />
       </Grid>
+      
+      {initialState &&
+      <Grid item xs={12} md={6}>
+        <SubmitBusinessInfoButton updateType="businessInfoOnly" />
+      </Grid>
+}
     </FormBorderGrid>
   );
 }

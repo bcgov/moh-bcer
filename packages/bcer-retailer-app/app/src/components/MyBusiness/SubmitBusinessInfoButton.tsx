@@ -11,7 +11,11 @@ import { StyledButton } from 'vaping-regulation-shared-components';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 
-export default function SubmitBusinessInfoButton() {
+interface SubmitBusinessInfoButtonProps {
+  updateType?: string
+}
+
+export default function SubmitBusinessInfoButton({ updateType }: SubmitBusinessInfoButtonProps) {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
   const [{ response, loading, error}, patch] = useAxiosPatch(`/submission`, { manual: true });
 
@@ -42,7 +46,8 @@ export default function SubmitBusinessInfoButton() {
     }
   }, [error])
 
-  return response?.status === 201 ? <Redirect to='/business/map' /> : (
+  return response?.status === 201 ? 
+    updateType === "businessInfoOnly" ? <Redirect to='/business/confirm'/> :  <Redirect to='/business/map' /> : (
     <>
     {error && (
       <Grid container>
@@ -58,7 +63,7 @@ export default function SubmitBusinessInfoButton() {
           onClick={submit}
           disabled={loading || !isValid || !businessInfo.locations.length}
         >
-          {loading ? '...' : 'Next'}
+          {loading ? '...' : updateType === "businessInfoOnly" ? 'Update Business Details': 'Next'}
         </StyledButton>
       </Grid>
     </Grid>
