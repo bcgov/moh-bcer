@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Route, Switch, useLocation, useHistory } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import store from 'store';
 
-import { makeStyles, createStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import WorkOutlineIcon from '@material-ui/icons/WorkOutline';
 import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
-import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
 import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
 
 import Top from '@/components/stepper/Top';
 import Bottom from '@/components/stepper/Bottom';
 
-import { BIContext, BusinessInfoProvider } from '@/contexts/BusinessInfo';
+import { BusinessInfoProvider } from '@/contexts/BusinessInfo';
 import { SubmissionTypeEnum } from '@/constants/localEnums';
 
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
@@ -22,7 +21,6 @@ import BusinessDetails from './MyBusinessComponents/BusinessDetails';
 import ConfirmLocations from './MyBusinessComponents/ConfirmLocations';
 import ConfirmAndSubmit from './MyBusinessComponents/ConfirmAndSubmit';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { BusinessLocation } from '@/constants/localInterfaces';
 import { formatError } from '@/utils/formatting';
 import Subscription from '../Subscription/Subscription';
 
