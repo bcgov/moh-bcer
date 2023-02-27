@@ -21,12 +21,12 @@ module.exports = [
     'host': process.env.DB_HOST,
     'port': process.env.DB_PORT,
     'username': process.env.DB_USERNAME,
-    'password': decryptedDbPw,
+    'password': process.env.DB_PASSWORD,
     'database': process.env.DB_DATABASE,
     'entities': entities,
     'synchronize': synchronize,
     'dropSchema': dropSchema,
-    'migrations': ['migrations/*{.ts,.js}'],
+    'migrations': ['dist/migrations/*{.ts,.js}'],
     'cli': {
       'migrationsDir':'src/migrations'
     }
