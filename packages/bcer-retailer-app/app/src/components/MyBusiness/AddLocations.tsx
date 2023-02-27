@@ -12,6 +12,7 @@ import UploadArea from '@/components/form/UploadArea';
 import { useAxiosPatch } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 
 const useStyles = makeStyles((theme) => // TODO: grab any color data from theme once implemented
   createStyles({
@@ -73,7 +74,20 @@ const useStyles = makeStyles((theme) => // TODO: grab any color data from theme 
       borderBottom: '1px solid #CCCCCC',
       padding: '0px 0px 16px 0px',
       margin: '16px 24px 0px 24px'
-    }
+    },
+    helpTextWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '15px',
+      backgroundColor: '#E0E8F0',
+      marginBottom: '20px',
+      borderRadius: '5px',
+    },
+    helperIcon: {
+      fontSize: '45px',
+      color: '#0053A4',
+      paddingRight: '25px',
+    },
   })
 );
 
@@ -174,9 +188,13 @@ export default function AddLocations () {
     <>
       <div>
         <div className={classes.title}>Add Business Locations</div>
-        <div className={classes.description}>
-          Please provide all the business locations that have sales premises. 
-          If you are uploading a prefilled file, please ensure that you are using a CSV.
+        <div className={classes.helpTextWrapper}>
+          <ChatBubbleOutlineIcon className={classes.helperIcon} />
+          <div>
+            Please provide all the business locations that have sales premises. 
+            If you are uploading a prefilled file, please ensure that you are using a CSV.
+            The <b>"Confirm Your Business Details"</b> section must also be completed to proceed.
+          </div>
         </div>
         <Formik enableReinitialize initialValues={{'mode select': entry}} onSubmit={(value) => handleModeSwitch(value)}>
           <Form>
