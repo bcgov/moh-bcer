@@ -527,7 +527,7 @@ function LocationsContent() {
                               </Box>
                             </Grid>
                             </>}
-                            {data.location_type === LocationType.online &&                            
+                            {data.location_type !== LocationType.physical &&                            
                             <Grid item xs={12} md={4}>
                               <Box>
                                 <Typography variant="body2">Webpage</Typography>
@@ -546,21 +546,20 @@ function LocationsContent() {
                                 <StyledEditableTextField id={data.id} value={data.email} type="email" onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>
-                            {data.location_type !== LocationType.online &&
-                            <>
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">If persons under 19 years of age are permitted on the sales premises</Typography>
                                 <StyledEditableTextField id={data.id} value={data.underage} type="underage" onSuccessfulUpdate={submitChangeToNote}/>
                               </Box>
                             </Grid>
+                            {data.location_type !== LocationType.online &&
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Regional health authority the sales premises is located in</Typography>
                                 <Typography className={classes.rowContent}>{data.ha === 'other' ? data.ha_other : data.ha}</Typography>
                               </Box>
                             </Grid>
-                            </>}
+                            }
                             <Grid item xs={12}>
                               <Box>
                                 <Typography variant="body2">Intent to manufacture e-substances for sale at this business location</Typography>
