@@ -71,8 +71,13 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
   const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
+  
   useEffect(() => {
     formikHelpers.setFieldValue('location_type', values.location_type? values.location_type: 'physical');
+    if (values) {
+      const haName = HealthAuthorities[values.health_authority.toLowerCase()];
+      formikHelpers.setFieldValue('health_authority_display', haName);
+    }
   }, [])
 
   useEffect(() => {
