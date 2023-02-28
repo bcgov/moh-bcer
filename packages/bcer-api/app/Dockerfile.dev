@@ -1,17 +1,15 @@
 FROM node:14.17.6-slim
 
-MAINTAINER FreshWorks <web@freshworks.io>
-
 ENV PATH $PATH:/usr/src/app/node_modules/.bin
 
 WORKDIR /usr/src/app
 
-COPY ./package.json .
+COPY . /usr/src/app
 
-RUN npm install
-
-COPY . .
+RUN rm -rf node_modules
+RUN npm install 
+RUN npm run build
 
 EXPOSE 4000
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "start" ]
