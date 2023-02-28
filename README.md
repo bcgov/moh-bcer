@@ -1,7 +1,6 @@
 ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)
 
 # B.C. E-Substance Reporting
-
 The BCER application includes 4 packages.
 - API
 - Retailer App
@@ -9,6 +8,15 @@ The BCER application includes 4 packages.
 - Shared Components
 
 There is documentation in each package for how to build, run, and deploy them. This README includes more generalized documentation.
+
+# AWS promotion Guide
+## BCER API
+1) Created database in AWS Aurora Postgres, provided conncetion information to app team.
+    see ./aurora_create_db.sql for script
+
+2) Docker, from the app folder
+    docker build -f ./Dockerfile.dev -t bcer-api-dev .
+    docker run -p 4000:4000/tcp bcer-api-dev:latest
 
 ## API - bcer-api
 The API uses NestJS and TypeORM, which locally you can run where it uses a synchronize setting to keep your local database or containerized database in sync with entity changes.
