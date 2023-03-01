@@ -23,6 +23,7 @@ export interface Business {
   underage: string;
   ha: string;
   status: string;
+  addressLine1: string;
 }
 
 export interface KeycloakComponentProps {
@@ -413,6 +414,8 @@ export interface SearchQueryBuilder {
   page?: number;
   pageSize?: number;
   additionalFilter?: string;
+  orderBy?: string;
+  orderDirection?: string;
 }
 
 export interface BusinessReportStatus {
