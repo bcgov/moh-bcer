@@ -31,6 +31,7 @@ import { NotificationModule } from './notification/notification.module';
 import { NoteModule } from './note/note.module';
 import { FaqModule } from './faq/faq.module';
 import { FavouriteModule } from './favourite/favourite.module';
+import { ReportModule } from './report/report.module';
 
 const moduleImports = [
   AuthModule,
@@ -51,7 +52,8 @@ const moduleImports = [
   NotificationModule,
   NoteModule,
   FaqModule,
-  FavouriteModule
+  FavouriteModule,
+  ReportModule
 ];
 
 @Module({

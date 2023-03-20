@@ -94,7 +94,15 @@ const AppMenu = ({ orientation } : AppMenuProps) => {
         label="Map"
         {...a11yProps(4)}
         value={routes.mapMenu}
-      />              
+      />          
+      {config.permissions.SEND_TEXT_MESSAGES && (
+        <StyledTab
+          disableRipple
+          label="Report"
+          {...a11yProps(4)}
+          value={routes.report}
+        />
+      )}        
     </StyledTabs>)
 }
 
