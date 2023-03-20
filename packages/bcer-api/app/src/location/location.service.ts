@@ -6,7 +6,7 @@ import moment from 'moment';
 import * as XLSX from "xlsx";
 
 import { BusinessEntity } from 'src/business/entities/business.entity';
-import { haTranslation, HealthAuthority } from 'src/business/enums/health-authority.enum'
+import { haTranslation } from 'src/business/enums/health-authority.enum'
 import { LocationDTO } from 'src/location/dto/location.dto';
 import { LocationEntity } from 'src/location/entities/location.entity';
 import { LocationSearchDTO } from 'src/location/dto/locationSearch.dto';
@@ -748,7 +748,6 @@ export class LocationService {
   }
 
   async getDirection(uri: string) {
-    console.log(process.env.BC_DIRECTION_API_KEY)
     const baseLink = 'https://router.api.gov.bc.ca';
     const { data } = await Axios.get(`${baseLink}${uri}`, {
       headers: {

@@ -21,6 +21,7 @@ import { AppGlobalContext } from './contexts/AppGlobal';
 import { formatError } from './util/formatting';
 import MapMenu from './views/MapMenu';
 import MobileNav from './components/nav/MobileNav';
+import Report from './views/Report/Overview';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -88,10 +89,11 @@ const App = () => {
           <Route exact path={routes.getHelp} component={GetHelp} />
           <Route exact path={routes.FAQManagement} component={FAQManagement} />
           <Route exact path={routes.userManagement} component={UserManagement} />
-          { config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
+          {config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
           <Route exact path={routes.map} component={Map} />
           <Route exact path={`${routes.viewBusiness}/:id`} component={BusinessDetails} />
           <Route exact path={routes.mapMenu} component={MapMenu} />
+          <Route exact path={routes.report} component={Report} />
         </Switch>
       </div>
     </div>
