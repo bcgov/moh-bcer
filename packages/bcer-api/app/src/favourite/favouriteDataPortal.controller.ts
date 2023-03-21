@@ -18,7 +18,6 @@ export class FavouriteDataPortalController {
     private userService: UserService,
   ) {}
 
-
   @ApiOperation({ summary: 'Save a favourite search' })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthDataGuard)

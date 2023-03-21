@@ -41,7 +41,6 @@ import { DirectionDto } from './dto/direction.dto';
 import { DownloadSaleDTO } from 'src/sales/dto/download-sale.dto';
 import { SingleLocationReportStatus } from './helper/singleLocationReportStatus';
 import { BusinessStatus } from 'src/business/enums/business-status.enum';
-import { LocationDTO } from './dto/location.dto';
 import { GeoCodeService } from './geoCode.service';
 
 @ApiBearerAuth()
@@ -56,7 +55,7 @@ export class LocationDataPortalController {
     private productsService: ProductsService,
     private salesReportService: SalesReportService,
     private geoCodeService: GeoCodeService,
-  ) { }
+  ) {}
   @ApiOperation({ summary: 'Get all locations as MoH' })
   @ApiResponse({ status: HttpStatus.OK, type: LocationSearchRO })
   @ApiQuery({
