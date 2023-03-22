@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { BCRetailerStat, BCRetailerStatData, HARetailerStat, HARetailerStatData, ReportRequestDto, ReportResponseDto } from './dto/report.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
@@ -13,7 +13,6 @@ const getDates = () => {
     const { startReport, endReport } = getNoiReportingPeriod();
 
     const isReportingPeriod = moment().isBetween(startReport, endReport);
-    console.log(isReportingPeriod);
 
     let closeDate, reportStartDate, year;
 
@@ -48,7 +47,7 @@ export class ReportService {
                                                     CASE
                                                         WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'Missing NOI'
                                                         WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}'::date AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}'::date) AND
-                                                            (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'NOI NOT RENEWED'
+                                                            (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'NOI Not Renewed'
                                                         ELSE 'Complete NOI' END
                                                     "missingReport" FROM location loc
                                                     LEFT OUTER JOIN noi on noi.id = loc."noiId"
@@ -88,7 +87,7 @@ export class ReportService {
                                                 WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'Missing NOI'
                                                 WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}'::date AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}'::date) AND
                                                     (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'NOI Not Renewed'
-                                                ELSE 'NOI ok' END
+                                                ELSE 'Complete NOI' END
                                             "missingReport",
                                             loc.health_authority
                                             FROM location loc
@@ -108,21 +107,21 @@ export class ReportService {
                                                     GROUP BY loc.health_authority
                                                     ORDER BY loc.health_authority`;
     private readonly HA_noProductReportQuery = `SELECT COUNT(*) "No Product Submitted", loc.health_authority
-                                        FROM location loc
-                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
-                                        AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)
-                                        GROUP BY loc.health_authority
-                                        ORDER BY loc.health_authority`;
-    private readonly HA_totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only", loc.health_authority
-                                                FROM location loc
-                                                WHERE UPPER(loc.underage) = 'NO'
-                                                GROUP BY loc.health_authority
-                                                ORDER BY loc.health_authority`;
-    private readonly HA_totalWithAllAgesCustomersQuery = `SELECT COUNT(*) "Underage Accepted", loc.health_authority
                                                     FROM location loc
-                                                    WHERE UPPER(loc.underage) = 'YES'
+                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
+                                                    AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)
                                                     GROUP BY loc.health_authority
                                                     ORDER BY loc.health_authority`;
+    private readonly HA_totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only", loc.health_authority
+                                                            FROM location loc
+                                                            WHERE UPPER(loc.underage) = 'NO'
+                                                            GROUP BY loc.health_authority
+                                                            ORDER BY loc.health_authority`;
+    private readonly HA_totalWithAllAgesCustomersQuery = `SELECT COUNT(*) "Underage Accepted", loc.health_authority
+                                                            FROM location loc
+                                                            WHERE UPPER(loc.underage) = 'YES'
+                                                            GROUP BY loc.health_authority
+                                                            ORDER BY loc.health_authority`;
     private readonly HA_topFlavoursQuery = `SELECT COUNT(*), UPPER(ps.flavour) "flavour", loc.health_authority
                                                 FROM product_sold ps
                                                 LEFT OUTER JOIN location loc ON loc.id = ps."locationId"
@@ -151,7 +150,7 @@ export class ReportService {
     }
 
     async getReports(count: number) {
-        console.log(getDates())
+        Logger.log(getDates());
         return await this.reportRepository.find({
             take: count,
             order: { createdAt: 'DESC'},
@@ -286,7 +285,7 @@ export class ReportService {
     }
     
     private async generateBCStatistics(request: BCRetailerStat[]) {
-        let result: BCRetailerStatData = {};
+        let result: any = {};
 
         for (var item of request) {
             switch (item) {
@@ -312,10 +311,12 @@ export class ReportService {
                     transform["Missing Sales Report"] = missingSalesReport[0]['Missing Sales Report'];
 
                     const missingManufacturingReport = await this.manager.query(this.missingManufacturingReportQuery);
-                    transform["Missing Manufacturing Report'"] = missingManufacturingReport[0]['Missing Manufacturing Report'];
+                    transform["Missing Manufacturing Report"] = missingManufacturingReport[0]['Missing Manufacturing Report'];
 
                     const noProductReport = await this.manager.query(this.noProductReportQuery);
                     transform['No Product Submitted'] = noProductReport[0]['No Product Submitted'];
+                    
+                    Logger.log(transform);
                     result.totalWithOutstandingReports = transform;
                     break;
                 case 'totalWithOver19Customers':
@@ -395,6 +396,7 @@ export class ReportService {
                     for (let stat of noProductReportStat) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], 'No Product Submitted': stat['No Product Submitted']}
                     }
+                    Logger.log(totalWithOutstandingReportsResult);
                     result.totalWithOutstandingReports = totalWithOutstandingReportsResult
                     break;
                 case 'totalWithOver19Customers':
