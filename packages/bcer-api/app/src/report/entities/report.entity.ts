@@ -4,7 +4,7 @@ import { Generated } from "typeorm/decorator/Generated";
 import { Column } from "typeorm/decorator/columns/Column";
 import { PrimaryColumn } from "typeorm/decorator/columns/PrimaryColumn";
 import { ManyToOne } from "typeorm/decorator/relations/ManyToOne";
-import { ReportRequestDto, ReportResponseDto } from "../dto/report.dto";
+import { ReportRequestDto } from "../dto/report.dto";
 
 @Entity('report')
 export class ReportEntity {
@@ -22,7 +22,7 @@ export class ReportEntity {
     @Column('json', {
         nullable: true,
     })
-    result: ReportResponseDto;
+    result: any;
 
     @CreateDateColumn({
       name: 'created_at',
