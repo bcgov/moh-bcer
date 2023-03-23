@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BCRetailerStat, BCRetailerStatData, HARetailerStat, HARetailerStatData, ReportRequestDto, ReportResponseDto } from './dto/report.dto';
+import { BCRetailerStat, HARetailerStat, ReportRequestDto } from './dto/report.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { ReportEntity } from './entities/report.entity';
@@ -135,7 +135,7 @@ export class ReportService {
         private reportRepository: Repository<ReportEntity>
     ) {}
     
-    async create(user: UserEntity, query?: ReportRequestDto, result?: ReportResponseDto) {  
+    async create(user: UserEntity, query?: ReportRequestDto, result?: any) {  
         const report = this.reportRepository.create({
             user,
             query,
@@ -285,67 +285,94 @@ export class ReportService {
     }
     
     private async generateBCStatistics(request: BCRetailerStat[]) {
+        Logger.log(request);
         let result: any = {};
+        
+        const queries = [];
 
-        for (var item of request) {
+        for (let item of request) {
             switch (item) {
-                case 'totalBusinesses':
-                    const totalBusinesses = await this.manager.query(this.totalBusinessQuery);
-                    result.total = totalBusinesses[0]['Total BC Businesses'];
+          
+                case "totalBusinesses": {
+                    queries.push(this.manager.query(this.totalBusinessQuery).then(res => {
+                        result.totalBusinesses = res[0]['Total BC Businesses'];
+                    }));
                     break;
-                case 'totalByStatus':
-                    const totalByStatus = await this.manager.query(this.totalByStatusQuery);
-                    result.totalByStatus = totalByStatus.reduce((dict, item) => {
-                                                dict[item['Location Status']] = item['Total BC Locations']
-                                                return dict;
-                                            }, {});
+                }
+          
+                case "totalByStatus": {
+                    queries.push(this.manager.query(this.totalByStatusQuery).then(res => {
+                        result.totalByStatus = res.reduce((dict, item) => {
+                        dict[item['Location Status']] = item['Total BC Locations'];
+                        return dict;
+                        }, {});
+                    }));
                     break;
-                case 'totalWithOutstandingReports':
-                    const NOIStats = await this.manager.query(this.missingUnrenewedNOIQuery);
-                    const transform = NOIStats.reduce((dict, item) => {
+                }
+
+                case "totalWithOutstandingReports": {
+                    queries.push(
+                        this.manager.query(this.missingUnrenewedNOIQuery),
+                        this.manager.query(this.missingSalesReportQuery),
+                        this.manager.query(this.missingManufacturingReportQuery),
+                        this.manager.query(this.noProductReportQuery)
+                    );
+          
+                    const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
+                
+                    const NOIStats = noiStats.reduce((dict, item) => {
                         dict[item['missingReport']] = item['count']
                         return dict;
                     }, {});
 
-                    const missingSalesReport = await this.manager.query(this.missingSalesReportQuery);
-                    transform["Missing Sales Report"] = missingSalesReport[0]['Missing Sales Report'];
+                    result.totalWithOutstandingReports = {
+                         ...NOIStats,
+                        'Missing Sales Report': missingSalesReport[0]['Missing Sales Report'],
+                        'Missing Manufacturing Report': missingManufacturingReport[0]['Missing Manufacturing Report'],
+                        'No Product Submitted': noProductReport[0]['No Product Submitted']
+                    };
 
-                    const missingManufacturingReport = await this.manager.query(this.missingManufacturingReportQuery);
-                    transform["Missing Manufacturing Report"] = missingManufacturingReport[0]['Missing Manufacturing Report'];
-
-                    const noProductReport = await this.manager.query(this.noProductReportQuery);
-                    transform['No Product Submitted'] = noProductReport[0]['No Product Submitted'];
-                    
-                    Logger.log(transform);
-                    result.totalWithOutstandingReports = transform;
                     break;
-                case 'totalWithOver19Customers':
-                    const over19Only = await this.manager.query(this.totalWithOver19CustomersQuery);
-                    result.totalWithOver19Customers = over19Only[0]['Over 19 Only'];
+                }
+          
+                case "totalWithOver19Customers": {
+                    queries.push(this.manager.query(this.totalWithOver19CustomersQuery).then(res => {
+                        result.totalWithOver19Customers = res[0]['Over 19 Only'];
+                    }));
                     break;
-                case 'totalWithAllAgesCustomers':
-                    const allAgeAccepted = await this.manager.query(this.totalWithAllAgesCustomersQuery);
-                    result.totalWithAllAgesCustomers = allAgeAccepted[0]['Underage Accepted'];
+                }
+          
+                case "totalWithAllAgesCustomers": {
+                    queries.push(this.manager.query(this.totalWithAllAgesCustomersQuery).then(res => {
+                        result.totalWithAllAgesCustomers = res[0]['Underage Accepted'];
+                    }));
                     break;
-                case 'topFlavours':
-                    const top30FlavourStat = await this.manager.query(this.topFlavoursQuery);
-
-                    result.topFlavours = top30FlavourStat.reduce((dict, item) => {
-                        dict[item['flavour']] = item['count']
+                }
+          
+                case "topFlavours" : {
+                    queries.push(this.manager.query(this.topFlavoursQuery).then(res => {
+                        result.topFlavours = res.reduce((dict, item) => {
+                        dict[item['flavour']] = item['count'];
                         return dict;
-                    }, {});
-
+                        }, {});
+                    }));
                     break;
+                }
+
                 default:
-                    return;             
+                    return;
             }
         }
+            
+        await Promise.all(queries);
+        
+        Logger.log(result);
 
-        return result;
+        return result; 
     }
 
     private async generateHAStatistics(request: HARetailerStat[]) {
-        let result: HARetailerStatData = {};
+        let result: any = {};
         for (var item of request) {
             switch (item) {
                 case 'totalByStatus':
@@ -367,7 +394,8 @@ export class ReportService {
 
                     result.totalByStatus = totalByStatusResult;
                     break;
-                case 'totalWithOutstandingReports':
+                case 'totalWithOutstandingReports': {
+                    Logger.log("totalWithOutstandingReportsResult");
                     const totalWithOutstandingReportsResult: any = {};
 
                     const NOIStats = await this.manager.query(this.HA_missingUnrenewedNOIQuery);
@@ -396,9 +424,10 @@ export class ReportService {
                     for (let stat of noProductReportStat) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], 'No Product Submitted': stat['No Product Submitted']}
                     }
-                    Logger.log(totalWithOutstandingReportsResult);
+                    
                     result.totalWithOutstandingReports = totalWithOutstandingReportsResult
                     break;
+                }
                 case 'totalWithOver19Customers':
                     const totalWithOver19CustomersResult: any = {}
 
