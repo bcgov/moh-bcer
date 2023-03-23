@@ -14,17 +14,15 @@ const getDates = () => {
 
     const isReportingPeriod = moment().isBetween(startReport, endReport);
 
-    let closeDate, reportStartDate, year;
+    let closeDate = startReport.clone().subtract(3, 'year');
+    let reportStartDate = startReport.clone().subtract(2, 'year');
+    let year = moment().subtract(1, 'year').year();
 
-    if (!isReportingPeriod) { 
-        closeDate = startReport.clone().subtract(3, 'year');
-        reportStartDate = startReport.clone().subtract(2, 'year');
-        year = moment().subtract(1, 'year').year();
-    } else {
+    if (isReportingPeriod) {       
         closeDate = startReport.clone().subtract(2, 'year');
         reportStartDate = startReport.clone().subtract(1, 'year');
-        year = moment().year()
-    }
+        year = moment().year();
+    } 
     
     return {closeDate, reportStartDate, year};
 }
@@ -36,32 +34,32 @@ export class ReportService {
     * BC queries
     */
 
-    private readonly closeBeforeDate = '2020-10-01'; //getDates().closeDate;
-    private readonly periodStartDate = '2021-10-01'; //getDates().reportStartDate;
-    private readonly queryYear = '2021'; //getDates().year;
+    private readonly closeBeforeDate = getDates().closeDate;
+    private readonly periodStartDate = getDates().reportStartDate;
+    private readonly queryYear = getDates().year;
 
 
     private readonly totalBusinessQuery = 'SELECT COUNT(*) "Total BC Businesses" FROM business';
     private readonly totalByStatusQuery = 'SELECT COUNT(*) "Total BC Locations", status "Location Status" FROM location GROUP BY status';
     private readonly missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
                                                     CASE
-                                                        WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'Missing NOI'
-                                                        WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}'::date AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}'::date) AND
-                                                            (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'NOI Not Renewed'
+                                                        WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'Missing NOI'
+                                                        WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}') AND
+                                                            (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'NOI Not Renewed'
                                                         ELSE 'Complete NOI' END
                                                     "missingReport" FROM location loc
                                                     LEFT OUTER JOIN noi on noi.id = loc."noiId"
                                                     GROUP BY "missingReport"`;
     private readonly missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report" FROM location loc
-                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
+                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
                                                     AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${this.queryYear}')`;
     private readonly missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report"
                                                             FROM location loc
-                                                            WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
+                                                            WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
                                                             AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)`;
     private readonly noProductReportQuery  =  `SELECT COUNT(*) "No Product Submitted"
                                                 FROM location loc
-                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
+                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
                                                 AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)`;
     private readonly totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only"
                                                 FROM location loc
@@ -84,9 +82,9 @@ export class ReportService {
                                         ORDER BY health_authority`;
     private readonly HA_missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
                                             CASE
-                                                WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'Missing NOI'
-                                                WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}'::date AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}'::date) AND
-                                                    (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))) THEN 'NOI Not Renewed'
+                                                WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'Missing NOI'
+                                                WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}') AND
+                                                    (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'NOI Not Renewed'
                                                 ELSE 'Complete NOI' END
                                             "missingReport",
                                             loc.health_authority
@@ -96,19 +94,19 @@ export class ReportService {
                                             ORDER BY health_authority`;
     private readonly HA_missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report", loc.health_authority
                                             FROM location loc
-                                            WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
+                                            WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
                                             AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${this.queryYear}')
                                             GROUP BY loc.health_authority
                                             ORDER BY loc.health_authority`;
     private readonly HA_missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report", loc.health_authority
                                                     FROM location loc
-                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
+                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
                                                     AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)
                                                     GROUP BY loc.health_authority
                                                     ORDER BY loc.health_authority`;
     private readonly HA_noProductReportQuery = `SELECT COUNT(*) "No Product Submitted", loc.health_authority
                                                     FROM location loc
-                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'::date))
+                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
                                                     AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)
                                                     GROUP BY loc.health_authority
                                                     ORDER BY loc.health_authority`;
