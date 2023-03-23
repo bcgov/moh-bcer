@@ -24,108 +24,12 @@ const getDates = () => {
         year = moment().year();
     } 
     
-    return {closeDate, reportStartDate, year};
+    return { closeDate, reportStartDate, year };
 }
 
 
 @Injectable()
 export class ReportService {
-    /*
-    * BC queries
-    */
-
-    private readonly closeBeforeDate = getDates().closeDate;
-    private readonly periodStartDate = getDates().reportStartDate;
-    private readonly queryYear = getDates().year;
-
-
-    private readonly totalBusinessQuery = 'SELECT COUNT(*) "Total BC Businesses" FROM business';
-    private readonly totalByStatusQuery = 'SELECT COUNT(*) "Total BC Locations", status "Location Status" FROM location GROUP BY status';
-    private readonly missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
-                                                    CASE
-                                                        WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'Missing NOI'
-                                                        WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}') AND
-                                                            (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'NOI Not Renewed'
-                                                        ELSE 'Complete NOI' END
-                                                    "missingReport" FROM location loc
-                                                    LEFT OUTER JOIN noi on noi.id = loc."noiId"
-                                                    GROUP BY "missingReport"`;
-    private readonly missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report" FROM location loc
-                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
-                                                    AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${this.queryYear}')`;
-    private readonly missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report"
-                                                            FROM location loc
-                                                            WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
-                                                            AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)`;
-    private readonly noProductReportQuery  =  `SELECT COUNT(*) "No Product Submitted"
-                                                FROM location loc
-                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
-                                                AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)`;
-    private readonly totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only"
-                                                FROM location loc
-                                                WHERE UPPER(loc.underage) = 'NO'`;
-    private readonly totalWithAllAgesCustomersQuery = `SELECT COUNT(*) "Underage Accepted"
-                                                FROM location loc
-                                                WHERE UPPER(loc.underage) = 'YES'`;
-    private readonly topFlavoursQuery = `SELECT COUNT(*), UPPER(ps.flavour) "flavour"
-                                            FROM product_sold ps
-                                            GROUP BY UPPER(ps.flavour)
-                                            ORDER BY COUNT(*) DESC`;
-    
-    /*
-    * HA Queries
-    */
-    
-    private readonly HA_totalByStatusQuery = `SELECT COUNT(*) "Total Locations", status "Location Status", health_authority "Health Authority" 
-                                        FROM location
-                                        GROUP BY status, health_authority
-                                        ORDER BY health_authority`;
-    private readonly HA_missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
-                                            CASE
-                                                WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'Missing NOI'
-                                                WHEN (loc."noiId" is not null AND noi.created_at < '${this.periodStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${this.periodStartDate}') AND
-                                                    (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))) THEN 'NOI Not Renewed'
-                                                ELSE 'Complete NOI' END
-                                            "missingReport",
-                                            loc.health_authority
-                                            FROM location loc
-                                            LEFT OUTER JOIN noi on noi.id = loc."noiId"
-                                            GROUP BY "missingReport", health_authority
-                                            ORDER BY health_authority`;
-    private readonly HA_missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report", loc.health_authority
-                                            FROM location loc
-                                            WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
-                                            AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${this.queryYear}')
-                                            GROUP BY loc.health_authority
-                                            ORDER BY loc.health_authority`;
-    private readonly HA_missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report", loc.health_authority
-                                                    FROM location loc
-                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
-                                                    AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)
-                                                    GROUP BY loc.health_authority
-                                                    ORDER BY loc.health_authority`;
-    private readonly HA_noProductReportQuery = `SELECT COUNT(*) "No Product Submitted", loc.health_authority
-                                                    FROM location loc
-                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${this.closeBeforeDate}'))
-                                                    AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)
-                                                    GROUP BY loc.health_authority
-                                                    ORDER BY loc.health_authority`;
-    private readonly HA_totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only", loc.health_authority
-                                                            FROM location loc
-                                                            WHERE UPPER(loc.underage) = 'NO'
-                                                            GROUP BY loc.health_authority
-                                                            ORDER BY loc.health_authority`;
-    private readonly HA_totalWithAllAgesCustomersQuery = `SELECT COUNT(*) "Underage Accepted", loc.health_authority
-                                                            FROM location loc
-                                                            WHERE UPPER(loc.underage) = 'YES'
-                                                            GROUP BY loc.health_authority
-                                                            ORDER BY loc.health_authority`;
-    private readonly HA_topFlavoursQuery = `SELECT COUNT(*), UPPER(ps.flavour) "flavour", loc.health_authority
-                                                FROM product_sold ps
-                                                LEFT OUTER JOIN location loc ON loc.id = ps."locationId"
-                                                GROUP BY UPPER(ps.flavour), loc.health_authority
-                                                ORDER BY loc.health_authority, COUNT(*) DESC`;
-
     constructor(
         @InjectEntityManager() 
         private manager: EntityManager,
@@ -283,7 +187,40 @@ export class ReportService {
     }
     
     private async generateBCStatistics(request: BCRetailerStat[]) {
-        Logger.log(request);
+        const {closeDate, reportStartDate, year} = getDates();
+
+        const totalBusinessQuery = 'SELECT COUNT(*) "Total BC Businesses" FROM business';
+        const totalByStatusQuery = 'SELECT COUNT(*) "Total BC Locations", status "Location Status" FROM location GROUP BY status';
+        const missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
+                                                        CASE
+                                                            WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'Missing NOI'
+                                                            WHEN (loc."noiId" is not null AND noi.created_at < '${reportStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${reportStartDate}') AND
+                                                                (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'NOI Not Renewed'
+                                                            ELSE 'Complete NOI' END
+                                                        "missingReport" FROM location loc
+                                                        LEFT OUTER JOIN noi on noi.id = loc."noiId"
+                                                        GROUP BY "missingReport"`;
+        const missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report" FROM location loc
+                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                        AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${year}')`;
+        const missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report"
+                                                                FROM location loc
+                                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                                AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)`;
+        const noProductReportQuery  =  `SELECT COUNT(*) "No Product Submitted"
+                                                    FROM location loc
+                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                    AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)`;
+        const totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only"
+                                                    FROM location loc
+                                                    WHERE UPPER(loc.underage) = 'NO'`;
+        const totalWithAllAgesCustomersQuery = `SELECT COUNT(*) "Underage Accepted"
+                                                    FROM location loc
+                                                    WHERE UPPER(loc.underage) = 'YES'`;
+        const topFlavoursQuery = `SELECT COUNT(*), UPPER(ps.flavour) "flavour"
+                                                FROM product_sold ps
+                                            GROUP BY UPPER(ps.flavour)
+                                            ORDER BY COUNT(*) DESC`;
         let result: any = {};
         
         const queries = [];
@@ -292,14 +229,14 @@ export class ReportService {
             switch (item) {
           
                 case "totalBusinesses": {
-                    queries.push(this.manager.query(this.totalBusinessQuery).then(res => {
+                    queries.push(this.manager.query(totalBusinessQuery).then(res => {
                         result.totalBusinesses = res[0]['Total BC Businesses'];
                     }));
                     break;
                 }
           
                 case "totalByStatus": {
-                    queries.push(this.manager.query(this.totalByStatusQuery).then(res => {
+                    queries.push(this.manager.query(totalByStatusQuery).then(res => {
                         result.totalByStatus = res.reduce((dict, item) => {
                         dict[item['Location Status']] = item['Total BC Locations'];
                         return dict;
@@ -311,10 +248,10 @@ export class ReportService {
                 case "totalWithOutstandingReports": {
                     Logger.log("totalWithOutstandingReports");
                     queries.push(
-                        this.manager.query(this.missingUnrenewedNOIQuery),
-                        this.manager.query(this.missingSalesReportQuery),
-                        this.manager.query(this.missingManufacturingReportQuery),
-                        this.manager.query(this.noProductReportQuery)
+                        this.manager.query(missingUnrenewedNOIQuery),
+                        this.manager.query(missingSalesReportQuery),
+                        this.manager.query(missingManufacturingReportQuery),
+                        this.manager.query(noProductReportQuery)
                     );
                     Logger.log(queries)
                     const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
@@ -323,16 +260,16 @@ export class ReportService {
                     Logger.log(missingManufacturingReport);
                     Logger.log(noProductReport);
 
-                    // const NOIStats = noiStats.reduce((dict, item) => {
-                    //     dict[item['missingReport']] = item['count']
-                    //     return dict;
-                    // }, {});
+                    const NOIStats = noiStats.reduce((dict, item) => {
+                        dict[item['missingReport']] = item['count']
+                        return dict;
+                    }, {});
 
                     
-                    // Logger.log(NOIStats);
+                    Logger.log(NOIStats);
 
                     result.totalWithOutstandingReports = {
-                        //  ...NOIStats,
+                         ...NOIStats,
                         'Missing Sales Report': missingSalesReport[0]['Missing Sales Report'],
                         'Missing Manufacturing Report': missingManufacturingReport[0]['Missing Manufacturing Report'],
                         'No Product Submitted': noProductReport[0]['No Product Submitted']
@@ -343,21 +280,21 @@ export class ReportService {
                 }
           
                 case "totalWithOver19Customers": {
-                    queries.push(this.manager.query(this.totalWithOver19CustomersQuery).then(res => {
+                    queries.push(this.manager.query(totalWithOver19CustomersQuery).then(res => {
                         result.totalWithOver19Customers = res[0]['Over 19 Only'];
                     }));
                     break;
                 }
           
                 case "totalWithAllAgesCustomers": {
-                    queries.push(this.manager.query(this.totalWithAllAgesCustomersQuery).then(res => {
+                    queries.push(this.manager.query(totalWithAllAgesCustomersQuery).then(res => {
                         result.totalWithAllAgesCustomers = res[0]['Underage Accepted'];
                     }));
                     break;
                 }
           
                 case "topFlavours" : {
-                    queries.push(this.manager.query(this.topFlavoursQuery).then(res => {
+                    queries.push(this.manager.query(topFlavoursQuery).then(res => {
                         result.topFlavours = res.reduce((dict, item) => {
                         dict[item['flavour']] = item['count'];
                         return dict;
@@ -379,13 +316,66 @@ export class ReportService {
     }
 
     private async generateHAStatistics(request: HARetailerStat[]) {
+        const {closeDate, reportStartDate, year} = getDates();
+    
+        
+        const HA_totalByStatusQuery = `SELECT COUNT(*) "Total Locations", status "Location Status", health_authority "Health Authority" 
+                                            FROM location
+                                            GROUP BY status, health_authority
+                                            ORDER BY health_authority`;
+        const HA_missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
+                                                CASE
+                                                    WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'Missing NOI'
+                                                    WHEN (loc."noiId" is not null AND noi.created_at < '${reportStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${reportStartDate}') AND
+                                                        (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'NOI Not Renewed'
+                                                    ELSE 'Complete NOI' END
+                                                "missingReport",
+                                                loc.health_authority
+                                                FROM location loc
+                                                LEFT OUTER JOIN noi on noi.id = loc."noiId"
+                                                GROUP BY "missingReport", health_authority
+                                                ORDER BY health_authority`;
+        const HA_missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report", loc.health_authority
+                                                FROM location loc
+                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${year}')
+                                                GROUP BY loc.health_authority
+                                                ORDER BY loc.health_authority`;
+        const HA_missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report", loc.health_authority
+                                                        FROM location loc
+                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                        AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)
+                                                        GROUP BY loc.health_authority
+                                                        ORDER BY loc.health_authority`;
+        const HA_noProductReportQuery = `SELECT COUNT(*) "No Product Submitted", loc.health_authority
+                                                        FROM location loc
+                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                        AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)
+                                                        GROUP BY loc.health_authority
+                                                        ORDER BY loc.health_authority`;
+        const HA_totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only", loc.health_authority
+                                                                FROM location loc
+                                                                WHERE UPPER(loc.underage) = 'NO'
+                                                                GROUP BY loc.health_authority
+                                                                ORDER BY loc.health_authority`;
+        const HA_totalWithAllAgesCustomersQuery = `SELECT COUNT(*) "Underage Accepted", loc.health_authority
+                                                                FROM location loc
+                                                                WHERE UPPER(loc.underage) = 'YES'
+                                                                GROUP BY loc.health_authority
+                                                                ORDER BY loc.health_authority`;
+        const HA_topFlavoursQuery = `SELECT COUNT(*), UPPER(ps.flavour) "flavour", loc.health_authority
+                                                    FROM product_sold ps
+                                                    LEFT OUTER JOIN location loc ON loc.id = ps."locationId"
+                                                    GROUP BY UPPER(ps.flavour), loc.health_authority
+                                                    ORDER BY loc.health_authority, COUNT(*) DESC`;
+    
         let result: any = {};
         for (var item of request) {
             switch (item) {
                 case 'totalByStatus':
                     const totalByStatusResult: any = {};
 
-                    const totalByStatus = await this.manager.query(this.HA_totalByStatusQuery);
+                    const totalByStatus = await this.manager.query(HA_totalByStatusQuery);
                 
                     const groupResultByHA = this.groupResultByHA(totalByStatus, 'Health Authority');
                                        
@@ -405,7 +395,7 @@ export class ReportService {
                     Logger.log("totalWithOutstandingReportsResult");
                     const totalWithOutstandingReportsResult: any = {};
 
-                    const NOIStats = await this.manager.query(this.HA_missingUnrenewedNOIQuery);
+                    const NOIStats = await this.manager.query(HA_missingUnrenewedNOIQuery);
                     const groupNOIStatByHA = this.groupResultByHA(NOIStats, 'health_authority');
                     Object.keys(groupNOIStatByHA).reduce((dict, healthAuthority) => {
                         const HAArray = groupNOIStatByHA[healthAuthority];
@@ -417,17 +407,17 @@ export class ReportService {
                         return dict;
                     }, {})
                     
-                    const missingSalesReportStats = await this.manager.query(this.HA_missingSalesReportQuery);
+                    const missingSalesReportStats = await this.manager.query(HA_missingSalesReportQuery);
                     for (let stat of missingSalesReportStats) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], "Missing Sales Report": stat['Missing Sales Report']}
                     }
                                         
-                    const missingManufacturingReportStat = await this.manager.query(this.HA_missingManufacturingReportQuery);
+                    const missingManufacturingReportStat = await this.manager.query(HA_missingManufacturingReportQuery);
                     for (let stat of missingManufacturingReportStat) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], 'Missing Manufacturing Report': stat['Missing Manufacturing Report']}
                     }
                     
-                    const noProductReportStat = await this.manager.query(this.HA_noProductReportQuery);
+                    const noProductReportStat = await this.manager.query(HA_noProductReportQuery);
                     for (let stat of noProductReportStat) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], 'No Product Submitted': stat['No Product Submitted']}
                     }
@@ -438,7 +428,7 @@ export class ReportService {
                 case 'totalWithOver19Customers':
                     const totalWithOver19CustomersResult: any = {}
 
-                    const over19OnlyStat = await this.manager.query(this.HA_totalWithOver19CustomersQuery);
+                    const over19OnlyStat = await this.manager.query(HA_totalWithOver19CustomersQuery);
                     for (let stat of over19OnlyStat) {
                         totalWithOver19CustomersResult[stat.health_authority] = stat['Over 19 Only'];
                     }
@@ -448,7 +438,7 @@ export class ReportService {
                 case 'totalWithAllAgesCustomers':
                     const totalWithAllAgesCustomersResult: any = {}
 
-                    const allAgesStat = await this.manager.query(this.HA_totalWithAllAgesCustomersQuery);
+                    const allAgesStat = await this.manager.query(HA_totalWithAllAgesCustomersQuery);
                     for (let stat of allAgesStat) {
                         totalWithAllAgesCustomersResult[stat.health_authority] = stat['Underage Accepted'];
                     }
@@ -458,7 +448,7 @@ export class ReportService {
                 case 'topFlavours':
                     const topFlavoursResult: any = {};
                 
-                    const top30FlavourStat = await this.manager.query(this.HA_topFlavoursQuery);
+                    const top30FlavourStat = await this.manager.query(HA_topFlavoursQuery);
                     const topFlavoursByHA = this.groupResultByHA(top30FlavourStat, 'health_authority');
 
                     Object.keys(topFlavoursByHA).reduce((dict, healthAuthority) => {
