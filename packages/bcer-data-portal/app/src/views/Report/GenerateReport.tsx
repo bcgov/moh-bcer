@@ -26,8 +26,12 @@ const useStyles = makeStyles({
 export function GenerateReport (props: any) {
     const classes = useStyles();
     const { openToast } = useToast()
-    const [{ data, error, loading }, generateReport] = useAxiosPost('/data/report/generate', { manual: true });
+    const [{ error, loading }, generateReport] = useAxiosPost('/data/report/generate', { manual: true });
     
+    // useEffect(() => {
+    //     if (data) onSuccess()
+    // }, [data]);
+
     const onSuccess = () => {
         props.generateComplete();
         openToast({
@@ -48,14 +52,13 @@ export function GenerateReport (props: any) {
         <Box className={classes.box}>
             <Formik 
                 onSubmit={async (values,  { resetForm }) =>  {
-                    await generateReport({ data: values })
-                    if (data === "ok" && !error) {
+                    const { data } = await generateReport({ data: values });
+                    if (data === "ok") {
                         onSuccess();
-                        resetForm();
+                       resetForm();
                     } else {
                         onError();
                     }
-                    
                 }}
                 initialValues={{
                     bcStatistics: [], 
