@@ -36,9 +36,9 @@ export class ReportService {
     * BC queries
     */
 
-    private readonly closeBeforeDate = getDates().closeDate;
-    private readonly periodStartDate = getDates().reportStartDate;
-    private readonly queryYear = getDates().year;
+    private readonly closeBeforeDate = '2020-10-01'; //getDates().closeDate;
+    private readonly periodStartDate = '2021-10-01'; //getDates().reportStartDate;
+    private readonly queryYear = '2021'; //getDates().year;
 
 
     private readonly totalBusinessQuery = 'SELECT COUNT(*) "Total BC Businesses" FROM business';
@@ -311,27 +311,36 @@ export class ReportService {
                 }
 
                 case "totalWithOutstandingReports": {
+                    Logger.log("totalWithOutstandingReports");
                     queries.push(
                         this.manager.query(this.missingUnrenewedNOIQuery),
                         this.manager.query(this.missingSalesReportQuery),
                         this.manager.query(this.missingManufacturingReportQuery),
                         this.manager.query(this.noProductReportQuery)
                     );
-          
+                    Logger.log(queries)
                     const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
-                
-                    const NOIStats = noiStats.reduce((dict, item) => {
-                        dict[item['missingReport']] = item['count']
-                        return dict;
-                    }, {});
+                    Logger.log(noiStats);
+                    Logger.log(missingSalesReport);
+                    Logger.log(missingManufacturingReport);
+                    Logger.log(noProductReport);
+
+                    // const NOIStats = noiStats.reduce((dict, item) => {
+                    //     dict[item['missingReport']] = item['count']
+                    //     return dict;
+                    // }, {});
+
+                    
+                    // Logger.log(NOIStats);
 
                     result.totalWithOutstandingReports = {
-                         ...NOIStats,
+                        //  ...NOIStats,
                         'Missing Sales Report': missingSalesReport[0]['Missing Sales Report'],
                         'Missing Manufacturing Report': missingManufacturingReport[0]['Missing Manufacturing Report'],
                         'No Product Submitted': noProductReport[0]['No Product Submitted']
                     };
 
+                    Logger.log(result)
                     break;
                 }
           
