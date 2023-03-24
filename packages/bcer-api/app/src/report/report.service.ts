@@ -8,7 +8,6 @@ import * as XLSX from "xlsx";
 import { getNoiReportingPeriod } from 'src/common/common.utils';
 import moment from 'moment';
 
-
 const getDates = () => {
     const { startReport, endReport } = getNoiReportingPeriod();
 
@@ -52,7 +51,6 @@ export class ReportService {
     }
 
     async getReports(count: number) {
-        Logger.log(getDates());
         return await this.reportRepository.find({
             take: count,
             order: { createdAt: 'DESC'},
@@ -82,9 +80,9 @@ export class ReportService {
             const bcStatistics = report.result.bcStatistics;
             let bcResult = [];
             
-            if (bcStatistics.total) {
+            if (bcStatistics.totalBusinesses) {
                 bcResult.push(["NUMBER OF RETAILERS:"]); //add colors to headers
-                bcResult.push([bcStatistics.total.toString()]);
+                bcResult.push([bcStatistics.totalBusinesses.toString()]);
                 bcResult.push([]);
             }
 
@@ -117,7 +115,7 @@ export class ReportService {
             }
 
             if (bcStatistics.topFlavours) {
-                bcResult.push(["FLAVOURS AND THIER COUNTS"]);
+                bcResult.push(["FLAVOURS AND THEIR COUNTS:"]);
                 for (const [key, value] of Object.entries(bcStatistics.topFlavours)) {
                     bcResult.push([key, value]);
                 }
@@ -222,51 +220,45 @@ export class ReportService {
                                             GROUP BY UPPER(ps.flavour)
                                             ORDER BY COUNT(*) DESC`;
         let result: any = {};
-        
-        const queries = [];
 
         for (let item of request) {
             switch (item) {
           
                 case "totalBusinesses": {
-                    queries.push(this.manager.query(totalBusinessQuery).then(res => {
+                    await this.manager.query(totalBusinessQuery).then(res => {
                         result.totalBusinesses = res[0]['Total BC Businesses'];
-                    }));
+                    });
+
                     break;
                 }
           
                 case "totalByStatus": {
-                    queries.push(this.manager.query(totalByStatusQuery).then(res => {
+                    await this.manager.query(totalByStatusQuery).then(res => {
                         result.totalByStatus = res.reduce((dict, item) => {
-                        dict[item['Location Status']] = item['Total BC Locations'];
-                        return dict;
+                            dict[item['Location Status']] = item['Total BC Locations'];
+                            return dict;
                         }, {});
-                    }));
+                    });
+
                     break;
                 }
 
                 case "totalWithOutstandingReports": {
-                    Logger.log("totalWithOutstandingReports");
+                    const queries = [];
+
                     queries.push(
                         this.manager.query(missingUnrenewedNOIQuery, [closeDate, reportStartDate]),
                         this.manager.query(missingSalesReportQuery,  [closeDate, year]),
                         this.manager.query(missingManufacturingReportQuery,  [closeDate]),
                         this.manager.query(noProductReportQuery,  [closeDate])
                     );
-                    Logger.log(queries)
+                    
                     const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
-                    Logger.log(noiStats);
-                    Logger.log(missingSalesReport);
-                    Logger.log(missingManufacturingReport);
-                    Logger.log(noProductReport);
-
+                 
                     const NOIStats = noiStats.reduce((dict, item) => {
                         dict[item['missingReport']] = item['count']
                         return dict;
                     }, {});
-
-                    
-                    Logger.log(NOIStats);
 
                     result.totalWithOutstandingReports = {
                          ...NOIStats,
@@ -275,31 +267,33 @@ export class ReportService {
                         'No Product Submitted': noProductReport[0]['No Product Submitted']
                     };
 
-                    Logger.log(result)
                     break;
                 }
           
                 case "totalWithOver19Customers": {
-                    queries.push(this.manager.query(totalWithOver19CustomersQuery).then(res => {
+                    await this.manager.query(totalWithOver19CustomersQuery).then(res => {
                         result.totalWithOver19Customers = res[0]['Over 19 Only'];
-                    }));
+                    });
+
                     break;
                 }
           
                 case "totalWithAllAgesCustomers": {
-                    queries.push(this.manager.query(totalWithAllAgesCustomersQuery).then(res => {
+                    await this.manager.query(totalWithAllAgesCustomersQuery).then(res => {
                         result.totalWithAllAgesCustomers = res[0]['Underage Accepted'];
-                    }));
+                    });
+
                     break;
                 }
           
                 case "topFlavours" : {
-                    queries.push(this.manager.query(topFlavoursQuery).then(res => {
+                    await this.manager.query(topFlavoursQuery).then(res => {
                         result.topFlavours = res.reduce((dict, item) => {
-                        dict[item['flavour']] = item['count'];
-                        return dict;
+                            dict[item['flavour']] = item['count'];
+                            return dict;
                         }, {});
-                    }));
+                    });
+
                     break;
                 }
 
@@ -308,10 +302,6 @@ export class ReportService {
             }
         }
             
-        await Promise.all(queries);
-        
-        Logger.log(result);
-
         return result; 
     }
 
@@ -325,9 +315,9 @@ export class ReportService {
                                             ORDER BY health_authority`;
         const HA_missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
                                                 CASE
-                                                    WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'Missing NOI'
-                                                    WHEN (loc."noiId" is not null AND noi.created_at < '${reportStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${reportStartDate}') AND
-                                                        (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'NOI Not Renewed'
+                                                    WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))) THEN 'Missing NOI'
+                                                    WHEN (loc."noiId" is not null AND noi.created_at < $2 AND (noi.renewed_at IS null OR noi.renewed_at < $2) AND
+                                                        (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))) THEN 'NOI Not Renewed'
                                                     ELSE 'Complete NOI' END
                                                 "missingReport",
                                                 loc.health_authority
@@ -337,19 +327,19 @@ export class ReportService {
                                                 ORDER BY health_authority`;
         const HA_missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report", loc.health_authority
                                                 FROM location loc
-                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
-                                                AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${year}')
+                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))
+                                                AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = $2)
                                                 GROUP BY loc.health_authority
                                                 ORDER BY loc.health_authority`;
         const HA_missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report", loc.health_authority
                                                         FROM location loc
-                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))
                                                         AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)
                                                         GROUP BY loc.health_authority
                                                         ORDER BY loc.health_authority`;
         const HA_noProductReportQuery = `SELECT COUNT(*) "No Product Submitted", loc.health_authority
                                                         FROM location loc
-                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))
                                                         AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)
                                                         GROUP BY loc.health_authority
                                                         ORDER BY loc.health_authority`;
@@ -370,33 +360,48 @@ export class ReportService {
                                                     ORDER BY loc.health_authority, COUNT(*) DESC`;
     
         let result: any = {};
+
+        
+
         for (var item of request) {
             switch (item) {
-                case 'totalByStatus':
-                    const totalByStatusResult: any = {};
+                case 'totalByStatus': {
+                    
+                    await this.manager.query(HA_totalByStatusQuery).then(res => {
+                        const groupResultByHA = this.groupResultByHA(res, 'Health Authority');
+                        const totalByStatusResult: any = {};
 
-                    const totalByStatus = await this.manager.query(HA_totalByStatusQuery);
-                
-                    const groupResultByHA = this.groupResultByHA(totalByStatus, 'Health Authority');
-                                       
-                    Object.keys(groupResultByHA).reduce((dict, item) => {
-                        const HAArray = groupResultByHA[item];
-                        for (var HAResult of HAArray) {
-                            dict[HAResult['Location Status']] =  HAResult['Total Locations'] 
-                        }
-                        totalByStatusResult[item] = dict;
-                        dict = {}
-                        return dict;
-                    }, {}); 
+                        Object.keys(groupResultByHA).reduce((dict, item) => {
+                            const HAArray = groupResultByHA[item];
+                            for (var HAResult of HAArray) {
+                                dict[HAResult['Location Status']] =  HAResult['Total Locations'] 
+                            }
+                            totalByStatusResult[item] = dict;
+                            dict = {}
+                            return dict;
+                        }, {}); 
 
-                    result.totalByStatus = totalByStatusResult;
+                        result.totalByStatus = totalByStatusResult;
+                    });
+
                     break;
+                }
+
                 case 'totalWithOutstandingReports': {
-                    Logger.log("totalWithOutstandingReportsResult");
                     const totalWithOutstandingReportsResult: any = {};
 
-                    const NOIStats = await this.manager.query(HA_missingUnrenewedNOIQuery);
-                    const groupNOIStatByHA = this.groupResultByHA(NOIStats, 'health_authority');
+                    const queries = [];
+                    queries.push(
+                        this.manager.query(HA_missingUnrenewedNOIQuery, [closeDate, reportStartDate]),
+                        this.manager.query(HA_missingSalesReportQuery,  [closeDate, year]),
+                        this.manager.query(HA_missingManufacturingReportQuery,  [closeDate]),
+                        this.manager.query(HA_noProductReportQuery,  [closeDate])
+                    );
+
+                    const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
+
+                    const groupNOIStatByHA = this.groupResultByHA(noiStats, 'health_authority');
+
                     Object.keys(groupNOIStatByHA).reduce((dict, healthAuthority) => {
                         const HAArray = groupNOIStatByHA[healthAuthority];
                         for (var HAResult of HAArray) {
@@ -406,63 +411,70 @@ export class ReportService {
                         dict = {};
                         return dict;
                     }, {})
-                    
-                    const missingSalesReportStats = await this.manager.query(HA_missingSalesReportQuery);
-                    for (let stat of missingSalesReportStats) {
+                 
+                    for (let stat of missingSalesReport) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], "Missing Sales Report": stat['Missing Sales Report']}
                     }
                                         
-                    const missingManufacturingReportStat = await this.manager.query(HA_missingManufacturingReportQuery);
-                    for (let stat of missingManufacturingReportStat) {
+                    for (let stat of missingManufacturingReport) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], 'Missing Manufacturing Report': stat['Missing Manufacturing Report']}
                     }
                     
-                    const noProductReportStat = await this.manager.query(HA_noProductReportQuery);
-                    for (let stat of noProductReportStat) {
+                    for (let stat of noProductReport) {
                         totalWithOutstandingReportsResult[stat.health_authority] = {...totalWithOutstandingReportsResult[stat.health_authority], 'No Product Submitted': stat['No Product Submitted']}
                     }
                     
                     result.totalWithOutstandingReports = totalWithOutstandingReportsResult
                     break;
                 }
-                case 'totalWithOver19Customers':
+
+                case 'totalWithOver19Customers': {
                     const totalWithOver19CustomersResult: any = {}
 
-                    const over19OnlyStat = await this.manager.query(HA_totalWithOver19CustomersQuery);
-                    for (let stat of over19OnlyStat) {
-                        totalWithOver19CustomersResult[stat.health_authority] = stat['Over 19 Only'];
-                    }
+                    await this.manager.query(HA_totalWithOver19CustomersQuery).then(res => {
+                        for (let stat of res) {
+                            totalWithOver19CustomersResult[stat.health_authority] = stat['Over 19 Only'];
+                        }
+                    });
 
                     result.totalWithOver19Customers = totalWithOver19CustomersResult;
                     break;
-                case 'totalWithAllAgesCustomers':
+                }
+
+                case 'totalWithAllAgesCustomers': {
                     const totalWithAllAgesCustomersResult: any = {}
 
-                    const allAgesStat = await this.manager.query(HA_totalWithAllAgesCustomersQuery);
-                    for (let stat of allAgesStat) {
-                        totalWithAllAgesCustomersResult[stat.health_authority] = stat['Underage Accepted'];
-                    }
+                    await this.manager.query(HA_totalWithAllAgesCustomersQuery).then(res => {
+                        for (let stat of res) {
+                            totalWithAllAgesCustomersResult[stat.health_authority] = stat['Underage Accepted'];
+                        }
+                    });
 
                     result.totalWithAllAgesCustomers = totalWithAllAgesCustomersResult;
                     break;
-                case 'topFlavours':
+                }
+
+                case 'topFlavours': {
                     const topFlavoursResult: any = {};
                 
-                    const top30FlavourStat = await this.manager.query(HA_topFlavoursQuery);
-                    const topFlavoursByHA = this.groupResultByHA(top30FlavourStat, 'health_authority');
+                    await this.manager.query(HA_topFlavoursQuery).then(res => {
+                        const topFlavoursByHA = this.groupResultByHA(res, 'health_authority');
 
-                    Object.keys(topFlavoursByHA).reduce((dict, healthAuthority) => {
-                        const HAArray = topFlavoursByHA[healthAuthority];
-                        for (var HAResult of HAArray) {
-                            dict[HAResult['flavour']] = HAResult['count']
-                        }
-                        topFlavoursResult[healthAuthority] = dict;
-                        dict = {};
-                        return dict;
-                    }, {})
+                        Object.keys(topFlavoursByHA).reduce((dict, healthAuthority) => {
+                            const HAArray = topFlavoursByHA[healthAuthority];
+                            for (var HAResult of HAArray) {
+                                dict[HAResult['flavour']] = HAResult['count']
+                            }
+                            topFlavoursResult[healthAuthority] = dict;
+                            dict = {};
+                            return dict;
+                        }, {})
+                    });
                     
                     result.topFlavours = topFlavoursResult;
                     break;
+                }
+
                 default:
                     return;
             }
