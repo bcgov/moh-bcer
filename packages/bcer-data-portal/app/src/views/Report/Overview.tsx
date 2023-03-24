@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Paper, Typography, makeStyles } from "@material-ui/core";
 import GetAppIcon from '@material-ui/icons/GetApp';
 import { useAxiosGet } from "@/hooks/axios";
@@ -45,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
 export default function Report() {
     const classes = useStyles();
     
@@ -72,7 +71,6 @@ export default function Report() {
                     <ReportTable reports = {reports} loading = {reportLoading} />
                 </Paper>
             </Box>
-            
         </Box>
     )
 }

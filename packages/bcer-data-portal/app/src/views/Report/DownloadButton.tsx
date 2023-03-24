@@ -53,7 +53,7 @@ export function DownloadButton(props: any) {
 
     return (
         <>        
-            <StyledButton variant="small-outlined" onClick={() => handleDownload()} disabled = {Object.keys(props.result).length === 0}>
+            <StyledButton variant="small-outlined" onClick={() => handleDownload()} disabled = {!props.result || Object.keys(props.result).length === 0}>
                 Download
             </StyledButton>
             

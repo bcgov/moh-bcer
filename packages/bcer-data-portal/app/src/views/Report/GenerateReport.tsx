@@ -26,39 +26,40 @@ const useStyles = makeStyles({
 export function GenerateReport (props: any) {
     const classes = useStyles();
     const { openToast } = useToast()
-    const [{ data: generateSuccess, error: generateError, loading: generating }, generateReport] = useAxiosPost(
-        '/data/report/generate',
-        {
-            manual: true,
-        }
-    );
+    const [{ error, loading }, generateReport] = useAxiosPost('/data/report/generate', { manual: true });
+    
+    // useEffect(() => {
+    //     if (data) onSuccess()
+    // }, [data]);
 
-    useEffect(() => {
-        if (generateSuccess) {
-            props.generateComplete();
-            openToast({
-                successMessages: ['Generate Report request recieved! Please check the report table below for you report.'],
-                type: 'success',
-            });
-        }
-    }, [generateSuccess])
-
-    useEffect(() => {
-        if (generateSuccess) {
-            openToast({
-                errorMessages: ['Error generating Report. Please try again later.'],
-                type: 'error',
-            });
-            console.error(generateError)
-        }
-    }, [generateError])
+    const onSuccess = () => {
+        props.generateComplete();
+        openToast({
+            successMessages: ['Generate Report request recieved! Please check the report table below for your report.'],
+            type: 'success',
+        });
+    }
+    
+    const onError = () => {
+        console.error(error);
+        openToast({
+            errorMessages: ['Error generating Report. Please try again later.'],
+            type: 'error',
+        });
+    }
 
     return (
         <Box className={classes.box}>
             <Formik 
-                onSubmit={(values) => 
-                    generateReport({ data: values})
-                } 
+                onSubmit={async (values,  { resetForm }) =>  {
+                    const { data } = await generateReport({ data: values });
+                    if (data === "ok") {
+                        onSuccess();
+                       resetForm();
+                    } else {
+                        onError();
+                    }
+                }}
                 initialValues={{
                     bcStatistics: [], 
                     haStatistics: []
@@ -134,8 +135,8 @@ export function GenerateReport (props: any) {
                                 />
                             </Grid>
                             <Box marginLeft={'auto'} display={'flex'}>
-                                <StyledButton variant="dialog-accept" type="submit" disabled={values.bcStatistics.length === 0 && values.haStatistics.length === 0}>                               
-                                    {generating ? <CircularProgress /> : "Generate Report"}
+                                <StyledButton variant="dialog-accept" type="submit" disabled = {values.bcStatistics.length === 0 && values.haStatistics.length === 0}>                               
+                                    {loading ? <CircularProgress /> : "Generate Report"}
                                 </StyledButton>
                             </Box>
                         </Grid>

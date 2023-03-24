@@ -26,7 +26,7 @@ export function ReportTable ({ reports, loading }: any) {
             {loading ? <LinearProgress /> : <Box pt={0.5}/>}
             <StyledTable
                 columns={[
-                    {title: 'Date Created', render: (row: any) => `${moment(row.createdAt).format('MMM DD, YYYY HH:mm')}`},  
+                    {title: 'Date Created', render: (row: any) => `${moment(row.createdAt).format('MMM DD, YYYY HH:mm:ss')}`},  
                     {title: 'Created By', render: (row: any) => `${row.user.firstName} ${row.user.lastName}`},
                     {title: '', render: (row: any) => <DownloadButton {...row} />, align: "center"}
                 ]} 
