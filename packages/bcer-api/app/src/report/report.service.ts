@@ -161,7 +161,7 @@ export class ReportService {
 
             if (haStatistics.totalWithAllAgesCustomers) {
                 haResult.push(["NUMBER OF LOCATIONS ACCEPTING ALL AGES PER HA:"]);
-                for (const [key, value] of Object.entries(haStatistics.totalWithOver19Customers)) {
+                for (const [key, value] of Object.entries(haStatistics.totalWithAllAgesCustomers)) {
                     haResult.push([key, value.toString()])
                 }
                 haResult.push([[]]);
@@ -360,8 +360,6 @@ export class ReportService {
                                                     ORDER BY loc.health_authority, COUNT(*) DESC`;
     
         let result: any = {};
-
-        
 
         for (var item of request) {
             switch (item) {
