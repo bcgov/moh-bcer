@@ -193,23 +193,23 @@ export class ReportService {
         const totalByStatusQuery = 'SELECT COUNT(*) "Total BC Locations", status "Location Status" FROM location GROUP BY status';
         const missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
                                                         CASE
-                                                            WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'Missing NOI'
-                                                            WHEN (loc."noiId" is not null AND noi.created_at < '${reportStartDate}' AND (noi.renewed_at IS null OR noi.renewed_at < '${reportStartDate}') AND
-                                                                (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))) THEN 'NOI Not Renewed'
+                                                            WHEN (loc."noiId" is null AND (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))) THEN 'Missing NOI'
+                                                            WHEN (loc."noiId" is not null AND noi.created_at < $2 AND (noi.renewed_at IS null OR noi.renewed_at < $2) AND
+                                                                (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))) THEN 'NOI Not Renewed'
                                                             ELSE 'Complete NOI' END
                                                         "missingReport" FROM location loc
                                                         LEFT OUTER JOIN noi on noi.id = loc."noiId"
                                                         GROUP BY "missingReport"`;
         const missingSalesReportQuery = `SELECT COUNT(*) "Missing Sales Report" FROM location loc
-                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
-                                                        AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = '${year}')`;
+                                                        WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))
+                                                        AND loc.id NOT IN (SELECT DISTINCT sr."locationId" FROM salesreport sr WHERE sr.year = $2)`;
         const missingManufacturingReportQuery = `SELECT COUNT(*) "Missing Manufacturing Report"
                                                                 FROM location loc
-                                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                                WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))
                                                                 AND loc.manufacturing = 'true' AND loc.id NOT IN (SELECT DISTINCT lm."locationId" FROM location_manufactures_manufacturing lm)`;
         const noProductReportQuery  =  `SELECT COUNT(*) "No Product Submitted"
                                                     FROM location loc
-                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > '${closeDate}'))
+                                                    WHERE (loc.status = 'active' OR (loc.status = 'closed' AND loc.closed_at > $1))
                                                     AND loc.id NOT IN (SELECT DISTINCT lp."locationId" FROM location_products_product lp)`;
         const totalWithOver19CustomersQuery = `SELECT COUNT(*) "Over 19 Only"
                                                     FROM location loc
@@ -248,10 +248,10 @@ export class ReportService {
                 case "totalWithOutstandingReports": {
                     Logger.log("totalWithOutstandingReports");
                     queries.push(
-                        this.manager.query(missingUnrenewedNOIQuery),
-                        this.manager.query(missingSalesReportQuery),
-                        this.manager.query(missingManufacturingReportQuery),
-                        this.manager.query(noProductReportQuery)
+                        this.manager.query(missingUnrenewedNOIQuery, [closeDate, reportStartDate]),
+                        this.manager.query(missingSalesReportQuery,  [closeDate, year]),
+                        this.manager.query(missingManufacturingReportQuery,  [closeDate]),
+                        this.manager.query(noProductReportQuery,  [closeDate])
                     );
                     Logger.log(queries)
                     const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
