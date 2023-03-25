@@ -68,7 +68,7 @@ export default function Report() {
                 <Paper className={classes.box} variant="outlined">
                     <GenerateReport generateComplete={() => getReports()} />
                     <Box mt={5} />
-                    <ReportTable reports = {reports} loading = {reportLoading} />
+                    <ReportTable reports = {reports} loading = {reportLoading} refresh = {getReports}/>
                 </Paper>
             </Box>
         </Box>
