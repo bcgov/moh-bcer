@@ -44,17 +44,83 @@ resource "aws_ecs_task_definition" "bcer_td" {
         }
       ]
       secrets = [
-        {"name": "PG_USER", 
+        {"name": "DB_USERNAME", 
          "valueFrom": "${aws_secretsmanager_secret_version.rds_credentials.arn}:username::"},
-        {"name": "PG_PASSWORD", 
+        {"name": "DB_PASSWORD", 
          "valueFrom": "${aws_secretsmanager_secret_version.rds_credentials.arn}:password::"},
-        {"name": "JDBC_SETTING", 
-         "valueFrom": "${aws_secretsmanager_secret_version.jdbc_setting.arn}"},
-         {"name": "bcer_keycloak_client_secret",
-         "valueFrom": "${aws_secretsmanager_secret_version.bcer_keycloak-client-secret.arn}"},
-         {"name": "REDIRECT_URI",
-         "valueFrom": "${aws_secretsmanager_secret_version.redirect_uri.arn}"}
-      ]
+        {"name": "DB_HOST", 
+         "valueFrom": "${aws_secretsmanager_secret_version.rds_credentials.arn}:host::"},
+         {"name": "DB_PORT",
+         "valueFrom": "${aws_secretsmanager_secret_version.rds_credentials.arn}:port::"}
+         ]
+      environment = [
+         {"name": "APPLICATION_PORT",
+         "value": "4000"},
+         {"name": "AWS_ENV",
+         "value": "true"},
+         {"name": "BC_DIRECTION_API_KEY",
+         "value": "true"},
+         {"name": "BC_DIRECTION_API_KEY",
+         "value": "11dd756f680c47b5aef5093d95543738"},
+         {"name": "CLOSE_LOCATION_CRON_TIME",
+         "value": "0 1 16 2 *"},
+         {"name": "CRON_JOB_NAMES",
+         "value": "SEND_NOTIFICATION"},
+         {"name": "DB_DATABASE",
+         "value": "bcerd"},
+         {"name": "DB_SCHEMA",
+         "value": "bcer"},
+         {"name": "DB_TEST_DATABASE",
+         "value": "nest_api_test"},
+         {"name": "EMAIL_GENERIC_NOTIFICATION_TEMPLATE_ID",
+         "value": "b0e11803-ee8e-457d-a6e4-faad527edf68"},
+         {"name": "ENABLE_SUBSCRIPTION",
+         "value": "true"},
+         {"name": "ENABLE_TEXT_MESSAGES",
+         "value": "true"},
+         {"name": "GA_KEY",
+         "value": "AIzaSyBLX_40ZbEOvxrPctDCnAQOcs5G8tTxLfk"},
+         {"name": "HEAPSNAPSHOT_ENABLED",
+         "value": "false"},
+         {"name": "KEYCLOAK_AUTH_URL",
+          "value": "https://common-logon-test.hlth.gov.bc.ca/auth/"},
+          {"name": "KEYCLOAK_CLIENT",
+          "value": "BCER"},
+          {"name": "KEYCLOAK_DATA_AUTH_URL",
+          "value": "https://common-logon-test.hlth.gov.bc.ca/auth/"},
+          {"name": "KEYCLOAK_DATA_CLIENT",
+          "value": "BCER-CP"},
+          {"name": "KEYCLOAK_DATA_REALM",
+          "value": "moh_applications"},
+          {"name": "KEYCLOAK_PORT",
+          "value": "443"},
+          {"name": "KEYCLOAK_REALM",
+          "value": "bcer"},
+          {"name": "LOAD_CERTS",
+          "value": "false"},
+          {"name": "LOGS_PATH",
+          "value": "./../logs"},
+          {"name": "MAP_BOX_ACCESS_TOKEN",
+          "value": "pk.eyJ1Ijoic2FnYXJiaHAiLCJhIjoiY2t4YjNlZXMyM3VkbTJvcTMwYW5rbmRjbSJ9.j7i9KaoFeFHjerA8DcdDCw"},
+          {"name": "NOI_EXPIRY_DATE",
+          "value": "10-01"},
+          {"name": "PEM_CERT_PATH",
+          "value": "../keys/bcer-dev.hlth.gov.bc.ca.crt"},
+          {"name": "PEM_KEY_PATH",
+          "value": "../keys/bcer-dev.hlth.gov.bc.ca.key"},
+          {"name": "SALES_REPORT_END_DATE",
+          "value": "09-30"},
+          {"name": "TEXT_API_KEY",
+          "value": "bcertestnotificationservicekey-8d304d1f-3230-4497-ac29-777725ddd287-2bb83e07-6f3a-4e23-ae44-cc3dcdfca4a1"},
+          {"name": "TEXT_API_PROXY",
+          "value": "apiproxyd.hlth.gov.bc.ca"},
+          {"name": "TEXT_GENERIC_NOTIFICATION_TEMPLATE_ID",
+          "value": "fd45cc5f-6ba7-4d82-9b7f-45525918344d"},
+          {"name": "VAPING_NOTIFICATION_EMAIL",
+          "value": "adam.hoplock@gov.bc.ca"}
+      ]       
+
+      
       #change awslog group
       logConfiguration = {
       "logDriver": "awslogs",
@@ -92,6 +158,9 @@ resource "aws_ecs_service" "main" {
   }
 
   depends_on = [data.aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_execution_role]
-
+  
+   lifecycle {
+  ignore_changes = [ capacity_provider_strategy ]
+  }
 #   tags = local.common_tags
 }
