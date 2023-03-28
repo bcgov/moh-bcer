@@ -3,7 +3,7 @@ terraform {
 }
  locals {
     #tfc_hostname        = "app.terraform.io"
-    project             = get_env("LICENSE_PLATE")
+    project =   "q9y1j9"
     environment         = reverse(split("/", get_terragrunt_dir()))[0]
     app_image           = get_env("app_image", "")
  }
@@ -15,7 +15,7 @@ generate "remote_state" {
 terraform {
   backend "s3" {
     bucket         = "terraform-remote-state-${ local.project }-${ local.environment }"
-    key            = "${ local.project }/${ local.environment }/fmdb-app.tfstate"
+    key            = "${ local.project }/${ local.environment }/bcer-app.tfstate"
     dynamodb_table = "terraform-remote-state-lock-${ local.project }"
     region         = "ca-central-1"
     encrypt        = true
@@ -35,6 +35,7 @@ generate "tfvars" {
     target_env = "${local.environment}"   
 EOF
 }
+
 
 generate "provider" {
   path      = "provider.tf"
