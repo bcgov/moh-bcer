@@ -3,12 +3,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthService } from 'src/auth/auth.service';
 import { KeycloakConnectOptions } from './interface/keycloakConnectOptions.interface';
 import { KEYCLOAK_CONNECT_OPTIONS, KEYCLOAK_INSTANCE } from 'src/auth/constants';
-import * as crypto from 'crypto';
 const Keycloak = require('keycloak-connect');
-
-const IV = '962d7949d38e6f1e';
-const SALT = 'fc1cadcfa5fd2623113b0e256b799710';
-const ALGO = 'aes-256-cbc';
 
 export * from './decorators/scopes.decorator';
 export * from './decorators/roles.decorator';
@@ -63,12 +58,9 @@ class AuthModuleSetup {
   }
 }
 
-const decipher = crypto.createDecipheriv(ALGO, SALT, IV);
-const decryptedKeycloakSecret = process.env.KEYCLOAK_SECRET ? Buffer.concat([decipher.update(Buffer.from(process.env.KEYCLOAK_SECRET, 'hex')), decipher.final()]).toString() : '';
-
 export const AuthModule = AuthModuleSetup.register({
   'realm': process.env.KEYCLOAK_REALM,
   'authServerUrl': process.env.KEYCLOAK_AUTH_URL,
   'clientId': process.env.KEYCLOAK_CLIENT,
-  'secret': decryptedKeycloakSecret,
+  'secret': '',
 });

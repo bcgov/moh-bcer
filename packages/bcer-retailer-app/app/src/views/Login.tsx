@@ -124,7 +124,7 @@ const Login = () => {
                 <Typography variant='body1'>
                   This application utilizes BCeID for authentication.<br />
                 </Typography>
-                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid_basic', redirectUri: location.origin + '/retailer/#/keycloak' })}>
+                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid_basic', redirectUri: location.origin + '/#/keycloak' })}>
                   <div className={classes.authButtonIcon}>
                     <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
                   </div>
@@ -133,7 +133,7 @@ const Login = () => {
                     <img className={classes.arrowRight} src={arrowRight} alt="Login" />
                   </div>
                 </div>
-                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid_business', redirectUri: location.origin + '/retailer/#/keycloak' })}>
+                <div className={classes.authButtonContainer} onClick={() => keycloak.login({ idpHint: 'bceid_business', redirectUri: location.origin + '/#/keycloak' })}>
                   <div className={classes.authButtonIcon}>
                     <img className={classes.buttonImage} src={userLoginLogo} alt="Login" />
                   </div>
