@@ -64,7 +64,7 @@ export function DownloadButton(props: any) {
                         <div>
                             <FileCopyIcon className = {downloading ? classes.fileLoading : classes.fileComplete} />
                             <span className={classes.messageTextContent}>
-                                {`report-${moment().format('MMM-DD-hh-mm')}.xlsx`}
+                                {`${props.query.period}Report-${moment().format('DD_MM_YYYY')}.xlsx`}
                             </span>
                         </div>
                     }
@@ -73,7 +73,7 @@ export function DownloadButton(props: any) {
                         (
                         <IconButton
                             href = {window.URL.createObjectURL(new Blob([report]))}
-                            download = {`report-${moment().format('MMM-DD-hh-mm')}.xlsx`}
+                            download = {`${props.query.period}Report-${moment().format('DD_MM_YYYY')}.xlsx`}
                             onClick = {() => {
                                 setSnackbarOpen(false);
                             }}

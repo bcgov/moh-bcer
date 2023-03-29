@@ -1,31 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { BCRetailerStat, HARetailerStat, ReportRequestDto } from './dto/report.dto';
+import { Injectable } from '@nestjs/common';
+import { ReportRequestDto } from './dto/report.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { ReportEntity } from './entities/report.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import * as XLSX from "xlsx";
-import { getNoiReportingPeriod } from 'src/common/common.utils';
 import moment from 'moment';
 
-const getDates = () => {
-    const { startReport, endReport } = getNoiReportingPeriod();
+const getDates = (reportPeriod: number) => { 
+    const startReport = moment(`${reportPeriod}-10-01T00:00:00-07:00`);
 
-    const isReportingPeriod = moment().isBetween(startReport, endReport);
+    const closeBeforeDate = startReport.clone().subtract(1, 'year');
 
-    let closeDate = startReport.clone().subtract(3, 'year');
-    let reportStartDate = startReport.clone().subtract(2, 'year');
-    let year = moment().subtract(1, 'year').year();
-
-    if (isReportingPeriod) {       
-        closeDate = startReport.clone().subtract(2, 'year');
-        reportStartDate = startReport.clone().subtract(1, 'year');
-        year = moment().year();
-    } 
-    
-    return { closeDate, reportStartDate, year };
+    return { reportPeriod, closeBeforeDate, startReport };
 }
-
 
 @Injectable()
 export class ReportService {
@@ -64,8 +52,8 @@ export class ReportService {
     async generateReport(user: UserEntity, request: ReportRequestDto) {
         const report = await this.create(user, request);
 
-        const bcStatistics = await this.generateBCStatistics(request.bcStatistics);
-        const haStatistics = await this.generateHAStatistics(request.haStatistics);   
+        const bcStatistics = await this.generateBCStatistics(request);
+        const haStatistics = await this.generateHAStatistics(request);   
 
         this.update({
             id: report.id,
@@ -95,7 +83,7 @@ export class ReportService {
             }
 
             if (bcStatistics.totalWithOutstandingReports) {
-                bcResult.push(["REPORT STATUS AND NUMBER OF LOCATIONS:"]);
+                bcResult.push([`REPORT STATUS (${report.query.period}) AND NUMBER OF LOCATIONS:`]);
                 for (const [key, value] of Object.entries(bcStatistics.totalWithOutstandingReports)) {
                     bcResult.push([key, value]);
                 }
@@ -115,7 +103,11 @@ export class ReportService {
             }
 
             if (bcStatistics.topFlavours) {
-                bcResult.push(["FLAVOURS AND THEIR COUNTS:"]);
+                if (report.query.flavourCount > 0) {
+                    bcResult.push([`TOP ${report.query.flavourCount} FLAVOURS AND THEIR COUNTS`]);
+                } else {
+                    bcResult.push(["FLAVOURS AND THEIR COUNTS:"]);
+                }
                 for (const [key, value] of Object.entries(bcStatistics.topFlavours)) {
                     bcResult.push([key, value]);
                 }
@@ -141,7 +133,7 @@ export class ReportService {
             }
 
             if (haStatistics.totalWithOutstandingReports) {
-                haResult.push(["REPORT STATUS AND NUMBER OF LOCATIONS PER HA:"]);
+                haResult.push([`REPORT STATUS (${report.query.period}) AND NUMBER OF LOCATIONS PER HA:`]);
                 for (const [key, values] of Object.entries(haStatistics.totalWithOutstandingReports)) {
                     haResult.push([key]);
                     for (const [key, value] of Object.entries(values)) {
@@ -168,7 +160,11 @@ export class ReportService {
             }
 
             if (haStatistics.topFlavours) {
-                haResult.push(["FLAVOURS AND THIER COUNTS"]);
+                if (report.query.flavourCount > 0) {
+                    haResult.push([`TOP ${report.query.flavourCount} FLAVOURS AND THIER COUNTS`]);
+                } else {
+                    haResult.push(["FLAVOURS AND THIER COUNTS"]);
+                }
                 for (const [key, values] of Object.entries(haStatistics.topFlavours)) {
                     haResult.push([key]);
                     for (const [key, value] of Object.entries(values)) {
@@ -184,8 +180,9 @@ export class ReportService {
        return XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' });  
     }
     
-    private async generateBCStatistics(request: BCRetailerStat[]) {
-        const {closeDate, reportStartDate, year} = getDates();
+    private async generateBCStatistics(request: ReportRequestDto) {
+        const { bcStatistics, period, flavourCount}  = request;
+        const {reportPeriod, closeBeforeDate, startReport} = getDates(period);
 
         const totalBusinessQuery = 'SELECT COUNT(*) "Total BC Businesses" FROM business';
         const totalByStatusQuery = 'SELECT COUNT(*) "Total BC Locations", status "Location Status" FROM location GROUP BY status';
@@ -219,9 +216,15 @@ export class ReportService {
                                                 FROM product_sold ps
                                             GROUP BY UPPER(ps.flavour)
                                             ORDER BY COUNT(*) DESC`;
+        const topFlavoursQueryWithLimit = `SELECT COUNT(*), UPPER(ps.flavour) "flavour"
+                                            FROM product_sold ps
+                                        GROUP BY UPPER(ps.flavour)
+                                        ORDER BY COUNT(*) DESC
+                                        LIMIT $1`;
+
         let result: any = {};
 
-        for (let item of request) {
+        for (let item of bcStatistics) {
             switch (item) {
           
                 case "totalBusinesses": {
@@ -247,10 +250,10 @@ export class ReportService {
                     const queries = [];
 
                     queries.push(
-                        this.manager.query(missingUnrenewedNOIQuery, [closeDate, reportStartDate]),
-                        this.manager.query(missingSalesReportQuery,  [closeDate, year]),
-                        this.manager.query(missingManufacturingReportQuery,  [closeDate]),
-                        this.manager.query(noProductReportQuery,  [closeDate])
+                        this.manager.query(missingUnrenewedNOIQuery, [closeBeforeDate, startReport]),
+                        this.manager.query(missingSalesReportQuery, [closeBeforeDate, reportPeriod]),
+                        this.manager.query(missingManufacturingReportQuery, [closeBeforeDate]),
+                        this.manager.query(noProductReportQuery, [closeBeforeDate])
                     );
                     
                     const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
@@ -287,12 +290,21 @@ export class ReportService {
                 }
           
                 case "topFlavours" : {
-                    await this.manager.query(topFlavoursQuery).then(res => {
-                        result.topFlavours = res.reduce((dict, item) => {
-                            dict[item['flavour']] = item['count'];
-                            return dict;
-                        }, {});
-                    });
+                    if (flavourCount > 0) {
+                        await this.manager.query(topFlavoursQueryWithLimit, [flavourCount]).then(res => {
+                            result.topFlavours = res.reduce((dict, item) => {
+                                dict[item['flavour']] = item['count'];
+                                return dict;
+                            }, {});
+                        });
+                    } else {
+                        await this.manager.query(topFlavoursQuery).then(res => {
+                            result.topFlavours = res.reduce((dict, item) => {
+                                dict[item['flavour']] = item['count'];
+                                return dict;
+                            }, {});
+                        });
+                    }
 
                     break;
                 }
@@ -305,9 +317,9 @@ export class ReportService {
         return result; 
     }
 
-    private async generateHAStatistics(request: HARetailerStat[]) {
-        const {closeDate, reportStartDate, year} = getDates();
-    
+    private async generateHAStatistics(request: ReportRequestDto) {
+        const { haStatistics, period, flavourCount}  = request;
+        const {reportPeriod, closeBeforeDate, startReport} = getDates(period);
         
         const HA_totalByStatusQuery = `SELECT COUNT(*) "Total Locations", status "Location Status", health_authority "Health Authority" 
                                             FROM location
@@ -358,10 +370,14 @@ export class ReportService {
                                                     LEFT OUTER JOIN location loc ON loc.id = ps."locationId"
                                                     GROUP BY UPPER(ps.flavour), loc.health_authority
                                                     ORDER BY loc.health_authority, COUNT(*) DESC`;
-    
+        const HA_topFlavoursQueryWithLimit = `SELECT COUNT(*), UPPER(ps.flavour) "flavour", loc.health_authority
+                                                    FROM product_sold ps
+                                                    LEFT OUTER JOIN location loc ON loc.id = ps."locationId"
+                                                    GROUP BY UPPER(ps.flavour), loc.health_authority
+                                                    ORDER BY loc.health_authority, COUNT(*) DESC LIMIT $1`;        
         let result: any = {};
 
-        for (var item of request) {
+        for (var item of haStatistics) {
             switch (item) {
                 case 'totalByStatus': {
                     
@@ -387,13 +403,13 @@ export class ReportService {
 
                 case 'totalWithOutstandingReports': {
                     const totalWithOutstandingReportsResult: any = {};
-
                     const queries = [];
+
                     queries.push(
-                        this.manager.query(HA_missingUnrenewedNOIQuery, [closeDate, reportStartDate]),
-                        this.manager.query(HA_missingSalesReportQuery,  [closeDate, year]),
-                        this.manager.query(HA_missingManufacturingReportQuery,  [closeDate]),
-                        this.manager.query(HA_noProductReportQuery,  [closeDate])
+                        this.manager.query(HA_missingUnrenewedNOIQuery, [closeBeforeDate, startReport]),
+                        this.manager.query(HA_missingSalesReportQuery, [closeBeforeDate, reportPeriod]),
+                        this.manager.query(HA_missingManufacturingReportQuery, [closeBeforeDate]),
+                        this.manager.query(HA_noProductReportQuery, [closeBeforeDate])
                     );
 
                     const [noiStats, missingSalesReport, missingManufacturingReport, noProductReport] = await Promise.all(queries);
@@ -454,20 +470,36 @@ export class ReportService {
 
                 case 'topFlavours': {
                     const topFlavoursResult: any = {};
-                
-                    await this.manager.query(HA_topFlavoursQuery).then(res => {
-                        const topFlavoursByHA = this.groupResultByHA(res, 'health_authority');
 
-                        Object.keys(topFlavoursByHA).reduce((dict, healthAuthority) => {
-                            const HAArray = topFlavoursByHA[healthAuthority];
-                            for (var HAResult of HAArray) {
-                                dict[HAResult['flavour']] = HAResult['count']
-                            }
-                            topFlavoursResult[healthAuthority] = dict;
-                            dict = {};
-                            return dict;
-                        }, {})
-                    });
+                    if (flavourCount > 0) {
+                        await this.manager.query(HA_topFlavoursQueryWithLimit, [flavourCount]).then(res => {
+                            const topFlavoursByHA = this.groupResultByHA(res, 'health_authority');
+    
+                            Object.keys(topFlavoursByHA).reduce((dict, healthAuthority) => {
+                                const HAArray = topFlavoursByHA[healthAuthority];
+                                for (var HAResult of HAArray) {
+                                    dict[HAResult['flavour']] = HAResult['count']
+                                }
+                                topFlavoursResult[healthAuthority] = dict;
+                                dict = {};
+                                return dict;
+                            }, {})
+                        });
+                    } else {
+                        await this.manager.query(HA_topFlavoursQuery).then(res => {
+                            const topFlavoursByHA = this.groupResultByHA(res, 'health_authority');
+
+                            Object.keys(topFlavoursByHA).reduce((dict, healthAuthority) => {
+                                const HAArray = topFlavoursByHA[healthAuthority];
+                                for (var HAResult of HAArray) {
+                                    dict[HAResult['flavour']] = HAResult['count']
+                                }
+                                topFlavoursResult[healthAuthority] = dict;
+                                dict = {};
+                                return dict;
+                            }, {})
+                        });
+                    }
                     
                     result.topFlavours = topFlavoursResult;
                     break;
