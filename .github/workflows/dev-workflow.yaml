@@ -37,6 +37,8 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+        with: 
+          ref: FEATURE/aws
         
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
