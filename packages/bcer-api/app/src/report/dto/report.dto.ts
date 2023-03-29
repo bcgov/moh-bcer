@@ -1,6 +1,8 @@
 export class ReportRequestDto {
     bcStatistics: BCRetailerStat[];
     haStatistics: HARetailerStat[];
+    period: number;
+    flavourCount: number;
 }
 
 export type BCRetailerStat = 

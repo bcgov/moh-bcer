@@ -42,7 +42,8 @@ export function ReportTable ({ reports, loading, refresh }: any) {
                 <StyledTable
                     columns={[
                         {title: 'Date Created', render: (row: any) => `${moment(row.createdAt).format('MMM DD, YYYY HH:mm:ss')}`},  
-                        {title: 'Created By', render: (row: any) => `${row.user.firstName} ${row.user.lastName}`},
+                        {title: 'Created By', render: (row: any) => `${row.user.firstName} ${row.user.lastName}`}, 
+                        {title: 'Year', render: (row: any) => `${row.query.period}`},
                         {title: '', render: (row: any) => <DownloadButton {...row} />, align: "center"}
                     ]} 
                     data={
