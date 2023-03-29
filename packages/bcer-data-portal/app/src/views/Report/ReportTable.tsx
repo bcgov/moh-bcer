@@ -1,4 +1,4 @@
-import { Box, CircularProgress, LinearProgress, Tooltip, Typography, makeStyles } from "@material-ui/core";
+import { Box, LinearProgress, Tooltip, Typography, makeStyles } from "@material-ui/core";
 import moment from "moment";
 import React from "react";
 import { StyledTable } from "vaping-regulation-shared-components";

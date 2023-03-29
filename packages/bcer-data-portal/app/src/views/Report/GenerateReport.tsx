@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/useToast";
 import { Box, Checkbox, CircularProgress, FormControlLabel, Grid, Typography, makeStyles } from "@material-ui/core";
 import { FieldArray, Form, Formik } from "formik";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StyledButton, StyledSelectField, StyledTextField } from "vaping-regulation-shared-components";
 
 const useStyles = makeStyles({
@@ -29,10 +29,6 @@ export function GenerateReport (props: any) {
     const { openToast } = useToast()
     const [{ error, loading }, generateReport] = useAxiosPost('/data/report/generate', { manual: true });
     
-    // useEffect(() => {
-    //     if (data) onSuccess()
-    // }, [data]);
-
     const onSuccess = () => {
         props.generateComplete();
         openToast({
@@ -53,7 +49,7 @@ export function GenerateReport (props: any) {
         const years = [];
         let startYear = 2021;
 
-        for (var i = startYear; i <=  moment().year() - 1; i++) {
+        for (var i = startYear; i <= moment().year() - 1; i++) {
             years.push(startYear);
             startYear++;
         }
@@ -101,6 +97,7 @@ export function GenerateReport (props: any) {
                                             <span style={{ fontWeight: "bold"}}>Top Flavors Count</span>
                                         }
                                         type="number"
+                                        min = "0"
                                         placeholder="Type in keyword..."
                                     />
                                 </Grid>
