@@ -79,7 +79,7 @@ jobs:
     name: docker push
     environment:  dev
     runs-on: ubuntu-22.04
-    needs: build_jobs_retailer
+    needs: build_jobs
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
