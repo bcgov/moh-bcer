@@ -30,13 +30,31 @@ permissions:
   contents: read  # This is required for actions/checkout
   
 jobs:
-  build_jobs: 
-    name: build jobs 
+  build_jobs_shared_components: 
+    name: build jobs shared components  
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 14
         uses: actions/setup-node@v3
+        with:
+          node-version: 14      
+      - name: Build project
+        run: |
+          cd packages/bcer-shared_components
+          npm install 
+          npm run build 
+          
+  build_jobs_retailer: 
+    name: build jobs 
+    runs-on: ubuntu-latest
+    needs: build_jobs_shared_components
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 14
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
       - name: Copy env file
         run: |
           cd packages/bcer-retailer-app
@@ -52,7 +70,7 @@ jobs:
     name: docker push
     environment:  dev
     runs-on: ubuntu-22.04
-    needs: build_jobs
+    needs: build_jobs_retailer
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
