@@ -41,7 +41,7 @@ jobs:
           node-version: 14      
       - name: Build project
         run: |
-          cd packages/bcer-shared_components
+          cd packages/bcer-shared-components
           npm install 
           npm run build 
           
