@@ -41,12 +41,11 @@ jobs:
         run: |
           cd packages/bcer-retailer-app
           cp .config/.env.aws.dev app/.env
-          cd app
-      - name: Install dependencies
-        run: npm install
+          cd app        
       - name: Build project
         run: |
           cd packages/bcer-retailer-app/app
+          npm install 
           npm run build 
   
   docker_push:
