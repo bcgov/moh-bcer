@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-node@v3
       - name: Copy env file
         run: |
-          cd packes/bcer-retailer-app
+          cd packages/bcer-retailer-app
           cp .config/.env.aws.dev app/.env
           cd app
       - name: Install dependencies
@@ -51,6 +51,7 @@ jobs:
     name: docker push
     environment:  dev
     runs-on: ubuntu-22.04
+    needs: build_jobs
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
