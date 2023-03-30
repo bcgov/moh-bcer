@@ -45,7 +45,9 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build project
-        run: npm run build 
+        run: |
+          cd packages/bcer-retailer-app/app
+          npm run build 
   
   docker_push:
     name: docker push
