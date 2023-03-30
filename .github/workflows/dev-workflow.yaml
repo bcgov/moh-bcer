@@ -30,6 +30,23 @@ permissions:
   contents: read  # This is required for actions/checkout
   
 jobs:
+  build_jobs: 
+    name: build jobs 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+      - name: Copy env file
+        run: |
+          cd packes/bcer-retailer-app
+          cp .config/.env.aws.dev app/.env
+          cd app
+      - name: Install dependencies
+        run: npm install
+      - name: Build project
+        run: npm run build 
+  
   docker_push:
     name: docker push
     environment:  dev
