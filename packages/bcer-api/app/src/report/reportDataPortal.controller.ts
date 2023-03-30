@@ -26,8 +26,6 @@ export class ReportDataPortalController {
   @AllowAnyRole()
   @Post('generate')
   async generateReport(@Body() payload: any, @Request() req: RequestWithUser): Promise<string> {
-    //validate input
-    
     const user = await this.userService.findByBCeID(req.user.bceidGuid);
 
     if (!user) {
