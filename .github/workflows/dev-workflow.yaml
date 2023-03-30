@@ -60,7 +60,7 @@ jobs:
           aws-region: ca-central-1
       - name: Upload to S3
         run: |
-          cd packages/bcer-shared-components/build
+          cd packages/bcer-shared-components/dist
           aws s3 sync . s3://bcer-retailer-dev --delete 
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
