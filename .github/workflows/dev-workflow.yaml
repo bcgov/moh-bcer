@@ -91,6 +91,7 @@ jobs:
     name: docker push
     environment:  dev
     runs-on: ubuntu-22.04
+    permissions: write-all
     needs: build_jobs
     steps:
       - name: Check out the repo
