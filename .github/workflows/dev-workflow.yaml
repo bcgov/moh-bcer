@@ -47,8 +47,7 @@ jobs:
       - name: Copy env file
         run: |
           cd packages/bcer-retailer-app
-          cp .config/.env.aws.dev app/.env
-          cd app        
+          cp .config/.env.aws.dev app/.env      
       - name: Build project
         run: |
           cd packages/bcer-retailer-app/app
