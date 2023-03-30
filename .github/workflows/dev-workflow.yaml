@@ -128,6 +128,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: terraform_apply
     steps:
     - uses: actions/checkout@master
     - name: Assume IAM Role
