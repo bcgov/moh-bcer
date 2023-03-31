@@ -1,5 +1,5 @@
 terraform {
-  source = "../..//infrastructure"
+  source = "../..//Infrastructure"
 }
  locals {
     #tfc_hostname        = "app.terraform.io"
