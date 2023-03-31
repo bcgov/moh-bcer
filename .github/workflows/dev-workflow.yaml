@@ -108,7 +108,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
           context: packages/bcer-api/app
           push: true
-          tags: ${{ env.IMAGE_ID  }}${{ env.IMAGE_NAME }}
+          tags: "https://705490038982.dkr.ecr.ca-central-1.amazonaws.com/bcer-api:latest"
           
   terraform_apply:
     name: terraform apply 
