@@ -1,6 +1,7 @@
 --As Postgres User
 CREATE USER bcer_proxy WITH PASSWORD 'bcer';
-CREATE DATABASE bcer WITH OWNER = bcer ENCODING = 'UTF8' CONNECTION LIMIT = -1 IS_TEMPLATE = False;
+--RDS handles the CREATE DATABASE bcer step
+--CREATE DATABASE bcer WITH OWNER = bcer ENCODING = 'UTF8' CONNECTION LIMIT = -1 IS_TEMPLATE = False;
 GRANT ALL PRIVILEGES on database bcer to bcer_proxy;
 
 --Switch to bcer_proxy user
