@@ -106,7 +106,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-          conetxt: packages/bcer-api/app
+          context: packages/bcer-api/app
           file: Dockerfile
           push: true
           tags: ${{ env.IMAGE_ID  }}${{env.IMAGE_NAME}}
