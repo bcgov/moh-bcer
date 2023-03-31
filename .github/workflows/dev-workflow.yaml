@@ -19,7 +19,7 @@ concurrency: dev
 env:
   APP_IMAGE: ${{ secrets.APP_IMAGE }} 
   IMAGE_ID: ${{ secrets.AWS_ECR_URI }}
-  IMAGE_NAME: bcertest
+  IMAGE_NAME: bcer-api
   TF_VERSION: 1.2.2
   TG_VERSION: 0.37.1
   TG_SRC_PATH: Terraform
