@@ -108,7 +108,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
           context: packages/bcer-api/app
           push: true
-          tags: ${{ env.IMAGE_ID  }}${{env.IMAGE_NAME}}
+          tags: ${{ env.IMAGE_ID  }}${{ env.IMAGE_NAME }}
           
   terraform_apply:
     name: terraform apply 
