@@ -24,6 +24,7 @@ env:
   TG_VERSION: 0.37.1
   TG_SRC_PATH: Terraform
   TFC_WORKSPACE: dev
+  BCER_TAGS: ${{ secrets.BCER_TAGS }} 
   
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -108,7 +109,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
           context: packages/bcer-api/app
           push: true
-          tags: "705490038982.dkr.ecr.ca-central-1.amazonaws.com/bcer-api:latest"
+          tags: ${{ env.BCER_TAGS }} 
           
   terraform_apply:
     name: terraform apply 
