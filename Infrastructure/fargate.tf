@@ -132,9 +132,6 @@ resource "aws_ecs_task_definition" "bcer_td" {
       }
     }
   ])
-     lifecycle {
-  ignore_changes = [ capacity_provider_strategy ]
-  }
 }
 
 resource "aws_ecs_service" "main" {
