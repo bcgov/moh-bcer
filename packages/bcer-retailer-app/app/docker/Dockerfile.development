@@ -1,6 +1,6 @@
 # Create development build
 
-FROM node:16.17.0
+FROM node:14.6.1
 
 MAINTAINER FreshWorks <web@freshworks.io>
 
