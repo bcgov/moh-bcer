@@ -1,4 +1,4 @@
-FROM node:16.18.0 as builder
+FROM node:16.17.0 as builder
 
 MAINTAINER FreshWorks <web@freshworks.io>
 
