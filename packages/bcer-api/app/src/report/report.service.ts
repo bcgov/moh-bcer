@@ -183,7 +183,7 @@ export class ReportService {
     private async generateBCStatistics(request: ReportRequestDto) {
         const { bcStatistics, period, flavourCount}  = request;
         const {reportPeriod, closeBeforeDate, startReport} = getDates(period);
-
+        
         const totalBusinessQuery = 'SELECT COUNT(*) "Total BC Businesses" FROM business';
         const totalByStatusQuery = 'SELECT COUNT(*) "Total BC Locations", status "Location Status" FROM location GROUP BY status';
         const missingUnrenewedNOIQuery = `SELECT COUNT(loc.*),
@@ -370,11 +370,7 @@ export class ReportService {
                                                     LEFT OUTER JOIN location loc ON loc.id = ps."locationId"
                                                     GROUP BY UPPER(ps.flavour), loc.health_authority
                                                     ORDER BY loc.health_authority, COUNT(*) DESC`;
-        const HA_topFlavoursQueryWithLimit = `SELECT COUNT(*), UPPER(ps.flavour) "flavour", loc.health_authority
-                                                    FROM product_sold ps
-                                                    LEFT OUTER JOIN location loc ON loc.id = ps."locationId"
-                                                    GROUP BY UPPER(ps.flavour), loc.health_authority
-                                                    ORDER BY loc.health_authority, COUNT(*) DESC LIMIT $1`;        
+
         let result: any = {};
 
         for (var item of haStatistics) {
@@ -472,7 +468,7 @@ export class ReportService {
                     const topFlavoursResult: any = {};
 
                     if (flavourCount > 0) {
-                        await this.manager.query(HA_topFlavoursQueryWithLimit, [flavourCount]).then(res => {
+                        await this.manager.query(HA_topFlavoursQuery).then(res => {
                             const topFlavoursByHA = this.groupResultByHA(res, 'health_authority');
     
                             Object.keys(topFlavoursByHA).reduce((dict, healthAuthority) => {
@@ -480,7 +476,9 @@ export class ReportService {
                                 for (var HAResult of HAArray) {
                                     dict[HAResult['flavour']] = HAResult['count']
                                 }
-                                topFlavoursResult[healthAuthority] = dict;
+                                topFlavoursResult[healthAuthority] = Object.fromEntries(
+                                                                        Object.entries(dict).slice(0, flavourCount)
+                                                                    );
                                 dict = {};
                                 return dict;
                             }, {})
