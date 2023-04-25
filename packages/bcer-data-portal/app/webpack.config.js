@@ -93,7 +93,7 @@ const prodConfig = merge([
   {
     output: {
       path: PATHS.build,
-      publicPath: '/',
+      publicPath: '/portal/',
       chunkFilename: BUILD_FILE_NAMES.vendor,
       filename: BUILD_FILE_NAMES.bundle,
     },
