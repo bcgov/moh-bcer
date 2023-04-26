@@ -107,6 +107,6 @@
     "typedoc": "0.22.10",
     "typescript": "4.5.4",
     "@types/babel__core": "7.1.14",
-    "@types/babel__traverse": "7.0.17" 
+    "@types/babel__traverse": "7.0.16" 
   }
 }
