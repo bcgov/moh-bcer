@@ -17,6 +17,11 @@ variable "fargate_cpu" {
   default     = 512
 }
 
+variable "application" {
+  description = "Application that is being deployed"
+  default     = "fmdb"
+}
+
 variable "fargate_memory" {
   description = "Fargate instance memory to provision (in MiB)"
   default     = 1024

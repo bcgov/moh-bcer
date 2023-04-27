@@ -13,14 +13,14 @@ data "aws_alb_listener" "front_end" {
 }
 
 resource "aws_alb_target_group" "app" {
-  name                 = "bcer-dev-target-group"
+  name                 = "${var.application}-${var.target_env}-target-group"
   port                 = var.app_port
-  protocol             = "HTTP"
+  protocol             = "HTTPS"
   vpc_id               = data.aws_vpc.main.id
   target_type          = "ip"
   deregistration_delay = 30
   lifecycle {
-    create_before_destroy = true
+    ignore_changes = [name]
   }
   stickiness {
     type = "lb_cookie"

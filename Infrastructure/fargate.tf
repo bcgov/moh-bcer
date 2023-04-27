@@ -4,7 +4,7 @@ resource "aws_cloudwatch_log_group" "ecs_monitoring" {
 }
 
 resource "aws_ecs_cluster" "bcer_cluster" {
-  name = "bcer_cluster"
+  name = "${var.application}_cluster"
 }
 
 resource "aws_ecs_cluster_capacity_providers" "bcer_cluster" {
@@ -19,7 +19,7 @@ resource "aws_ecs_cluster_capacity_providers" "bcer_cluster" {
 }
 #difference between task and execution roles
 resource "aws_ecs_task_definition" "bcer_td" {
-  family                   = "bcer-${var.target_env}-task"
+  family                   = "${var.application}-${var.target_env}-task"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   network_mode             = "awsvpc"
@@ -30,7 +30,7 @@ resource "aws_ecs_task_definition" "bcer_td" {
   container_definitions = jsonencode([
     {
       essential   = true
-      name        = "bcer-${var.target_env}-definition"
+      name        = "${var.application}-${var.target_env}-definition"
       #change to variable to env. for GH Actions
       image       = "705490038982.dkr.ecr.ca-central-1.amazonaws.com/bcer-api:latest"
       cpu         = var.fargate_cpu
@@ -70,6 +70,8 @@ resource "aws_ecs_task_definition" "bcer_td" {
          "value": "bcerd"},
          {"name": "DB_SCHEMA",
          "value": "bcer"},
+         {"name": "DB_TEST_DATABASE",
+         "value": "nest_api_test"},
          {"name": "EMAIL_GENERIC_NOTIFICATION_TEMPLATE_ID",
          "value": "b0e11803-ee8e-457d-a6e4-faad527edf68"},
          {"name": "ENABLE_SUBSCRIPTION",
@@ -102,10 +104,16 @@ resource "aws_ecs_task_definition" "bcer_td" {
           "value": "pk.eyJ1Ijoic2FnYXJiaHAiLCJhIjoiY2t4YjNlZXMyM3VkbTJvcTMwYW5rbmRjbSJ9.j7i9KaoFeFHjerA8DcdDCw"},
           {"name": "NOI_EXPIRY_DATE",
           "value": "10-01"},
+          {"name": "PEM_CERT_PATH",
+          "value": "../keys/bcer-dev.hlth.gov.bc.ca.crt"},
+          {"name": "PEM_KEY_PATH",
+          "value": "../keys/bcer-dev.hlth.gov.bc.ca.key"},
           {"name": "SALES_REPORT_END_DATE",
           "value": "09-30"},
           {"name": "TEXT_API_KEY",
           "value": "bcertestnotificationservicekey-8d304d1f-3230-4497-ac29-777725ddd287-2bb83e07-6f3a-4e23-ae44-cc3dcdfca4a1"},
+          {"name": "TEXT_API_PROXY",
+          "value": "apiproxyd.hlth.gov.bc.ca"},
           {"name": "TEXT_GENERIC_NOTIFICATION_TEMPLATE_ID",
           "value": "fd45cc5f-6ba7-4d82-9b7f-45525918344d"},
           {"name": "VAPING_NOTIFICATION_EMAIL",
@@ -127,7 +135,7 @@ resource "aws_ecs_task_definition" "bcer_td" {
 }
 
 resource "aws_ecs_service" "main" {
-  name                              = "bcer-${var.target_env}-service"
+  name                              = "${var.application}-${var.target_env}-service"
   cluster                           = aws_ecs_cluster.bcer_cluster.arn
   # Cant do count.index (research)
   task_definition                   = aws_ecs_task_definition.bcer_td.arn
@@ -150,9 +158,6 @@ resource "aws_ecs_service" "main" {
   }
 
   depends_on = [data.aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_execution_role]
-  
-   lifecycle {
-  ignore_changes = [ capacity_provider_strategy ]
-  }
+
 #   tags = local.common_tags
 }
