@@ -40,32 +40,51 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 14      
+          
       - name: Build project shared components
         run: |
           cd packages/bcer-shared-components
           npm install 
           npm run build 
+          
       - name: Copy env file
         run: |
           cd packages/bcer-retailer-app
-          cp .config/.env.aws.dev app/.env      
+          cp .config/.env.aws.dev app/.env     
+          
       - name: Build project retailer app 
         run: |
           cd packages/bcer-retailer-app/app
           npm install 
           npm run build 
-      - name: Assume IAM Role
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
-          aws-region: ca-central-1
-      - name: Upload to S3
+      - name: Upload to S3 bucket retail app
         run: |
           cd packages/bcer-retailer-app/app/build
           aws s3 sync . s3://bcer-dev/retailer --delete 
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_REGION: ca-central-1
+          
+      - name: Build project data portal frontend
+        run: |
+          cd packages/bcer-data-portal/app
+          npm install 
+          npm run build
+      - name: Upload to S3 bucket data portal
+        run: |
+          cd packages/bcer-data-portal/app/build
+          aws s3 sync . s3://bcer-dev/portal --delete 
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_REGION: ca-central-1
+          
+      - name: Assume IAM Role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
+          aws-region: ca-central-1
+          
+     
   
   docker_push:
     name: docker push
