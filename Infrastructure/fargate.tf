@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_log_group" "ecs_monitoring" {
   name = "ecs-monitoring"
-  retention_in_days = "731"
+  retention_in_days = "90"
 }
 
 resource "aws_ecs_cluster" "bcer_cluster" {
