@@ -19,7 +19,6 @@ variable "fargate_cpu" {
 
 variable "application" {
   description = "Application that is being deployed"
-  default     = "fmdb"
 }
 
 variable "fargate_memory" {
