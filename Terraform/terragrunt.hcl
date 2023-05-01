@@ -32,7 +32,8 @@ generate "tfvars" {
   disable_signature = true
   contents          = <<-EOF
     app_image  = "${local.app_image}"
-    target_env = "${local.environment}"   
+    target_env = "${local.environment}"  
+    application = "bcer" 
 EOF
 }
 
