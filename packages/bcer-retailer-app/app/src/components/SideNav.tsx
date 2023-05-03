@@ -137,7 +137,7 @@ export default function SideNav() {
   function ListItemLink(props: ListItemProps<'a', { button?: true }>) {
     const history = useHistory();
     const classes = useStyles();
-
+   
     if (props.download) { //BCER User Guide 
       return (
         <ListItem button component="a" className={classes.listItem}
@@ -150,7 +150,7 @@ export default function SideNav() {
           });
           event.preventDefault();
           const link = document.createElement('a');
-          link.href = '/public/BCER User Guide (2023).pdf';
+          link.href = "/public/BCER User Guide (2023).pdf";
           link.download = 'BCER User Guide (2023).pdf';
           link.target = '_blank';
           link.click();
