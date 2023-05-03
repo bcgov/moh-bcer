@@ -150,7 +150,7 @@ export default function SideNav() {
           });
           event.preventDefault();
           const link = document.createElement('a');
-          link.href = '../../public/BCER User Guide (2023).pdf';
+          link.href = '/public/BCER User Guide (2023).pdf';
           link.download = 'BCER User Guide (2023).pdf';
           link.target = '_blank';
           link.click();
