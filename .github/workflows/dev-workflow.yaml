@@ -31,6 +31,83 @@ permissions:
   contents: read  # This is required for actions/checkout
   
 jobs:
+  docker_push:
+    name: docker push
+    environment:  dev
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        with:
+          ref: FEATURE/aws
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
+          aws-region: ca-central-1
+          
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        
+      - uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+            
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2.5.0
+        
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v4
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          context: packages/bcer-api/app
+          push: true
+          tags: ${{ env.BCER_TAGS }} 
+          
+  terraform_apply:
+    name: terraform apply 
+    environment: dev
+    runs-on: ubuntu-22.04
+    needs: docker_push
+    steps:
+
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
+          aws-region: ca-central-1
+
+      - uses: hashicorp/setup-terraform@v2.0.3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - uses: autero1/action-terragrunt@v1.3.1
+        with:
+          terragrunt_version: ${{ env.TG_VERSION }}
+
+      - name: Terragrunt Apply
+        working-directory: ${{ env.TG_SRC_PATH }}/${{env.TFC_WORKSPACE }}
+        env:
+          app_image: ${{ env.IMAGE_ID }}:${{ github.sha }}
+          LICENSE_PLATE: ${{ secrets.MY_LICENSE_PLATE }}
+        run: |
+            terragrunt run-all apply --terragrunt-non-interactive
+          
   build_jobs: 
     name: build jobs 
     runs-on: ubuntu-latest
@@ -88,87 +165,6 @@ jobs:
         env:
          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
          AWS_REGION: ca-central-1
-         
-  terraform_apply:
-    name: terraform apply 
-    environment: dev
-    runs-on: ubuntu-22.04
-    needs: docker_push
-    steps:
-    
-      - name: Check out the repo
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-          
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
-          aws-region: ca-central-1
-          
-      - uses: hashicorp/setup-terraform@v2.0.3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          
-      - uses: autero1/action-terragrunt@v1.3.1
-        with:
-          terragrunt_version: ${{ env.TG_VERSION }}
-            
-      - name: Terragrunt Apply
-        working-directory: ${{ env.TG_SRC_PATH }}/${{env.TFC_WORKSPACE }}
-        env:
-          app_image: ${{ env.IMAGE_ID }}:${{ github.sha }}
-          LICENSE_PLATE: ${{ secrets.MY_LICENSE_PLATE }}
-        run: |
-            terragrunt run-all apply --terragrunt-non-interactive
-                
-  
-  docker_push:
-    name: docker push
-    environment:  dev
-    runs-on: ubuntu-22.04
-    permissions: write-all
-    needs: build_jobs
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-        with:
-          ref: FEATURE/aws
-        
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
-          aws-region: ca-central-1
-          
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        
-      - uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-            
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2.5.0
-        
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v4
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-          context: packages/bcer-api/app
-          push: true
-          tags: ${{ env.BCER_TAGS }} 
-          
-  
 
 
   # zap_scan:
