@@ -151,7 +151,7 @@ export default function SideNav() {
           event.preventDefault();
           const link = document.createElement('a');
           link.download = 'BCER User Guide (2023).pdf';
-          link.href = './public/BCER User Guide (2023).pdf'; 
+          link.href = window.location.origin === 'http://localhost:3000'? window.location.origin + '/public/BCER User Guide (2023).pdf': window.location.origin + '/retailer/public/BCER User Guide (2023).pdf';
           link.target = '_blank';
           link.click();
         }} {...props} />
