@@ -15,7 +15,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "assets/*": ["./src/assets/*"]
+      "assets/*": ["./src/assets/*"],
+      "public/*": ["./public/*"]
     },
     "typeRoots": [
       "./node_modules/@types",
@@ -32,14 +33,14 @@
   },
   "include": [
     "./src/**/*",
-    "./typings/*.d.ts"
+    "./typings/*.d.ts",
+    "./public/**/*"
   ],
   "exclude": [
     "./node_modules",
     "./build",
     "./scripts",
     "./docker",
-    "./public",
     "./coverage"
   ]
 }

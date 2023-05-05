@@ -150,8 +150,8 @@ export default function SideNav() {
           });
           event.preventDefault();
           const link = document.createElement('a');
-          link.href = "/public/BCER User Guide (2023).pdf";
           link.download = 'BCER User Guide (2023).pdf';
+          link.href = './public/BCER User Guide (2023).pdf'; 
           link.target = '_blank';
           link.click();
         }} {...props} />
@@ -218,7 +218,7 @@ export default function SideNav() {
         break;
       case 'userGuide':
         completedStep = appGlobal.userGuideComplete;
-        pathName = '/BCERUserGuide';
+        pathName = '/userguide';
         stepTitle = 'BCER User Guide';
         showWarningIcon = false;
         break;
