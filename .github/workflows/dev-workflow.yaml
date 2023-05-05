@@ -31,40 +31,6 @@ permissions:
   contents: read  # This is required for actions/checkout
   
 jobs:
-  terraform_apply:
-    name: terraform apply 
-    environment: dev
-    runs-on: ubuntu-22.04
-    needs: docker_push
-    steps:
-    
-      - name: Check out the repo
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-          
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
-          aws-region: ca-central-1
-          
-      - uses: hashicorp/setup-terraform@v2.0.3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          
-      - uses: autero1/action-terragrunt@v1.3.1
-        with:
-          terragrunt_version: ${{ env.TG_VERSION }}
-            
-      - name: Terragrunt Apply
-        working-directory: ${{ env.TG_SRC_PATH }}/${{env.TFC_WORKSPACE }}
-        env:
-          app_image: ${{ env.IMAGE_ID }}:${{ github.sha }}
-          LICENSE_PLATE: ${{ secrets.MY_LICENSE_PLATE }}
-        run: |
-            terragrunt run-all apply --terragrunt-non-interactive
-            
   build_jobs: 
     name: build jobs 
     runs-on: ubuntu-latest
@@ -122,7 +88,41 @@ jobs:
         env:
          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
          AWS_REGION: ca-central-1
-     
+         
+  terraform_apply:
+    name: terraform apply 
+    environment: dev
+    runs-on: ubuntu-22.04
+    needs: docker_push
+    steps:
+    
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
+          aws-region: ca-central-1
+          
+      - uses: hashicorp/setup-terraform@v2.0.3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          
+      - uses: autero1/action-terragrunt@v1.3.1
+        with:
+          terragrunt_version: ${{ env.TG_VERSION }}
+            
+      - name: Terragrunt Apply
+        working-directory: ${{ env.TG_SRC_PATH }}/${{env.TFC_WORKSPACE }}
+        env:
+          app_image: ${{ env.IMAGE_ID }}:${{ github.sha }}
+          LICENSE_PLATE: ${{ secrets.MY_LICENSE_PLATE }}
+        run: |
+            terragrunt run-all apply --terragrunt-non-interactive
+                
   
   docker_push:
     name: docker push
