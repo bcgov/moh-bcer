@@ -1,6 +1,6 @@
 # Create production build
 
-FROM node:14.17.6
+FROM node:17.3.0
 
 MAINTAINER FreshWorks <web@freshworks.io>
 

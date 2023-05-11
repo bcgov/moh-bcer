@@ -11,6 +11,7 @@ export interface AppGlobalContext {
   manufacturingReportComplete: boolean;
   networkErrorMessage: string;
   config: Config;
+  userGuideComplete: boolean;
 }
 
 const Context = createContext<[AppGlobalContext, Function]>([{
@@ -21,7 +22,8 @@ const Context = createContext<[AppGlobalContext, Function]>([{
   networkErrorMessage: '',
   config: {
     enableSubscription: false,
-  }
+  },
+  userGuideComplete: false,
 }, () => {}]);
 
 export const AppGlobalContext = Context;

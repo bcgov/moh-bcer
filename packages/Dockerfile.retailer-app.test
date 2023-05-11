@@ -9,6 +9,8 @@ WORKDIR /usr/src/app
 COPY ./bcer-retailer-app/app/ ./bcer-retailer-app/app/
 COPY ./bcer-shared-components/ ./bcer-shared-components/
 
+COPY sources.list /etc/apt/sources.list
+
 # Install dependencies
 # RUN apk add --no-cache git
 

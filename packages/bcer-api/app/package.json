@@ -59,7 +59,7 @@
     "keycloak-js": "11.0.0",
     "moment": "2.29.1",
     "nest-csv-parser": "2.0.4",
-    "nest-keycloak-connect": "1.2.1",
+    "nest-keycloak-connect": "1.9.1",
     "nest-winston": "1.6.2",
     "notifications-node-client": "5.1.0",
     "pg": "8.7.1",
@@ -105,6 +105,8 @@
     "tsconfig-paths": "3.12.0",
     "tscpaths": "0.0.9",
     "typedoc": "0.22.10",
-    "typescript": "4.5.4"
+    "typescript": "4.5.4",
+    "@types/babel__core": "7.1.14",
+    "@types/babel__traverse": "7.0.16" 
   }
 }
