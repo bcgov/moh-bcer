@@ -32,7 +32,7 @@ resource "aws_ecs_task_definition" "bcer_td" {
       essential   = true
       name        = "${var.application}-${var.target_env}-definition"
       #change to variable to env. for GH Actions
-      image       = "705490038982.dkr.ecr.ca-central-1.amazonaws.com/bcer-api:latest"
+      image       = "${data.aws_caller_identity.current.account_id}.dkr.ecr.ca-central-1.amazonaws.com/bcer-api:latest"
       cpu         = var.fargate_cpu
       memory      = var.fargate_memory
       networkMode = "awsvpc"
@@ -147,7 +147,7 @@ resource "aws_ecs_service" "main" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.app.id
-    container_name   = "bcer-${var.target_env}-definition"
+    container_name   = "${var.application}-${var.target_env}-definition"
     container_port   = var.app_port
   }
 

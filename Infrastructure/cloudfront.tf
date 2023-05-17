@@ -2,6 +2,18 @@ locals {
   s3_origin_id = "bcer-dev"
 }
 
+provider "aws" {
+  alias = "us-east-1"
+  region = "us-east-1"
+}
+
+data "aws_acm_certificate" "bcer_certificate" {
+  provider = aws.us-east-1
+  domain = "bcer-${var.target_env}.hlth.gov.bc.ca"
+  statuses = ["ISSUED"]
+  most_recent = true
+}
+
 resource "aws_cloudfront_function" "redirect" {
   name    = "indexRedirect"
   runtime = "cloudfront-js-1.0"
@@ -98,7 +110,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 #   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = data.aws_acm_certificate.bcer_certificate.arn
+    minimum_protocol_version = "TLSv1.2_2021"
+    ssl_support_method = "sni-only"
   }
 }
 

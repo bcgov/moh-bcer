@@ -15,7 +15,7 @@ data "aws_alb_listener" "front_end" {
 resource "aws_alb_target_group" "app" {
   name                 = "${var.application}-${var.target_env}-target-group"
   port                 = var.app_port
-  protocol             = "HTTPS"
+  protocol             = "HTTP"
   vpc_id               = data.aws_vpc.main.id
   target_type          = "ip"
   deregistration_delay = 30

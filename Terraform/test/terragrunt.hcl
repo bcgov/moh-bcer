@@ -15,9 +15,8 @@ generate "test_tfvars" {
   if_exists         = "overwrite"
   disable_signature = true
   contents          = <<-EOF
-  environment = "dev"
   fargate_cpu = 512
   fargate_memory = 1024
-  app_port = 21000
+  app_port = 4000
   EOF
 }
