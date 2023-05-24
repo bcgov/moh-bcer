@@ -1,5 +1,5 @@
 locals {
-  s3_origin_id = "bcer-dev"
+  s3_origin_id = "bcer-${var.target_env}"
 }
 
 provider "aws" {

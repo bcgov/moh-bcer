@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "sql_scripts" {
-  bucket = "705490038982-sql-scripts"  
+  bucket = "${data.aws_caller_identity.current.account_id}-sql-scripts"  
 }
 
 

@@ -1,6 +1,10 @@
-resource "aws_cloudwatch_log_group" "ecs_monitoring" {
+# resource "aws_cloudwatch_log_group" "ecs_monitoring" {
+#   name = "ecs-${var.application}-monitoring"
+#   retention_in_days = "90"
+# }
+
+data "aws_cloudwatch_log_group" "ecs_monitoring" {
   name = "ecs-monitoring"
-  retention_in_days = "90"
 }
 
 resource "aws_ecs_cluster" "bcer_cluster" {
@@ -119,7 +123,7 @@ resource "aws_ecs_task_definition" "bcer_td" {
       logConfiguration = {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.ecs_monitoring.name}",
+        "awslogs-group": "${data.aws_cloudwatch_log_group.ecs_monitoring.name}",
         "awslogs-region": "ca-central-1",
         "awslogs-stream-prefix": "streaming"
         }
