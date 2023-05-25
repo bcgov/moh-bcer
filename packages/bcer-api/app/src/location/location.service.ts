@@ -124,12 +124,12 @@ export class LocationService {
       qb.addOrderBy('"noi"."id"', 'ASC');
     } 
     
-    if (query.search) {      
+    if (query.search) {
       qb.andWhere(`
         (
           regexp_replace(LOWER(location.addressLine1), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
           regexp_replace(LOWER(location.doingBusinessAs), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
-          LOWER(location.city) LIKE :search OR
+          REPLACE(LOWER(location.city), ' ', '') LIKE REPLACE(:search, ' ', '') OR
           REPLACE(LOWER(location.postal), ' ', '') LIKE REPLACE(:search, ' ', '') OR
           regexp_replace(LOWER(business.legalName), '[^a-zA-Z0-9]', '', 'g') LIKE :search OR
           regexp_replace(LOWER(business.businessName), '[^a-zA-Z0-9]', '', 'g') LIKE :search          
