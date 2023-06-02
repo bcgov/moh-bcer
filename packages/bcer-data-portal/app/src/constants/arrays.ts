@@ -15,3 +15,21 @@ export const businessSearchCategoryOptions = [
   { label: 'City', value: 'city' },
   { label: 'Postal Code', value: 'postal' },
 ]
+
+export const reportRequestOptions = { 
+  bcStatistics: [
+      {value: "totalBusinesses", label: "Total Number of retailers"}, 
+      {value: "totalByStatus", label: "Total number of Retailers by status"}, 
+      {value: "totalWithOutstandingReports", label: "Total number of Outstanding reports"}, 
+      {value: "totalWithOver19Customers", label: 'Total number with "Over 19" customers'}, 
+      {value: "totalWithAllAgesCustomers", label: 'Total number with "All-ages" customers'}, 
+      {value: "topFlavours", label: "Top Flavours"}
+  ], 
+  haStatistics: [
+      {value: "totalByStatus", label: "Total number of Retailers by status"}, 
+      {value: "totalWithOutstandingReports", label: "Total number of Outstanding reports"}, 
+      {value: "totalWithOver19Customers", label: 'Total number with "Over 19" customers'}, 
+      {value: "totalWithAllAgesCustomers", label: 'Total number with "All-ages" customers'}, 
+      {value: "topFlavours", label: "Top Flavours"}
+  ]
+}

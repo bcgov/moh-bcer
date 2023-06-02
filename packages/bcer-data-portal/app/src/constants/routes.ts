@@ -9,4 +9,5 @@ export const routes = Object.freeze({
     viewLocation: '/location',
     viewBusiness: '/business',
     mapMenu: '/map-route',
+    report: '/report'
 });
