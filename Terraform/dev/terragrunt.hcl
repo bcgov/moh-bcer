@@ -3,7 +3,7 @@ include {
 }
 
 locals {
-  project = get_env("LICENSE_PLATE  ")
+  project = get_env("LICENSE_PLATE")
 }
 
 generate "dev_tfvars" {
