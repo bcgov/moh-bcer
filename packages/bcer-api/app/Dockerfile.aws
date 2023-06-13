@@ -11,10 +11,10 @@ RUN npm install
 # Copy source files
 COPY . .
 
-# Run migrations
-RUN npm run migrate:run
-
 # Build application
 RUN npm run build
+
+# Run migrations
+RUN npm run migrate:run
 
 CMD [ "npm", "run", "start:prod" ]
