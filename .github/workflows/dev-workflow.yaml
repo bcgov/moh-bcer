@@ -71,6 +71,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           context: packages/bcer-api/app
+          file: Dockerfile.aws
           push: true
           tags: ${{ env.BCER_TAGS }} 
           
