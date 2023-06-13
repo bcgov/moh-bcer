@@ -6,10 +6,13 @@ WORKDIR '/app'
 
 # Install dependencies
 COPY ./package.json ./
-RUN npm i --only=production
+RUN npm install
 
 # Copy source files
 COPY . .
+
+# Run migrations
+RUN npm run migrate:run
 
 # Build application
 RUN npm run build
