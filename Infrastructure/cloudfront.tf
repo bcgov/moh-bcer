@@ -38,10 +38,15 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     domain_name = aws_s3_bucket.static.bucket_regional_domain_name
     origin_id   = local.s3_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.bcer.id
+    origin_shield {
+      enabled = true
+      origin_shield_region = "us-east-1"
+    }
   }
   default_root_object = "index.html"
   enabled             = true
   is_ipv6_enabled     = true
+  aliases = ["bcer-dev.hlth.gov.bc.ca"]
 
   # Configure logging here if required 	
   #logging_config {
@@ -49,9 +54,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   #  bucket          = "mylogs.s3.amazonaws.com"
   #  prefix          = "myprefix"
   #}
-
-  # If you have domain configured use it here 
-  #aliases = ["mywebsite.example.com", "s3-static-web-dev.example.com"]
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
@@ -73,6 +75,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     cached_methods   = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
     cache_policy_id = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
+    compress = true
     function_association {
       event_type = "viewer-request"
       function_arn = aws_cloudfront_function.redirect.arn
@@ -85,6 +88,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     cached_methods   = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
     cache_policy_id = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
+    compress = true
     function_association {
       event_type = "viewer-request"
       function_arn = aws_cloudfront_function.redirect.arn

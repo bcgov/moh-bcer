@@ -6,7 +6,7 @@ resource "aws_secretsmanager_secret_version" "rds_credentials" {
   secret_id     = aws_secretsmanager_secret.bcer_proxy_user.id
   secret_string = <<EOF
 {
-  "username": "bcer_proxy",
+  "username": "bcer",
   "password": "changeme",
   "engine": "${data.aws_rds_engine_version.postgresql.version}",
   "host": "${module.aurora_postgresql_v2.cluster_endpoint}",
@@ -14,4 +14,7 @@ resource "aws_secretsmanager_secret_version" "rds_credentials" {
   "dbClusterIdentifier": "${module.aurora_postgresql_v2.cluster_id}"
 }
 EOF
+lifecycle {
+  ignore_changes = [ secret_string ]
+}
 }
