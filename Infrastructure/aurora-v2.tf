@@ -128,6 +128,9 @@ resource "aws_secretsmanager_secret_version" "bcer_mastercreds_secret_version" {
     "password": "${random_password.bcer_master_password.result}"
    }
 EOF
+lifecycle {
+  ignore_changes = [ secret_string ]
+}
 }
 
 resource "random_password" "bcer_api_password" {
@@ -165,4 +168,7 @@ resource "aws_secretsmanager_secret_version" "bcer_apicreds_secret_version" {
     "password": "${random_password.bcer_api_password.result}"
    }
 EOF
+lifecycle {
+  ignore_changes = [ secret_string ]
+}
 }

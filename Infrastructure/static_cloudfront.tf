@@ -2,10 +2,6 @@ locals {
   s3_origin_id = "bcer-${var.target_env}"
 }
 
-provider "aws" {
-  alias = "us-east-1"
-  region = "us-east-1"
-}
 
 data "aws_acm_certificate" "bcer_certificate" {
   provider = aws.us-east-1
@@ -22,10 +18,6 @@ resource "aws_cloudfront_function" "redirect" {
   code    = file("redirect.js")
 }
 
-data "aws_cloudfront_cache_policy" "Managed-CachingOptimized" {
-  name = "Managed-CachingOptimized"
-}
-#fix
 resource "aws_cloudfront_origin_access_control" "bcer" {
   name                              = "bcer-dev"
   origin_access_control_origin_type = "s3"
@@ -46,7 +38,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_root_object = "index.html"
   enabled             = true
   is_ipv6_enabled     = true
-  aliases = ["bcer-dev.hlth.gov.bc.ca"]
+  aliases = ["bcer-${var.target_env}.hlth.gov.bc.ca"]
 
   # Configure logging here if required 	
   #logging_config {
