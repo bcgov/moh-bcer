@@ -90,3 +90,8 @@ variable "db_instance_identifier" {
   description = "Identifies the cluster ID of aurora_rds_v2"
   default     = "bcer-cluster"
 }
+
+variable "license" {
+  description = "AWS project set for the application"
+}
+

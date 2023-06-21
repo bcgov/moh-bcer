@@ -32,7 +32,8 @@ generate "tfvars" {
   contents          = <<-EOF
     app_image  = "${local.app_image}"
     target_env = "${local.environment}"  
-    application = "bcer" 
+    application = "bcer"
+    license = "${local.project}"
 EOF
 }
 

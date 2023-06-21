@@ -22,7 +22,7 @@ data "aws_cloudfront_cache_policy" "Managed-CachingOptimized" {
 
 resource "aws_cloudfront_distribution" "api_distribution" {
   origin {
-    domain_name = "bcer-api.${data.aws_caller_identity.current.account_id}-${var.target_env}.nimbus.cloud.gov.bc.ca"
+    domain_name = "bcer-api.${var.license}-${var.target_env}.nimbus.cloud.gov.bc.ca"
     origin_id   = local.api_origin_id
     origin_shield {
       enabled = true
