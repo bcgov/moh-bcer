@@ -1,4 +1,4 @@
-name: Dev-Workflow
+name: Test-Workflow
 on:
   workflow_dispatch:
     inputs:
@@ -14,11 +14,11 @@ on:
   #     - main
   # pull_request:
   
-concurrency: dev
+concurrency: test
 
 env:
   APP_IMAGE: ${{ secrets.APP_IMAGE }} 
-  IMAGE_ID: ${{ secrets.AWS_ECR_URI }}
+  IMAGE_ID: ${{ secrets.AWS_ECR_URI_TEST }}
   IMAGE_NAME: bcer-api
   TF_VERSION: 1.2.2
   TG_VERSION: 0.37.1
@@ -33,7 +33,7 @@ permissions:
 jobs:
   docker_push:
     name: docker push
-    environment:  dev
+    environment:  test
     runs-on: ubuntu-22.04
     permissions: write-all
     steps:
@@ -45,7 +45,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
+          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN_TEST }}
           aws-region: ca-central-1
           
       - name: Login to Amazon ECR
@@ -77,7 +77,7 @@ jobs:
           
   terraform_apply:
     name: terraform apply 
-    environment: dev
+    environment: test
     runs-on: ubuntu-22.04
     needs: docker_push
     steps:
@@ -90,7 +90,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
+          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN_TEST }}
           aws-region: ca-central-1
 
       - uses: hashicorp/setup-terraform@v2.0.3
@@ -129,12 +129,12 @@ jobs:
       - name: Copy env file to retailer app
         run: |
           cd packages/bcer-retailer-app
-          cp .config/.env.aws.dev app/.env     
+          cp .config/.env.aws.test app/.env     
                     
       - name: Assume IAM Role
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
+          role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN_TEST }}
           aws-region: ca-central-1
           
       - name: Build project retailer app 
@@ -145,15 +145,15 @@ jobs:
       - name: Upload to S3 bucket retail app
         run: |
           cd packages/bcer-retailer-app/app/build
-          aws s3 sync . s3://bcer-dev/retailer --delete 
+          aws s3 sync . s3://bcer-test/retailer --delete 
         env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_TEST }}
           AWS_REGION: ca-central-1
           
       - name: Copy env file to bcer-data-portal
         run: |
           cd packages/bcer-data-portal
-          cp .config/.env.aws.dev app/.env  
+          cp .config/.env.aws.test app/.env  
           
       - name: Build project data portal frontend
         run: |
@@ -163,9 +163,9 @@ jobs:
       - name: Upload to S3 bucket data portal
         run: |
          cd packages/bcer-data-portal/app/build
-         aws s3 sync . s3://bcer-dev/portal --delete 
+         aws s3 sync . s3://bcer-test/portal --delete 
         env:
-         AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+         AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_TEST }}
          AWS_REGION: ca-central-1
 
 
