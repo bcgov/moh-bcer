@@ -133,7 +133,8 @@ resource "aws_ecs_service" "main" {
   cluster                           = aws_ecs_cluster.bcer_cluster.arn
   # Cant do count.index (research)
   task_definition                   = aws_ecs_task_definition.bcer_td.arn
-  desired_count                     = 2
+  # desired_count                     = 2
+  desired_count                     = 0
   #Health Check need to go up?
   health_check_grace_period_seconds = 60
   wait_for_steady_state             = false
