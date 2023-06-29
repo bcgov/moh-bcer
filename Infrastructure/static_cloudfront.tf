@@ -18,6 +18,10 @@ resource "aws_cloudfront_function" "redirect" {
   code    = file("redirect.js")
 }
 
+data "aws_cloudfront_cache_policy" "Managed-CachingOptimized" {
+  name = "Managed-CachingOptimized"
+}
+
 resource "aws_cloudfront_origin_access_control" "bcer" {
   name                              = "bcer-dev"
   origin_access_control_origin_type = "s3"

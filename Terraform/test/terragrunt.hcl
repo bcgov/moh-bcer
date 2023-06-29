@@ -19,5 +19,6 @@ generate "test_tfvars" {
   fargate_memory = 1024
   app_port = 4000
   fam_console_idp_name = "TEST-IDIR"
+  application = "bcer"
   EOF
 }
