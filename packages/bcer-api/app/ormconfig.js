@@ -19,7 +19,7 @@ module.exports = [
     'entities': entities,
     'synchronize': synchronize,
     'dropSchema': dropSchema,
-    'migrations': ['migrations/*{.ts,.js}'],
+    'migrations': ['dist/migrations/*{.ts,.js}'],
     'cli': {
       'migrationsDir':'src/migrations'
     }
