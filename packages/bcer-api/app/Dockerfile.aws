@@ -14,8 +14,5 @@ COPY . .
 # Build application
 RUN npm run build
 
-# Run migrations
-RUN npm run migrate:run
-
 # Run application
 CMD [ "npm", "run", "start:prod" ]
