@@ -52,14 +52,16 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   #}
 
   default_cache_behavior {
+    target_origin_id = local.s3_origin_id
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = local.s3_origin_id
+    viewer_protocol_policy = "redirect-to-https"
     cache_policy_id = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
     compress = true
-    
-
-    viewer_protocol_policy = "redirect-to-https"
+    function_association {
+      event_type = "viewer-request"
+      function_arn = aws_cloudfront_function.redirect.arn
+    }
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
