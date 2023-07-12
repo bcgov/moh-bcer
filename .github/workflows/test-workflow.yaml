@@ -23,7 +23,9 @@ env:
   TF_VERSION: 1.2.2
   TG_VERSION: 0.37.1
   TG_SRC_PATH: Terraform
-  TFC_WORKSPACE: ${{ github.event.inputs.environment }}
+  TFC_WORKSPACE: test
+  #Temporary commenting out. This pulls dev no matter what
+  #TFC_WORKSPACE: ${{ github.event.inputs.environment }}
   BCER_TAGS: ${{ secrets.BCER_TAGS }} 
   
 permissions:
