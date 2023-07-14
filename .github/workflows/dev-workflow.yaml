@@ -3,37 +3,38 @@ on:
   workflow_dispatch:
     inputs:
        environment:
-        description: 'Environment to run tests against' 
-        type: environment 
+        description: 'Environment to run tests against'
+        type: environment
         required: true
        version:
         description: 'Version Number'
         required: false
-  # push: 
+  # push:
   #   branches:
   #     - main
   # pull_request:
-  
-concurrency: dev
 
 env:
-  APP_IMAGE: ${{ secrets.APP_IMAGE }} 
+  APP_IMAGE: ${{ secrets.APP_IMAGE }}
+  AWS_ENV: ${{ github.event.inputs.environment }}
   IMAGE_ID: ${{ secrets.AWS_ECR_URI }}
   IMAGE_NAME: bcer-api
   TF_VERSION: 1.2.2
   TG_VERSION: 0.37.1
   TG_SRC_PATH: Terraform
   TFC_WORKSPACE: ${{ github.event.inputs.environment }}
-  BCER_TAGS: ${{ secrets.BCER_TAGS }} 
-  
+  BCER_TAGS: ${{ secrets.BCER_TAGS }}
+
+concurrency: ${{ env.AWS_ENV }}
+
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read  # This is required for actions/checkout
-  
+
 jobs:
   docker_push:
     name: docker push
-    environment:  dev
+    environment: ${{ env.ENVIRONMENT }}
     runs-on: ubuntu-22.04
     permissions: write-all
     steps:
@@ -41,28 +42,28 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: FEATURE/aws
-        
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
-          
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        
+
       - uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-            
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2.5.0
-        
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v4
@@ -73,11 +74,11 @@ jobs:
           context: packages/bcer-api/app
           file: packages/bcer-api/app/Dockerfile.aws
           push: true
-          tags: ${{ env.BCER_TAGS }} 
-          
+          tags: ${{ env.BCER_TAGS }}
+
   terraform_apply:
-    name: terraform apply 
-    environment: dev
+    name: terraform apply
+    environment: ${{ env.AWS_ENV }}
     runs-on: ubuntu-22.04
     needs: docker_push
     steps:
@@ -108,9 +109,9 @@ jobs:
           LICENSE_PLATE: ${{ secrets.MY_LICENSE_PLATE }}
         run: |
             terragrunt run-all apply --terragrunt-non-interactive
-          
-  build_jobs: 
-    name: build jobs 
+
+  build_jobs:
+    name: build jobs
     runs-on: ubuntu-latest
     needs: terraform_apply
     steps:
@@ -118,52 +119,52 @@ jobs:
       - name: Use Node.js 14
         uses: actions/setup-node@v3
         with:
-          node-version: 14      
-          
+          node-version: 14
+
       - name: Build project shared components
         run: |
           cd packages/bcer-shared-components
-          npm install 
-          npm run build 
-          
+          npm install
+          npm run build
+
       - name: Copy env file to retailer app
         run: |
           cd packages/bcer-retailer-app
-          cp .config/.env.aws.dev app/.env     
-                    
+          cp .config/.env.aws.${{ env.AWS_ENV }} app/.env
+
       - name: Assume IAM Role
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
-          
-      - name: Build project retailer app 
+
+      - name: Build project retailer app
         run: |
           cd packages/bcer-retailer-app/app
-          npm install 
-          npm run build 
+          npm install
+          npm run build
       - name: Upload to S3 bucket retail app
         run: |
           cd packages/bcer-retailer-app/app/build
-          aws s3 sync . s3://bcer-dev/retailer --delete 
+          aws s3 sync . s3://bcer-${{ env.AWS_ENV }}/retailer --delete
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_REGION: ca-central-1
-          
+
       - name: Copy env file to bcer-data-portal
         run: |
           cd packages/bcer-data-portal
-          cp .config/.env.aws.dev app/.env  
-          
+          cp .config/.env.aws.${{ env.AWS_ENV }} app/.env
+
       - name: Build project data portal frontend
         run: |
          cd packages/bcer-data-portal/app
-         npm install 
+         npm install
          npm run build
       - name: Upload to S3 bucket data portal
         run: |
          cd packages/bcer-data-portal/app/build
-         aws s3 sync . s3://bcer-dev/portal --delete 
+         aws s3 sync . s3://bcer-${{ env.AWS_ENV }}/portal --delete
         env:
          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
          AWS_REGION: ca-central-1
@@ -179,7 +180,7 @@ jobs:
   #       uses: zaproxy/action-baseline@v0.7.0
   #       with:
   #         target: 'https://fmdb.ynr9ed-dev.nimbus.cloud.gov.bc.ca/'
-#   ----------------------------Commenting out while trying to get rollback working-------------------------------          
+#   ----------------------------Commenting out while trying to get rollback working-------------------------------
 #   bump_version:
 #     runs-on: ubuntu-22.04
 #     permissions: write-all
