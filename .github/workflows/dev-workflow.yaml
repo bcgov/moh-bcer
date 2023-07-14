@@ -34,7 +34,7 @@ permissions:
 jobs:
   docker_push:
     name: docker push
-    environment: ${{ env.ENVIRONMENT }}
+    environment: ${{ env.AWS_ENV }}
     runs-on: ubuntu-22.04
     permissions: write-all
     steps:
