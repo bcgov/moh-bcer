@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
        environment:
-        description: 'Environment to run tests against'
+        description: 'Environment to deploy to'
         type: environment
         required: true
        version:
@@ -14,9 +14,10 @@ on:
   #     - main
   # pull_request:
 
+concurrency: ${{ github.event.inputs.environment }}
+
 env:
   APP_IMAGE: ${{ secrets.APP_IMAGE }}
-  AWS_ENV: ${{ github.event.inputs.environment }}
   IMAGE_ID: ${{ secrets.AWS_ECR_URI }}
   IMAGE_NAME: bcer-api
   TF_VERSION: 1.2.2
@@ -25,8 +26,6 @@ env:
   TFC_WORKSPACE: ${{ github.event.inputs.environment }}
   BCER_TAGS: ${{ secrets.BCER_TAGS }}
 
-concurrency: ${{ env.AWS_ENV }}
-
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read  # This is required for actions/checkout
@@ -34,7 +33,7 @@ permissions:
 jobs:
   docker_push:
     name: docker push
-    environment: ${{ env.AWS_ENV }}
+    environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-22.04
     permissions: write-all
     steps:
@@ -78,7 +77,7 @@ jobs:
 
   terraform_apply:
     name: terraform apply
-    environment: ${{ env.AWS_ENV }}
+    environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-22.04
     needs: docker_push
     steps:
@@ -103,7 +102,7 @@ jobs:
           terragrunt_version: ${{ env.TG_VERSION }}
 
       - name: Terragrunt Apply
-        working-directory: ${{ env.TG_SRC_PATH }}/${{env.TFC_WORKSPACE }}
+        working-directory: ${{ env.TG_SRC_PATH }}/${{ env.TFC_WORKSPACE }}
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.sha }}
           LICENSE_PLATE: ${{ secrets.MY_LICENSE_PLATE }}
@@ -130,7 +129,7 @@ jobs:
       - name: Copy env file to retailer app
         run: |
           cd packages/bcer-retailer-app
-          cp .config/.env.aws.${{ env.AWS_ENV }} app/.env
+          cp .config/.env.aws.${{ github.event.inputs.environment }} app/.env
 
       - name: Assume IAM Role
         uses: aws-actions/configure-aws-credentials@v2
@@ -146,7 +145,7 @@ jobs:
       - name: Upload to S3 bucket retail app
         run: |
           cd packages/bcer-retailer-app/app/build
-          aws s3 sync . s3://bcer-${{ env.AWS_ENV }}/retailer --delete
+          aws s3 sync . s3://bcer-${{ github.event.inputs.environment }}/retailer --delete
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_REGION: ca-central-1
@@ -154,7 +153,7 @@ jobs:
       - name: Copy env file to bcer-data-portal
         run: |
           cd packages/bcer-data-portal
-          cp .config/.env.aws.${{ env.AWS_ENV }} app/.env
+          cp .config/.env.aws.${{ github.event.inputs.environment }} app/.env
 
       - name: Build project data portal frontend
         run: |
@@ -164,7 +163,7 @@ jobs:
       - name: Upload to S3 bucket data portal
         run: |
          cd packages/bcer-data-portal/app/build
-         aws s3 sync . s3://bcer-${{ env.AWS_ENV }}/portal --delete
+         aws s3 sync . s3://bcer-${{ github.event.inputs.environment }}/portal --delete
         env:
          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
          AWS_REGION: ca-central-1
