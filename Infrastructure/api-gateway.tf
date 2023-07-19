@@ -33,7 +33,7 @@ module "api_gateway" {
     "ANY /{proxy+}" = {
       connection_type = "VPC_LINK"
       vpc_link = "bcer-vpc"
-      integration_uri = "arn:aws:elasticloadbalancing:ca-central-1:705490038982:listener/app/default/35426aefceba87be/72d3ccfa5faf7163"
+      integration_uri = data.aws_alb_listener.front_end.arn
       integration_type = "HTTP_PROXY"
       integration_method = "ANY"
     }
