@@ -28,7 +28,8 @@ env:
   BCER_TAGS: ${{ secrets.BCER_TAGS }}
   
   #External Actions Projects
-  ACTIONS_REPO_CHECKOUT: v3
+  ACTIONS_REPO_CHECKOUT: actions/checkout@v3
+  ACTIONS_REPO_CHECKOUT_VERSION: v3
   ACTIONS_CONFIG_AWS_CREDS: aws-actions/configure-aws-credentials@v2
   ACTIONS_ECR_LOGIN: aws-actions/amazon-ecr-login@v1
   ACTIONS_CACHE: actions/cache@v3
@@ -50,6 +51,6 @@ jobs:
     permissions: write-all
     steps:
       - name: Check out the repo
-        uses: actions/cache@${{ env.ACTIONS_REPO_CHECKOUT }}
+        uses: $ACTIONS_REPO_CHECKOUT@${{ env.ACTIONS_REPO_CHECKOUT_VERSION }}
         with:
           ref: FEATURE/aws
