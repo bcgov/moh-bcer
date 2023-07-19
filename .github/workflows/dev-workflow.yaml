@@ -51,6 +51,6 @@ jobs:
     permissions: write-all
     steps:
       - name: Check out the repo
-        uses: $ACTIONS_REPO_CHECKOUT@${{ env.ACTIONS_REPO_CHECKOUT_VERSION }}
+        uses: "$ACTIONS_REPO_CHECKOUT@${{ env.ACTIONS_REPO_CHECKOUT_VERSION }}"
         with:
           ref: FEATURE/aws
