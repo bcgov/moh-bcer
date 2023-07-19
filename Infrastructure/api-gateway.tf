@@ -1,10 +1,4 @@
-provider "aws" {
-  alias = "ca-central-1"
-  region = "ca-central-1"
-}
-
 data "aws_acm_certificate" "bcer_api_certificate" {
-  provider = aws.ca-central-1
   domain = "bcer-${var.target_env}.api.hlth.gov.bc.ca"
   statuses = ["ISSUED"]
   most_recent = true
