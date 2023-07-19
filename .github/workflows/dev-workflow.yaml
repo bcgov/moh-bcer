@@ -26,7 +26,9 @@ env:
   TG_SRC_PATH: Terraform
   TFC_WORKSPACE: ${{ github.event.inputs.environment }}
   BCER_TAGS: ${{ secrets.BCER_TAGS }}
-  ACTIONS_REPO_CHECKOUT: actions/checkout
+  
+  #External Actions Projects
+  ACTIONS_REPO_CHECKOUT: actions/checkout@v3
   ACTIONS_CONFIG_AWS_CREDS: aws-actions/configure-aws-credentials@v2
   ACTIONS_ECR_LOGIN: aws-actions/amazon-ecr-login@v1
   ACTIONS_CACHE: actions/cache@v3
@@ -48,6 +50,6 @@ jobs:
     permissions: write-all
     steps:
       - name: Check out the repo
-        uses: $ACTIONS_REPO_CHECKOUT@v3
+        uses: actions/checkout@v3
         with:
           ref: FEATURE/aws
