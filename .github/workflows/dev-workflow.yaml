@@ -48,8 +48,10 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     runs-on: ${{ env.UBUNTU_VERSION }}
     permissions: write-all
+    env:
+      ACTIONS_REPO_CHECKOUT: actions/checkout@v3
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v3
+        uses: ${{ ACTIONS_REPO_CHECKOUT }}
         with:
           ref: FEATURE/aws
