@@ -46,7 +46,7 @@ jobs:
   docker_push:
     name: docker push
     environment: ${{ github.event.inputs.environment }}
-    runs-on: $UBUNTU_VERSION
+    runs-on: ${{ secrets.UBUNTU_VERSION }}
     permissions: write-all
     steps:
       - name: Check out the repo
