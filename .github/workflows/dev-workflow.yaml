@@ -9,3 +9,10 @@ on:
        version:
         description: 'Version Number'
         required: false
+jobs:
+  nothing:
+    name: nothing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
