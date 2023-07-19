@@ -2,6 +2,10 @@ locals {
   s3_origin_id = "bcer-${var.target_env}"
 }
 
+provider "aws" {
+  alias = "us-east-1"
+  region = "us-east-1"
+}
 
 data "aws_acm_certificate" "bcer_certificate" {
   provider = aws.us-east-1
