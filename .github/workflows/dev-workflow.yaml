@@ -34,7 +34,7 @@ jobs:
   docker_push:
     name: docker push
     environment: ${{ github.event.inputs.environment }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions: write-all
     steps:
       - name: Check out the repo
@@ -78,7 +78,7 @@ jobs:
   terraform_apply:
     name: terraform apply
     environment: ${{ github.event.inputs.environment }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: docker_push
     steps:
 
@@ -181,7 +181,7 @@ jobs:
   #         target: 'https://fmdb.ynr9ed-dev.nimbus.cloud.gov.bc.ca/'
 #   ----------------------------Commenting out while trying to get rollback working-------------------------------
 #   bump_version:
-#     runs-on: ubuntu-22.04
+#     runs-on: ubuntu-latest
 #     permissions: write-all
 
 #     steps:
