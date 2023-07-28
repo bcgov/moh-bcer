@@ -6,6 +6,10 @@ on:
         description: 'Environment to deploy to'
         type: environment
         required: true
+       migrations:
+        description: 'Run database migrations'
+        type: boolean
+        required: true
        version:
         description: 'Version Number'
         required: false
@@ -18,13 +22,13 @@ concurrency: ${{ github.event.inputs.environment }}
 
 env:
   APP_IMAGE: ${{ secrets.APP_IMAGE }}
+  DOCKER_TAGS: ${{ secrets.DOCKER_TAGS }}
   IMAGE_ID: ${{ secrets.AWS_ECR_URI }}
   IMAGE_NAME: bcer-api
-  TF_VERSION: 1.2.2
-  TG_VERSION: 0.37.1
-  TG_SRC_PATH: Terraform
   TFC_WORKSPACE: ${{ github.event.inputs.environment }}
-  BCER_TAGS: ${{ secrets.BCER_TAGS }}
+  TF_VERSION: 1.2.2
+  TG_SRC_PATH: Terraform
+  TG_VERSION: 0.37.1
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -73,7 +77,7 @@ jobs:
           context: packages/bcer-api/app
           file: packages/bcer-api/app/Dockerfile.aws
           push: true
-          tags: ${{ env.BCER_TAGS }}
+          tags: ${{ env.DOCKER_TAGS }}
 
   terraform_apply:
     name: terraform apply
