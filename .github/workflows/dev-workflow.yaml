@@ -69,7 +69,7 @@ jobs:
 
       - name: Build and push (run migrations)
         id: docker_build_migrations
-        if: inputs.migrations
+        if: inputs.migrations == true
         uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -82,7 +82,7 @@ jobs:
 
       - name: Build and push
         id: docker_build
-        if: ! inputs.migrations
+        if: inputs.migrations == false
         uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -128,7 +128,7 @@ jobs:
 
   build_jobs:
     name: build jobs
-    if: ! inputs.migrations
+    if: inputs.migrations == false
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     needs: terraform_apply
