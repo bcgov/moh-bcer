@@ -105,6 +105,10 @@ resource "aws_rds_cluster_parameter_group" "bcer_postgresql13" {
   tags = {
     managed-by = "terraform"
   }
+  parameter {
+    name  = "timezone"
+    value = "America/Vancouver"
+  }
 }
 
 resource "random_pet" "master_creds_secret_name" {

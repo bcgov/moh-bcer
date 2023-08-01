@@ -1,5 +1,5 @@
 terraform {
-  source = "../..//Infrastructure"
+  source = "../../Infrastructure"
 }
  locals {
     project             = get_env("LICENSE_PLATE")
