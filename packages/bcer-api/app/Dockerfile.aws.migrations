@@ -14,5 +14,8 @@ COPY . .
 # Build application
 RUN npm run build
 
-# Run migrations
-CMD [ "npm", "run", "migrate:run" ]
+# Add health check
+HEALTHCHECK --start-period=5m CMD curl --fail http://localhost:4000/ || exit 1
+
+# Run migrations + application
+CMD [ "npm", "run", "migrate:start" ]
