@@ -29,6 +29,7 @@ import { SingleLocationReportStatus } from './helper/singleLocationReportStatus'
 import { LocationContactDTO } from './dto/locationContact.dto';
 import { LocationType } from './enums/location_type.enum';
 import { ConfigDates } from 'src/utils/configDates';
+import { CONFIG } from 'src/common/common.config';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -41,10 +42,7 @@ const manufacturingLocationDictionary = {
   '0': false
 }
 
-export const manufacturingLocationTranslation = (manufacturing: string): boolean => {
-  if (typeof (manufacturing) === 'boolean') return manufacturing;
-  return manufacturingLocationDictionary[manufacturing];
-}
+export const manufacturingLocationTranslation = (manufacturing: string): boolean => {return manufacturingLocationDictionary[manufacturing]}
 
 @Injectable()
 export class LocationService {
