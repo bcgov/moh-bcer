@@ -42,9 +42,9 @@ data "aws_rds_engine_version" "postgresql" {
 }
 
 module "aurora_postgresql_v2" {
-  source = "terraform-aws-modules/rds-aurora/aws"
+  source  = "terraform-aws-modules/rds-aurora/aws"
   version = "7.7.1"
-  
+
   name              = "${var.bcer_cluster_name}-${var.target_env}"
   engine            = data.aws_rds_engine_version.postgresql.engine
   engine_mode       = "provisioned"
@@ -132,9 +132,9 @@ resource "aws_secretsmanager_secret_version" "bcer_mastercreds_secret_version" {
     "password": "${random_password.bcer_master_password.result}"
    }
 EOF
-lifecycle {
-  ignore_changes = [ secret_string ]
-}
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
 }
 
 resource "random_password" "bcer_api_password" {
@@ -172,7 +172,7 @@ resource "aws_secretsmanager_secret_version" "bcer_apicreds_secret_version" {
     "password": "${random_password.bcer_api_password.result}"
    }
 EOF
-lifecycle {
-  ignore_changes = [ secret_string ]
-}
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
 }

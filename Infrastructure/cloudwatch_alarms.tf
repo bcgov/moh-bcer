@@ -18,7 +18,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_utilization_alarm" {
   alarm_description   = "This metric checks the CPU utilization of the ECS service"
   tags                = local.common_tags
 
-  
+
   dimensions = {
     ClusterName = var.cluster_name
     ServiceName = var.ecs_service_name
@@ -42,8 +42,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_utilization" {
   alarm_description   = "Alarm for ECS memory utilization exceeding 80%"
   tags                = local.common_tags
 
-  
- dimensions = {
+
+  dimensions = {
     ClusterName = var.cluster_name
     ServiceName = var.ecs_service_name
   }
@@ -65,14 +65,14 @@ resource "aws_cloudwatch_metric_alarm" "ecs_service_status" {
   threshold           = "1"
   tags                = local.common_tags
 
-  
- dimensions = {
+
+  dimensions = {
     ClusterName = var.cluster_name
     ServiceName = var.ecs_service_name
   }
-  
+
   alarm_description = "Alarm for Amazon ECS service status"
-  
+
   alarm_actions = [
     aws_sns_topic.alerts.arn
   ]
@@ -90,14 +90,14 @@ resource "aws_cloudwatch_metric_alarm" "ecs_network_traffic" {
   threshold           = "100000"
   tags                = local.common_tags
 
-  
- dimensions = {
+
+  dimensions = {
     ClusterName = var.cluster_name
     ServiceName = var.ecs_service_name
   }
-  
+
   alarm_description = "Alarm for Amazon ECS Network Traffic"
-  
+
   alarm_actions = [
     aws_sns_topic.alerts.arn
   ]
@@ -115,14 +115,14 @@ resource "aws_cloudwatch_metric_alarm" "ecs_disk_usage" {
   threshold           = "80"
   tags                = local.common_tags
 
-  
- dimensions = {
+
+  dimensions = {
     ClusterName = var.cluster_name
     ServiceName = var.ecs_service_name
   }
-  
+
   alarm_description = "Alarm for Amazon ECS task filesystem utilization"
-  
+
   alarm_actions = [
     aws_sns_topic.alerts.arn
   ]
@@ -139,13 +139,13 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_failures" {
   threshold           = "1"
   tags                = local.common_tags
 
-  
+
   dimensions = {
     ClusterName = var.cluster_name
   }
-  
+
   alarm_description = "Alarm for Amazon ECS task failures"
-  
+
   alarm_actions = [
     aws_sns_topic.alerts.arn
   ]
@@ -174,7 +174,7 @@ resource "aws_cloudwatch_metric_alarm" "aurora_cpu_alarm" {
 
 
   dimensions = {
-    DBInstanceIdentifier = "${var.db_instance_identifier}-${var.target_env}" 
+    DBInstanceIdentifier = "${var.db_instance_identifier}-${var.target_env}"
   }
 }
 
@@ -189,13 +189,13 @@ resource "aws_cloudwatch_metric_alarm" "db_connections_alarm" {
   statistic           = "Average"
   threshold           = 100
   alarm_description   = "Alarm when the number of database connections exceeds 100 for 2 consecutive periods"
-  
+
   alarm_actions = [
     aws_sns_topic.alerts.arn
   ]
 
   dimensions = {
-    DBInstanceIdentifier = "${var.db_instance_identifier}-${var.target_env}" 
+    DBInstanceIdentifier = "${var.db_instance_identifier}-${var.target_env}"
   }
 }
 
@@ -215,7 +215,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_queue_depth_alarm" {
   ]
 
   dimensions = {
-    DBInstanceIdentifier = "${var.db_instance_identifier}-${var.target_env}" 
+    DBInstanceIdentifier = "${var.db_instance_identifier}-${var.target_env}"
   }
 }
 
@@ -232,10 +232,10 @@ resource "aws_cloudwatch_metric_alarm" "billing_alarm" {
   namespace           = "AWS/Billing"
   period              = "86400" # 1 day (in seconds)
   statistic           = "Maximum"
-  threshold           = "375"   
-  
+  threshold           = "375"
+
   alarm_description = "This alarm will be triggered if the estimated charges for the account exceed $3000 CAD within a 1-month period."
-  
+
   alarm_actions = [
     aws_sns_topic.alerts.arn
   ]

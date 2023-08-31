@@ -29,12 +29,12 @@ variable "fargate_memory" {
 variable "bcer_cluster_name" {
   description = "Name for the FAM database cluster -- must be unique"
   type        = string
-  default     = "bcer-cluster" 
+  default     = "bcer-cluster"
 }
 
-variable "cluster_name" { 
-  description = "Name for ECS cluster (with underscore)" 
-  type        = string 
+variable "cluster_name" {
+  description = "Name for ECS cluster (with underscore)"
+  type        = string
   default     = "bcer_cluster"
 }
 
@@ -62,7 +62,7 @@ variable "alb_name" {
 }
 
 variable "acl_value" {
-    default = "private"
+  default = "private"
 }
 
 variable "app_port" {
@@ -83,7 +83,7 @@ variable "app_count" {
 
 variable "fam_console_idp_name" {
   description = "Identifies which version of IDIR to use (DEV, TEST, or PROD)"
-  type = string
+  type        = string
 }
 
 variable "db_instance_identifier" {
