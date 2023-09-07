@@ -63,8 +63,13 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
   }, [content])
 
   async function confirmContentChange() {
-    saveChange(content, city, health_authority, longitude, latitude, geo_confidence)
-    setOpen(false);
+    if(type === 'addressLine1' && !healthAuthority){
+      //if it's the address being updated, it will take some time for the system to get the health authority
+      seterrorText('Please wait for the system to determine the Health Authority')
+    }else{
+      saveChange(content, city, health_authority, longitude, latitude, geo_confidence)
+      setOpen(false);
+    }
   }
 
   async function cancelContentChange() {
@@ -88,16 +93,9 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
   useEffect(() => {
     if(healthAuthority) {
       setHealth_authority(healthAuthority.toLowerCase())
+      seterrorText('')
     }
   }, [healthAuthority]);
-
-  const getAutocomplete = (e: any) => {
-    getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
-  }
-
-  const doDetermineHealthAuthority = (long: number, lat: number) => {
-    determineHealthAuthority({url: `data/location/determine-health-authority-on-portal?lat=${lat}&long=${long}`})
-  }
 
   const handleAutocompleteSelect = ( value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
     const fullLocation = predictions.find((e: { properties: { fullAddress: any; }; }) => e.properties.fullAddress === value)
@@ -109,6 +107,14 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
     if (fullLocation) {
       doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
     }
+  }
+
+  const getAutocomplete = (e: any) => {
+    getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
+  }
+
+  const doDetermineHealthAuthority =  (long: number, lat: number) => {
+    determineHealthAuthority({url: `data/location/determine-health-authority-on-portal?lat=${lat}&long=${long}`});
   }
 
   return (

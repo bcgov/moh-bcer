@@ -49,10 +49,10 @@ function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledE
       {type==='addressLine1'? updateNoteMessage("address changed from " + content): updateNoteMessage(type + " changed from " + content)}
       setContent(data)
       setCity(city)
-      setHealth_authority(health_authority)
       setLongitude(longitude)
       setLatitude(latitude)
       setGeo_confidence(geo_confidence)
+      setHealth_authority(health_authority)
     }
     handleMouseOver()
   }
@@ -63,10 +63,10 @@ function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledE
         //POST the change to DB
         await updateLocationInfo(type, content)
         if(city) await updateLocationInfo('city', city)
-        if(health_authority) await updateLocationInfo('health_authority', health_authority)
         if(longitude) await updateLocationInfo('longitude', longitude)
         if(latitude) await updateLocationInfo('latitude', latitude)
         if(geo_confidence) await updateLocationInfo('geo_confidence', geo_confidence)
+        if(health_authority) await updateLocationInfo('health_authority', health_authority)
         
         if(patchLocationError){
           showNetworkErrorMessage(patchLocationError);

@@ -444,11 +444,14 @@ export class LocationDataPortalController {
   ){
     const type = Object.keys(payload)[0]
     const possibleTypes = ['addressLine1','postal','webpage','phone','email','underage','manufacturing', 'city', 'health_authority', 'longitude', 'latitude', 'geo_confidence']
+    const typeMappings = {
+      health_authority: 'ha',
+      geo_confidence: 'geoAddressConfidence'
+    };
     if(possibleTypes.includes(type)){
       const location = await this.service.getLocation(id);
-      {type ==='manufacturing'? location[type] =  manufacturingLocationTranslation(payload[type].toLowerCase()) : location[type] = payload[type]}
-      {type ==='health_authority'? location['ha'] = payload[type] : location[type] = payload[type]}
-      {type ==='geo_confidence'? location['geoAddressConfidence'] = payload[type] : location[type] = payload[type]}
+      const typeName = typeMappings[type] || type; 
+      location[typeName] = type === 'manufacturing'? manufacturingLocationTranslation(payload[type].toLowerCase()) : payload[type];
       await this.service.updateLocation(id, location.toResponseObject() as any);
     }else{
       throw new ForbiddenException("the type is not editable. allowed types: addressLine1 || postal || webpage || phone || email || underage || manufacturing || city || health_authority || longitude || latitude || geo_confidence)");
@@ -470,6 +473,9 @@ export class LocationDataPortalController {
     @Query('lat') lat: number,
     @Query('long') lng: number
   ){
+    if(!lat || !lng){
+      throw new ForbiddenException("lat & lng are required");
+    }
     return this.geoCodeService.determineHealthAuthority(lat, lng);
   }
 }
