@@ -202,13 +202,12 @@ jobs:
 
   zap_scan:
     name: Run ZAP Scan
-    if: inputs.zap_scan == true
+    if: inputs.zap_scan == true && contains(needs.build_jobs.result, 'success') && contains(needs.build_jobs.result, 'skipped')
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
-    needs: terraform_apply
+    needs: [ terraform_apply, build_jobs ]
     permissions: write-all
     steps:
-      - run: echo ${{ needs.build_jobs.result }}
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.9.0
         with:
