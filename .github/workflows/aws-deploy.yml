@@ -21,7 +21,7 @@ on:
         description: 'Run ZAP Scan'
         type: boolean
         required: false
-   push:
+#   push:
 #     branches:
 #       - main
 #   pull_request:
