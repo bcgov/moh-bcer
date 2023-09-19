@@ -1,31 +1,34 @@
-name: Dev-Workflow
+name: AWS Deploy
 on:
   workflow_dispatch:
     inputs:
-       environment:
+      environment:
         description: 'Environment to deploy to'
         type: environment
         required: true
-       migrations:
+      migrations:
         description: 'Run database migrations'
         type: boolean
         required: true
-       frontends:
+      frontends:
         description: 'Deploy frontends'
         type: boolean
         required: true
-       version:
+      version:
         description: 'Version Number'
         required: false
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
+      zap_scan:
+        description: 'Run ZAP Scan'
+        type: boolean
+        required: false
+   push:
+#     branches:
+#       - main
+#   pull_request:
 
 concurrency: ${{ github.event.inputs.environment }}
 
 env:
-  APP_IMAGE: ${{ secrets.APP_IMAGE }}
   DOCKER_TAGS: ${{ secrets.DOCKER_TAGS }}
   IMAGE_ID: ${{ secrets.AWS_ECR_URI }}
   IMAGE_NAME: bcer-api
@@ -40,12 +43,11 @@ permissions:
 
 jobs:
   docker_push:
-    name: docker push
+    name: Docker Push
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
-      - name: Check out the repo
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: FEATURE/aws
@@ -56,25 +58,23 @@ jobs:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
-      - name: Login to Amazon ECR
-        id: login-ecr
+      - name: Amazon ECR Login
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: 'true'
 
-      - uses: actions/cache@v3
+      - name: Cache
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2.5.0
+      - name: Docker Setup Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Build and push (run migrations)
-        id: docker_build_migrations
+      - name: Build and push Docker images (run migrations)
         if: inputs.migrations == true
         uses: docker/build-push-action@v4
         with:
@@ -86,8 +86,7 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_TAGS }}
 
-      - name: Build and push
-        id: docker_build
+      - name: Build and push Docker images
         if: inputs.migrations == false
         uses: docker/build-push-action@v4
         with:
@@ -100,12 +99,12 @@ jobs:
           tags: ${{ env.DOCKER_TAGS }}
 
   terraform_apply:
-    name: terraform apply
+    name: Terraform Apply
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     needs: docker_push
     steps:
-      - name: Check out the repo
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
@@ -116,11 +115,13 @@ jobs:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
-      - uses: hashicorp/setup-terraform@v2.0.3
+      - name: HashiCorp - Setup Terraform
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - uses: autero1/action-terragrunt@v1.3.1
+      - name: Terragrunt installer
+        uses: autero1/action-terragrunt@v1.3.2
         with:
           terragrunt_version: ${{ env.TG_VERSION }}
 
@@ -133,14 +134,16 @@ jobs:
             terragrunt run-all apply --terragrunt-non-interactive
 
   build_jobs:
-    name: build jobs
+    name: Build Jobs
     if: inputs.frontends == true
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     needs: terraform_apply
     steps:
-      - name: Check out the repo
+      - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Use Node.js 14
         uses: actions/setup-node@v3
@@ -158,7 +161,7 @@ jobs:
           cd packages/bcer-retailer-app
           cp .config/.env.aws.${{ github.event.inputs.environment }} app/.env
 
-      - name: Assume IAM Role
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
@@ -196,18 +199,19 @@ jobs:
         env:
          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
          AWS_REGION: ca-central-1
-
-
-  # zap_scan:
-  #   runs-on: ubuntu-latest
-  #   permissions: write-all
-  #   name: Scan the webapplication
-  #   needs: terraform_apply
-  #   steps:
-  #     - name: ZAP Scan
-  #       uses: zaproxy/action-baseline@v0.7.0
-  #       with:
-  #         target: 'https://fmdb.ynr9ed-dev.nimbus.cloud.gov.bc.ca/'
+            
+  zap_scan:
+    name: Run ZAP Scan
+    if: inputs.zap_scan == true
+    environment: ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: terraform_apply
+    permissions: write-all
+    steps:
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.9.0
+        with:
+          target: ${{ vars.APPLICATION_URL }}
 #   ----------------------------Commenting out while trying to get rollback working-------------------------------
 #   bump_version:
 #     runs-on: ubuntu-latest
