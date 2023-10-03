@@ -9,7 +9,7 @@ terraform {
       version = "~> 3"
     }
   }
-  required_version = "~> 1.2.2"
+  required_version = "~> 1.3.7"
 }
 
 locals {
