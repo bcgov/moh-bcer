@@ -29,7 +29,6 @@ data "aws_vpc" "main" {
 }
 
 data "aws_subnets" "web" {
-
   filter {
     name   = "tag:Name"
     values = local.web_subnet_names
@@ -37,7 +36,6 @@ data "aws_subnets" "web" {
 }
 
 data "aws_subnets" "app" {
-
   filter {
     name   = "tag:Name"
     values = local.app_subnet_names
@@ -45,7 +43,6 @@ data "aws_subnets" "app" {
 }
 
 data "aws_subnets" "data" {
-
   filter {
     name   = "tag:Name"
     values = local.data_subnet_names

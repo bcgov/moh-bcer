@@ -3,7 +3,6 @@ resource "random_pet" "bcer_subnet_group_name" {
   length = 2
 }
 
-
 resource "random_password" "bcer_master_password" {
   length           = 16
   special          = true
@@ -30,7 +29,6 @@ resource "aws_db_subnet_group" "bcer_subnet_group" {
   tags = {
     managed-by = "terraform"
   }
-
   tags_all = {
     managed-by = "terraform"
   }
@@ -107,7 +105,7 @@ resource "aws_rds_cluster_parameter_group" "bcer_postgresql13" {
   }
   parameter {
     name  = "timezone"
-    value = "America/Vancouver"
+    value = var.timezone
   }
 }
 
@@ -118,7 +116,6 @@ resource "random_pet" "master_creds_secret_name" {
 
 resource "aws_secretsmanager_secret" "bcer_mastercreds_secret" {
   name = random_pet.master_creds_secret_name.id
-
   tags = {
     managed-by = "terraform"
   }
@@ -150,7 +147,6 @@ variable "bcer_api_username" {
   sensitive   = true
 }
 
-
 resource "random_pet" "api_creds_secret_name" {
   prefix = "bcer-api-creds"
   length = 2
@@ -158,7 +154,6 @@ resource "random_pet" "api_creds_secret_name" {
 
 resource "aws_secretsmanager_secret" "bcer_apicreds_secret" {
   name = random_pet.api_creds_secret_name.id
-
   tags = {
     managed-by = "terraform"
   }

@@ -27,7 +27,7 @@ data "aws_cloudfront_cache_policy" "Managed-CachingOptimized" {
 }
 
 resource "aws_cloudfront_origin_access_control" "bcer" {
-  name                              = "bcer-dev"
+  name                              = "bcer-${var.target_env}"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"

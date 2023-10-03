@@ -29,7 +29,6 @@ module "api_gateway" {
   #   }
 
   integrations = {
-
     "ANY /{proxy+}" = {
       connection_type    = "VPC_LINK"
       vpc_link           = "bcer-vpc"

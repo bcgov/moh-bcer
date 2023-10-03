@@ -1,8 +1,3 @@
-resource "aws_cloudwatch_log_group" "ecs_monitoring" {
-  name              = "ecs-${var.application}-monitoring"
-  retention_in_days = 90
-}
-
 resource "aws_ecs_cluster" "bcer_cluster" {
   name = "${var.application}_cluster"
 }
@@ -17,7 +12,7 @@ resource "aws_ecs_cluster_capacity_providers" "bcer_cluster" {
 
   }
 }
-#difference between task and execution roles
+
 resource "aws_ecs_task_definition" "bcer_td" {
   family                   = "${var.application}-${var.target_env}-task"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
@@ -44,80 +39,81 @@ resource "aws_ecs_task_definition" "bcer_td" {
         }
       ]
       secrets = [
-        { "name" : "DB_USERNAME",
-        "valueFrom" : "${aws_secretsmanager_secret_version.rds_credentials.arn}:username::" },
-        { "name" : "DB_PASSWORD",
-        "valueFrom" : "${aws_secretsmanager_secret_version.rds_credentials.arn}:password::" },
-        { "name" : "DB_HOST",
-        "valueFrom" : "${aws_secretsmanager_secret_version.rds_credentials.arn}:host::" },
-        { "name" : "DB_PORT",
-        "valueFrom" : "${aws_secretsmanager_secret_version.rds_credentials.arn}:port::" },
-        { "name" : "APPLICATION_PORT",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_application_port.arn}" },
-        { "name" : "AWS_ENV",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_aws_env.arn}" },
-        { "name" : "BC_DIRECTION_API_KEY",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_bc_direction_api_key.arn}" },
-        { "name" : "CLOSE_LOCATION_CRON_TIME",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_close_location_cron_time.arn}" },
-        { "name" : "CRON_JOB_NAMES",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_cron_job_names.arn}" },
-        { "name" : "DB_DATABASE",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_db_database.arn}" },
-        { "name" : "DB_SCHEMA",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_db_schema.arn}" },
-        { "name" : "EMAIL_GENERIC_NOTIFICATION_TEMPLATE_ID",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_email_generic_notification_template_id.arn}" },
-        { "name" : "ENABLE_SUBSCRIPTION",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_enable_subscription.arn}" },
-        { "name" : "ENABLE_TEXT_MESSAGES",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_enable_text_messages.arn}" },
-        { "name" : "GA_KEY",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_ga_key.arn}" },
-        { "name" : "HEAPSNAPSHOT_ENABLED",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_heapsnapshot_enabled.arn}" },
-        { "name" : "KEYCLOAK_AUTH_URL",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_keycloak_auth_url.arn}" },
-        { "name" : "KEYCLOAK_CLIENT",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_keycloak_client.arn}" },
-        { "name" : "KEYCLOAK_DATA_AUTH_URL",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_keycloak_data_auth_url.arn}" },
-        { "name" : "KEYCLOAK_DATA_CLIENT",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_keycloak_data_client.arn}" },
-        { "name" : "KEYCLOAK_DATA_REALM",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_keycloak_data_realm.arn}" },
-        { "name" : "KEYCLOAK_PORT",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_keycloak_port.arn}" },
-        { "name" : "KEYCLOAK_REALM",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_keycloak_realm.arn}" },
-        { "name" : "LOAD_CERTS",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_load_certs.arn}" },
-        { "name" : "LOGS_PATH",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_logs_path.arn}" },
-        { "name" : "MAP_BOX_ACCESS_TOKEN",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_map_box_access_token.arn}" },
-        { "name" : "NOI_EXPIRY_DATE",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_noi_expiry_date.arn}" },
-        { "name" : "SALES_REPORT_END_DATE",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_sales_report_end_date.arn}" },
-        { "name" : "TEXT_API_KEY",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_text_api_key.arn}" },
-        { "name" : "TEXT_GENERIC_NOTIFICATION_TEMPLATE_ID",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_text_generic_notification_template_id.arn}" },
-        { "name" : "VAPING_NOTIFICATION_EMAIL",
-        "valueFrom" : "${aws_secretsmanager_secret_version.bcer_vaping_notification_email.arn}" },
+        { name = "DB_USERNAME",
+        valueFrom = "${aws_secretsmanager_secret_version.rds_credentials.arn}:username::" },
+        { name = "DB_PASSWORD"
+        valueFrom = "${aws_secretsmanager_secret_version.rds_credentials.arn}:password::" },
+        { name = "DB_HOST"
+        valueFrom = "${aws_secretsmanager_secret_version.rds_credentials.arn}:host::" },
+        { name = "DB_PORT"
+        valueFrom = "${aws_secretsmanager_secret_version.rds_credentials.arn}:port::" },
+        { name = "APPLICATION_PORT"
+        valueFrom = aws_secretsmanager_secret_version.bcer_application_port.arn },
+        { name = "AWS_ENV"
+        valueFrom = aws_secretsmanager_secret_version.bcer_aws_env.arn },
+        { name = "BC_DIRECTION_API_KEY"
+        valueFrom = aws_secretsmanager_secret_version.bcer_bc_direction_api_key.arn },
+        { name = "CLOSE_LOCATION_CRON_TIME"
+        valueFrom = aws_secretsmanager_secret_version.bcer_close_location_cron_time.arn },
+        { name = "CRON_JOB_NAMES"
+        valueFrom = aws_secretsmanager_secret_version.bcer_cron_job_names.arn },
+        { name = "DB_DATABASE"
+        valueFrom = aws_secretsmanager_secret_version.bcer_db_database.arn },
+        { name = "DB_SCHEMA"
+        valueFrom = aws_secretsmanager_secret_version.bcer_db_schema.arn },
+        { name = "EMAIL_GENERIC_NOTIFICATION_TEMPLATE_ID"
+        valueFrom = aws_secretsmanager_secret_version.bcer_email_generic_notification_template_id.arn },
+        { name = "ENABLE_SUBSCRIPTION"
+        valueFrom = aws_secretsmanager_secret_version.bcer_enable_subscription.arn },
+        { name = "ENABLE_TEXT_MESSAGES"
+        valueFrom = aws_secretsmanager_secret_version.bcer_enable_text_messages.arn },
+        { name = "GA_KEY"
+        valueFrom = aws_secretsmanager_secret_version.bcer_ga_key.arn },
+        { name = "HEAPSNAPSHOT_ENABLED"
+        valueFrom = aws_secretsmanager_secret_version.bcer_heapsnapshot_enabled.arn },
+        { name = "KEYCLOAK_AUTH_URL"
+        valueFrom = aws_secretsmanager_secret_version.bcer_keycloak_auth_url.arn },
+        { name = "KEYCLOAK_CLIENT"
+        valueFrom = aws_secretsmanager_secret_version.bcer_keycloak_client.arn },
+        { name = "KEYCLOAK_DATA_AUTH_URL"
+        valueFrom = aws_secretsmanager_secret_version.bcer_keycloak_data_auth_url.arn },
+        { name = "KEYCLOAK_DATA_CLIENT"
+        valueFrom = aws_secretsmanager_secret_version.bcer_keycloak_data_client.arn },
+        { name = "KEYCLOAK_DATA_REALM"
+        valueFrom = aws_secretsmanager_secret_version.bcer_keycloak_data_realm.arn },
+        { name = "KEYCLOAK_PORT"
+        valueFrom = aws_secretsmanager_secret_version.bcer_keycloak_port.arn },
+        { name = "KEYCLOAK_REALM"
+        valueFrom = aws_secretsmanager_secret_version.bcer_keycloak_realm.arn },
+        { name = "LOAD_CERTS"
+        valueFrom = aws_secretsmanager_secret_version.bcer_load_certs.arn },
+        { name = "LOGS_PATH"
+        valueFrom = aws_secretsmanager_secret_version.bcer_logs_path.arn },
+        { name = "MAP_BOX_ACCESS_TOKEN"
+        valueFrom = aws_secretsmanager_secret_version.bcer_map_box_access_token.arn },
+        { name = "NOI_EXPIRY_DATE"
+        valueFrom = aws_secretsmanager_secret_version.bcer_noi_expiry_date.arn },
+        { name = "SALES_REPORT_END_DATE"
+        valueFrom = aws_secretsmanager_secret_version.bcer_sales_report_end_date.arn },
+        { name = "TEXT_API_KEY"
+        valueFrom = aws_secretsmanager_secret_version.bcer_text_api_key.arn },
+        { name = "TEXT_GENERIC_NOTIFICATION_TEMPLATE_ID"
+        valueFrom = aws_secretsmanager_secret_version.bcer_text_generic_notification_template_id.arn },
+        { name = "VAPING_NOTIFICATION_EMAIL"
+        valueFrom = aws_secretsmanager_secret_version.bcer_vaping_notification_email.arn },
       ]
       environment = [
-        { "name" : "TZ",
-        "value" : "America/Vancouver" },
+        { name = "TZ"
+        value = var.timezone },
       ]
       #change awslog group
       logConfiguration = {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-group" : "${aws_cloudwatch_log_group.ecs_monitoring.name}",
-          "awslogs-region" : "ca-central-1",
-          "awslogs-stream-prefix" : "streaming"
+        logDriver = "awslogs"
+        options = {
+          awslogs-create-group  = "true"
+          awslogs-group         = "/ecs/${var.application}"
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs"
         }
       }
     }
@@ -128,7 +124,7 @@ resource "aws_ecs_service" "main" {
   name                              = "${var.application}-${var.target_env}-service"
   cluster                           = aws_ecs_cluster.bcer_cluster.arn
   task_definition                   = aws_ecs_task_definition.bcer_td.arn
-  desired_count                     = 2
+  desired_count                     = var.app_count
   health_check_grace_period_seconds = 30
   wait_for_steady_state             = false
   force_new_deployment              = true
