@@ -346,15 +346,11 @@ function LocationsContent() {
       },
       {
         label: <Typography variant="body2">Manufacturing Report</Typography>, value: 'manufacturingReport'
+      },
+      {
+        label: <Typography variant="body2">Sales Report</Typography>, value: 'salesReport'
       }
     ]
-    if (authConfig.permissions.VIEW_SALES) {
-      options.push(
-        {
-          label: <Typography variant="body2">Sales Report</Typography>, value: 'salesReport'
-        }
-      )
-    }
     options.push(
       {
         label: <Typography variant="body2">Map</Typography>, value: 'mapBox'
@@ -613,8 +609,14 @@ function LocationsContent() {
                       </Grid>
 
                       {
-                        authConfig.permissions.VIEW_SALES
-                          &&
+                        authConfig.permissions.VIEW_SALES?
+                        <Grid item xs={12} id="salesReport" ref={salesReportRef} >
+                          <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
+                          <Paper className={classes.tableBox}>
+                            <LocationSalesTable locationId={id} />
+                          </Paper>
+                        </Grid>
+                        :
                         <Grid item xs={12} id="salesReport" ref={salesReportRef} >
                           <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
                           <Paper className={classes.tableBox}>
