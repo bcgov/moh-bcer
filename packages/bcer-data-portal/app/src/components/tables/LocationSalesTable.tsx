@@ -99,7 +99,6 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
             title: 'Submission Date',
             field: 'submissionDate',
           },
-
           {
             title: '',
             render: (salesReport: SalesRO) => (
