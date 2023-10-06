@@ -1,0 +1,21 @@
+FROM node:14.17.6-slim
+
+ENV PATH $PATH:/usr/src/app/node_modules/.bin
+
+WORKDIR '/app'
+
+# Install dependencies
+COPY ./package.json ./
+RUN npm install
+
+# Copy source files
+COPY . .
+
+# Build application
+RUN npm run build
+
+# Add health check
+HEALTHCHECK --start-period=5m CMD curl --fail http://localhost:4000/ || exit 1
+
+# Run migrations + application
+CMD [ "npm", "run", "migrate:start" ]

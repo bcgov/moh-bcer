@@ -24,20 +24,8 @@ variable "fargate_memory" {
 
 variable "bcer_cluster_name" {
   description = "Name for the FAM database cluster -- must be unique"
+  default     = "bcer-cluster"
   type        = string
-  default     = "bcer-cluster" 
-}
-
-variable "cluster_name" { 
-  description = "Name for ECS cluster (with underscore)" 
-  type        = string 
-  default     = "bcer_cluster"
-}
-
-variable "ecs_service_name" {
-  description = "Name for the ECS service name"
-  type        = string
-  default     = "bcer-dev-service"
 }
 
 variable "common_tags" {
@@ -58,7 +46,7 @@ variable "alb_name" {
 }
 
 variable "acl_value" {
-    default = "private"
+  default = "private"
 }
 
 variable "app_port" {
@@ -68,8 +56,8 @@ variable "app_port" {
 
 variable "app_image" {
   description = "Docker image to run in the ECS cluster. _Note_: there is a blank default value, which will cause service and task resource creation to be supressed unless an image is specified."
-  type        = string
   default     = ""
+  type        = string
 }
 
 variable "app_count" {
@@ -79,10 +67,20 @@ variable "app_count" {
 
 variable "fam_console_idp_name" {
   description = "Identifies which version of IDIR to use (DEV, TEST, or PROD)"
-  type = string
+  type        = string
+}
+
+variable "application" {
+  description = "Application that is being deployed"
 }
 
 variable "db_instance_identifier" {
   description = "Identifies the cluster ID of aurora_rds_v2"
   default     = "bcer-cluster"
+}
+
+variable "timezone" {
+  description = "Default timezone to use for containers + database"
+  default     = "America/Vancouver"
+  type        = string
 }

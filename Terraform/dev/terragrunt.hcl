@@ -3,12 +3,7 @@ include {
 }
 
 locals {
-  # project = get_env("LICENSE_PLATE  ")
-  project =   "q9y1j9"
-#   commontags = [
-#     environment = "dev",
-#     application = "fmdb"
-#   ]
+  project = get_env("LICENSE_PLATE")
 }
 
 generate "dev_tfvars" {
@@ -20,5 +15,6 @@ generate "dev_tfvars" {
   fargate_memory = 1024
   app_port = 4000
   fam_console_idp_name = "DEV-IDIR"
+  application = "bcer"
   EOF
 }

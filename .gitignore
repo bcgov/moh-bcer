@@ -36,6 +36,8 @@ cypress/videos/
 # .tfstate files
 *.tfstate
 *.tfstate.*
+.terraform.lock.hcl
+**/.terragrunt-cache/**
 
 # Crash log files
 crash.log

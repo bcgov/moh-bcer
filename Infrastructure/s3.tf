@@ -1,38 +1,35 @@
 resource "aws_s3_bucket" "sql_scripts" {
-  bucket = "705490038982-sql-scripts"  
+  bucket = "${data.aws_caller_identity.current.account_id}-sql-scripts"
 }
 
-
 resource "aws_s3_bucket" "static" {
-  bucket = "bcer-dev"
+  bucket = "bcer-${var.target_env}"
 
   # tags = {
   #   Environment = "development"
   #   Name        = "my-tag"
   # }
-
 }
 
-resource "aws_s3_bucket_website_configuration" "static_bcer" {
-  bucket = aws_s3_bucket.static.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "error.html"
+data "aws_iam_policy_document" "s3_policy" {
+  statement {
+    actions = ["s3:GetObject",
+    "s3:ListBucket"]
+    resources = ["${aws_s3_bucket.static.arn}/*",
+    aws_s3_bucket.static.arn]
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.s3_distribution.arn]
+    }
   }
 }
 
-resource "aws_s3_bucket_acl" "bcer_static" {
+resource "aws_s3_bucket_policy" "cloudfront-s3-access" {
   bucket = aws_s3_bucket.static.id
-  acl    = "private"
-}
-
-resource "aws_s3_bucket_versioning" "bcer_static" {
-  bucket = aws_s3_bucket.static.id
-  versioning_configuration {
-    status = "Enabled"
-  }
+  policy = data.aws_iam_policy_document.s3_policy.json
 }
