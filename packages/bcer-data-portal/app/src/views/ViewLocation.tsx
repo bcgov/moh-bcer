@@ -608,23 +608,13 @@ function LocationsContent() {
                         </Paper>
                       </Grid>
 
-                      {
-                        authConfig.permissions.VIEW_SALES?
-                        <Grid item xs={12} id="salesReport" ref={salesReportRef} >
-                          <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
-                          <Paper className={classes.tableBox}>
-                            <LocationSalesTable locationId={id} />
-                          </Paper>
-                        </Grid>
-                        :
-                        <Grid item xs={12} id="salesReport" ref={salesReportRef} >
-                          <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
-                          <Paper className={classes.tableBox}>
-                            <LocationSalesTable locationId={id} />
-                          </Paper>
-                        </Grid>
-                      }
-
+                      <Grid item xs={12} id="salesReport" ref={salesReportRef} >
+                        <Typography className={classes.cellTitle}>Sales Report Submissions</Typography>
+                        <Paper className={classes.tableBox}>
+                          <LocationSalesTable locationId={id} viewSales={authConfig.permissions.VIEW_SALES}/>
+                        </Paper>
+                      </Grid>
+                      
                       <Grid item xs={12} >
                         <Box style={{display: 'flex', justifyContent: 'space-between'}}>
                           <Typography className={classes.cellTitle}>Map</Typography>

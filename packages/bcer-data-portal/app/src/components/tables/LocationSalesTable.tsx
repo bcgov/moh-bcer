@@ -31,12 +31,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function LocationSalesTable({ locationId }: { locationId: string }) {
+function LocationSalesTable({ locationId, viewSales }: { locationId: string, viewSales : boolean}) {
   const [selectedSalesReport, setSelectedSalesReport] = useState<GroupedSalesRO>();
   const [viewOpen, setViewOpen] = useState<boolean>();
   const csvRef = useRef(null);
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
-
   const classes = useStyles();
 
   const [{ data, loading, error }, get] = useAxiosGet(
@@ -100,31 +99,36 @@ function LocationSalesTable({ locationId }: { locationId: string }) {
             title: 'Submission Date',
             field: 'submissionDate',
           },
+
           {
             title: '',
             render: (salesReport: SalesRO) => (
-              <StyledButton
-                variant="small-outlined"
-                onClick={async () => {
-                  await getDownload({
-                    url: `/data/location/download?locationId=${data.id}&year=${salesReport.year}`,
-                  });
-                  csvRef.current.link.click();
-                }}
-              >
-                Download
-              </StyledButton>
+              viewSales? (
+                <StyledButton
+                  variant="small-outlined"
+                  onClick={async () => {
+                    await getDownload({
+                      url: `/data/location/download?locationId=${data.id}&year=${salesReport.year}`,
+                    });
+                    csvRef.current.link.click();
+                  }}
+                >
+                  Download
+                </StyledButton>
+              ) : null
             ),
           },
           {
             title: '',
             render: (salesReport: GroupedSalesRO) => (
-              <StyledButton
-                variant="table"
-                onClick={() => handleSalesSelect(salesReport)}
-              >
-                View
-              </StyledButton>
+              viewSales? (
+                <StyledButton
+                  variant="table"
+                  onClick={() => handleSalesSelect(salesReport)}
+                >
+                  View
+                </StyledButton>
+              ) : null
             ),
           },
         ]}
