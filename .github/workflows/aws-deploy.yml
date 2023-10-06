@@ -1,26 +1,30 @@
-name: Dev-Workflow
+name: AWS Deploy
 on:
   workflow_dispatch:
     inputs:
-       environment:
+      environment:
         description: 'Environment to deploy to'
         type: environment
         required: true
-       migrations:
+      migrations:
         description: 'Run database migrations'
         type: boolean
         required: true
-       frontends:
+      frontends:
         description: 'Deploy frontends'
         type: boolean
         required: true
-       version:
+      version:
         description: 'Version Number'
+        required: false
+      zap_scan:
+        description: 'Run ZAP Scan'
+        type: boolean
         required: false
 jobs:
   nothing:
     name: nothing
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      - name: Checkout
         uses: actions/checkout@v3
