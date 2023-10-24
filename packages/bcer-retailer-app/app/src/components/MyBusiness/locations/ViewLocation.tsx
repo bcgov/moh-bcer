@@ -6,6 +6,7 @@ import {
   LocationTypeLabels,
   StyledTextField,
   StyledWarning,
+  StyledRadioGroup
 } from 'vaping-regulation-shared-components';
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 
@@ -16,11 +17,13 @@ export default function ViewLocation({
   rowData: IBusinessLocationValues;
   allowEdit?: boolean;
 }) {
+  {rowData.underage === 'No' ? rowData.underage ='No' : rowData.underage ='Yes'}
   return (
     <Grid container spacing={3}>
       {allowEdit && (
         <Grid item spacing={1} xs={12}>
           <StyledWarning text="You already submitted the NOI for this location so you can only edit the contact information" />
+          <StyledWarning text="You can update your underage option before Feb 1, 2024" />
         </Grid>
       )}
       <Grid item container spacing={1} xs={12}>
@@ -104,16 +107,26 @@ export default function ViewLocation({
             sales premises
           </Typography>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
+              <StyledRadioGroup
+                name="underage"
+                options={[
+                  {label: 'Yes', value: 'Yes'},
+                  {label: 'No', value: 'No'}
+                ]}
+              />
+        </Grid>
+        {/* <Grid item xs={6}>
           <Typography variant="subtitle2">Underage Allowed</Typography>
           <Typography variant="body1">{rowData.underage}</Typography>
-        </Grid>
-        {rowData.underage_other ? (
+        </Grid> */}
+        {/* {rowData.underage_other ? (
           <Grid item xs={6}>
             <Typography variant="subtitle2">Underage Other Option</Typography>
             <Typography variant="body2">{rowData.underage_other}</Typography>
           </Grid>
-        ) : null}
+        ) : null} */}
+
       </Grid>
       <Grid item container spacing={1} xs={12}>
         <Grid item xs={12}>
