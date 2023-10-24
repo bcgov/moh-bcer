@@ -104,6 +104,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker_push
     steps:
+      - name: Set TF_VAR_TIMESTAMP
+        run: echo "TF_VAR_TIMESTAMP=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
