@@ -34,7 +34,6 @@ generate "tfvars" {
     app_image  = "${local.app_image}"
     target_env = "${local.environment}"  
     application = "bcer"
-    license = "${local.project}"
 EOF
 }
 
