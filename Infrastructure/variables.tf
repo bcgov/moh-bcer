@@ -84,3 +84,8 @@ variable "timezone" {
   default     = "America/Vancouver"
   type        = string
 }
+
+variable "timestamp" {
+  description = "Used to trigger ECS to redeploy builds when no task changes are present"
+  type        = string
+}

@@ -4,6 +4,7 @@ terraform {
 
 locals {
   project     = get_env("LICENSE_PLATE")
+  timestamp   = get_env("TF_VAR_TIMESTAMP")
   environment = reverse(split("/", get_terragrunt_dir()))[0]
   app_image   = get_env("app_image", "")
 }
@@ -45,4 +46,8 @@ provider "aws" {
   region  = var.aws_region
 }
 EOF
+}
+
+inputs = {
+  timestamp = local.timestamp
 }
