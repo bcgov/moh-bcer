@@ -1,0 +1,22 @@
+name: ZAP Scan
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to ZAP Scan'
+        type: environment
+        required: true
+
+concurrency: ${{ github.event.inputs.environment }}
+
+jobs:
+  zap_scan:
+    name: Run ZAP Scan
+    environment: ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.9.0
+        with:
+          target: ${{ vars.APPLICATION_URL }}
