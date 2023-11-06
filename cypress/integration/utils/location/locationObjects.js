@@ -84,18 +84,6 @@ export const exampleManualLocations = [
     healthAuthority: "fraser",
     manufacturing: "yes",
   },
-  // {
-  //   addressLine1: "1100 Blan",
-  //   email: "location2@test.com",
-  //   phone: "2222222222",
-  //   postal: "k0k0k0",
-  //   doingBusinessAs: "",
-  //   underage: "other",
-  //   underageOther: "Test underage",
-  //   healthAuthority: "other",
-  //   healthAuthorityOther: "Test health authority",
-  //   manufacturing: "no",
-  // }
   {
     addressLine1: "1100 Blan",
     email: "location2@test.com",

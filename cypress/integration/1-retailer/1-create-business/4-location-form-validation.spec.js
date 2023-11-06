@@ -61,14 +61,6 @@ describe("Testing Location input form", () => {
     })
   })
 
-  // it("Fails underage other field validation", () => {
-  //   cy.get(dialog).within(() => {
-  //     cy.get(locationFieldNames.underage.other).click();
-  //     cy.get(locationFieldNames.underageOther).focus().blur();
-  //     cy.contains(locationErrorMessages.underageOther.required);
-  //   })
-  // })
-
   it("Fails health authority field validation", () => {
     cy.get(dialog).within(() => {
       const selector = new Selector("input").addName("health_authority_display").build();
