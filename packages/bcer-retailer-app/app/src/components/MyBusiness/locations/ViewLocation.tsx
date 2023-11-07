@@ -9,6 +9,7 @@ import {
   StyledRadioGroup
 } from 'vaping-regulation-shared-components';
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
+import moment from "moment";
 
 export default function ViewLocation({
   rowData,
@@ -18,14 +19,14 @@ export default function ViewLocation({
   allowEdit?: boolean;
 }) {
   {rowData.underage === 'No' ? rowData.underage ='No' : rowData.underage ='Yes'}
-  const feb1st2024 = new Date('2024-02-01');
-  const currentDate = new Date();
+  const feb1st2024 = moment('2024-02-01');
+  const currentDate = moment();
   return (
     <Grid container spacing={3}>
       {allowEdit && (
         <Grid item spacing={1} xs={12}>
           <StyledWarning text="You already submitted the NOI for this location so you can only edit the contact information" />
-          {(currentDate <= feb1st2024) && <StyledWarning text="You can update your underage option before Feb 1, 2024" />}
+          {currentDate.isBefore(feb1st2024) && rowData.location_type !== LocationType.online && <StyledWarning text="You can update your underage option before Feb 1, 2024" />}
         </Grid>
       )}
       <Grid item container spacing={1} xs={12}>
@@ -109,7 +110,7 @@ export default function ViewLocation({
             sales premises
           </Typography>
       </Grid>
-      {(currentDate <= feb1st2024)?
+      {(currentDate.isBefore(feb1st2024) && rowData.location_type !== LocationType.online)?
         <Grid item xs={12}>
               <StyledRadioGroup
                 name="underage"
