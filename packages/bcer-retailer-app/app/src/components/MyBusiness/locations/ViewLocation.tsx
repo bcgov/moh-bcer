@@ -103,29 +103,31 @@ export default function ViewLocation({
           )}
         </Grid>
       </Grid>
-      <Grid item container spacing={1} xs={12}>
-        <Grid item xs={12}>
-          <Typography variant="subtitle1">
-            Please state if persons under 19 years of age are permitted on the
-            sales premises
-          </Typography>
-      </Grid>
-      {(currentDate.isBefore(feb1st2024) && rowData.location_type !== LocationType.online)?
-        <Grid item xs={12}>
-              <StyledRadioGroup
-                name="underage"
-                options={[
-                  {label: 'Yes', value: 'Yes'},
-                  {label: 'No', value: 'No'}
-                ]}
-              />
-        </Grid>:
-        <Grid item xs={12}>
-          <Typography variant="subtitle2">Underage Allowed</Typography>
-          <Typography variant="body1">{rowData.underage}</Typography>
+      {(rowData.location_type !== LocationType.online) && (
+        <Grid item container spacing={1} xs={12}>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1">
+              Please state if persons under 19 years of age are permitted on the
+              sales premises
+            </Typography>
+          </Grid>
+          {currentDate.isBefore(feb1st2024)?
+            <Grid item xs={12}>
+                    <StyledRadioGroup
+                      name="underage"
+                      options={[
+                        {label: 'Yes', value: 'Yes'},
+                        {label: 'No', value: 'No'}
+                      ]}
+                    />
+            </Grid>:
+            <Grid item xs={12}>
+              <Typography variant="subtitle2">Underage Allowed</Typography>
+              <Typography variant="body1">{rowData.underage}</Typography>
+            </Grid> 
+          }
         </Grid>
-      }
-      </Grid>
+      )}
       <Grid item container spacing={1} xs={12}>
         <Grid item xs={12}>
           <Typography variant="subtitle1">
