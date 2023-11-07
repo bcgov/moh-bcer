@@ -78,6 +78,10 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       const haName = HealthAuthorities[values.health_authority.toLowerCase()];
       formikHelpers.setFieldValue('health_authority_display', haName);
     }
+    if(values.underage === 'other'){
+      values.underage ='Yes';
+      values.underage_other ='';
+    }
   }, [])
 
   useEffect(() => {
