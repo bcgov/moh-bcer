@@ -11,7 +11,7 @@ describe("Submit a sales report", () => {
   })
 
   it("Successfully submits a sales report", () => {
-    cy.contains("You have 2 retail location(s) that are missing Sales Reports");
+    cy.contains("You have 4 retail location(s) that are missing Sales Reports");
     const wrapper = new Selector("tr").addIndex("0").build();
     cy.wait(1000);
     inside(wrapper, () => {

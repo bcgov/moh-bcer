@@ -16,7 +16,7 @@ describe('Updates Locations and noi creation date', () => {
   })
 
   it("Shows both NOI and sales report is outstanding", () => {
-    cy.contains("2 locations with outstanding Notice of Intent");
-    cy.contains("2 locations with outstanding Sales Report");
+    cy.contains("4 locations with outstanding Notice of Intent");
+    cy.contains("4 locations with outstanding Sales Report");
   });
 })
