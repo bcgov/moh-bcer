@@ -11,14 +11,14 @@ describe("Tests renewal of NOI", () => {
   })
 
   it("Contains correct number of missing reports", () => {
-    cy.contains("2 locations with outstanding Notice of Intent");
-    cy.contains("1 locations with outstanding Sales Report");
+    cy.contains("4 locations with outstanding Notice of Intent");
+    cy.contains("3 locations with outstanding Sales Report");
   })
 
   it("Shows correct number of location in noi tables", () => {
     Navigate.gotoNoi();
     cy.contains("You have 1 retail locations that need a Notice of Intent");
-    cy.contains("You have 1 locations that require a Sales Report before their NOI can be renewed.");
+    cy.contains("You have 3 locations that require a Sales Report before their NOI can be renewed.");
   })
 
   it("Renews NOI", () => {
