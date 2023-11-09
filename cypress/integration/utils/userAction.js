@@ -6,7 +6,7 @@ export class UserAction {
   static submitBusinessInfo() {
     cy.wait(1000);
     cy.get("button").contains("Next").click();
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get("button").contains("Next").click();
     cy.wait(1000);
     cy.get("button").contains("Submit Business Information").click();
@@ -28,6 +28,24 @@ export class UserAction {
     locations.forEach((l) => {
       Navigate.openLocationManualInputForm();
       FillForm.fillManualLocationForm(l);
+      cy.wait(1000);
+      clickButton("Submit");
+    });
+  }
+
+  static addNewOnlineLocationManually(locations) {
+    locations.forEach((l) => {
+      clickButton("Add Location");
+      FillForm.fillManualOnlineLocationForm(l);
+      cy.wait(1000);
+      clickButton("Submit");
+    });
+  }
+
+  static addNewOnlineAndPhysicalLocationManually(locations) {
+    locations.forEach((l) => {
+      clickButton("Add Location");
+      FillForm.fillManualOnlineAndPhysicalLocationForm(l);
       cy.wait(1000);
       clickButton("Submit");
     });

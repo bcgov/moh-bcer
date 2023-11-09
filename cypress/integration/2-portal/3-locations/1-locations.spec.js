@@ -27,7 +27,7 @@ describe("Tests the submitted locations page", () => {
     cy.contains("Location Creation Start Date");
     cy.contains("Location Creation End Date");
     cy.contains("Search");
-    cy.contains("2 retail locations.");
+    cy.contains("4 retail locations.");
   })
 
   it("Tests that link to location details page works correctly", () => {

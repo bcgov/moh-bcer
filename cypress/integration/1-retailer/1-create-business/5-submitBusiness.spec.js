@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 import { FillForm } from "../../utils/fillForm";
-import { exampleManualLocations } from "../../utils/location/locationObjects";
+import { exampleManualLocations, exampleManualOnlineLocation, exampleManualOnlineandPhysicalLocation } from "../../utils/location/locationObjects";
 import { Navigate } from "../../utils/navigate";
 import { UserAction } from "../../utils/userAction";
 import { clickButton } from "../../utils/util";
@@ -21,6 +21,8 @@ describe("Tests the 1st time business submission flow", () => {
   it("Successfully creates a test business with a location", () => {
     FillForm.fillBusinessForm();
     UserAction.addNewLocationManually(exampleManualLocations);
+    UserAction.addNewOnlineLocationManually(exampleManualOnlineLocation);
+    UserAction.addNewOnlineAndPhysicalLocationManually(exampleManualOnlineandPhysicalLocation);
     UserAction.submitBusinessInfo();
     cy.contains("Your Business Details have been submited.");
     cy.contains("Next steps");

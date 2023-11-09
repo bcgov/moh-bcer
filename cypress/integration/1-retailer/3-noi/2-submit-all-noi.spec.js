@@ -13,7 +13,7 @@ describe("Tests the submissiong flow of all outstanding NOI", () => {
     Navigate.gotoNoi();
     cy.get(".MuiButton-contained").contains("Submit Outstanding NOI").click();
     cy.contains("Confirm and Submit Notice of Intent");
-    cy.contains("You have 2 retail locations");
+    cy.contains("You have 4 retail locations")
     UserAction.clickSelectAllRowsInTable();
     cy.get("button").contains("Submit").parent().should("not.be.disabled").click();
     insideDialog(() => {
@@ -33,6 +33,6 @@ describe("Tests the submissiong flow of all outstanding NOI", () => {
   it("Tests that NOI tables are properly updated", () => {
     Navigate.gotoNoi();
     cy.contains("You have 0 retail locations that need a Notice of Intent");
-    cy.contains("You have 2 retail locations. You can download/print the Notice of Intent for your Active locations.")
+    cy.contains("You have 4 retail locations. You can download/print the Notice of Intent for your Active locations.")
   })
 })
