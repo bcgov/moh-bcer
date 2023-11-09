@@ -38,13 +38,39 @@ import { UserAction } from "./userAction";
       cy.get(locationFieldNames.phone).type(location.phone);
       cy.get(locationFieldNames.postal).type(location.postal);
       cy.get(locationFieldNames.underage[location.underage]).click();
-      if (location.underage === "other") {
-        cy.get(locationFieldNames.underageOther).type(location.underageOther);
-      }
       /**
        * Missing proper way to fill health authority other atm
        * Should be added when health authority is automatically added with csv upload
        */
+      cy.get(locationFieldNames.manufacturing[location.manufacturing]).click();
+    });
+  }
+
+  static fillManualOnlineLocationForm(location) {
+    cy.get(locationFieldNames.locationType.online).click();
+    cy.get(".MuiDialog-paper").within(() => {
+      cy.get(locationFieldNames.email).type(location.email);
+      cy.get(locationFieldNames.phone).type(location.phone);
+      cy.get(locationFieldNames.doingBusinessAs).type(location.doingBusinessAs);
+      cy.get(locationFieldNames.webpage).type(location.webpage);
+      cy.get(locationFieldNames.manufacturing[location.manufacturing]).click();
+    });
+  }
+
+  static fillManualOnlineAndPhysicalLocationForm(location) {
+    cy.get(locationFieldNames.locationType.both).click();
+    cy.get(locationFieldNames.addressLine1).type(location.addressLine1, {
+      delay: 100,
+    });
+    cy.wait(1000);
+    cy.get('.MuiAutocomplete-popper li[data-option-index="0"]').click();
+    cy.get(".MuiDialog-paper").within(() => {
+      cy.get(locationFieldNames.email).type(location.email);
+      cy.get(locationFieldNames.phone).type(location.phone);
+      cy.get(locationFieldNames.postal).type(location.postal);
+      cy.get(locationFieldNames.doingBusinessAs).type(location.doingBusinessAs);
+      cy.get(locationFieldNames.webpage).type(location.webpage);
+      cy.get(locationFieldNames.underage[location.underage]).click();
       cy.get(locationFieldNames.manufacturing[location.manufacturing]).click();
     });
   }
@@ -114,23 +140,53 @@ export class CheckForm {
       cy.get(locationFieldNames.addressLine1).invoke("attr", "value").then( val => {
         expect(val).to.have.lengthOf.above(2);
       })
-      cy.get(locationFieldNames.phone).should("have.value", location.phone);
       cy.get(locationFieldNames.email).should("have.value", location.email);
+      cy.get(locationFieldNames.phone).should("have.value", location.phone);
       cy.get(locationFieldNames.city).invoke("attr", "value").then(val => {
         expect(val).to.have.lengthOf.above(1);
       })
+      cy.get(locationFieldNames.postal).should("have.value", location.postal);
       cy.get(locationFieldNames.doingBusinessAs).invoke("attr", "value").then(val => {
         expect(val).to.be.oneOf([location.doingBusinessAs || businessInfo.businessName]);
       })
       cy.get(locationFieldNames.underage[location.underage]).should("be.checked");
-      if(location.underage === "other"){
-        cy.get(locationFieldNames.underageOther).should("have.value", location.underageOther)
-      }
       // Missing proper testing for health authority
       // cy.get(locationFieldNames.healthAuthority[location.healthAuthority]).should("be.checked");
       // if(location.healthAuthority === 'other'){
       //   cy.get(locationFieldNames.healthAuthorityOther).should("have.value", location.healthAuthorityOther);
       // }
+      cy.get(locationFieldNames.manufacturing[location.manufacturing]).should("be.checked");
+    })
+  }
+
+  static checkOnlineLocationForm(location){
+    insideDialog(() => {
+      cy.get(locationFieldNames.email).should("have.value", location.email);
+      cy.get(locationFieldNames.phone).should("have.value", location.phone);
+      cy.get(locationFieldNames.doingBusinessAs).invoke("attr", "value").then(val => {
+        expect(val).to.be.oneOf([location.doingBusinessAs || businessInfo.businessName]);
+      })
+      cy.get(locationFieldNames.webpage).should("have.value", location.webpage);
+      cy.get(locationFieldNames.manufacturing[location.manufacturing]).should("be.checked");
+    })
+  }
+
+  static checkOnlineAndPhysicalLocationForm(location){
+    insideDialog(() => {
+      cy.get(locationFieldNames.addressLine1).invoke("attr", "value").then( val => {
+        expect(val).to.have.lengthOf.above(2);
+      })
+      cy.get(locationFieldNames.email).should("have.value", location.email);
+      cy.get(locationFieldNames.phone).should("have.value", location.phone);
+      cy.get(locationFieldNames.city).invoke("attr", "value").then(val => {
+        expect(val).to.have.lengthOf.above(1);
+      })
+      cy.get(locationFieldNames.postal).should("have.value", location.postal);
+      cy.get(locationFieldNames.doingBusinessAs).invoke("attr", "value").then(val => {
+        expect(val).to.be.oneOf([location.doingBusinessAs || businessInfo.businessName]);
+      })
+      cy.get(locationFieldNames.webpage).should("have.value", location.webpage);
+      cy.get(locationFieldNames.underage[location.underage]).should("be.checked");
       cy.get(locationFieldNames.manufacturing[location.manufacturing]).should("be.checked");
     })
   }
