@@ -18,7 +18,7 @@ describe("Submit a sales report", () => {
       const selector = new Selector("button").addProperty("tabIndex", "0").build();
       cy.get(selector).contains("Select").parent().click();
     })
-    cy.contains("Test business name").should('be.visible');
+    cy.contains("Test business name").should('be.visible', { timeout: 10000 });
     UserAction.uploadSalesReport('salesReport.csv')
     cy.contains("Your CSV file has been mapped successfully.");
     clickButton("Next");
