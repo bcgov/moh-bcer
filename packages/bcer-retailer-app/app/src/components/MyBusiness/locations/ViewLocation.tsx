@@ -26,7 +26,7 @@ export default function ViewLocation({
       {allowEdit && (
         <Grid item spacing={1} xs={12}>
           <StyledWarning text="You already submitted the NOI for this location so you can only edit the contact information" />
-          {currentDate.isBefore(feb1st2024) && rowData.location_type !== LocationType.online && <StyledWarning text="You can update your underage option before Feb 1, 2024" />}
+          {currentDate.isBefore(feb1st2024) && rowData.location_type !== LocationType.online && <StyledWarning text="You can update whether persons under 19 years of age are permitted on the sales premise before February 1, 2024" />}
         </Grid>
       )}
       <Grid item container spacing={1} xs={12}>
