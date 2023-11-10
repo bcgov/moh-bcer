@@ -61,6 +61,11 @@ const login = (user) => {
 
 Cypress.Commands.add("kcLogout", function () {
   Cypress.log({ name: "Logout" });
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.window().then(win => {
+    win.location.reload(true);
+  });
   return cy.request({
     url: `${authBaseUrl}/realms/${realm}/protocol/openid-connect/logout`,
   });
