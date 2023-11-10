@@ -13,8 +13,7 @@ jobs:
   tests:
     name: cypress
     runs-on: ubuntu-20.04
-    concurrency: ci-test
-    timeout-minutes: 50
+    timeout-minutes: 80
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -22,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '17'
 
       - name: Install deps
         run: npm install
@@ -41,8 +40,4 @@ jobs:
           record: true
         env:
           CYPRESS_RECORD_KEY: 'f89f5784-9f69-4445-ae27-951ee12a2b9a'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-
-      - name: Sleep for 30 seconds
-        run: sleep 30s
-        shell: bash
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
