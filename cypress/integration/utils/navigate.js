@@ -2,8 +2,11 @@ import { clickButton, Selector } from "./util";
 
 export class Navigate {
   static loginUser(name="user") {
+    cy.log('Starting logout ...');
     cy.kcLogout();
+    cy.log('start login...');
     cy.kcLogin(name);
+    cy.log('login finished...');
   }
 
   static loginRetailer(name) {
@@ -13,6 +16,7 @@ export class Navigate {
 
   static loginPortal(name="admin") {
     this.loginUser(name);
+    cy.log('Starting visit...');
     cy.visit("/portal", { timeout: 20000 })
   }
 
