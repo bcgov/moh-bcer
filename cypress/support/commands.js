@@ -73,7 +73,7 @@ Cypress.Commands.add("kcLogout", function () {
 
 Cypress.Commands.add("kcLogin", (user) => {
   Cypress.log({ name: "Login" });
-  login(user);
+  login(user, { timeout: 20000 });
 });
 
 
