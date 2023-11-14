@@ -42,6 +42,8 @@ const login = (user) => {
         html.innerHTML = response.body;
         let form = html.getElementsByTagName("form")[0];
         let url = form.action;
+        cy.log('Constructed URL:', url);
+        cy.log('Response Body:', response.body);
         return cy.request({
           method: "POST",
           url: url,
@@ -61,11 +63,6 @@ const login = (user) => {
 
 Cypress.Commands.add("kcLogout", function () {
   Cypress.log({ name: "Logout" });
-  cy.clearCookies();
-  cy.clearLocalStorage();
-  cy.window().then(win => {
-    win.location.reload(true);
-  });
   return cy.request({
     url: `${authBaseUrl}/realms/${realm}/protocol/openid-connect/logout`,
   });
@@ -73,7 +70,7 @@ Cypress.Commands.add("kcLogout", function () {
 
 Cypress.Commands.add("kcLogin", (user) => {
   Cypress.log({ name: "Login" });
-  login(user, { timeout: 20000 });
+  login(user);
 });
 
 

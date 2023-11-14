@@ -13,7 +13,7 @@ export class Navigate {
 
   static loginPortal(name="admin") {
     this.loginUser(name);
-    cy.visit("/portal", { timeout: 20000 })
+    cy.visit("/portal")
   }
 
   static openBusinessSubmissionOnFirstLogin() {
