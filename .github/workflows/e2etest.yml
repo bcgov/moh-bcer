@@ -13,6 +13,7 @@ jobs:
   tests:
     name: cypress
     runs-on: ubuntu-20.04
+    concurrency: ci-test
     timeout-minutes: 80
     steps:
       - name: Checkout
