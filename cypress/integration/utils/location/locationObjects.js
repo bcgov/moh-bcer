@@ -90,10 +90,32 @@ export const exampleManualLocations = [
     phone: "2222222222",
     postal: "k0k0k0",
     doingBusinessAs: "",
-    underage: "other",
-    underageOther: "Test underage",
+    underage: "no",
     healthAuthority: "other",
     healthAuthorityOther: "Test health authority",
     manufacturing: "no",
+  }
+]
+
+export const exampleManualOnlineLocation = [
+  {
+    email: "online@test.com",
+    phone: "3333333333",
+    doingBusinessAs: "onlineBusiness",
+    webpage: "www.sampleonlinelocation.com",
+    manufacturing: "no"
+  }
+]
+
+export const exampleManualOnlineandPhysicalLocation = [
+  {
+    addressLine1: "123 ferry",
+    email: "location3@test.com",
+    phone: "4444444444",
+    postal: "a0a0a0",
+    doingBusinessAs: "onlineAndPhysicalBusiness",
+    webpage: "www.sampleonlineandphysicallocation.com",
+    underage: "no",
+    manufacturing: "no"
   }
 ]

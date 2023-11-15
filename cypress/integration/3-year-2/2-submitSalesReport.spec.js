@@ -11,14 +11,14 @@ describe("Submit a sales report", () => {
   })
 
   it("Successfully submits a sales report", () => {
-    cy.contains("You have 2 retail location(s) that are missing Sales Reports");
+    cy.contains("You have 4 retail location(s) that are missing Sales Reports");
     const wrapper = new Selector("tr").addIndex("0").build();
     cy.wait(1000);
     inside(wrapper, () => {
       const selector = new Selector("button").addProperty("tabIndex", "0").build();
       cy.get(selector).contains("Select").parent().click();
     })
-    cy.contains("Test business name");
+    cy.contains("Test business name").should('be.visible', { timeout: 10000 });
     UserAction.uploadSalesReport('salesReport.csv')
     cy.contains("Your CSV file has been mapped successfully.");
     clickButton("Next");

@@ -6,8 +6,10 @@ import {
   LocationTypeLabels,
   StyledTextField,
   StyledWarning,
+  StyledRadioGroup
 } from 'vaping-regulation-shared-components';
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
+import moment from "moment";
 
 export default function ViewLocation({
   rowData,
@@ -16,11 +18,15 @@ export default function ViewLocation({
   rowData: IBusinessLocationValues;
   allowEdit?: boolean;
 }) {
+  {rowData.underage === 'No' ? rowData.underage ='No' : rowData.underage ='Yes'}
+  const feb1st2024 = moment('2024-02-01');
+  const currentDate = moment();
   return (
     <Grid container spacing={3}>
       {allowEdit && (
         <Grid item spacing={1} xs={12}>
           <StyledWarning text="You already submitted the NOI for this location so you can only edit the contact information" />
+          {currentDate.isBefore(feb1st2024) && rowData.location_type !== LocationType.online && <StyledWarning text="You can update whether persons under 19 years of age are permitted on the sales premise before February 1, 2024" />}
         </Grid>
       )}
       <Grid item container spacing={1} xs={12}>
@@ -97,24 +103,31 @@ export default function ViewLocation({
           )}
         </Grid>
       </Grid>
-      <Grid item container spacing={1} xs={12}>
-        <Grid item xs={12}>
-          <Typography variant="subtitle1">
-            Please state if persons under 19 years of age are permitted on the
-            sales premises
-          </Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography variant="subtitle2">Underage Allowed</Typography>
-          <Typography variant="body1">{rowData.underage}</Typography>
-        </Grid>
-        {rowData.underage_other ? (
-          <Grid item xs={6}>
-            <Typography variant="subtitle2">Underage Other Option</Typography>
-            <Typography variant="body2">{rowData.underage_other}</Typography>
+      {(rowData.location_type !== LocationType.online) && (
+        <Grid item container spacing={1} xs={12}>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1">
+              Please state if persons under 19 years of age are permitted on the
+              sales premises
+            </Typography>
           </Grid>
-        ) : null}
-      </Grid>
+          {currentDate.isBefore(feb1st2024)?
+            <Grid item xs={12}>
+                    <StyledRadioGroup
+                      name="underage"
+                      options={[
+                        {label: 'Yes', value: 'Yes'},
+                        {label: 'No', value: 'No'}
+                      ]}
+                    />
+            </Grid>:
+            <Grid item xs={12}>
+              <Typography variant="subtitle2">Underage Allowed</Typography>
+              <Typography variant="body1">{rowData.underage}</Typography>
+            </Grid> 
+          }
+        </Grid>
+      )}
       <Grid item container spacing={1} xs={12}>
         <Grid item xs={12}>
           <Typography variant="subtitle1">

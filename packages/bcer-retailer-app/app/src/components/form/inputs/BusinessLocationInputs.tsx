@@ -78,6 +78,10 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       const haName = HealthAuthorities[values.health_authority.toLowerCase()];
       formikHelpers.setFieldValue('health_authority_display', haName);
     }
+    if(values.underage === 'other'){
+      values.underage ='Yes';
+      values.underage_other ='';
+    }
   }, [])
 
   useEffect(() => {
@@ -246,9 +250,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       <>
       <div className={classes.groupHeader} >
         Please state if persons under 19 years of age are permitted on the sales premises <span style={{color: 'red'}}>*</span>
-        <div className={classes.headerDescription} >
-          If your retail location has unique circumstances surrounding age-restriction, please select "other" and describe in the comment box below.
-        </div>
       </div>
 
       <div className={classes.optionalWrapper} >
@@ -258,12 +259,8 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
             options={[
               {label: 'Yes', value: 'Yes'},
               {label: 'No', value: 'No'},
-              {label: 'Other', value: 'other'}
             ]}
           />
-        </div>
-        <div >
-          {values.underage === 'other' && <StyledTextField name="underage_other" placeholder="Please Specify" fullWidth={false}/>}
         </div>
       </div>      
 
