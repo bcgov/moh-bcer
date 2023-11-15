@@ -8,6 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rm -rf ./dist && tsc -p tsconfig.build.json && tscpaths -p tsconfig.build.json -s ./src -o ./dist",
+    "build:aws": "rm -rf ./dist && tsc -p tsconfig.build.json && tscpaths -p tsconfig.build.json -s ./src -o ./dist",
     "build:pipeline": "set NODE_ENV=production && tsc -p tsconfig.build.json && tscpaths -p tsconfig.build.json -s ./src -o ./dist && copy \"ormconfig.js\" \"dist/ormconfig.js\" && copy \".env.build\" \"dist/.env\" && copy \"package.json\" \"dist/package.json\"",
     "build:prem": "cross-env NODE_ENV=production rm -rf ./dist && tsc -p tsconfig.build.json && tscpaths -p tsconfig.build.json -s ./src -o ./dist && cp ormconfig.js dist/ormconfig.js && cp .env.build dist/.env && cp package.json dist/package.json",
     "build-nest": "nest build",
@@ -18,7 +19,6 @@
     "dev": "nodemon --config nodemon.json",
     "migrate:create": "typeorm migration:generate",
     "migrate:run": "typeorm migration:run",
-    "migrate:start": "typeorm migration:run && node dist/main",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
@@ -107,6 +107,6 @@
     "typedoc": "0.22.10",
     "typescript": "4.5.4",
     "@types/babel__core": "7.1.14",
-    "@types/babel__traverse": "7.0.16"
+    "@types/babel__traverse": "7.0.16" 
   }
 }

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 3001;
+const port = 3000;
 const serveStatic = express.static(`${__dirname}/build`);
 
 const serveGzipped = (contentType) => (req, res, next) => {

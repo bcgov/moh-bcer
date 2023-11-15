@@ -3,7 +3,11 @@ include {
 }
 
 locals {
-  project = get_env("LICENSE_PLATE")
+  #project = get_env("LICENSE_PLATE")
+#   commontags = [
+#     environment = "dev",
+#     application = "fmdb"
+#   ]
 }
 
 generate "sandbox_tfvars" {

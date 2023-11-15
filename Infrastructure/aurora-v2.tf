@@ -3,6 +3,7 @@ resource "random_pet" "bcer_subnet_group_name" {
   length = 2
 }
 
+
 resource "random_password" "bcer_master_password" {
   length           = 16
   special          = true
@@ -29,6 +30,7 @@ resource "aws_db_subnet_group" "bcer_subnet_group" {
   tags = {
     managed-by = "terraform"
   }
+
   tags_all = {
     managed-by = "terraform"
   }
@@ -40,8 +42,7 @@ data "aws_rds_engine_version" "postgresql" {
 }
 
 module "aurora_postgresql_v2" {
-  source  = "terraform-aws-modules/rds-aurora/aws"
-  version = "7.7.1"
+  source = "terraform-aws-modules/rds-aurora/aws"
 
   name              = "${var.bcer_cluster_name}-${var.target_env}"
   engine            = data.aws_rds_engine_version.postgresql.engine
@@ -103,10 +104,6 @@ resource "aws_rds_cluster_parameter_group" "bcer_postgresql13" {
   tags = {
     managed-by = "terraform"
   }
-  parameter {
-    name  = "timezone"
-    value = var.timezone
-  }
 }
 
 resource "random_pet" "master_creds_secret_name" {
@@ -116,6 +113,7 @@ resource "random_pet" "master_creds_secret_name" {
 
 resource "aws_secretsmanager_secret" "bcer_mastercreds_secret" {
   name = random_pet.master_creds_secret_name.id
+
   tags = {
     managed-by = "terraform"
   }
@@ -129,9 +127,6 @@ resource "aws_secretsmanager_secret_version" "bcer_mastercreds_secret_version" {
     "password": "${random_password.bcer_master_password.result}"
    }
 EOF
-  lifecycle {
-    ignore_changes = [secret_string]
-  }
 }
 
 resource "random_password" "bcer_api_password" {
@@ -147,6 +142,7 @@ variable "bcer_api_username" {
   sensitive   = true
 }
 
+
 resource "random_pet" "api_creds_secret_name" {
   prefix = "bcer-api-creds"
   length = 2
@@ -154,6 +150,7 @@ resource "random_pet" "api_creds_secret_name" {
 
 resource "aws_secretsmanager_secret" "bcer_apicreds_secret" {
   name = random_pet.api_creds_secret_name.id
+
   tags = {
     managed-by = "terraform"
   }
@@ -167,7 +164,4 @@ resource "aws_secretsmanager_secret_version" "bcer_apicreds_secret_version" {
     "password": "${random_password.bcer_api_password.result}"
    }
 EOF
-  lifecycle {
-    ignore_changes = [secret_string]
-  }
 }

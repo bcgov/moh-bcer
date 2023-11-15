@@ -17,6 +17,7 @@ services:
       - DB_DATABASE=vaping_regulation_dev
       - DB_USERNAME=vapingregulation
       - DB_PASSWORD=FF52887E21AAA8E87B28B13C155FBCCF6FA10C4C835C94BFA70A54F6000F8128
+      - DB_TEST_DATABASE=nest_api_test
       - DEPLOY_ENV=node-api-dev
       - LOGS_PATH=./../logs
       - MERGE_BRANCH=dev
