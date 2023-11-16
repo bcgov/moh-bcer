@@ -12,5 +12,7 @@ generate "dev_tfvars" {
   app_port = 4000
   fam_console_idp_name = "DEV-IDIR"
   application = "bcer"
+  aurora_acu_min = 0.5
+  aurora_acu_max = 1
   EOF
 }

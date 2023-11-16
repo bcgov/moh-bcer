@@ -11,5 +11,7 @@ generate "prod_tfvars" {
   fargate_cpu = 512
   fargate_memory = 1024
   app_port = 21000
+  aurora_acu_min = 0.5
+  aurora_acu_max = 3
   EOF
 }
