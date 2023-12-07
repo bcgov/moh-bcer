@@ -9,7 +9,7 @@ provider "aws" {
 
 data "aws_acm_certificate" "bcer_certificate" {
   provider    = aws.us-east-1
-  domain      = "bcer-${var.target_env}.hlth.gov.bc.ca"
+  domain      = var.application_url
   statuses    = ["ISSUED"]
   most_recent = true
 }
@@ -46,14 +46,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_root_object = "index.html"
   enabled             = true
   is_ipv6_enabled     = true
-  aliases             = ["bcer-${var.target_env}.hlth.gov.bc.ca"]
-
-  # Configure logging here if required 	
-  #logging_config {
-  #  include_cookies = false
-  #  bucket          = "mylogs.s3.amazonaws.com"
-  #  prefix          = "myprefix"
-  #}
+  aliases             = [var.application_url]
 
   default_cache_behavior {
     target_origin_id       = local.s3_origin_id
@@ -70,6 +63,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     default_ttl = 3600
     max_ttl     = 86400
   }
+
   ordered_cache_behavior {
     path_pattern           = "/retailer*"
     target_origin_id       = aws_s3_bucket.static.id
@@ -83,6 +77,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       function_arn = aws_cloudfront_function.redirect.arn
     }
   }
+
   ordered_cache_behavior {
     path_pattern           = "/portal*"
     target_origin_id       = aws_s3_bucket.static.id
@@ -109,11 +104,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       locations        = ["CA"]
     }
   }
-
-  #   tags = {
-  #     Environment = "development"
-  #     Name        = "my-tag"
-  #   }
 
   viewer_certificate {
     acm_certificate_arn      = data.aws_acm_certificate.bcer_certificate.arn

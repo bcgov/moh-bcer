@@ -74,6 +74,14 @@ variable "application" {
   description = "Application that is being deployed"
 }
 
+variable "application_url" {
+  description = "Domain name of the live and cutover application"
+}
+
+variable "api_url" {
+  description = "Domain name of the live and cutover API"
+}
+
 variable "db_instance_identifier" {
   description = "Identifies the cluster ID of aurora_rds_v2"
   default     = "bcer-cluster"

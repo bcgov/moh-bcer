@@ -1,12 +1,7 @@
 data "aws_acm_certificate" "bcer_api_certificate" {
-  domain      = "bcer-${var.target_env}.api.hlth.gov.bc.ca"
+  domain      = var.api_url
   statuses    = ["ISSUED"]
   most_recent = true
-}
-
-resource "aws_cloudwatch_log_group" "bcer_api_access_logs" {
-  name              = "bcer-${var.target_env}-api-gateway"
-  retention_in_days = 90
 }
 
 module "api_gateway" {
@@ -18,15 +13,8 @@ module "api_gateway" {
   protocol_type          = "HTTP"
   create_api_domain_name = false
 
-  domain_name                              = "bcer-${var.target_env}.api.hlth.gov.bc.ca"
+  domain_name                              = var.api_url
   domain_name_certificate_arn              = data.aws_acm_certificate.bcer_api_certificate.arn
-  default_stage_access_log_destination_arn = aws_cloudwatch_log_group.bcer_api_access_logs.arn
-
-  #   default_route_settings = {
-  #     detailed_metrics_enabled = true
-  #     throttling_burst_limit   = 100
-  #     throttling_rate_limit    = 100
-  #   }
 
   integrations = {
     "ANY /{proxy+}" = {
@@ -37,6 +25,7 @@ module "api_gateway" {
       integration_method = "ANY"
     }
   }
+
   vpc_links = {
     bcer-vpc = {
       name               = "${var.application}-vpc-link"
@@ -44,8 +33,4 @@ module "api_gateway" {
       subnet_ids         = data.aws_subnets.web.ids
     }
   }
-
-  #   tags = {
-  #     Name = "dev-api-new"
-  #   }
 }
