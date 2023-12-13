@@ -25,7 +25,7 @@ on:
 concurrency: ${{ github.event.inputs.environment }}
 
 env:
-  DOCKER_TAGS: ${{ secrets.DOCKER_TAGS }}
+  DOCKER_TAGS: ${{ vars.AWS_ECR_URI }}:${{ vars.DOCKER_TAGS }}
   IMAGE_ID: ${{ secrets.AWS_ECR_URI }}
   IMAGE_NAME: bcer-api
   TFC_WORKSPACE: ${{ github.event.inputs.environment }}
@@ -43,6 +43,8 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     steps:
+      - name: echo DOCKER_TAGS
+        run: echo "$DOCKER_TAGS"
       - name: Checkout
         uses: actions/checkout@v3
         with:
