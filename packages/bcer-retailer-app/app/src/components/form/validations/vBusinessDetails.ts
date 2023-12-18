@@ -32,7 +32,8 @@ export const Validation = yup.object({
   businessName: yup.string().test('length', 'The business name must be less than 100 characters.', val => val?.length <= 100).required('The name of your business is required'),
   addressLine1: yup.string().test('length', 'The address must be less than 100 characters.', val => val?.length <= 100).required('The address of your place of business is required'),
   addressLine2: yup.string().test('length', 'The address must be less than 100 characters.', val => (val?.length <= 100 || val === undefined)),
-  city: yup.string().test('length', 'The city must be less than 50 characters.', val => val?.length <= 50).required('City is a required field'),
+  city: yup.string().test('length', 'The city must be less than 50 characters.', val => val?.length <= 50).required('City is a required field'), 
+  province: yup.string().required('Province is a required field'),
   postal: yup.string()
     .matches(
       /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/,
