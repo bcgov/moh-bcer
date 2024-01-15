@@ -9,7 +9,7 @@ generate "prod_tfvars" {
   contents          = <<-EOF
   fargate_cpu = 512
   fargate_memory = 1024
-  app_port = 13643
+  app_port = 21000
   fam_console_idp_name = "PROD-IDIR"
   application = "bcer"
   application_url = "bcer.hlth.gov.bc.ca"
