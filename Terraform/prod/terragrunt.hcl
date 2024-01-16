@@ -15,6 +15,6 @@ generate "prod_tfvars" {
   application_url      = "bcer.hlth.gov.bc.ca"
   api_url              = "bcer.api.hlth.gov.bc.ca"
   aurora_acu_min       = 0.5
-  aurora_acu_max       = 3
+  aurora_acu_max       = 7
   EOF
 }
