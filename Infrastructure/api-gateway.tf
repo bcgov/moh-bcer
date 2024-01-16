@@ -13,8 +13,8 @@ module "api_gateway" {
   protocol_type          = "HTTP"
   create_api_domain_name = false
 
-  domain_name                              = var.api_url
-  domain_name_certificate_arn              = data.aws_acm_certificate.bcer_api_certificate.arn
+  domain_name                 = var.api_url
+  domain_name_certificate_arn = data.aws_acm_certificate.bcer_api_certificate.arn
 
   integrations = {
     "ANY /{proxy+}" = {
