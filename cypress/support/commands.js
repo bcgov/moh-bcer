@@ -42,6 +42,8 @@ const login = (user) => {
         html.innerHTML = response.body;
         let form = html.getElementsByTagName("form")[0];
         let url = form.action;
+        cy.log('Constructed URL:', url);
+        cy.log('Response Body:', response.body);
         return cy.request({
           method: "POST",
           url: url,
