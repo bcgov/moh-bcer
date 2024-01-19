@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, IsIn } from "class-validator";
+import { IsEnum, IsOptional, IsString, IsIn, IsNumber, Min } from "class-validator";
 import { HealthAuthority } from "src/location/enums/health-authority.enum";
 import { BusinessSearchCategory } from "../enums/businessSearchCategory.enum";
 import { ApiProperty } from "@nestjs/swagger";
@@ -15,11 +15,18 @@ export class SearchDto {
   @IsEnum(HealthAuthority)
   healthAuthority: HealthAuthority;
 
+  @ApiProperty({
+    description: 'Index starts at 1',
+  })
+  @IsNumber()
+  @Min(1)
   @IsOptional()
-  page: number;
+  page?: number = 1;
 
+  @ApiProperty()
+  @IsNumber()
   @IsOptional()
-  pageSize: number;
+  pageSize?: number = 5;
 
   @ApiProperty({
     description: 'ASC or DESC'

@@ -29,6 +29,8 @@ function useBusiness() {
       category: '',
       healthAuthority: user_ha,
       additionalFilter: 'all',
+      page: 0,
+      pageSize: 5
     }    
     
     const filterParams = JSON.parse(localStorage.getItem('searchOptions'));

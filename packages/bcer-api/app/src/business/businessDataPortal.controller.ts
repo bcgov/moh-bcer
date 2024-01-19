@@ -16,6 +16,7 @@ import {
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -120,6 +121,16 @@ export class BusinessDataPortalController {
 
   @ApiOperation({ summary: 'gets paginated business data with report status summary' })
   @HttpCode(HttpStatus.OK)
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'numPerPage',
+    type: Number,
+    required: false,
+  })
   @ApiResponse({ status: HttpStatus.OK, type: String })
   @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
   @AllowAnyRole()
