@@ -30,6 +30,16 @@ function Table({
           pageSizeOptions: [5, 10, 20, 30, 50],
           sorting: true
         }}
+        onChangePage={(page: number) => {
+          onChangeSearch({
+            page: page,
+          });
+        }}
+        onChangeRowsPerPage={(rowsPerPage: number) => {
+          onChangeSearch({
+            pageSize: rowsPerPage,
+          });
+        }}
         onOrderChange={(orderColumn: number, orderDirection: any) => {
           if (orderColumn === -1) {
             onChangeSearch({

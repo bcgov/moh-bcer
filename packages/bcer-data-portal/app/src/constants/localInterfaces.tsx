@@ -430,7 +430,7 @@ export interface BusinessReportStatus {
 
 export type BusinessList = {
   [key in BusinessFilter]: BusinessRO[];
-}&{total: number}
+} & { pageNum: number, total: number };
 
 export interface LocationReportStatus {
   noi: ReportStatus;

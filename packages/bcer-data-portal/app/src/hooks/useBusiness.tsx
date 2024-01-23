@@ -19,6 +19,7 @@ function useBusiness() {
     all: [],
     completed: [],
     notCompleted: [],
+    pageNum: 0,
     total: 0,
   });
 
@@ -48,7 +49,7 @@ function useBusiness() {
 
   const [searchOptions, setSearchOptions] = useState<SearchQueryBuilder>(getInitialState());
 
-  const [{data: businessData, error: businessError, loading: businessLoading}, getBusinesses] = useAxiosGet<{data: BusinessRO[], count: number}>('/data/business/businesses', { manual: true });
+  const [{data: businessData, error: businessError, loading: businessLoading}, getBusinesses] = useAxiosGet<{data: BusinessRO[], pageNum: number, totalRows: number}>('/data/business/businesses', { manual: true });
 
   function onChangeSearch(queryOptions: Partial<SearchQueryBuilder>){
     setSearchOptions({
@@ -71,7 +72,8 @@ function useBusiness() {
         all: businessData.data || [],
         notCompleted,
         completed,
-        total: businessData.count
+        pageNum: businessData.pageNum,
+        total: businessData.totalRows
       })
     }
   }, [businessData])

@@ -187,13 +187,9 @@ export class BusinessService {
     }
 
     if(page && pageSize){
-      qb.offset((page - 1) * pageSize);
-      qb.limit(pageSize);
-    } else{
-      qb.offset(0);
-      qb.limit(5);
+      qb.skip((page - 1) * pageSize);
+      qb.take(pageSize);
     }
-    console.log(qb.printSql());
     const businesses = await qb.getManyAndCount();
     return businesses;
   }

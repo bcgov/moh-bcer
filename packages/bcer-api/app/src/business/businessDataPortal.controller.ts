@@ -127,7 +127,7 @@ export class BusinessDataPortalController {
     required: false,
   })
   @ApiQuery({
-    name: 'numPerPage',
+    name: 'pageSize',
     type: Number,
     required: false,
   })
@@ -135,12 +135,12 @@ export class BusinessDataPortalController {
   @Roles(ROLES.MOH_ADMIN, ROLES.HA_ADMIN)
   @AllowAnyRole()
   @Get('businesses')
-  async listBusinesses(@Query() query: SearchDto): Promise<{data: BusinessRO[], count: number}>{
+  async listBusinesses(@Query() query: SearchDto): Promise<{data: BusinessRO[], pageNum: number, totalRows: number}>{
     let businessIds: string[];
     if(query?.healthAuthority){
       businessIds = await this.businessService.getBusinessIdsForHA(query.healthAuthority);
       if(!businessIds?.length){
-        return {data: [], count: 0};
+        return {data: [], pageNum: 0, totalRows: 0};
       }
     }
     const [businesses, count] = await this.businessService.listBusinesses(query, businessIds);
@@ -150,7 +150,7 @@ export class BusinessDataPortalController {
       b.locations = [];
       return b.toResponseObject();
     });
-    return { data, count}
+    return {data, pageNum: query.page, totalRows: count}
   }
 
   @ApiOperation({ summary: 'gets report/compliance report for all business location' })
