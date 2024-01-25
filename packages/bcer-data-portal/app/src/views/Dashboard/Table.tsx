@@ -7,8 +7,7 @@ import React from 'react';
 import { StyledTable } from 'vaping-regulation-shared-components';
 
 export interface TableProps {
-  data: BusinessRO[],
-  [x: string]: unknown,
+  data: BusinessRO[];
 }
 
 function Table({
@@ -17,6 +16,8 @@ function Table({
 }: TableProps) {
 
   const {
+    totalRowCount,
+    searchOptions,
     onChangeSearch,
   } = useBusiness();
 
@@ -53,6 +54,8 @@ function Table({
             orderDirection: orderDirection.toUpperCase()
           })
         }}
+        page={searchOptions.page}
+        totalCount={totalRowCount}
         {...props}
       />
     </Box>

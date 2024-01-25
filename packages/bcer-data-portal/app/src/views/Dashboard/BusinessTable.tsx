@@ -65,8 +65,6 @@ function BusinessTable({
             {loading ? <LinearProgress /> : <Box pt={0.5}/>}
             <Table
               data={data[values.location]}
-              totalCount={data.total}
-              page={data.pageNum}
             />
           </Form>
         )}

@@ -15,12 +15,11 @@ export enum BusinessFilter {
 function useBusiness() {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
+  const [totalRowCount, setTotalRowCount] = useState(0);
   const [businessList, setBusinessList] = useState<BusinessList>({
     all: [],
     completed: [],
-    notCompleted: [],
-    pageNum: 0,
-    total: 0,
+    notCompleted: []
   });
 
   const getInitialState = () => {
@@ -55,7 +54,7 @@ function useBusiness() {
     setSearchOptions({
       ...searchOptions,
       ...queryOptions,
-    });    
+    });
   }
 
   useEffect(() => {
@@ -68,12 +67,11 @@ function useBusiness() {
     if(businessData?.data){
       const completed = businessData.data?.filter(b => b.reportingStatus?.incompleteReports?.length === 0) || [];
       const notCompleted = businessData.data?.filter(b => b.reportingStatus?.incompleteReports?.length) || [];
+      setTotalRowCount(businessData?.totalRows || 0);
       setBusinessList({
         all: businessData.data || [],
         notCompleted,
         completed,
-        pageNum: businessData.pageNum,
-        total: businessData.totalRows
       })
     }
   }, [businessData])
@@ -98,6 +96,7 @@ function useBusiness() {
 
   return ({
     businessList,
+    totalRowCount,
     businessLoading,
     businessError,
     onChangeSearch,
