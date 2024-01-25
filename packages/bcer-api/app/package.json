@@ -46,7 +46,7 @@
     "axios": "0.24.0",
     "bcryptjs": "2.4.3",
     "class-transformer": "0.5.1",
-    "class-validator": "0.13.2",
+    "class-validator": "0.14.1",
     "crypto": "1.0.1",
     "crypto-js": "4.2.0",
     "csvtojson": "2.0.10",
@@ -76,7 +76,7 @@
     "zlib": "1.0.5"
   },
   "devDependencies": {
-    "@nestjs/cli": "8.1.8",
+    "@nestjs/cli": "10.2.1",
     "@nestjs/schematics": "8.0.5",
     "@nestjs/testing": "8.2.4",
     "@types/babel__core": "7.1.14",

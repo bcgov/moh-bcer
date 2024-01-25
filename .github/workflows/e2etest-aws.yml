@@ -1,18 +1,18 @@
-name: Test Application (e2e)
+name: Test Application (e2e AWS)
 
 on:
-  pull_request:
-    branches:
-      - main
-      - fix-ci
-      - dev-env
-      - test-env
+#  pull_request:
+#    branches:
+#      - main
+#      - fix-ci
+#      - dev-env
+#      - test-env
   workflow_dispatch:
 
 jobs:
   tests:
     name: cypress
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     concurrency: ci-test
     timeout-minutes: 80
     steps:
@@ -37,8 +37,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           wait-on-timeout: 200
-          wait-on: 'http://localhost:3000/retailer, http://localhost:3000/portal'
+          wait-on: 'http://localhost:3000/retailer, http://localhost:3001/portal'
           record: true
         env:
-          CYPRESS_RECORD_KEY: 'd6703994-08d4-4421-b52f-d7f02ee5cff0'
+          CYPRESS_RECORD_KEY: 'f89f5784-9f69-4445-ae27-951ee12a2b9a'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
