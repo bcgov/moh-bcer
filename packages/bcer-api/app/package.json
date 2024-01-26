@@ -101,7 +101,7 @@
     "nodemon": "2.0.15",
     "prettier": "2.5.1",
     "sonarqube-scanner": "2.8.1",
-    "sqlite3": "5.0.2",
+    "sqlite3": "5.1.5",
     "supertest": "6.2.0",
     "ts-jest": "27.1.2",
     "ts-loader": "9.2.6",
