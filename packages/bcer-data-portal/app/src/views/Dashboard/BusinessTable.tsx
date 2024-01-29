@@ -30,17 +30,23 @@ const useStyles = makeStyles((theme) => ({
 export interface BusinessTableProps {
   data: BusinessList;
   loading: boolean;
+  onChangeSearch: Function;
+  totalRowCount: number;
+  searchOptions: SearchQueryBuilder;
 }
 
 function BusinessTable({
   data,
-  loading
+  loading,
+  onChangeSearch,
+  totalRowCount,
+  searchOptions,
 }: BusinessTableProps) {
   const classes = useStyles();
   const initialValues: { location: BusinessFilter } = {
     location: BusinessFilter.All,
   };
-  
+
   return (
     <Box>
       <Formik
@@ -65,6 +71,9 @@ function BusinessTable({
             {loading ? <LinearProgress /> : <Box pt={0.5}/>}
             <Table
               data={data[values.location]}
+              onChangeSearch={onChangeSearch}
+              totalRowCount={totalRowCount}
+              searchOptions={searchOptions}
             />
           </Form>
         )}

@@ -8,18 +8,18 @@ import { StyledTable } from 'vaping-regulation-shared-components';
 
 export interface TableProps {
   data: BusinessRO[];
+  onChangeSearch: Function;
+  totalRowCount: number;
+  searchOptions: SearchQueryBuilder;
 }
 
 function Table({
   data,
+  onChangeSearch,
+  totalRowCount,
+  searchOptions,
   ...props
 }: TableProps) {
-
-  const {
-    totalRowCount,
-    searchOptions,
-    onChangeSearch,
-  } = useBusiness();
 
   return (
     <Box>

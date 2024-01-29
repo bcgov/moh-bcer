@@ -25,9 +25,10 @@ function Dashboard() {
     businessList,
     businessLoading,
     onChangeSearch,
-    clearAllFilters
+    clearAllFilters,
+    totalRowCount,
+    searchOptions
   } = useBusiness();
-
   return (
     <Page title='Dashboard' error={!businessLoading && !config.permissions.MANAGE_LOCATIONS}>
       <Paper variant="outlined" className={classes.box}>
@@ -42,6 +43,9 @@ function Dashboard() {
         <BusinessTable
           data={businessList}
           loading={businessLoading}
+          onChangeSearch={onChangeSearch}
+          totalRowCount={totalRowCount}
+          searchOptions={searchOptions}
         />
       </Paper>
     </Page>
