@@ -186,7 +186,6 @@ export class BusinessService {
       qb.andWhere('business.id IN (:...businessIds)', { businessIds })
     }
 
-    console.log(page)
     if(page && pageSize){
       qb.offset((page - 1) * pageSize);
       qb.limit(pageSize);
