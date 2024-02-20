@@ -186,14 +186,12 @@ export class BusinessService {
       qb.andWhere('business.id IN (:...businessIds)', { businessIds })
     }
 
-    if(page && pageSize){
-      qb.offset((page - 1) * pageSize);
-      qb.limit(pageSize);
-    } else{
-      qb.offset(0);
-      qb.limit(5);
-    }
-    console.log(qb.printSql());
+    console.log(page);
+    //if(page && pageSize){
+    //qb.offset((page - 1) * pageSize);
+    qb.offset((20 - 1) * pageSize);
+    qb.limit(pageSize);
+    //}
     const businesses = await qb.getManyAndCount();
     return businesses;
   }
