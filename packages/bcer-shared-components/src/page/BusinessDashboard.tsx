@@ -1,56 +1,71 @@
 import { ReportStatus } from '@/constants/enums/genericEnums';
+import { styled } from '@mui/material/styles';
 import {
   BusinessReportStatus,
   LocationReportStatus,
   LocationRO,
 } from '@/constants/interfaces/genericInterfaces';
 import { BusinessDashboardUtil } from '@/util/businessDashboard.util';
-import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, makeStyles, Paper, Typography } from '@mui/material';
 import React from 'react';
 import { StyledStatusMessage, StyledTable, StyledTextWithStatusIcon } from '..';
 
-export type BusinessDashboardProps = {
-  data: { locations: LocationRO[]; overview: BusinessReportStatus };
-  loading?: boolean;
-  showOverview?: boolean;
-  showStatusMessage?: boolean;
-  isRetailerPortal?: boolean;
-  renderAddress: (l: Partial<LocationRO>) => React.ReactNode;
+const PREFIX = 'BusinessDashboard';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  title: `${PREFIX}-title`,
+  retailerLegend: `${PREFIX}-retailerLegend`,
+  legendTitle: `${PREFIX}-legendTitle`,
+  legendItem: `${PREFIX}-legendItem`,
+  retailerText: `${PREFIX}-retailerText`,
+  locationReportStatWrap: `${PREFIX}-locationReportStatWrap`
 };
 
-const useStyles = makeStyles((theme) => ({
-  box: {
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
   },
-  title: {
+
+  [`& .${classes.title}`]: {
     fontWeight: 'bold',
     fontSize: '17px',
   },
-  retailerLegend: {
+
+  [`& .${classes.retailerLegend}`]: {
     display: 'flex',
     border: '1px solid #CDCED2',
     borderRadius: '4px',
     padding: '12px 18px',
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       display: 'block',
     }
   },
-  legendTitle: {
+
+  [`& .${classes.legendTitle}`]: {
     fontWeight: 600
   },
-  legendItem: {
+
+  [`& .${classes.legendItem}`]: {
     display: 'flex',
     paddingLeft: '30px',
     color: '#333333',
     fontSize: '14px'
   },
-  retailerText: {
+
+  [`& .${classes.retailerText}`]: {
     fontSize: '16px'
   },
-  locationReportStatWrap: {
-    [theme.breakpoints.down('xs')]: {
+
+  [`& .${classes.locationReportStatWrap}`]: {
+    [theme.breakpoints.down('sm')]: {
       '& th': {
         whiteSpace: 'pre-wrap !important',
         textAlign: 'center',
@@ -63,6 +78,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+export type BusinessDashboardProps = {
+  data: { locations: LocationRO[]; overview: BusinessReportStatus };
+  loading?: boolean;
+  showOverview?: boolean;
+  showStatusMessage?: boolean;
+  isRetailerPortal?: boolean;
+  renderAddress: (l: Partial<LocationRO>) => React.ReactNode;
+};
+
 export function BusinessDashboard({
   data,
   loading,
@@ -71,7 +95,7 @@ export function BusinessDashboard({
   renderAddress,
   isRetailerPortal = false
 }: BusinessDashboardProps) {
-  const classes = useStyles();
+
   let outstanding: LocationRO[] = [];
   let completed: LocationRO[] = [];
   let missingSales = 0;
@@ -114,7 +138,7 @@ export function BusinessDashboard({
             <BusinessOverview data={data.overview} missingSales={missingSales}/>
           )}
           {!!outstanding.length && 
-            <>
+            <Root>
               <Box pt={2} pb={1} > 
                 <ReportStatusLegend />
               </Box>
@@ -131,7 +155,7 @@ export function BusinessDashboard({
                   do it automatically on October 1st.
                 </Typography>
               }
-            </>
+            </Root>
           }
         </Paper>
       
@@ -263,7 +287,7 @@ export function LocationCompletedReportTable({
 }
 
 export function ReportStatusLegend() {
-  const classes = useStyles();
+
 
   return (
     <Box className={classes.retailerLegend}>
@@ -291,7 +315,7 @@ export function ReportStatusLegend() {
 }
 
 export function LocationReportStatusTable({status, loading}: {status: LocationReportStatus, loading?: boolean}){
-  const classes = useStyles();
+
   return(
     <>
       <Box py={1}>

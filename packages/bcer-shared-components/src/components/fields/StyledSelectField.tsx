@@ -1,8 +1,7 @@
 
 import React, { ReactElement, Fragment } from 'react';
 import { Field } from 'formik'
-import { TextField, MenuItem, styled } from '@material-ui/core';
-
+import { TextField, MenuItem, styled } from '@mui/material';
 import { InputFieldLabel } from '@/components/generic';
 import { SelectInputProps, SelectOptionProps, StyledSelectProps } from '@/constants/interfaces/inputInterfaces';
 
@@ -79,6 +78,7 @@ function SelectInput ({
           value={value || ''}
           {...fieldRest}
           {...props}
+          as="div" // Explicitly define 'as' prop as 'div'
         >
           <StyledMenuItem value="" disabled>Please Select</StyledMenuItem>
           {
@@ -97,6 +97,7 @@ function SelectInput ({
           value={value || ''}
           {...fieldRest}
           {...props}
+          as="div" // Explicitly define 'as' prop as 'div'
         >
           <StyledMenuItem value="" disabled>Please Select</StyledMenuItem>
           {

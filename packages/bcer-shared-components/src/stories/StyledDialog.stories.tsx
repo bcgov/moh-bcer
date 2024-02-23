@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Select, DialogProps, MenuItem } from '@material-ui/core';
+import { Select, DialogProps, MenuItem } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -29,14 +29,14 @@ export const Dialog = () => {
         acceptHandler={() => window.alert('accepted')}
       >
         <Select
+          variant="standard"
           autoFocus
           value={maxWidth}
           onChange={handleMaxWidthChange}
           inputProps={{
             name: 'max-width',
             id: 'max-width',
-          }}
-        >
+          }}>
           <MenuItem value={false as any}>false</MenuItem>
           <MenuItem value="xs">xs</MenuItem>
           <MenuItem value="sm">sm</MenuItem>
@@ -48,7 +48,7 @@ export const Dialog = () => {
 
       <StyledButton variant="contained" onClick={() => setOpen(true)}>Click to open dialog</StyledButton>
     </div>
-  )
+  );
 }
 export const FormDialog = () => {
   const [isOpen, setOpen] = useState<boolean>(false);

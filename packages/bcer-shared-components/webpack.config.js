@@ -1,4 +1,3 @@
-
 const path = require('path')
 const { merge } = require('webpack-merge');
 const SRC_PATH = path.join(__dirname, 'src')
@@ -15,7 +14,9 @@ const PATH_ALIASES = {
   'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
   'formik': path.resolve(__dirname, './node_modules/formik'), 
   '@material-ui': path.resolve(__dirname, './node_modules/@material-ui'), 
+  '@mui': path.resolve(__dirname, './node_modules/@mui'), 
   'assets': path.resolve(__dirname, 'src', 'assets'),
+  '@types': path.resolve(__dirname, './node_modules/@types'),
 };
 
 const commonConfig = merge([
@@ -60,6 +61,24 @@ const commonConfig = merge([
         commonjs2: "jspdf",          
         amd: "jspdf",          
         root: "jspdf"
+      },
+      "@mui/icons-material": {
+        commonjs: "@mui/icons-material",          
+        commonjs2: "@mui/icons-material",          
+        amd: "@mui/icons-materials",          
+        root: "@mui/icons-material"
+      },
+      "@mui/lab": {
+        commonjs: "@mui/lab",          
+        commonjs2: "@mui/lab",          
+        amd: "@mui/lab",          
+        root: "@mui/lab"
+      },
+      "@mui/material": {
+        commonjs: "@mui/material",          
+        commonjs2: "@mui/material",          
+        amd: "@mui/material",
+        root: "@mui/material"
       },
       "@material-ui/icons": {
         commonjs: "@material-ui/icons",          
@@ -119,6 +138,7 @@ module.exports = () => {
           use: [
             {
               loader: require.resolve('awesome-typescript-loader'),
+              // loader: require.resolve('ts-loader'),
               options: {
                 configFileName: './tsconfig.json'
               }

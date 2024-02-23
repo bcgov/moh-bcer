@@ -1,24 +1,25 @@
 
 import React, { ReactElement } from 'react';
-import {  } from '@material-ui/styles';
-import { 
-  styled,
-  makeStyles, 
-  Stepper,
-  Step, 
-  StepLabel, 
-  StepIconProps, 
-  StepConnector 
-} from '@material-ui/core';
-
+import { styled, Stepper, Step, StepLabel, StepIconProps, StepConnector } from '@mui/material';
 import { StyledStepperProps, StepperStepProps } from '@/constants/interfaces/stepperInterfaces';
 
-const useStyles = makeStyles({
-  stepperGroup: {
+const PREFIX = 'StyledStp';
+
+const classes = {
+  stepperGroup: `${PREFIX}-stepperGroup`,
+  stepLabel: `${PREFIX}-stepLabel`,
+  activeIconWrapper: `${PREFIX}-activeIconWrapper`,
+  activeIcon: `${PREFIX}-activeIcon`,
+  inactiveIconWrapper: `${PREFIX}-inactiveIconWrapper`,
+  inactiveIcon: `${PREFIX}-inactiveIcon`
+};
+
+const StyledStp = styled(Stepper)({
+  [`&.${classes.stepperGroup}`]: {
     backgroundColor: 'transparent',
     padding: '0px 0px 30px 0px',
   },
-  stepLabel: {
+  [`& .${classes.stepLabel}`]: {
     alignItems: 'flex-start',
     '& .MuiStepLabel-label': {
       color: '#424242',
@@ -31,7 +32,7 @@ const useStyles = makeStyles({
       },
     }
   },
-  activeIconWrapper: {
+  [`& .${classes.activeIconWrapper}`]: {
     display: 'flex',
     width: '50px',
     height: "50px",
@@ -40,10 +41,10 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  activeIcon: {
+  [`& .${classes.activeIcon}`]: {
     color: '#fff'
   },
-  inactiveIconWrapper: {
+  [`& .${classes.inactiveIconWrapper}`]: {
     display: 'flex',
     width: '46px',
     height: "46px",
@@ -53,7 +54,7 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  inactiveIcon: {
+  [`& .${classes.inactiveIcon}`]: {
     color: '#0053A4'
   }
 });
@@ -79,8 +80,6 @@ const StyledStepConnector = styled(StepConnector)({
  * @returns object of type ReactElement - the step icon based on props.active state
  */
 function getStepIcon(props: StepIconProps, step: StepperStepProps) {
-  const classes = useStyles();
-
   const { active } = props;
   const StepIcon = step.icon;
 
@@ -110,10 +109,8 @@ activeStep,
 steps,
 ...props
 }: StyledStepperProps):ReactElement {
-  const classes = useStyles({});
-
   return (
-    <Stepper 
+    <StyledStp 
       alternativeLabel
       className={classes.stepperGroup}
       activeStep={activeStep} 
@@ -132,6 +129,6 @@ steps,
           </Step>
         ))
       }
-    </Stepper>
+    </StyledStp>
   );
 }

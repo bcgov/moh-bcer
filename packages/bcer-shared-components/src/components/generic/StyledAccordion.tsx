@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, AccordionProps, Typography } from '@material-ui/core'
-import { styled } from '@material-ui/styles';
-import { ArrowForwardIosSharp, DeleteOutline, EditSharp, SearchOutlined } from '@material-ui/icons';
+import { Accordion, AccordionDetails, AccordionSummary, AccordionProps, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles';
+import { ArrowForwardIosSharp, DeleteOutline, EditSharp, SearchOutlined } from '@mui/icons-material';
 import { AccordionGroupProps, StyledAccordionSummaryProps, AccordionSingleProps } from '@/constants/interfaces/genericInterfaces';
 import { Form, Formik } from 'formik';
 import { StyledTextField } from '../fields';

@@ -1,19 +1,22 @@
 
 import React, { ReactElement, Fragment, ChangeEvent } from 'react';
 import { Field, ErrorMessage } from 'formik'
-import { 
-  styled,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  makeStyles
-} from '@material-ui/core';
-
+import { styled, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import { InputFieldLabel, InputFieldError } from '@/components/generic';
 import { RadioGroupInputProps, StyledRadioProps } from '@/constants/interfaces/inputInterfaces';
 
-const useStyles = makeStyles({
-  icon: {
+const PREFIX = 'StyledRadioGroup';
+
+const classes = {
+  icon: `${PREFIX}-icon`,
+  checkedIcon: `${PREFIX}-checkedIcon`,
+  emptyHelper: `${PREFIX}-emptyHelper`
+};
+
+const StyledField
+ = styled(Field
+)({
+  [`& .${classes.icon}`]: {
     borderRadius: '50%',
     width: 24,
     height: 24,
@@ -27,7 +30,7 @@ const useStyles = makeStyles({
       background: 'rgba(206,217,224,.5)',
     },
   },
-  checkedIcon: {
+  [`& .${classes.checkedIcon}`]: {
     boxShadow: 'none',
     backgroundColor: '#0053A4',
     backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
@@ -42,16 +45,15 @@ const useStyles = makeStyles({
       backgroundColor: '#2e6ead',
     },
   },
-  emptyHelper: {
+  [`& .${classes.emptyHelper}`]: {
     height: '22px'
   }
-})
+});
 
 const StyledGroup = styled(RadioGroup)({
 });
 
 const StyledControlLabel = styled(FormControlLabel)({
-
 });
 
 const StyledControl = styled(Radio)({
@@ -71,7 +73,7 @@ function GroupedRadioButtons ({
   additionalChange,
   ...props
 }: RadioGroupInputProps):ReactElement {
-  const classes = useStyles();
+
 
   const touched = form.touched[field.name];
   const error = form.errors[field.name];
@@ -96,6 +98,7 @@ function GroupedRadioButtons ({
         {...field}
         {...props}
         onChange={handleChange}
+        as="div"
       >
         {options.map((option: any) => (
           <StyledControlLabel

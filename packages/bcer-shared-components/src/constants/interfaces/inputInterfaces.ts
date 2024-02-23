@@ -1,6 +1,6 @@
 import { FormikProps, FieldAttributes } from "formik";
-import { TextFieldProps, RadioGroupProps, CheckboxProps} from "@material-ui/core";
-import { DatePickerProps } from '@material-ui/pickers';
+import { DatePickerProps } from '@mui/lab/DatePicker';
+import { TextFieldProps, RadioGroupProps, CheckboxProps } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
 
 export interface TextInputProps {
@@ -106,12 +106,12 @@ export interface ContextProps {
 }
 
 export interface DtPickerProps {
-  field: FieldAttributes<DatePickerProps>;
+  field: FieldAttributes<Date>;
   form: FormikProps<FormData>;
   name: string;
   label: string;
-  props: DatePickerProps;
+  props: DatePickerProps<Date>;
   disabled?: boolean;
-  minDate?: Date,
-  maxDate?: Date,
+  minDate?: Date;
+  maxDate?: Date;
 }

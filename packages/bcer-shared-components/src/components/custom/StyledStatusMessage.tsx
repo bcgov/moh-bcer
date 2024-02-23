@@ -1,20 +1,31 @@
-import { Box, makeStyles } from '@material-ui/core';
+import { Box, makeStyles } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import React from 'react';
 import { StyledErrorIcon, StyledSuccessIcon } from '../icons';
 
 
-const useStyles = makeStyles(() => ({
-  error: {
+const PREFIX = 'StyledStatusMessage';
+
+const classes = {
+  error: `${PREFIX}-error`,
+  warning: `${PREFIX}-warning`,
+  success: `${PREFIX}-success`
+};
+
+const StyledBox = styled(Box)(() => ({
+  [`& .${classes.error}`]: {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#FF534A',
   },
-  warning: {},
-  success: {
+
+  [`& .${classes.warning}`]: {},
+
+  [`& .${classes.success}`]: {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#2E8540',
-  },
+  }
 }));
 
 export interface StyledStatusMessage {
@@ -23,7 +34,7 @@ export interface StyledStatusMessage {
 }
 
 export function StyledStatusMessage({ status, message }: StyledStatusMessage) {
-  const classes = useStyles();
+
   let backgroundColor = 'none';
   switch (status) {
     case 'error':
@@ -38,12 +49,12 @@ export function StyledStatusMessage({ status, message }: StyledStatusMessage) {
       break;
   }
   return (
-    <Box display={'flex'} alignItems={'center'} bgcolor={backgroundColor} p={1.5} >
+    <StyledBox display={'flex'} alignItems={'center'} bgcolor={backgroundColor} p={1.5} >
       {status === 'error' && <StyledErrorIcon />}
       {status === 'success' && <StyledSuccessIcon />}
       {status === 'warning' && <span>Not Implemented</span>}
       <Box p={0.5}/>
       <Box className={classes[status]}>{message}</Box>
-    </Box>
+    </StyledBox>
   );
 }

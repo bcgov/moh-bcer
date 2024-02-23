@@ -1,22 +1,27 @@
 import { InputFieldError } from '@/components/generic';
+import { styled } from '@mui/material/styles';
 import {
   CheckboxInputProps,
   StyledCheckboxProps,
 } from '@/constants/interfaces/inputInterfaces';
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  makeStyles,
-} from '@material-ui/core';
+import { Checkbox, FormControl, FormControlLabel } from '@mui/material';
 import { ErrorMessage, Field } from 'formik';
 import React, { Fragment, ReactNode } from 'react';
 
-const useStyles = makeStyles({
-  emptyHelper: {
+const PREFIX = 'StyledCheckedInput';
+
+const classes = {
+  emptyHelper: `${PREFIX}-emptyHelper`,
+  formControl: `${PREFIX}-formControl`
+};
+
+const StyledField
+ = styled(Field
+)({
+  [`& .${classes.emptyHelper}`]: {
     height: '22px',
   },
-  formControl: {
+  [`& .${classes.formControl}`]: {
     fontSize: '14px',
     '& .MuiIconButton-colorSecondary': {
       '&:hover': {
@@ -40,7 +45,7 @@ function CheckboxInput({
   showError,
   ...props
 }: CheckboxInputProps): ReactNode {
-  const classes = useStyles();
+
 
   const touched = form.touched[fieldRest.name];
   const error = form.errors[fieldRest.name];

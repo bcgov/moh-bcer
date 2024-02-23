@@ -1,10 +1,18 @@
-import React, { Children } from 'react';
-import { Box, makeStyles } from '@material-ui/core';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import React from 'react';
+import { styled } from '@mui/material/styles';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const useStyle = makeStyles(() => ({
-  root: {
+const PREFIX = 'StyledIcons';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  error: `${PREFIX}-error`,
+  success: `${PREFIX}-success`
+};
+
+const Root = styled('span')(() => ({
+  [`& .${classes.root}`]: {
     justifyContent: 'center',
     alignItems: 'center',
     color: '#fff',
@@ -13,28 +21,28 @@ const useStyle = makeStyles(() => ({
     height: '48px',
     borderRadius: '4px'
   },
-  error: {
+
+  [`& .${classes.error}`]: {
     backgroundColor: 'red',
   },
-  success: {
+
+  [`& .${classes.success}`]: {
     backgroundColor: '#2E8540'
   }
-}))
+}));
 
 export function StyledErrorIcon() {
-  const classes = useStyle();
   return (
-    <span className={`${classes.root} ${classes.error}`}>
-      <ErrorOutlineIcon />
-    </span>
+    <Root className={classes.error}>
+      <ErrorOutlineIcon className={classes.root} />
+    </Root>
   );
 }
 
 export function StyledSuccessIcon() {
-  const classes = useStyle();
   return (
-    <span className={`${classes.root} ${classes.success}`}>
-      <CheckCircleIcon />
-    </span>
+    <Root className={classes.success}>
+      <CheckCircleIcon className={classes.root} />
+    </Root>
   )
 }

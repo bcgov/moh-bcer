@@ -1,4 +1,5 @@
-import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
+import { Checkbox, FormControlLabel, makeStyles } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { Fragment, ReactElement } from 'react';
 import * as yup from 'yup';
@@ -7,11 +8,21 @@ import { StyledCheckboxProps, CheckboxInputProps } from '@/constants/interfaces/
 import { StyledDialog } from '@/index';
 import { StyledConfirmDialogProps } from '@/constants/interfaces/dialogInterfaces';
 
-const useStyles = makeStyles({
-  emptyHelper: {
+const PREFIX = 'StyledConfirmDialog';
+
+const classes = {
+  emptyHelper: `${PREFIX}-emptyHelper`,
+  formControl: `${PREFIX}-formControl`,
+  contentWrapper: `${PREFIX}-contentWrapper`
+};
+
+const StyledField
+ = styled(Field
+)({
+  [`& .${classes.emptyHelper}`]: {
     height: '22px'
   },
-  formControl:{
+  [`& .${classes.formControl}`]: {
     paddingTop: '15px',
     fontSize: '14px',
     '& .MuiIconButton-colorSecondary':{
@@ -27,12 +38,12 @@ const useStyles = makeStyles({
       color: '#0053A4'
     },
   },
-  contentWrapper:{
+  [`& .${classes.contentWrapper}`]: {
     display: 'flex',
     flexDirection: 'column',
     fontSize: '16px'
   },
-})
+});
 
 function CheckboxInput ({
   field: { value, ...fieldRest },
@@ -41,7 +52,7 @@ function CheckboxInput ({
   disabled,
   ...props
 }: CheckboxInputProps):ReactElement {
-  const classes = useStyles();
+
 
   const touched = form.touched[fieldRest.name];
   const error = form.errors[fieldRest.name];
@@ -92,7 +103,7 @@ export function StyledConfirmDialog(
     acceptButtonText,
     ...props
   }: StyledConfirmDialogProps): ReactElement {
-    const classes = useStyles();
+
 
   return (
     <Formik

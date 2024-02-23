@@ -1,6 +1,6 @@
 
 import React, { ReactElement } from 'react';
-import { DialogActions, styled } from '@material-ui/core';
+import { DialogActions, styled } from '@mui/material';
 import { useFormikContext } from 'formik';
 
 import { StyledButton } from '@/index';

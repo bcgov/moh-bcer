@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { makeStyles, Typography } from '@mui/material';
 import { StyledHeaderMapperProps } from '@/constants/interfaces/inputInterfaces';
 import { Formik, Form } from 'formik';
 import { StyledSelectField } from '@/index';
@@ -7,42 +8,56 @@ import * as Yup from 'yup';
 import { StyledButton } from '@/index';
 
 
-const useStyles = makeStyles({
-  header: {
+const PREFIX = 'StyledHeaderMapper';
+
+const classes = {
+  header: `${PREFIX}-header`,
+  headerText: `${PREFIX}-headerText`,
+  requiredColumn: `${PREFIX}-requiredColumn`,
+  csvHeaderColumn: `${PREFIX}-csvHeaderColumn`,
+  previewColumn: `${PREFIX}-previewColumn`,
+  mapRow: `${PREFIX}-mapRow`,
+  rowText: `${PREFIX}-rowText`,
+  actionWrapper: `${PREFIX}-actionWrapper`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.header}`]: {
     display: 'flex',
     borderBottom: '2px solid #F5A623',
     padding: '20px',
 
   },
-  headerText: {
+  [`& .${classes.headerText}`]: {
     color: '#002C71',
     fontWeight: 600
   },
-  requiredColumn: {
+  [`& .${classes.requiredColumn}`]: {
     width: '290px',
     paddingRight: '20px'
   },
-  csvHeaderColumn: {
+  [`& .${classes.csvHeaderColumn}`]: {
     width: '235px',
     marginRight: '20px'
     
   },
-  previewColumn: {
+  [`& .${classes.previewColumn}`]: {
     width: '190px',
   },
-  mapRow: {
+  [`& .${classes.mapRow}`]: {
     display: 'flex',
     padding: '20px 20px 0px 20px'
   },
-  rowText: {
+  [`& .${classes.rowText}`]: {
     color: '#333333'
   },
-  actionWrapper: {
+  [`& .${classes.actionWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '16px'
   }
-})
+});
 
 // THIS IS WIP
 // const ContextHandler = ({setOptionsHandler, stateOptions}: ContextProps ): null => {
@@ -80,7 +95,7 @@ const useStyles = makeStyles({
  * @returns ReactElement component
  */
 export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapCallback, cancelHandler}: StyledHeaderMapperProps) {
-  const classes = useStyles();
+
   const [initialValues] = useState<Object>({});
   const [options] = useState(providedHeaders.map(h => ({value: h, label: h})));
   const [validationSchema, setValidationSchema] = useState<Yup.ObjectSchema<any | undefined>>();
@@ -101,49 +116,49 @@ export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapC
     updateMapCallback(values)
   }
 
-  return(
-    <>
-    {
-      validationSchema !== undefined && initialValues !== undefined
-        ?
-        <Formik 
-          onSubmit={values => testHandler(values)}
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-        >
-          <Form>
-            <div className={classes.header}>
-              <Typography variant='body2' className={`${classes.headerText} ${classes.requiredColumn}`}>Required field in our system</Typography>
-              <Typography variant='body2' className={`${classes.headerText} ${classes.csvHeaderColumn}`}>Field from your CSV file</Typography>
-            </div>
-            {
-              keys.map((header: string, index: number) => (
-                <>
-                  <div key={index} className={classes.mapRow}>
-                    <Typography variant='body1' className={`${classes.requiredColumn} ${classes.rowText}`}>
-                      {values[index]}
-                    </Typography>
-                    <div className={classes.csvHeaderColumn}>
-                      <StyledSelectField name={header} label='' options={options} />
-                    </div>
-                  </div>
-                </>
-              ))
-            }
-            <div className={classes.actionWrapper}>
+  return (
+    (<Root>
+      {
+        validationSchema !== undefined && initialValues !== undefined
+          ?
+          <Formik 
+            onSubmit={values => testHandler(values)}
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+          >
+            <Form>
+              <div className={classes.header}>
+                <Typography variant='body2' className={`${classes.headerText} ${classes.requiredColumn}`}>Required field in our system</Typography>
+                <Typography variant='body2' className={`${classes.headerText} ${classes.csvHeaderColumn}`}>Field from your CSV file</Typography>
+              </div>
               {
-                cancelHandler
-                  ?
-                    <StyledButton variant='outlined' onClick={() => cancelHandler()}>Cancel</StyledButton>
-                  : null
+                keys.map((header: string, index: number) => (
+                  <>
+                    <div key={index} className={classes.mapRow}>
+                      <Typography variant='body1' className={`${classes.requiredColumn} ${classes.rowText}`}>
+                        {values[index]}
+                      </Typography>
+                      <div className={classes.csvHeaderColumn}>
+                        <StyledSelectField name={header} label='' options={options} />
+                      </div>
+                    </div>
+                  </>
+                ))
               }
-              <StyledButton variant='contained' type='submit'>Map Headers</StyledButton>
-            </div>
-            {/* <ContextHandler setOptionsHandler={setOptions} stateOptions={options}/> */}
-          </Form>
-        </Formik>
-      : null
-    }
-    </>
-  )
+              <div className={classes.actionWrapper}>
+                {
+                  cancelHandler
+                    ?
+                      <StyledButton variant='outlined' onClick={() => cancelHandler()}>Cancel</StyledButton>
+                    : null
+                }
+                <StyledButton variant='contained' type='submit'>Map Headers</StyledButton>
+              </div>
+              {/* <ContextHandler setOptionsHandler={setOptions} stateOptions={options}/> */}
+            </Form>
+          </Formik>
+        : null
+      }
+    </Root>)
+  );
 }

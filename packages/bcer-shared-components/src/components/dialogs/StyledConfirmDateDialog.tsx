@@ -1,24 +1,35 @@
-import { Checkbox, FormControlLabel, makeStyles, TextField } from '@material-ui/core';
+import { Checkbox, FormControlLabel, makeStyles, TextField } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { Fragment, ReactElement, useState } from 'react';
 import * as yup from 'yup';
 import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
 import { InputFieldError } from '../generic';
 import { StyledCheckboxProps, CheckboxInputProps, DtPickerProps, StyledDatePickerProps } from '@/constants/interfaces/inputInterfaces';
 import { StyledDialog } from '@/index';
 import { StyledConfirmDateDialogProps, StyledConfirmDialogProps } from '@/constants/interfaces/dialogInterfaces';
 
 
-const useStyles = makeStyles({
-  emptyHelper: {
+const PREFIX = 'StyledConfirmDateDialog';
+
+const classes = {
+  emptyHelper: `${PREFIX}-emptyHelper`,
+  formControl: `${PREFIX}-formControl`,
+  contentWrapper: `${PREFIX}-contentWrapper`,
+  root: `${PREFIX}-root`,
+  picker: `${PREFIX}-picker`,
+  icon: `${PREFIX}-icon`
+};
+
+const StyledField
+ = styled(Field
+)({
+  [`& .${classes.emptyHelper}`]: {
     height: '22px'
   },
-  formControl:{
+  [`& .${classes.formControl}`]: {
     paddingTop: '15px',
     fontSize: '14px',
     '& .MuiIconButton-colorSecondary':{
@@ -34,12 +45,12 @@ const useStyles = makeStyles({
       color: '#0053A4'
     },
   },
-  contentWrapper:{
+  [`& .${classes.contentWrapper}`]: {
     display: 'flex',
     flexDirection: 'column',
     fontSize: '16px'
   },
-  root: {
+  [`& .${classes.root}`]: {
     backgroundColor: '#F5F5F5',
     height: '58px',
     width: '100%',
@@ -49,17 +60,17 @@ const useStyles = makeStyles({
     },
     cursor: 'pointer',
   },
-  picker: {
+  [`& .${classes.picker}`]: {
     color: '#535353',
     fontSize: '16px',
     marginLeft: '9px',
     minWidth: '56px',
-    height: '19px',
+    height: '19px'
   },
-  icon: {
+  [`& .${classes.icon}`]: {
     color: 'white',
   },
-})
+});
 
 function CheckboxInput ({
   field: { value, ...fieldRest },
@@ -68,7 +79,6 @@ function CheckboxInput ({
   disabled,
   ...props
 }: CheckboxInputProps):ReactElement {
-  const classes = useStyles();
 
   const touched = form.touched[fieldRest.name];
   const error = form.errors[fieldRest.name];
@@ -122,7 +132,7 @@ export function StyledConfirmDateDialog(
     minDate,
     ...props
   }: StyledConfirmDateDialogProps): ReactElement {
-    const classes = useStyles();
+
 
   return (
     <Formik
@@ -198,7 +208,7 @@ function StyledCheckbox ({
 
 
 const TextFieldComponent = (props: any) => {
-  return <TextField {...props} disabled={true} />;
+  return <TextField variant="standard" {...props} disabled={true} />;
 };
 
 function DtPicker ({
@@ -208,7 +218,6 @@ function DtPicker ({
   disabled,
   ...props
 }: DtPickerProps):ReactElement {
-  const classes = useStyles();
 
   /** open calendar */
   const [open, setOpen] = useState(false);
@@ -224,8 +233,8 @@ function DtPicker ({
         disabled={disabled}
         labelPlacement="end"
         control={
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-             <KeyboardDatePicker
+          <LocalizationProvider>
+             <DatePicker
               className={classes.root}
               inputProps={{ className: classes.picker }}
               TextFieldComponent={TextFieldComponent}
@@ -243,7 +252,7 @@ function DtPicker ({
               open={open}
               {...props}
              />
-          </MuiPickersUtilsProvider>
+          </LocalizationProvider>
         }
       />
       {
