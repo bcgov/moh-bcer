@@ -138,7 +138,6 @@ module.exports = () => {
           use: [
             {
               loader: require.resolve('awesome-typescript-loader'),
-              // loader: require.resolve('ts-loader'),
               options: {
                 configFileName: './tsconfig.json'
               }

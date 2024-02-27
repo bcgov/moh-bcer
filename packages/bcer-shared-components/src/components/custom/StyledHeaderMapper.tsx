@@ -98,7 +98,8 @@ export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapC
 
   const [initialValues] = useState<Object>({});
   const [options] = useState(providedHeaders.map(h => ({value: h, label: h})));
-  const [validationSchema, setValidationSchema] = useState<Yup.ObjectSchema<any | undefined>>();
+  type ValidationSchemaType = Yup.AnyObjectSchema | undefined;
+  const [validationSchema, setValidationSchema] = useState<ValidationSchemaType>(undefined);
   const keys = Object.keys(requiredHeaders);
   const values: Array<string> = Object.values(requiredHeaders);
   
@@ -109,7 +110,8 @@ export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapC
       found ? initialValues[k] = found.value : initialValues[k] = ''      
       temp[k] = Yup.string().required('Required selection')
     })
-    setValidationSchema(Yup.object().shape(temp))
+    const schema: Yup.AnyObjectSchema = Yup.object().shape(temp) as Yup.AnyObjectSchema;
+    setValidationSchema(schema)
   }, [])
   
   const testHandler = (values: any) => {

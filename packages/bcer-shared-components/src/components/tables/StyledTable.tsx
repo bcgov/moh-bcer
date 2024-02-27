@@ -1,9 +1,9 @@
 
-import React, { ReactElement, CSSProperties, forwardRef } from 'react';
+import React, { ReactElement, CSSProperties } from 'react';
 import { styled } from '@mui/material/styles';
 import { Paper, IconButton } from '@mui/material';
 import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
-import MaterialTable, { MTableToolbar } from '@material-table/core';
+import MaterialTable, { Toolbar } from '@mui/material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 import { StyledButton } from '@/index';
@@ -19,9 +19,7 @@ const classes = {
   checkbox: `${PREFIX}-checkbox`
 };
 
-const Root = styled(
-  'aterialTable\n      components={customComponents}\n      options={{\n        headerStyle: headerStyle,\n        selectionProps: (rowData: any) ='
-)({
+const Root = styled('div')({
   [`& .${classes.root}`]: {
     border: '1px solid #CDCED2',
     borderRadius: '5px',
@@ -104,7 +102,7 @@ const rowStyle = (rowData: any): CSSProperties => {
  */
 const CustomToolbar = (props: any) => {
   return (
-    <MTableToolbar { ...props } />
+    <Toolbar  { ...props } />
   );
 }
 
@@ -184,13 +182,14 @@ export function StyledTable ({
   return (
     // @ts-ignore
     <MaterialTable
+      variant="standard"
       components={customComponents}
       options={{
         headerStyle: headerStyle,
         selectionProps: (rowData: any) => ({
           color: 'primary',
         }),
-        rowStyle: rowData => rowStyle(rowData),
+        rowStyle: (rowData: any) => rowStyle(rowData),
         sorting: false,
         pageSize: 5,
         paginationType: 'stepped',
@@ -212,7 +211,7 @@ export function StyledTable ({
         },
         ...localization
       }}
-      {...props}
-    />
+      {...props} />
+	  
   );
 }

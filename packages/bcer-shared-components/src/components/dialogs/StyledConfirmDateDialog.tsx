@@ -3,7 +3,6 @@ import { styled } from '@mui/material/styles';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { Fragment, ReactElement, useState } from 'react';
 import * as yup from 'yup';
-import DateFnsUtils from '@date-io/date-fns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import { InputFieldError } from '../generic';
