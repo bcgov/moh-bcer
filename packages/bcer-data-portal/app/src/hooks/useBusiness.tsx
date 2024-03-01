@@ -8,19 +8,15 @@ import store from 'store';
 
 export enum BusinessFilter {
   All = 'all',
-  Completed = 'completed',
-  NotCompleted = 'notCompleted'
+  Completed = 'complete',
+  Outstanding = 'outstanding'
 }
 
 function useBusiness() {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const [totalRowCount, setTotalRowCount] = useState(0);
-  const [businessList, setBusinessList] = useState<BusinessList>({
-    all: [],
-    completed: [],
-    notCompleted: []
-  });
+  const [businessList, setBusinessList] = useState<BusinessList>([]);
 
   const getInitialState = () => {
     const user_ha = store.get('KEYCLOAK_USER_HA') || '';
@@ -29,6 +25,7 @@ function useBusiness() {
       category: '',
       healthAuthority: user_ha,
       additionalFilter: 'all',
+      reports: 'all',
       page: 0,
       pageSize: 5
     }    
@@ -65,14 +62,8 @@ function useBusiness() {
 
   useEffect(() => {
     if(businessData?.data){
-      const completed = businessData.data?.filter(b => b.reportingStatus?.incompleteReports?.length === 0) || [];
-      const notCompleted = businessData.data?.filter(b => b.reportingStatus?.incompleteReports?.length) || [];
       setTotalRowCount(businessData?.totalRows || 0);
-      setBusinessList({
-        all: businessData.data || [],
-        notCompleted,
-        completed,
-      })
+      setBusinessList(businessData.data)
     }
   }, [businessData])
 
@@ -90,7 +81,10 @@ function useBusiness() {
       search: '',
       category: 'businessName',
       healthAuthority: 'all',
+      reports: 'all',
       additionalFilter: 'all',
+      page: 0,
+      pageSize: 5
     })
   }
 

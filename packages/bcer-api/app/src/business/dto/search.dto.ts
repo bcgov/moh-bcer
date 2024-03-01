@@ -2,6 +2,7 @@ import { IsEnum, IsOptional, IsString, IsIn, IsNumber, Min } from "class-validat
 import { HealthAuthority } from "src/location/enums/health-authority.enum";
 import { BusinessSearchCategory } from "../enums/businessSearchCategory.enum";
 import { ApiProperty } from "@nestjs/swagger";
+import { BusinessReportList } from "../enums/businessReportList.enum";
 
 export class SearchDto {
   @IsOptional()
@@ -14,6 +15,10 @@ export class SearchDto {
   @IsOptional()
   @IsEnum(HealthAuthority)
   healthAuthority: HealthAuthority;
+
+  @IsOptional()
+  @IsEnum(BusinessReportList) 
+  reports: BusinessReportList;
 
   @ApiProperty({
     description: 'Index starts at 1',

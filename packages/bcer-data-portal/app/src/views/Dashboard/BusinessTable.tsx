@@ -43,8 +43,8 @@ function BusinessTable({
   searchOptions,
 }: BusinessTableProps) {
   const classes = useStyles();
-  const initialValues: { location: BusinessFilter } = {
-    location: BusinessFilter.All,
+  const initialValues: { reports: BusinessFilter } = {
+    reports: BusinessFilter.All,
   };
 
   return (
@@ -53,24 +53,31 @@ function BusinessTable({
         initialValues={initialValues}
         onSubmit={() =>{}}
       >
-        {({ values }) => (
+        {({ values, setFieldValue }) => (
           <Form className= {classes.businessFilterForm}>
             <StyledRadioGroup
               label={``}
-              name="location"
+              name="reports"
               options={[
                 { label: 'All', value: BusinessFilter.All },
                 { label: 'With complete reports', value: BusinessFilter.Completed },
                 {
                   label: 'With outstanding reports',
-                  value: BusinessFilter.NotCompleted,
+                  value: BusinessFilter.Outstanding,
                 },
               ]}
-              row={true} 
+              row={true}
+              onChange={(event: string) => {
+                setFieldValue('reports', event);
+                onChangeSearch({ 
+                  reports: event,
+                  page: 0
+                });
+              }}
             />
             {loading ? <LinearProgress /> : <Box pt={0.5}/>}
             <Table
-              data={data[values.location]}
+              data={data}
               onChangeSearch={onChangeSearch}
               totalRowCount={totalRowCount}
               searchOptions={searchOptions}

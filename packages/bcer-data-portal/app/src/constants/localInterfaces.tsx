@@ -1,5 +1,4 @@
 import { UserType, HealthAuthority, HealthAuthorities, ReportStatus, BusinessStatus } from '@/constants/localEnums';
-import { BusinessFilter } from '@/hooks/useBusiness';
 import { LocationType } from 'vaping-regulation-shared-components';
 
 export interface UserProfile {
@@ -411,8 +410,9 @@ export interface SearchQueryBuilder {
   search: string;
   healthAuthority: string;
   location_type?: string;
-  page?: number;
-  pageSize?: number;
+  reports: string;
+  page: number;
+  pageSize: number;
   additionalFilter?: string;
   orderBy?: string;
   orderDirection?: string;
@@ -428,9 +428,7 @@ export interface BusinessReportStatus {
   earlyMissingConfirmed: boolean;
 }
 
-export type BusinessList = {
-  [key in BusinessFilter]: BusinessRO[];
-};
+export type BusinessList = BusinessRO[]
 
 export interface LocationReportStatus {
   noi: ReportStatus;
