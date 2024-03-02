@@ -1,36 +1,48 @@
 
-import React, { ReactElement, CSSProperties, forwardRef } from 'react';
-import { makeStyles, Paper, IconButton } from '@material-ui/core';
+import React, { ReactElement, CSSProperties } from 'react';
+import { styled } from '@mui/material/styles';
+import { Paper, IconButton } from '@mui/material';
 import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
-import MaterialTable, { MTableToolbar } from '@material-table/core';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import MaterialTable, { Toolbar } from '@mui/material';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 import { StyledButton } from '@/index';
 
-const useStyles = makeStyles({
-  root: {
+const PREFIX = 'StyledTable';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  editButtonWrapper: `${PREFIX}-editButtonWrapper`,
+  editButton: `${PREFIX}-editButton`,
+  deleteIcon: `${PREFIX}-deleteIcon`,
+  tableHeader: `${PREFIX}-tableHeader`,
+  checkbox: `${PREFIX}-checkbox`
+};
+
+const Root = styled('div')({
+  [`& .${classes.root}`]: {
     border: '1px solid #CDCED2',
     borderRadius: '5px',
     boxShadow: 'none',
     padding: '0px 1px 0px 1px'
   },
-  editButtonWrapper: {
+  [`& .${classes.editButtonWrapper}`]: {
     display: 'flex',
     alignItems: 'center'
   },
-  editButton: {
+  [`& .${classes.editButton}`]: {
     width: '90px',
     fontSize: '14px',
     minWidth: '90px',
     lineHeight: '18px',
   },
-  deleteIcon: {
+  [`& .${classes.deleteIcon}`]: {
     color: '#ff534a'
   },
-  tableHeader: {
+  [`& .${classes.tableHeader}`]: {
     display: 'contents',
   },
-  checkbox: {
+  [`& .${classes.checkbox}`]: {
     '& .MuiIconButton-colorSecondary':{
       '&:hover': {
         background: 'rgba(0, 83, 164, .03)',
@@ -44,7 +56,7 @@ const useStyles = makeStyles({
       color: '#0053A4'
     },
   }
-})
+});
 
 /**
  * Applies styling to a table's header component
@@ -90,7 +102,7 @@ const rowStyle = (rowData: any): CSSProperties => {
  */
 const CustomToolbar = (props: any) => {
   return (
-    <MTableToolbar { ...props } />
+    <Toolbar  { ...props } />
   );
 }
 
@@ -99,28 +111,29 @@ const Empty = () => (
 )
 
 const CustomActions = (props: any) => {
-  const classes = useStyles()
 
-  return (
-    props.action.icon === 'edit'
-      ?
-      <div className={classes.editButtonWrapper}>
-        <StyledButton className={classes.editButton} variant='outlined' onClick={(event) => props.action.onClick(event, props.data)} >
-          Edit
-        </StyledButton>
-      </div>
-      :
-        <IconButton className={classes.deleteIcon} onClick={(event) => props.action.onClick(event, props.data)} >
-          <DeleteOutlinedIcon/>
-        </IconButton>
-  )   
+
+  return props.action.icon === 'edit'
+    ?
+    <div className={classes.editButtonWrapper}>
+      <StyledButton className={classes.editButton} variant='outlined' onClick={(event) => props.action.onClick(event, props.data)} >
+        Edit
+      </StyledButton>
+    </div>
+    :
+      <IconButton
+        className={classes.deleteIcon}
+        onClick={(event) => props.action.onClick(event, props.data)}
+        size="large">
+        <DeleteOutlinedIcon/>
+      </IconButton>;   
 }
 
 /**
  * Override for MTable Container component
  */
 const CustomContainer = (props: any) => {
-  const classes = useStyles()
+
   return <Paper className={`${classes.root} ${classes.checkbox}`} {...props} />
 }
 
@@ -169,13 +182,14 @@ export function StyledTable ({
   return (
     // @ts-ignore
     <MaterialTable
+      variant="standard"
       components={customComponents}
       options={{
         headerStyle: headerStyle,
         selectionProps: (rowData: any) => ({
           color: 'primary',
         }),
-        rowStyle: rowData => rowStyle(rowData),
+        rowStyle: (rowData: any) => rowStyle(rowData),
         sorting: false,
         pageSize: 5,
         paginationType: 'stepped',
@@ -197,7 +211,7 @@ export function StyledTable ({
         },
         ...localization
       }}
-      {...props}
-    />
+      {...props} />
+	  
   );
 }
