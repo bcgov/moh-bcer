@@ -4,7 +4,7 @@ import { businessSearchCategoryOptions } from '@/constants/arrays';
 import { ConfigContext } from '@/contexts/Config';
 import useBusiness from '@/hooks/useBusiness';
 import { LinearProgress, makeStyles, Paper } from '@material-ui/core';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import BusinessTable from './BusinessTable';
 import ReportingSummary from './ReportingSummary';
 
@@ -25,8 +25,19 @@ function Dashboard() {
     businessList,
     businessLoading,
     onChangeSearch,
-    clearAllFilters
+    clearAllFilters,
+    totalRowCount,
+    searchOptions
   } = useBusiness();
+
+  // resets values on refresh
+  useEffect(() => {
+    onChangeSearch({ 
+      pageSize: 5,
+      page: 0,
+      reports: 'all' 
+    });
+  }, []);
 
   return (
     <Page title='Dashboard' error={!businessLoading && !config.permissions.MANAGE_LOCATIONS}>
@@ -42,6 +53,9 @@ function Dashboard() {
         <BusinessTable
           data={businessList}
           loading={businessLoading}
+          onChangeSearch={onChangeSearch}
+          totalRowCount={totalRowCount}
+          searchOptions={searchOptions}
         />
       </Paper>
     </Page>
