@@ -32,7 +32,6 @@ function Dashboard() {
 
   // resets values on refresh
   useEffect(() => {
-    console.log('resetting search options')
     onChangeSearch({ 
       pageSize: 5,
       page: 0,
