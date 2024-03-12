@@ -186,13 +186,13 @@ export class BusinessService {
     
     if (query) {
       if (query.orderBy === 'Business Name') {
-        qb.addSelect('LOWER(REPLACE(TRIM("business"."businessName"), E\'\\t\', \'\'))', 'b_businessname');
+        qb.addSelect('REPLACE(TRIM("business"."businessName"), E\'\\t\', \'\')', 'b_businessname');
         qb.orderBy('b_businessname', query.order);
       } else if (query.orderBy === 'Address') {
-        qb.addSelect('LOWER(REPLACE(TRIM("business"."addressLine1"), E\'\\t\', \'\'))', 'b_address_line1');
+        qb.addSelect('REPLACE(TRIM("business"."addressLine1"), E\'\\t\', \'\')', 'b_address_line1');
         qb.orderBy('b_address_line1', query.order);
       } else if (query.orderBy === 'City') {
-        qb.addSelect('LOWER(REPLACE(TRIM("business"."city"), E\'\\t\', \'\'))', 'b_city');
+        qb.addSelect('REPLACE(TRIM("business"."city"), E\'\\t\', \'\')', 'b_city');
         qb.orderBy('b_city', query.order);
       }
     }
