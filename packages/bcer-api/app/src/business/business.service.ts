@@ -109,25 +109,52 @@ export class BusinessService {
   }
 
   async getComplianceOverview(type?: BusinessReportType) {
-    const [businesses, total] = await this.listBusinesses();
-    let compliant = 0;
-    let nonCompliant = 0;
+    let compliant;
+    let nonCompliant;
+    let total;
+    // this is old code that may be depricated but kept for now 
+    // TODO: check if the type parameter is ever used or needed
+    if (type){
+      let [businesses, total1] = await this.listBusinesses();
+      compliant = 0;
+      nonCompliant = 0;
+      total = total1
 
-    businesses?.map(async (business) => {
-      const result = this.locationService.checkLocationReportComplete(
-        business?.locations || [],
-        {
-          type,
-          exitEarly: true,
-        }
-      );
-      if(result.earlyMissingConfirmed){
-        nonCompliant++;
-      }else{
-        compliant++;
-      } 
-    })
-    
+      businesses?.map(async (business) => {
+        const result = this.locationService.checkLocationReportComplete(
+          business?.locations || [],
+          {
+            type,
+            exitEarly: true,
+          }
+        );
+        if(result.earlyMissingConfirmed){
+          nonCompliant++;
+        }else{
+          compliant++;
+        } 
+      })
+    } else {
+      const qb1 = this.businessRepository.createQueryBuilder('business');
+      qb1.where("business.legalName IS NOT NULL AND business.legalName != ''");
+      total = await qb1.getCount();
+      
+      const qb2 = this.businessRepository.createQueryBuilder('business');
+      qb2.andWhere(`
+        (business.id  in  (
+          SELECT DISTINCT
+              business2.id
+          FROM "business" as business2
+          WHERE "business2"."legalName" IS NOT NULL AND "business2"."legalName" != ''
+          AND ("business2"."id" in( select business_id from noi_report_vw) 
+          OR "business2"."id"  in ( select business_id from manufacturing_report_vw )
+          OR "business2"."id"  in ( select business_id from sales_report_vw )
+          OR "business2"."id"  in ( select business_id from product_report_vw ))))
+        `);
+      nonCompliant = await qb2.getCount();
+
+      compliant = total - nonCompliant;
+    }
     return {compliant, nonCompliant, total };
   }
 
@@ -221,6 +248,7 @@ export class BusinessService {
       qb.skip((page - 1) * pageSize);
       qb.take(pageSize);
     }
+    console.log("query:", qb.getQueryAndParameters())
     const businesses = await qb.getManyAndCount();
     return businesses;
   }
