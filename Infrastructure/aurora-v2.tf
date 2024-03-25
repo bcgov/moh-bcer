@@ -34,19 +34,14 @@ resource "aws_db_subnet_group" "bcer_subnet_group" {
   }
 }
 
-data "aws_rds_engine_version" "postgresql" {
-  engine  = "aurora-postgresql"
-  major_engine_version = "13"
-}
-
 module "aurora_postgresql_v2" {
   source  = "terraform-aws-modules/rds-aurora/aws"
   version = "7.7.1"
 
   name              = "${var.bcer_cluster_name}-${var.target_env}"
-  engine            = data.aws_rds_engine_version.postgresql.engine
+  engine            = "aurora-postgresql"
   engine_mode       = "provisioned"
-  engine_version    = data.aws_rds_engine_version.postgresql.version
+  engine_version    = "13.12"
   storage_encrypted = true
   database_name     = var.bcer_database_name
 
