@@ -36,7 +36,7 @@ resource "aws_db_subnet_group" "bcer_subnet_group" {
 
 data "aws_rds_engine_version" "postgresql" {
   engine  = "aurora-postgresql"
-  version = "13.8"
+  version = "13.12"
 }
 
 module "aurora_postgresql_v2" {
