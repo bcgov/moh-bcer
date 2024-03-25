@@ -248,7 +248,6 @@ export class BusinessService {
       qb.skip((page - 1) * pageSize);
       qb.take(pageSize);
     }
-    console.log("query:", qb.getQueryAndParameters())
     const businesses = await qb.getManyAndCount();
     return businesses;
   }

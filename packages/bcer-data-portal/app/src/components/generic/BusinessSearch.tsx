@@ -73,7 +73,12 @@ function BusinessSearch({
   return (
     <Box my={2}>
       <Formik
-        onSubmit={onSubmit}
+        onSubmit={(values) => {
+          onSubmit({
+            ...values,
+            page: 0,
+          })
+        }}
         initialValues={{
           category: searchOptions.category || initialCategory,
           search: searchOptions.search,
