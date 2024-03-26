@@ -23,6 +23,11 @@ module "api_gateway" {
       integration_uri    = data.aws_alb_listener.front_end.arn
       integration_type   = "HTTP_PROXY"
       integration_method = "ANY"
+
+      request_parameters = {
+        "append:header.SourceIp"       = "$request.header.X-Forwarded-For"
+        "append:header.clientSourceIP" = "$context.identity.sourceIp"
+      }
     }
   }
 
