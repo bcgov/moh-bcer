@@ -102,6 +102,10 @@ resource "aws_rds_cluster_parameter_group" "bcer_postgresql13" {
     name  = "timezone"
     value = var.timezone
   }
+  parameter {
+    name  = "shared_preload_libraries"
+    value = "pg_stat_statements,pg_cron"
+  }
 }
 
 resource "random_pet" "master_creds_secret_name" {
