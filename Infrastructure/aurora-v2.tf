@@ -103,6 +103,7 @@ resource "aws_rds_cluster_parameter_group" "bcer_postgresql13" {
     value = var.timezone
   }
   parameter {
+    apply_method = "pending-reboot"
     name  = "shared_preload_libraries"
     value = "pg_stat_statements,pg_cron"
   }
