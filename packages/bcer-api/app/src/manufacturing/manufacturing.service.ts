@@ -93,7 +93,10 @@ export class ManufacturingService {
   }
 
   async getManufacturingReportById(reportId) {
-    const report = await this.manufacturingRepository.findOne(reportId, { relations: ['business', 'locations', 'ingredients' ]});
+    const report = await this.manufacturingRepository.findOne({
+      where: { id: reportId },
+      relations: ['business', 'locations', 'ingredients' ]
+    });
     return report;
   }
 

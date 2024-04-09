@@ -57,7 +57,8 @@ export class BusinessService {
     if (includes?.includes('locations')) {
       return await this.getBusinessWithLocationsById(id, includes);
     }
-    const business = await this.businessRepository.findOne(id, {
+    const business = await this.businessRepository.findOne({ 
+      where: { id },
       relations: includes ? includes.split(',') : [],
     });
     return business;

@@ -17,7 +17,7 @@ export class FaqService {
 
   async getFaqList(){
     // There will only ever be one faqList
-    const faqList = await this.faqRepository.findOne()
+    const faqList = await this.faqRepository.findOne({});
     if (faqList) {
       return faqList;
     } else {

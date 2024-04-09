@@ -41,7 +41,7 @@ export class NotificationService {
   }
 
   async findOneNotification(id: string): Promise<NotificationEntity> {
-    return await this.notificationRepository.findOne({ id });
+    return await this.notificationRepository.findOne({ where: {id: id} });
   }
 
   async getNotifications(): Promise<NotificationEntity[]> {
@@ -72,7 +72,7 @@ export class NotificationService {
         completed,
       },
     );
-    return await this.notificationRepository.findOne({ id });
+    return await this.notificationRepository.findOne({ where: {id: id} });
   }
 
   async createOrUpdateSubscription(
@@ -105,15 +105,15 @@ export class NotificationService {
     businessId: string,
   ): Promise<SubscriptionEntity> {
     const business = await this.businessService.getBusinessById(businessId);
-    return await this.subscriptionRepository.findOne({ business });
+    return await this.subscriptionRepository.findOne({ where: { business: business } });
   }
 
   async findSubscriptionById(id: string): Promise<SubscriptionEntity> {
-    return await this.subscriptionRepository.findOne({ id });
+    return await this.subscriptionRepository.findOne({ where: { id: id }});
   }
 
   async findAllActiveSubscription(): Promise<SubscriptionEntity[]> {
-    return await this.subscriptionRepository.find({ confirmed: true });
+    return await this.subscriptionRepository.find({ where: {confirmed: true }});
   }
 
   async getSubscribedPhoneNumbers(): Promise<string[]> {
