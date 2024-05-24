@@ -1,82 +1,53 @@
 import { ReportStatus } from '@/constants/enums/genericEnums';
-import { styled } from '@mui/material/styles';
 import {
   BusinessReportStatus,
   LocationReportStatus,
   LocationRO,
 } from '@/constants/interfaces/genericInterfaces';
 import { BusinessDashboardUtil } from '@/util/businessDashboard.util';
-import { Box, makeStyles, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import React from 'react';
 import { StyledStatusMessage, StyledTable, StyledTextWithStatusIcon } from '..';
 
-const PREFIX = 'BusinessDashboard';
-
 const classes = {
-  box: `${PREFIX}-box`,
-  title: `${PREFIX}-title`,
-  retailerLegend: `${PREFIX}-retailerLegend`,
-  legendTitle: `${PREFIX}-legendTitle`,
-  legendItem: `${PREFIX}-legendItem`,
-  retailerText: `${PREFIX}-retailerText`,
-  locationReportStatWrap: `${PREFIX}-locationReportStatWrap`
-};
-
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
-const Root = styled('div')((
-  {
-    theme
-  }
-) => ({
-  [`& .${classes.box}`]: {
+  box: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
   },
-
-  [`& .${classes.title}`]: {
+  title: {
     fontWeight: 'bold',
     fontSize: '17px',
   },
-
-  [`& .${classes.retailerLegend}`]: {
+  retailerLegend: {
     display: 'flex',
     border: '1px solid #CDCED2',
     borderRadius: '4px',
     padding: '12px 18px',
-    [theme.breakpoints.down('sm')]: {
-      display: 'block',
-    }
   },
-
-  [`& .${classes.legendTitle}`]: {
+  legendTitle: {
     fontWeight: 600
   },
-
-  [`& .${classes.legendItem}`]: {
+  legendItem: {
     display: 'flex',
     paddingLeft: '30px',
     color: '#333333',
     fontSize: '14px'
   },
-
-  [`& .${classes.retailerText}`]: {
+  retailerText: {
     fontSize: '16px'
   },
-
-  [`& .${classes.locationReportStatWrap}`]: {
-    [theme.breakpoints.down('sm')]: {
-      '& th': {
-        whiteSpace: 'pre-wrap !important',
-        textAlign: 'center',
-        padding: '0 5px'
-      },
-      '& td': {
-        textAlign: 'center'
-      }
+  locationReportStatWrap: {
+    '& th': {
+      whiteSpace: 'pre-wrap !important',
+      textAlign: 'center',
+      padding: '0 5px'
+    },
+    '& td': {
+      textAlign: 'center'
     }
   }
-}));
+};
 
 export type BusinessDashboardProps = {
   data: { locations: LocationRO[]; overview: BusinessReportStatus };
@@ -128,9 +99,9 @@ export function BusinessDashboard({
         </Box>
       )}
       <Box pt={2} />      
-        <Paper variant="outlined" className={classes.box}>
+        <Paper variant="outlined" sx={classes.box}>
           <Box my={1}>
-            <Typography className={classes.title}>
+            <Typography sx={classes.title}>
               Total Locations with outstanding reports
             </Typography>
           </Box>
@@ -138,7 +109,7 @@ export function BusinessDashboard({
             <BusinessOverview data={data.overview} missingSales={missingSales}/>
           )}
           {!!outstanding.length && 
-            <Root>
+            <>
               <Box pt={2} pb={1} > 
                 <ReportStatusLegend />
               </Box>
@@ -149,21 +120,21 @@ export function BusinessDashboard({
               {
                 isRetailerPortal
                   &&
-                <Typography className={classes.retailerText} style={{ paddingTop: '10px' }}>
+                <Typography sx={classes.retailerText} style={{ paddingTop: '10px' }}>
                   You can submit outstanding reports for the above locations by navigating through the different respective menus on the left. 
                   If you're not planning on renewing your NOI for a location, you should close it on the "My Business" page or the system will 
                   do it automatically on October 1st.
                 </Typography>
               }
-            </Root>
+            </>
           }
         </Paper>
       
       <Box pt={2} />
       {!!completed.length && (data?.overview?.incompleteReports?.length || !isRetailerPortal) && (
-        <Paper className={classes.box}>
+        <Paper sx={classes.box}>
           <Box my={1}>
-            <Typography className={classes.title}>
+            <Typography sx={classes.title}>
               Locations with complete reports
             </Typography>
           </Box>
@@ -290,23 +261,23 @@ export function ReportStatusLegend() {
 
 
   return (
-    <Box className={classes.retailerLegend}>
+    <Box sx={classes.retailerLegend}>
       <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
         Legend:
       </Typography>
-      <div className={classes.legendItem}>
+      <div style={classes.legendItem}>
         {BusinessDashboardUtil.renderStatus(ReportStatus.Reported)}
         &nbsp; Submitted
       </div>
-      <div className={classes.legendItem}>
+      <div style={classes.legendItem}>
         {BusinessDashboardUtil.renderStatus(ReportStatus.PendingReview)}
         &nbsp; Needs to be renewed
       </div>
-      <div className={classes.legendItem}>
+      <div style={classes.legendItem}>
         {BusinessDashboardUtil.renderStatus(ReportStatus.Missing)}
         &nbsp; Not Submitted
       </div>
-      <div className={classes.legendItem}>
+      <div style={classes.legendItem}>
         {BusinessDashboardUtil.renderStatus(ReportStatus.NotRequired)}
         &nbsp; Not Required
       </div>
@@ -321,7 +292,7 @@ export function LocationReportStatusTable({status, loading}: {status: LocationRe
       <Box py={1}>
         <ReportStatusLegend />
       </Box>
-      <span className={classes.locationReportStatWrap}>
+      <span style={classes.locationReportStatWrap as React.CSSProperties}>
         <StyledTable 
           columns={BusinessDashboardUtil.getLocationColumn()}
           data={ status? [status] : []}

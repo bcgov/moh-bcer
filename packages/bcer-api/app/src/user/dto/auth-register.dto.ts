@@ -6,7 +6,7 @@ import { UserTypeEnum } from 'src/user/enums/user-type.enum'
 export class AuthRegisterDTO {
   @ApiProperty({
     description: 'BCeID for this user',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   @IsNotEmpty()
   bceid: string;

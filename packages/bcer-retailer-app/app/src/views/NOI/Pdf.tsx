@@ -1,23 +1,54 @@
 import { BusinessLocation } from '@/constants/localInterfaces';
+import { styled } from '@mui/material/styles';
 import { NoiPdfUtil } from '@/utils/noi.util';
-import { Box, makeStyles, Typography } from '@material-ui/core';
+import { Box, makeStyles, Typography } from '@mui/material';
 import React from 'react';
 import noiImage from '../../assets/images/noi.png';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
+const PREFIX = 'Pdf';
+
+const classes = {
+  container: `${PREFIX}-container`,
+  headerWrapper: `${PREFIX}-headerWrapper`,
+  header: `${PREFIX}-header`,
+  headerV2: `${PREFIX}-headerV2`,
+  subHeader: `${PREFIX}-subHeader`,
+  bodyWrapper: `${PREFIX}-bodyWrapper`,
+  bodyWrapperV2: `${PREFIX}-bodyWrapperV2`,
+  infoWrapper: `${PREFIX}-infoWrapper`,
+  infoWrapperV3: `${PREFIX}-infoWrapperV3`,
+  infoLabel: `${PREFIX}-infoLabel`,
+  infoLabelV2: `${PREFIX}-infoLabelV2`,
+  infoData: `${PREFIX}-infoData`,
+  infoDataV2: `${PREFIX}-infoDataV2`,
+  infoDataV3: `${PREFIX}-infoDataV3`,
+  bottomTextWrapper: `${PREFIX}-bottomTextWrapper`,
+  bottomTextWrapperV3: `${PREFIX}-bottomTextWrapperV3`,
+  bottomText: `${PREFIX}-bottomText`,
+  date: `${PREFIX}-date`,
+  dateLabel: `${PREFIX}-dateLabel`
+};
+
+const StyledBox = styled(Box)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.container}`]: {
     height: '781px',
     width: '535px',
     position: 'relative',
   },
-  headerWrapper: {
+
+  [`& .${classes.headerWrapper}`]: {
     position: 'absolute',
     zIndex: 100,
     top: '128px',
     left: '28px',
     width: '100%',
   },
-  header: {
+
+  [`& .${classes.header}`]: {
     fontSize: '20px',
     lineHeight: '27px',
     textAlign: 'center',
@@ -25,7 +56,8 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginBottom: '10px',
   },
-  headerV2: {
+
+  [`& .${classes.headerV2}`]: {
     fontSize: '20px',
     lineHeight: '27px',
     textAlign: 'center',
@@ -33,13 +65,15 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     marginBottom: '5px',
   },
-  subHeader: {
+
+  [`& .${classes.subHeader}`]: {
     fontSize: '16px',
     lineHeight: '20px',
     textAlign: 'center',
     color: '#002C71',
   },
-  bodyWrapper: {
+
+  [`& .${classes.bodyWrapper}`]: {
     position: 'absolute',
     zIndex: 100,
     top: '212px',
@@ -47,7 +81,8 @@ const useStyles = makeStyles((theme) => ({
     width: '375px',
     paddingTop: '15px',
   },
-  bodyWrapperV2: {
+
+  [`& .${classes.bodyWrapperV2}`]: {
     position: 'absolute',
     zIndex: 100,
     top: '212px',
@@ -55,27 +90,32 @@ const useStyles = makeStyles((theme) => ({
     width: '395px',
     paddingTop: '5px',
   },
-  infoWrapper: {
+
+  [`& .${classes.infoWrapper}`]: {
     display: 'flex',
     marginBottom: '20px',
   },
-  infoWrapperV3: {
+
+  [`& .${classes.infoWrapperV3}`]: {
     marginBottom: '20px',
     textAlign: 'center',
   },
-  infoLabel: {
+
+  [`& .${classes.infoLabel}`]: {
     color: '#333',
     fontSize: '14px',
     lineHeight: '19px',
     flex: 0.55,
   },
-  infoLabelV2: {
+
+  [`& .${classes.infoLabelV2}`]: {
     color: '#333',
     fontSize: '12px',
     lineHeight: '17px',
     flex: 0.45,
   },
-  infoData: {
+
+  [`& .${classes.infoData}`]: {
     color: '#333',
     fontSize: '14px',
     lineHeight: '19px',
@@ -83,7 +123,8 @@ const useStyles = makeStyles((theme) => ({
     flex: 0.5,
     overflowWrap: 'anywhere',
   },
-  infoDataV2: {
+
+  [`& .${classes.infoDataV2}`]: {
     color: '#333',
     fontSize: '12px',
     lineHeight: '17px',
@@ -91,7 +132,8 @@ const useStyles = makeStyles((theme) => ({
     flex: 0.5,
     overflowWrap: 'anywhere',
   },
-  infoDataV3: {
+
+  [`& .${classes.infoDataV3}`]: {
     color: '#333',
     fontSize: '11px',
     lineHeight: '16px',
@@ -99,19 +141,23 @@ const useStyles = makeStyles((theme) => ({
     flex: 0.5,
     overflowWrap: 'anywhere',
   },
-  bottomTextWrapper: {
+
+  [`& .${classes.bottomTextWrapper}`]: {
     marginBottom: '24px',
   },
-  bottomTextWrapperV3: {
+
+  [`& .${classes.bottomTextWrapperV3}`]: {
     margin: '20px 0 30px',
   },
-  bottomText: {
+
+  [`& .${classes.bottomText}`]: {
     fontSize: '16px',
     lineHeight: '22px',
     textAlign: 'center',
     color: '#002C71',
   },
-  date: {
+
+  [`& .${classes.date}`]: {
     fontSize: '12px',
     lineHeight: '19px',
     textAlign: 'center',
@@ -121,12 +167,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '5px',
     color: '#333',
   },
-  dateLabel: {
+
+  [`& .${classes.dateLabel}`]: {
     fontSize: '12px',
     LineHeight: '17px',
     textAlign: 'center',
     color: '#333',
-  },
+  }
 }));
 
 type PdfProps = {
@@ -135,7 +182,7 @@ type PdfProps = {
 };
 
 function Pdf({ location, legalName }: PdfProps) {
-  const classes = useStyles();
+
   const { responsiveClass } = new NoiPdfUtil(
     location,
     legalName,
@@ -143,7 +190,7 @@ function Pdf({ location, legalName }: PdfProps) {
   ).build();
   const formattedData = NoiPdfUtil.formatNoiData(location, legalName);
   return (
-    <Box className={classes.container}>
+    <StyledBox className={classes.container}>
       <img src={noiImage} style={{ height: '841px', width: '595px' }} />
       <Box className={classes.headerWrapper}>
         <Typography className={responsiveClass.header}>
@@ -252,7 +299,7 @@ function Pdf({ location, legalName }: PdfProps) {
           </Box>
         </Box>
       </Box>
-    </Box>
+    </StyledBox>
   );
 }
 

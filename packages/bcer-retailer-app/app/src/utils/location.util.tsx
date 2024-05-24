@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, IconButton, Tooltip } from '@material-ui/core';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import CreateIcon from '@material-ui/icons/Create';
-import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined';
+import { Box, IconButton, Tooltip } from '@mui/material';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import CreateIcon from '@mui/icons-material/Create';
+import NoMeetingRoomOutlinedIcon from '@mui/icons-material/NoMeetingRoomOutlined';
 
 import {
   BusinessLocationHeaders,
@@ -116,65 +116,63 @@ export class LocationUtil {
     return function (l: BusinessLocation) {
       const disabledColor = '#CDCED2';
       const isEditDisabled: boolean = LocationUtil.isClosed(l) || l?.noi?.status === NoiStatus.Submitted;
-      return (
-        <>
-        {
-          isEditDisabled
-            ?
-          <Tooltip title="View Location" placement="top">
-            <IconButton
-              style={{
-                color: '#0053A5',
-              }}
-              onClick={() => {
-                handleAction.handleView(l);
-              }}
-            >
-              <CreateIcon />
-            </IconButton>
-          </Tooltip>
-            :
-          <Tooltip title="Edit Location" placement="top">
-            <IconButton
-              style={{
-                color: '#0053A5',
-              }}
-              onClick={() => {
-                handleAction.handleEdit(l);
-              }}
-            >
-              <CreateIcon />
-            </IconButton>
-          </Tooltip>
-        }
-          <Tooltip title="Close Location" placement="top">
-            <IconButton
-              style={{
-                color: LocationUtil.isClosed(l) ? disabledColor : '#F5A623',
-              }}
-              onClick={() => {
-                handleAction.handleClose(l);
-              }}
-              disabled={LocationUtil.isClosed(l)}
-            >
-              <NoMeetingRoomOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete Location" placement="top">
-            <IconButton
-              style={{
-                color: LocationUtil.isClosed(l) ? disabledColor : '#FE6B63',
-              }}
-              onClick={() => {
-                handleAction.handleDelete(l);
-              }}
-              disabled={LocationUtil.isClosed(l)}
-            >
-              <DeleteOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-        </>
-      );
+      return <>
+      {
+        isEditDisabled
+          ?
+        <Tooltip title="View Location" placement="top">
+          <IconButton
+            style={{
+              color: '#0053A5',
+            }}
+            onClick={() => {
+              handleAction.handleView(l);
+            }}
+            size="large">
+            <CreateIcon />
+          </IconButton>
+        </Tooltip>
+          :
+        <Tooltip title="Edit Location" placement="top">
+          <IconButton
+            style={{
+              color: '#0053A5',
+            }}
+            onClick={() => {
+              handleAction.handleEdit(l);
+            }}
+            size="large">
+            <CreateIcon />
+          </IconButton>
+        </Tooltip>
+      }
+        <Tooltip title="Close Location" placement="top">
+          <IconButton
+            style={{
+              color: LocationUtil.isClosed(l) ? disabledColor : '#F5A623',
+            }}
+            onClick={() => {
+              handleAction.handleClose(l);
+            }}
+            disabled={LocationUtil.isClosed(l)}
+            size="large">
+            <NoMeetingRoomOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete Location" placement="top">
+          <IconButton
+            style={{
+              color: LocationUtil.isClosed(l) ? disabledColor : '#FE6B63',
+            }}
+            onClick={() => {
+              handleAction.handleDelete(l);
+            }}
+            disabled={LocationUtil.isClosed(l)}
+            size="large">
+            <DeleteOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+      </>;
     };
   }
 
@@ -194,7 +192,7 @@ export class LocationUtil {
               onClick={() => {
                 handleAction.handleEdit(l);
               }}
-            >
+              size="large">
               <CreateIcon />
             </IconButton>
           </Tooltip>
@@ -207,7 +205,7 @@ export class LocationUtil {
               onClick={() => {
                 handleAction.handleDelete(l);
               }}
-            >
+              size="large">
               <DeleteOutlinedIcon />
             </IconButton>
           </Tooltip>

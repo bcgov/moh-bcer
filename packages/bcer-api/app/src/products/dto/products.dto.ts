@@ -6,7 +6,7 @@ import * as faker from 'faker/locale/en_CA';
 export class ProductsDTO {
   @ApiProperty({
     description: 'Ids of the locations this product is sold at',
-    example: [faker.random.uuid()]
+    example: [faker.datatype.uuid()]
   })
   @IsNotEmpty()
   locationIds: string[];

@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { styled } from '@mui/material/styles';
 import { useDropzone } from 'react-dropzone';
@@ -10,7 +9,11 @@ const PREFIX = 'StyledDropzone';
 const classes = {
   fileName: `${PREFIX}-fileName`,
   inputField: `${PREFIX}-inputField`,
-  icon: `${PREFIX}-icon`,
+  icon: {
+    width: '90px',
+    height: '70px',
+    paddingBottom: '20px'
+  },
   descriptionWrapper: `${PREFIX}-descriptionWrapper`,
   description: `${PREFIX}-description`,
   uploadOpenLink: `${PREFIX}-uploadOpenLink`,
@@ -29,11 +32,6 @@ const Root = styled('div')({
     flexDirection: 'column',
     justifyContent: 'center',
     height: '170px'
-  },
-  [`& .${classes.icon}`]: {
-    width: '90px',
-    height: '70px',
-    paddingBottom: '20px'
   },
   [`& .${classes.descriptionWrapper}`]: {
     paddingBottom: '10px'
@@ -146,7 +144,7 @@ export function StyledDropzone(props: {fileUploaded: boolean, actionText: string
         {
           props.icon
           ? 
-          <img className={classes.icon} src={props.icon}/>
+          <img style={classes.icon} src={props.icon}/>
           : null
         }
         <div className={classes.descriptionWrapper}>

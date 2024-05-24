@@ -1,36 +1,17 @@
-import { Box, BoxProps, makeStyles } from '@mui/material';
+import { Box, BoxProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 
-const PREFIX = 'StyledTextWithStatusIcon';
-
-const classes = {
-  box: `${PREFIX}-box`,
-  text: `${PREFIX}-text`,
-  successIcon: `${PREFIX}-successIcon`,
-  errorIcon: `${PREFIX}-errorIcon`
-};
-
 const StyledBox = styled(Box)(() => ({
-  [`&.${classes.box}`]: {
-    display: 'flex',
-    alignItems: 'center',
-  },
+  display: 'flex',
+  alignItems: 'center',
+}));
 
-  [`& .${classes.text}`]: {
-    color: '#333333',
-    fontSize: '14px',
-  },
-
-  [`& .${classes.successIcon}`]: {
-    color: '#52C41A',
-  },
-
-  [`& .${classes.errorIcon}`]: {
-    color: '#FAAD14',
-  }
+const StyledText = styled(Box)(() => ({
+  color: '#333333',
+  fontSize: '14px',
 }));
 
 export type TextWithStatusIconProps = {
@@ -48,14 +29,14 @@ export function StyledTextWithStatusIcon({
 }: TextWithStatusIconProps) {
 
   return (
-    <StyledBox className={classes.box}>
+    <StyledBox>
       {success ? (
-        <CheckCircleIcon className={classes.successIcon} {...iconProps}/>
+        <CheckCircleIcon style={{ color: '#52C41A' }} {...iconProps}/>
       ) : (
-        <ErrorIcon className={classes.errorIcon} {...iconProps}/>
+        <ErrorIcon style={{ color: '#FAAD14' }} {...iconProps}/>
       )}
       <Box ml={1} />
-      <Box className={classes.text} {...textProps}>{text}</Box>
+      <StyledText {...textProps}>{text}</StyledText>
     </StyledBox>
   );
 }

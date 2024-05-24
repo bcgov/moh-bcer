@@ -5,32 +5,22 @@ import { styled, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import { InputFieldLabel, InputFieldError } from '@/components/generic';
 import { RadioGroupInputProps, StyledRadioProps } from '@/constants/interfaces/inputInterfaces';
 
-const PREFIX = 'StyledRadioGroup';
-
 const classes = {
-  icon: `${PREFIX}-icon`,
-  checkedIcon: `${PREFIX}-checkedIcon`,
-  emptyHelper: `${PREFIX}-emptyHelper`
-};
-
-const StyledField
- = styled(Field
-)({
-  [`& .${classes.icon}`]: {
+  icon: {
     borderRadius: '50%',
     width: 24,
     height: 24,
     boxShadow: 'inset 0 0 0 1px #808080, inset 0 -1px 0 #808080',
     backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-    'input:hover ~ &': {
+    '&:hover': {
       backgroundColor: '#ebf1f5',
     },
-    'input:disabled ~ &': {
+    '&:disabled': {
       boxShadow: 'none',
       background: 'rgba(206,217,224,.5)',
     },
   },
-  [`& .${classes.checkedIcon}`]: {
+  checkedIcon: {
     boxShadow: 'none',
     backgroundColor: '#0053A4',
     backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
@@ -41,20 +31,18 @@ const StyledField
       backgroundImage: 'radial-gradient(#fff,#fff 32%,transparent 36%)',
       content: '""',
     },
-    'input:hover ~ &': {
+    '&:hover': {
       backgroundColor: '#2e6ead',
     },
   },
-  [`& .${classes.emptyHelper}`]: {
+  emptyHelper: {
     height: '22px'
   }
-});
+};
 
-const StyledGroup = styled(RadioGroup)({
-});
+const StyledGroup = styled(RadioGroup)({});
 
-const StyledControlLabel = styled(FormControlLabel)({
-});
+const StyledControlLabel = styled(FormControlLabel)({});
 
 const StyledControl = styled(Radio)({
   root: {
@@ -110,8 +98,8 @@ function GroupedRadioButtons ({
             labelPlacement="end"
             control={
               <StyledControl 
-                checkedIcon={<span className={`${classes.icon} ${classes.checkedIcon}`} />}
-                icon={<span className={classes.icon} />}
+                checkedIcon={<span style={{...classes.icon, ...classes.checkedIcon}} />} // Fix: Pass style as an object
+                icon={<span style={classes.icon} />}
                 color={option.color || 'primary'} 
               />
             }
@@ -121,7 +109,7 @@ function GroupedRadioButtons ({
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={field.name} />} />
-          : <div className={classes.emptyHelper} >{' '}</div>
+          : <div style={classes.emptyHelper} >{' '}</div>
       }
     </Fragment>
   )
@@ -153,8 +141,8 @@ export function StyledRadioGroup ({
       name={name}
       component={GroupedRadioButtons}
       label={label}
+      row={row? row : undefined}
       options={options}
-      row={row}
       disabled={isDisabled}
       additionalChange={onChange}
     />

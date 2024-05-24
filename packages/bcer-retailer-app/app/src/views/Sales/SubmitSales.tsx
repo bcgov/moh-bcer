@@ -1,8 +1,9 @@
 import React, { forwardRef, useEffect, useState, useContext } from 'react'
+import { styled } from '@mui/material/styles';
 import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
-import { makeStyles, Paper, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { makeStyles, Paper, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { SalesReportContext } from '@/contexts/SalesReport';
@@ -10,23 +11,34 @@ import { useAxiosPatch, useAxiosGet } from '@/hooks/axios';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 
-const useStyles = makeStyles({
-  bannerWrapper: {
+const PREFIX = 'SubmitSales';
+
+const classes = {
+  bannerWrapper: `${PREFIX}-bannerWrapper`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  box: `${PREFIX}-box`,
+  submitWrapper: `${PREFIX}-submitWrapper`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.bannerWrapper}`]: {
     alignItems: 'center',
     padding: '20px',
     backgroundColor: '#F8F2E4',
     marginBottom: '20px',
     borderRadius: '5px',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  box: {
+  [`& .${classes.box}`]: {
     display: 'flex',
     padding: '20px',
     borderRadius: '10px',
@@ -34,16 +46,16 @@ const useStyles = makeStyles({
     backgroundColor: '#fff',
     marginBottom: '20px',
   },
-  submitWrapper: {
+  [`& .${classes.submitWrapper}`]: {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingTop: '30px'
   },
-})
+});
 
 export default function SubmitSalesReport() {
-  const history = useHistory();
-  const classes = useStyles();
+  const navigate = useNavigate();
+
 
   const [salesReport, setSalesReport] = useContext(SalesReportContext);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
@@ -62,7 +74,7 @@ export default function SubmitSalesReport() {
         locationId: '',
         address: '',
       });
-      history.push('/sales/select');
+      navigate('/sales/select');
     }
   });
 
@@ -121,13 +133,13 @@ export default function SubmitSalesReport() {
         sales,
       }
     });
-    history.push('/sales/success');
+    navigate('/sales/success');
   }
 
   return (
-    <>
+    (<Root>
       <div>
-        <StyledButton onClick={() => history.goBack()}>
+        <StyledButton onClick={() => navigate(-1)}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Back
         </StyledButton>
@@ -229,6 +241,6 @@ export default function SubmitSalesReport() {
           : null
         }
       </div>
-    </>
-  )
+    </Root>)
+  );
 }

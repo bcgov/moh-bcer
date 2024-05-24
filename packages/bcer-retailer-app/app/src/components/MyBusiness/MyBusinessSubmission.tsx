@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { makeStyles, Typography, Paper } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { makeStyles, Typography, Paper } from '@mui/material';
 import { StyledTable } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
 
@@ -13,18 +14,41 @@ import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 
-const useStyles = makeStyles({
-  title: {
+const PREFIX = 'MyBusinessSubmission';
+
+const classes = {
+  title: `${PREFIX}-title`,
+  box: `${PREFIX}-box`,
+  successBanner: `${PREFIX}-successBanner`,
+  bannerIcon: `${PREFIX}-bannerIcon`,
+  bannerText: `${PREFIX}-bannerText`,
+  description: `${PREFIX}-description`,
+  stepsSubtitle: `${PREFIX}-stepsSubtitle`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  boxHeader: `${PREFIX}-boxHeader`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  boxDescription: `${PREFIX}-boxDescription`,
+  boxRow: `${PREFIX}-boxRow`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  csvLink: `${PREFIX}-csvLink`,
+  rowTitle: `${PREFIX}-rowTitle`,
+  rowContent: `${PREFIX}-rowContent`,
+  editButton: `${PREFIX}-editButton`,
+  tableWrapper: `${PREFIX}-tableWrapper`
+};
+
+const Root = styled('div')({
+  [`& .${classes.title}`]: {
     color: '#0F327F',
     paddingBottom: '30px'
   },
-  box: {
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem 1.4rem 0rem 1.4rem',
     marginBottom: '30px'
   },
-  successBanner: {
+  [`& .${classes.successBanner}`]: {
     display: 'flex',
     backgroundColor: '#E7F9EA',
     borderRadius: '4px',
@@ -32,27 +56,27 @@ const useStyles = makeStyles({
     alignItems: 'center',
     marginBottom: '20px',
   },
-  bannerIcon: {
+  [`& .${classes.bannerIcon}`]: {
     height: '45px',
     paddingRight: '20px'
   },
-  bannerText: {
+  [`& .${classes.bannerText}`]: {
     fontWeight: 600,
     color: '#3A3A3A'
   },
-  description: {
+  [`& .${classes.description}`]: {
     color: '#565656',
     paddingBottom: '20px'
   },
-  stepsSubtitle: {
+  [`& .${classes.stepsSubtitle}`]: {
     paddingBottom: '20px'
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     fontSize: '17px',
     fontWeight: 600,
     lineHeight: '22px',
   },
-  boxHeader: {
+  [`& .${classes.boxHeader}`]: {
     fontSize: '17px',
     fontWeight: 600,
     display: 'flex',
@@ -60,52 +84,52 @@ const useStyles = makeStyles({
     alignItems: 'center',
     paddingBottom: '15px',
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px'
   },
-  boxDescription: {
+  [`& .${classes.boxDescription}`]: {
     fontSize: '14px',
     color: '#3A3A3A',
     lineHeight: '20px',
     paddingBottom: '15px',
   },
-  boxRow: {
+  [`& .${classes.boxRow}`]: {
     display: 'flex',
     paddingBottom: '20px',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  rowTitle: {
+  [`& .${classes.rowTitle}`]: {
     fontSize: '14px',
     color: '#424242',
     width: '300px'
   },
-  rowContent: {
+  [`& .${classes.rowContent}`]: {
     fontSize: '14px',
     fontWeight: 600,
     color: '#3A3A3A',
   },
-  editButton: {
+  [`& .${classes.editButton}`]: {
     fontSize: '14px',
     width: '150px',
     minWidth: '150px'
   },
-  tableWrapper: {
+  [`& .${classes.tableWrapper}`]: {
     marginBottom: '20px'
   }
-})
+});
 
 
 export default function MyBusinessSubmission (props: any) {
-  const classes = useStyles();
+
 
   const [{ data: submission, error }, get] = useAxiosGet(`/submission/${props.match.params.submissionId}`);
   const [details, setDetails] = useState<BusinessDetails>();
@@ -146,7 +170,7 @@ export default function MyBusinessSubmission (props: any) {
   }, [error])
 
   return (
-    <div>
+    <Root>
       <Typography variant='h5' className={classes.title}>My Business</Typography>
       <Paper variant='outlined' className={classes.box}>
         <div className={classes.successBanner}>
@@ -284,6 +308,6 @@ export default function MyBusinessSubmission (props: any) {
           </FullScreen>
           : null
       }
-    </div>
-  )
+    </Root>
+  );
 }

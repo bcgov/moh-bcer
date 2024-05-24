@@ -1,5 +1,5 @@
 import React from 'react';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   BusinessLocationHeaders,
   DateFormat,
@@ -9,10 +9,10 @@ import {
   ReportStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
-import { Box, Grid, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { Box, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import moment from 'moment';
-import { ClassNameMap } from '@material-ui/styles';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import { ClassNameMap } from '@mui/material/styles';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { GeneralUtil } from './util';
 import { LocationType, LocationTypeLabels } from 'vaping-regulation-shared-components';
 
@@ -113,7 +113,7 @@ export class NoiUtil {
               }}
               onClick={() => handleDownload(l)}
               disabled={disabled}
-            >
+              size="large">
               <CloudDownloadIcon />
             </IconButton>
           </Tooltip>

@@ -1,25 +1,30 @@
 import TableWrapper from '@/components/generic/TableWrapper';
+import { styled } from '@mui/material/styles';
 import NoiTable from '@/components/Noi/NoiTable';
-import { BusinessLocationHeaders, NoiStatus } from '@/constants/localEnums';
+import { NoiStatus } from '@/constants/localEnums';
 import {
   BusinessLocation,
   GenericTableProp,
 } from '@/constants/localInterfaces';
 import React from 'react';
-import { useHistory } from 'react-router';
 import { StyledButton } from 'vaping-regulation-shared-components';
-import SendIcon from '@material-ui/icons/Send';
-import { makeStyles } from '@material-ui/styles';
+import SendIcon from '@mui/icons-material/Send';
 import { NoiUtil } from '@/utils/noi.util';
-import { Typography } from '@material-ui/core';
 import { getInitialPagination } from '@/utils/util';
 
-const useStyles = makeStyles({
-  sendIcon: {
+const PREFIX = 'Tables';
+
+const classes = {
+  sendIcon: `${PREFIX}-sendIcon`,
+  actionLink: `${PREFIX}-actionLink`
+};
+
+const StyledTableWrapper = styled(TableWrapper)({
+  [`& .${classes.sendIcon}`]: {
     height: '24px',
     paddingRight: '4px',
   },
-  actionLink: {
+  [`& .${classes.actionLink}`]: {
     color: 'blue',
     cursor: 'pointer',
     textDecoration: 'underline',
@@ -48,10 +53,10 @@ export function OutstandingNoiTable({
   handleActionButton,
   ...props
 }: OutstandingNoiTableProp) {
-  const classes = useStyles();
+
   
   return (
-    <TableWrapper
+    <StyledTableWrapper
       data={data}
       blockHeader="Outstanding Notice of Intent"
       tableHeader="Existing Business Locations"
@@ -72,7 +77,7 @@ export function OutstandingNoiTable({
         }}
         data={data} 
       />
-    </TableWrapper>
+    </StyledTableWrapper>
   );
 }
 
@@ -106,7 +111,7 @@ export function SubmittedNoiTable({
       />
     </TableWrapper>
   );
-};
+}
 
 export function NoiSubmissionTable({
   data,
@@ -133,7 +138,7 @@ export function NoiSubmissionTable({
       />
     </TableWrapper>
   );
-};
+}
 
 export function NoiMissingSalesReportTable({
   data,

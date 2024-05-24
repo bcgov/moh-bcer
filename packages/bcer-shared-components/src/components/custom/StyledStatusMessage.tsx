@@ -1,8 +1,7 @@
-import { Box, makeStyles } from '@mui/material';
+import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
 import { StyledErrorIcon, StyledSuccessIcon } from '../icons';
-
 
 const PREFIX = 'StyledStatusMessage';
 

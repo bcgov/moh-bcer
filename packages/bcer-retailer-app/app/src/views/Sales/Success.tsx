@@ -1,13 +1,22 @@
 import React, { useContext } from 'react';
+import { styled } from '@mui/material/styles';
 import { StyledButton } from 'vaping-regulation-shared-components';
-import { Box, makeStyles, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { Box, makeStyles, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 import { SalesReportContext } from '@/contexts/SalesReport';
 
-const useStyles = makeStyles({
-  box: {
+const PREFIX = 'Success';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  checkIcon: `${PREFIX}-checkIcon`,
+  text: `${PREFIX}-text`
+};
+
+const Root = styled('div')({
+  [`&.${classes.box}`]: {
     display: 'flex',
     flexDirection: 'column',
     padding: '20px',
@@ -16,24 +25,24 @@ const useStyles = makeStyles({
     backgroundColor: '#fff',
     marginBottom: '20px',
   },
-  checkIcon: {
+  [`& .${classes.checkIcon}`]: {
     fontSize: '128px',
     color: '#002C71',
   },
-  text: {
+  [`& .${classes.text}`]: {
     fontSize: '24px',
     textAlign: 'center',
   },
 });
 
 export default function SuccessSalesReport() {
-  const history = useHistory();
-  const classes = useStyles();
+  const navigate = useNavigate();
+
 
   const [salesReport] = useContext(SalesReportContext);
 
   return (
-    <div className={classes.box}>
+    <Root className={classes.box}>
       <Box textAlign="center">
         <CheckCircleOutlineIcon className={classes.checkIcon} />
       </Box>
@@ -46,12 +55,12 @@ export default function SuccessSalesReport() {
       </Box>
       <Box paddingTop={2} textAlign="center">
         <StyledButton
-          onClick={() => history.push('/sales')}
+          onClick={() => navigate('/sales')}
           variant="contained"
         >
           Return to my Sales Reports
         </StyledButton>
       </Box>
-    </div>
+    </Root>
   );
 }

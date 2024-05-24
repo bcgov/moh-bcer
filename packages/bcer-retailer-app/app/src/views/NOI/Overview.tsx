@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import ReactDOMServer from "react-dom/server";
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAxiosGet } from '@/hooks/axios';
-import { Box, makeStyles, Typography } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-
+import { Box, Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { Business, BusinessLocation } from '@/constants/localInterfaces';
+import { BusinessLocation } from '@/constants/localInterfaces';
 import { formatError } from '@/utils/formatting';
 import NoiSubmission from '@/components/Noi/NoiSubmission';
 import { NoiUtil } from '@/utils/noi.util';
@@ -15,12 +15,20 @@ import FullScreen from '@/components/generic/FullScreen';
 import jsPDF from 'jspdf';
 import Pdf from './Pdf';
 
-const useStyles = makeStyles({
-  title: {
+const PREFIX = 'Overview';
+
+const classes = {
+  title: `${PREFIX}-title`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px'
@@ -28,8 +36,8 @@ const useStyles = makeStyles({
 });
 
 export default function NoiOverview() {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const [{ data: businessData, loading: businessLoading, error: businessError }] = useAxiosGet(`/business`);
   const [outstanding, setOutstanding] = useState<Array<BusinessLocation>>([]);
   const outstandingFullscreenState = useState<boolean>(false);
@@ -37,7 +45,9 @@ export default function NoiOverview() {
   const submittedFullscreenState = useState<boolean>(false);
   const [missingSales, setMissingSales] = useState<Array<BusinessLocation>>([]);
   const missingSalesFullScreenState = useState<boolean>(false);
-  const { location: { pathname } } = history;
+  // const { location: { pathname } } = history;
+  const location = useLocation();
+  const { pathname } = location;
   const [{ data, loading, error }] = useAxiosGet<{locations: BusinessLocation[]}>(`/business/report-overview`);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
@@ -72,7 +82,7 @@ export default function NoiOverview() {
   }
 
   return loading ? <CircularProgress /> : (
-    <>
+    (<Root>
       <div>
         <div className={classes.actionsWrapper}>
         <Typography className={classes.title} variant='h5'>Notice of Intent</Typography>
@@ -111,7 +121,7 @@ export default function NoiOverview() {
         >
           <OutstandingNoiTable 
             data={outstanding || []} 
-            handleActionButton={()=>{history.push('/noi/submit')}}
+            handleActionButton={()=>{navigate('/noi/submit')}}
             fullScreenProp={outstandingFullscreenState}
           />
         </FullScreen>
@@ -133,6 +143,6 @@ export default function NoiOverview() {
           />
         </FullScreen>
       </div>
-    </>
+    </Root>)
   );
 }

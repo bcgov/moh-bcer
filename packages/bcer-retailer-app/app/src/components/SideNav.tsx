@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate, useLocation } from 'react-router-dom';
 import store from 'store';
 import { useKeycloak } from '@react-keycloak/web';
 import { useAxiosGet } from '@/hooks/axios';
@@ -7,7 +8,7 @@ import {
   CheckCircleOutlineOutlined,
   FiberManualRecordOutlined,
   ErrorOutline,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import {
   makeStyles,
   List,
@@ -17,13 +18,29 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
 import userSignOutLogo from '@/assets/images/sign-out.png';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 
-const useStyles = makeStyles({
-  sideNav: {
+const PREFIX = 'SideNav';
+
+const classes = {
+  sideNav: `${PREFIX}-sideNav`,
+  listGroup: `${PREFIX}-listGroup`,
+  listItem: `${PREFIX}-listItem`,
+  listLabel: `${PREFIX}-listLabel`,
+  activeLabel: `${PREFIX}-activeLabel`,
+  listIcon: `${PREFIX}-listIcon`,
+  activeIcon: `${PREFIX}-activeIcon`,
+  signOutIcon: `${PREFIX}-signOutIcon`,
+  signOutText: `${PREFIX}-signOutText`,
+  logoutContainer: `${PREFIX}-logoutContainer`,
+  errorIcon: `${PREFIX}-errorIcon`
+};
+
+const Root = styled('div')({
+  [`&.${classes.sideNav}`]: {
     position: 'relative',
     maxWidth: '360px',
     minWidth: '360px',
@@ -32,7 +49,7 @@ const useStyles = makeStyles({
     borderStyle: 'solid',
     borderColor: '#CDCED2'
   },
-  listGroup: {
+  [`& .${classes.listGroup}`]: {
     maxWidth: '360px',
     height: '100%',
     width: '360px',
@@ -40,12 +57,12 @@ const useStyles = makeStyles({
     paddingTop: '70px',
 
   },
-  listItem: {
+  [`& .${classes.listItem}`]: {
     padding: '0px',
     marginBottom: '0px',
     height: '70px',
   },
-  listLabel: {
+  [`& .${classes.listLabel}`]: {
     flex: 'none',
     '& .MuiTypography-root': {
       whiteSpace: 'nowrap',
@@ -53,29 +70,29 @@ const useStyles = makeStyles({
       color: "rgba(51, 51, 51, 0.5)"
     }
   },
-  activeLabel: {
+  [`& .${classes.activeLabel}`]: {
     '& .MuiTypography-root': {
       color: '#424242',
       fontWeight: 600
     }
   },
-  listIcon: {
+  [`& .${classes.listIcon}`]: {
     fontSize: '30px !important',
     padding: '0px 24px 0px 24px',
     marginBottom: '0px !important',
   },
-  activeIcon: {
+  [`& .${classes.activeIcon}`]: {
     color: '#002C71'
   },
-  signOutIcon: {
+  [`& .${classes.signOutIcon}`]: {
     marginBottom: '0px !important',
     padding: '0px 26px 0px 26px',
   },
-  signOutText: {
+  [`& .${classes.signOutText}`]: {
     fontSize: '20px',
     color: "rgba(51, 51, 51, 0.5)",
   },
-  logoutContainer: {
+  [`& .${classes.logoutContainer}`]: {
     minWidth: '360px',
     height: '70px',
     position: 'absolute',
@@ -87,19 +104,19 @@ const useStyles = makeStyles({
       cursor: 'pointer',
     },
   },
-  errorIcon: {
+  [`& .${classes.errorIcon}`]: {
     minWidth: '0px',
     padding: '0px 10px 0px 10px'
   }
 });
 
-interface IconProps { formStep: 'myDashboard' | 'myBusiness' | 'noi' | 'productReport' | 'manufacturingReport' | 'salesReports' | 'userGuide'};
+interface IconProps { formStep: 'myDashboard' | 'myBusiness' | 'noi' | 'productReport' | 'manufacturingReport' | 'salesReports' | 'userGuide' }
 
 export default function SideNav() {
   const { pathname } = useLocation();
-  const classes = useStyles();
-  const [keycloak] = useKeycloak();
-  const history = useHistory();
+
+  const {keycloak} = useKeycloak();
+  const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const logout = () => {
     store.clearAll();
@@ -135,8 +152,8 @@ export default function SideNav() {
 
   
   function ListItemLink(props: ListItemProps<'a', { button?: true }>) {
-    const history = useHistory();
-    const classes = useStyles();
+    const navigate = useNavigate();
+
    
     if (props.download) { //BCER User Guide 
       return (
@@ -162,13 +179,13 @@ export default function SideNav() {
       <ListItem button component="a" className={classes.listItem}
         onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
           event.preventDefault();
-          history.push(props.href);
+          navigate(props.href);
         }} {...props} />
     )
   }
 
 
-  const NavItem: React.SFC<IconProps> = ({ formStep }) => {
+  const NavItem: React.FunctionComponent<IconProps> = ({ formStep }) => {
     let completedStep = false;
     let pathName = '/';
     let stepTitle = '';
@@ -262,7 +279,7 @@ export default function SideNav() {
   }
 
   return (
-    <div className={classes.sideNav}>
+    <Root className={classes.sideNav}>
       <List component='nav' className={classes.listGroup} >
         <NavItem formStep={'myDashboard'} />
         <NavItem formStep={'myBusiness'} />
@@ -280,6 +297,6 @@ export default function SideNav() {
           )
         }
       </List>
-    </div>
-  )
+    </Root>
+  );
 }

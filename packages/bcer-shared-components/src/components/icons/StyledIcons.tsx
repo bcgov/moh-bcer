@@ -3,12 +3,21 @@ import { styled } from '@mui/material/styles';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const PREFIX = 'StyledIcons';
-
 const classes = {
-  root: `${PREFIX}-root`,
-  error: `${PREFIX}-error`,
-  success: `${PREFIX}-success`
+  root: {
+    padding: '11px',
+    backgroundColor: '#FAF3CA',
+    border: '2px solid #F9F1C6',
+    borderRadius: '4px',
+    marginTop: '10px',
+    marginBottom: '10px',
+  },
+  error: {
+    backgroundColor: 'red',
+  },
+  success: {
+    backgroundColor: '#2E8540'
+  }
 };
 
 const Root = styled('span')(() => ({
@@ -33,16 +42,16 @@ const Root = styled('span')(() => ({
 
 export function StyledErrorIcon() {
   return (
-    <Root className={classes.error}>
-      <ErrorOutlineIcon className={classes.root} />
+    <Root sx={classes.error}>
+      <ErrorOutlineIcon sx={classes.root} />
     </Root>
   );
 }
 
 export function StyledSuccessIcon() {
   return (
-    <Root className={classes.success}>
-      <CheckCircleIcon className={classes.root} />
+    <Root sx={classes.success}>
+      <CheckCircleIcon sx={classes.root} />
     </Root>
   )
 }

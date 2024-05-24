@@ -1,54 +1,70 @@
-import { makeStyles, Paper, Typography } from '@material-ui/core';
+import { makeStyles, Paper, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import React from 'react';
 import { CSVLink } from 'react-csv';
 import { StyledButton } from 'vaping-regulation-shared-components';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import { useHistory } from 'react-router';
-import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 
-const useStyles = makeStyles({
-  subtitleWrapper: {
+const PREFIX = 'TableWrapper';
+
+const classes = {
+  subtitleWrapper: `${PREFIX}-subtitleWrapper`,
+  subtitle: `${PREFIX}-subtitle`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  headerWrapper: `${PREFIX}-headerWrapper`,
+  csvLink: `${PREFIX}-csvLink`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  box: `${PREFIX}-box`,
+  buttonWrapper: `${PREFIX}-buttonWrapper`,
+  sendIcon: `${PREFIX}-sendIcon`
+};
+
+const Root = styled('div')({
+  [`& .${classes.subtitleWrapper}`]: {
     display: 'flex',
     alignItems: 'bottom',
     justifyContent: 'space-between',
     padding: '30px 0px 10px 0px',
   },
-  subtitle: {
+  [`& .${classes.subtitle}`]: {
     color: '#0053A4',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px',
   },
-  tableRowCount: {
+  [`& .${classes.tableRowCount}`]: {
     paddingBottom: '10px',
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     paddingBottom: '10px',
   },
-  headerWrapper: {
+  [`& .${classes.headerWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
     marginRight: '10px',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
-  box: {
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
   },
-  buttonWrapper: {
+  [`& .${classes.buttonWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
   },
-  sendIcon: {
+  [`& .${classes.sendIcon}`]: {
     height: '24px',
     paddingRight: '4px',
   },
@@ -83,8 +99,6 @@ function TableWrapper({
   fullScreenProp,
   isOutlined = true,
 }: TableWrapperProp) {
-  const classes = useStyles();
-  const history = useHistory();
 
   function TableContainer ({children}: {children: React.ReactNode}) {
 
@@ -96,7 +110,7 @@ function TableWrapper({
   }
 
   return (
-    <div>
+    <Root>
       {blockHeader && (
         <div className={classes.subtitleWrapper}>
           <Typography className={classes.subtitle} variant="h6">
@@ -140,7 +154,7 @@ function TableWrapper({
         </div>
         <div>{children}</div>
       </TableContainer>
-    </div>
+    </Root>
   );
 }
 

@@ -1,20 +1,19 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { CSVLink } from 'react-csv';
 import { useAxiosGet } from '@/hooks/axios';
 import {
-  makeStyles,
   Typography,
   Paper,
   styled,
   Button,
   Dialog,
   Tooltip,
-} from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import moment from 'moment';
-import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 
 import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
 import {
@@ -33,6 +32,87 @@ import { getSalesReportYear } from '@/utils/time';
 import Loader from '@/components/Sales/Loader';
 import { LocationUtil } from '@/utils/location.util';
 import { getInitialPagination } from '@/utils/util';
+
+const PREFIX = 'Overview';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  title: `${PREFIX}-title`,
+  subtitleWrapper: `${PREFIX}-subtitleWrapper`,
+  subtitle: `${PREFIX}-subtitle`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  csvLink: `${PREFIX}-csvLink`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  sendIcon: `${PREFIX}-sendIcon`,
+  actionLink: `${PREFIX}-actionLink`,
+  buttonWrapper: `${PREFIX}-buttonWrapper`,
+  editButton: `${PREFIX}-editButton`,
+  dialogWrap: `${PREFIX}-dialogWrap`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.box}`]: {
+    border: 'solid 1px #CDCED2',
+    borderRadius: '4px',
+    padding: '1.4rem',
+  },
+  [`& .${classes.title}`]: {
+    padding: '20px 0px',
+    color: '#002C71',
+  },
+  [`& .${classes.subtitleWrapper}`]: {
+    display: 'flex',
+    alignItems: 'bottom',
+    justifyContent: 'space-between',
+    padding: '30px 0px 10px 0px',
+  },
+  [`& .${classes.subtitle}`]: {
+    color: '#0053A4',
+  },
+  [`& .${classes.boxTitle}`]: {
+    paddingBottom: '10px',
+  },
+  [`& .${classes.tableRowCount}`]: {
+    paddingBottom: '10px',
+  },
+  [`& .${classes.actionsWrapper}`]: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingBottom: '10px',
+  },
+  [`& .${classes.csvLink}`]: {
+    textDecoration: 'none',
+  },
+  [`& .${classes.buttonIcon}`]: {
+    color: '#285CBC',
+    fontSize: '20px',
+  },
+  [`& .${classes.sendIcon}`]: {
+    height: '24px',
+    paddingRight: '4px',
+  },
+  [`& .${classes.actionLink}`]: {
+    color: 'blue',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+  },
+  [`& .${classes.buttonWrapper}`]: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  [`& .${classes.editButton}`]: {
+    width: '90px',
+    fontSize: '14px',
+    minWidth: '90px',
+    lineHeight: '18px',
+  },
+  [`& .${classes.dialogWrap}`]: {
+    padding: '1rem 1.5rem',
+  },
+});
 
 const IconButton = styled(Button)({
   minWidth: '30px !important',
@@ -70,74 +150,12 @@ const FullscreenButton = styled(Button)({
   },
 });
 
-const useStyles = makeStyles({
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-  },
-  title: {
-    padding: '20px 0px',
-    color: '#002C71',
-  },
-  subtitleWrapper: {
-    display: 'flex',
-    alignItems: 'bottom',
-    justifyContent: 'space-between',
-    padding: '30px 0px 10px 0px',
-  },
-  subtitle: {
-    color: '#0053A4',
-  },
-  boxTitle: {
-    paddingBottom: '10px',
-  },
-  tableRowCount: {
-    paddingBottom: '10px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px',
-  },
-  csvLink: {
-    textDecoration: 'none',
-  },
-  buttonIcon: {
-    color: '#285CBC',
-    fontSize: '20px',
-  },
-  sendIcon: {
-    height: '24px',
-    paddingRight: '4px',
-  },
-  actionLink: {
-    color: 'blue',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  },
-  buttonWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  editButton: {
-    width: '90px',
-    fontSize: '14px',
-    minWidth: '90px',
-    lineHeight: '18px',
-  },
-  dialogWrap: {
-    padding: '1rem 1.5rem',
-  },
-});
-
 export default function SalesOverview() {
-  const classes = useStyles();
-  const history = useHistory();
 
-  const {
-    location: { pathname },
-  } = history;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { pathname } = location;
+
   const [
     { data: outstanding, loading: outstandingLoading, error: outstandingError },
   ] = useAxiosGet(`/sales/locations`);
@@ -173,7 +191,7 @@ export default function SalesOverview() {
   return outstandingLoading || submittedLoading ? (
     <CircularProgress />
   ) : (
-    <>
+    (<Root>
       <div>
         <Loader
           open={downloadLoading}
@@ -266,7 +284,7 @@ export default function SalesOverview() {
                           file: undefined,
                           saleReports: [],
                         });
-                        history.push('/sales/upload');
+                        navigate('/sales/upload');
                       }}
                     >
                       Select
@@ -342,7 +360,7 @@ export default function SalesOverview() {
                   render: (rd: BusinessLocation) => (
                     <>
                       <Tooltip title="Download CSV" placement="top">
-                        <IconButton variant="outlined">
+                        <IconButton variant="outlined" size="large">
                           <SaveAltIcon
                             className={classes.buttonIcon}
                             onClick={async () => {
@@ -371,7 +389,7 @@ export default function SalesOverview() {
                             file: undefined,
                             saleReports: [],
                           });
-                          history.push('/sales/upload');
+                          navigate('/sales/upload');
                         }}
                       >
                         Select
@@ -456,7 +474,7 @@ export default function SalesOverview() {
                             file: undefined,
                             saleReports: [],
                           });
-                          history.push('/sales/upload');
+                          navigate('/sales/upload');
                         }}
                       >
                         Select
@@ -537,7 +555,7 @@ export default function SalesOverview() {
                     render: (rd: BusinessLocation) => (
                       <>
                         <Tooltip title="Download CSV" placement="top">
-                          <IconButton variant="outlined">
+                          <IconButton variant="outlined" size="large">
                             <SaveAltIcon
                               className={classes.buttonIcon}
                               onClick={async () => {
@@ -564,7 +582,7 @@ export default function SalesOverview() {
                               file: undefined,
                               saleReports: [],
                             });
-                            history.push('/sales/upload');
+                            navigate('/sales/upload');
                           }}
                         >
                           Select
@@ -588,6 +606,6 @@ export default function SalesOverview() {
           </div>
         </div>
       </Dialog>
-    </>
+    </Root>)
   );
 }

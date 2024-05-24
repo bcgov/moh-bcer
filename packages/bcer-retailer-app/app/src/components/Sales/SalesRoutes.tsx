@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
 import store from 'store';
 
@@ -46,20 +46,23 @@ export default function SalesRoutes(){
 
   useEffect(() => {
     (async () => {
-      const submissionId = store.get('salesReportSubmissionId') || sales.submissionId
+      const submissionId = store.get('salesReportSubmissionId') || sales.submissionId;
       // GET: returns an existing submission
       // TODO: when we have a keycloak token, this GET should also return existing business and location data for the business entity
       // POST: creates a new submission
-      await submissionId ? get({ url:`/submission/${submissionId}` }) : post({
-        data: Object.assign({}, {
-          // NB: legal name of business is hard coded
-          // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
-          legalName: 'Happy Puff',
-          type: SubmissionTypeEnum.sales,
-        }, { data: sales })
-      })
-    })()
-  }, [])
+      (await submissionId) 
+        ? get({ url: `/submission/${submissionId}` }) 
+        : post({
+            data: {
+              // NB: legal name of business is hard coded
+              // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
+              legalName: 'Happy Puff',
+              type: SubmissionTypeEnum.sales,
+              ...sales
+            }
+          });
+    })();
+  }, [sales.submissionId]);
 
   useEffect(() => {
     if (submission && !error) {
@@ -98,14 +101,16 @@ export default function SalesRoutes(){
 
   return(
     <>
-      <SalesReportProvider value={[sales, setSales]} >
-        <Switch>
-          <Route exact path='/sales' component={SalesOverview} />
-          <Route exact path='/sales/upload' component={SaleUpload} />
-          <Route exact path='/sales/review' component={SaleReview} />
-          <Route exact path='/sales/submit' component={SubmitSalesReport} />
-          <Route exact path='/sales/success' component={SuccessSalesReport} />
-        </Switch>
+      <SalesReportProvider value={[sales, setSales]}>
+        <Router>
+          <Routes>
+            <Route path='/sales' element={<SalesOverview />} />
+            <Route path='/sales/upload' element={<SaleUpload />} />
+            <Route path='/sales/review' element={<SaleReview />} />
+            <Route path='/sales/submit' element={<SubmitSalesReport />} />
+            <Route path='/sales/success' element={<SuccessSalesReport />} />
+          </Routes>
+        </Router>
       </SalesReportProvider>
     </>
   )

@@ -1,23 +1,33 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Typography, styled } from '@material-ui/core';
+import { Grid, GridProps, Typography,TypographyProps } from '@mui/material';
 import { StyledSelectField, StyledTextField } from 'vaping-regulation-shared-components'
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 import { provinceOptions } from '@/constants/arrays';
 import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
 import SubmitBusinessInfoButton from '@/components/MyBusiness/SubmitBusinessInfoButton';
 
-const FormBorderGrid = styled(Grid)({
-  padding: '25px 20px 15px 20px',
-  border: '1px solid #CDCED2',
-  borderRadius: '5px',
-  backgroundColor: '#fff'
-})
+const FormBorderGrid = (props: GridProps) => (
+  <Grid
+  {...props}
+    sx={{
+    padding: '25px 20px 15px 20px',
+    border: '1px solid #CDCED2',
+    borderRadius: '5px',
+    backgroundColor: '#fff'
+  }}
+  />
+);
 
-const FormTitle = styled(Typography)({
-  fontSize: '17px',
-  fontWeight: 600,
-  paddingBottom: '24px'
-})
+const FormTitle = (props: TypographyProps) => (
+  <Typography
+  {...props}
+    sx={{
+    fontSize: '17px',
+    fontWeight: 600,
+    paddingBottom: '24px'
+  }}
+  />
+);
 
 function BusinessDetailsInputs() {
   const [businessInfo, setBusinessInfo] = useContext<[BIContext, Function]>(BusinessInfoContext);
@@ -79,21 +89,21 @@ function BusinessDetailsInputs() {
 
       <Grid container item xs={12} md={6} spacing={2}>  
         
-        <Grid item xs={6}>
-          <StyledSelectField
-            label={<RequiredFieldLabel label="Province"/>}
-            name="province"
-            options={provinceOptions}
-            fullWidth
-          />
-        </Grid>
+      <Grid item xs={6}>
+        <StyledSelectField
+          label={<RequiredFieldLabel label="Province"/>}
+          name="province"
+          options={provinceOptions}
+          fullWidth
+        />
+      </Grid>
 
-        <Grid item xs={6}>
-          <StyledTextField
-            label={<RequiredFieldLabel label="Postal code"/>}
-            name="postal"          
-          />
-        </Grid>
+      <Grid item xs={6}>
+        <StyledTextField
+          label={<RequiredFieldLabel label="Postal code"/>}
+          name="postal"          
+        />
+      </Grid>
 
       </Grid>
 
@@ -104,6 +114,7 @@ function BusinessDetailsInputs() {
           fullWidth
         />
       </Grid>
+
       <Grid item xs={12} md={6}>
         <StyledTextField
           label={<RequiredFieldLabel label="Business email"/>}
@@ -118,8 +129,8 @@ function BusinessDetailsInputs() {
           name="webpage"
           fullWidth
         />
-      </Grid>
-      
+      </Grid> 
+
       {initialState &&
       <Grid item xs={12} md={6}>
         <SubmitBusinessInfoButton updateType="businessInfoOnly" />

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { makeStyles, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { StyledHeaderMapperProps } from '@/constants/interfaces/inputInterfaces';
 import { Formik, Form } from 'formik';
 import { StyledSelectField } from '@/index';
 import * as Yup from 'yup';
 import { StyledButton } from '@/index';
-
 
 const PREFIX = 'StyledHeaderMapper';
 
@@ -15,20 +14,29 @@ const classes = {
   headerText: `${PREFIX}-headerText`,
   requiredColumn: `${PREFIX}-requiredColumn`,
   csvHeaderColumn: `${PREFIX}-csvHeaderColumn`,
-  previewColumn: `${PREFIX}-previewColumn`,
   mapRow: `${PREFIX}-mapRow`,
   rowText: `${PREFIX}-rowText`,
   actionWrapper: `${PREFIX}-actionWrapper`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')({
   [`& .${classes.header}`]: {
     display: 'flex',
     borderBottom: '2px solid #F5A623',
     padding: '20px',
-
   },
+  [`& .${classes.mapRow}`]: {
+    display: 'flex',
+    padding: '20px 20px 0px 20px'
+  },
+  [`& .${classes.actionWrapper}`]: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingBottom: '16px'
+  }
+});
+
+const RootTypography = styled(Typography)({
   [`& .${classes.headerText}`]: {
     color: '#002C71',
     fontWeight: 600
@@ -40,23 +48,10 @@ const Root = styled('div')({
   [`& .${classes.csvHeaderColumn}`]: {
     width: '235px',
     marginRight: '20px'
-    
-  },
-  [`& .${classes.previewColumn}`]: {
-    width: '190px',
-  },
-  [`& .${classes.mapRow}`]: {
-    display: 'flex',
-    padding: '20px 20px 0px 20px'
   },
   [`& .${classes.rowText}`]: {
     color: '#333333'
   },
-  [`& .${classes.actionWrapper}`]: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '16px'
-  }
 });
 
 // THIS IS WIP
@@ -119,7 +114,8 @@ export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapC
   }
 
   return (
-    (<Root>
+    <Root>
+      <RootTypography>
       {
         validationSchema !== undefined && initialValues !== undefined
           ?
@@ -161,6 +157,7 @@ export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapC
           </Formik>
         : null
       }
-    </Root>)
+      </RootTypography>
+    </Root>
   );
 }

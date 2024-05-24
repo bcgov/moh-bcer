@@ -1,6 +1,6 @@
 import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Equal } from 'typeorm';
 import {
   ErrorDataType,
   NotificationReportDTO,
@@ -104,8 +104,7 @@ export class NotificationService {
   async findSubscriptionByBusinessId(
     businessId: string,
   ): Promise<SubscriptionEntity> {
-    const business = await this.businessService.getBusinessById(businessId);
-    return await this.subscriptionRepository.findOne({ where: { business: business } });
+    return await this.subscriptionRepository.findOne({ where: { business: Equal(businessId) } });
   }
 
   async findSubscriptionById(id: string): Promise<SubscriptionEntity> {

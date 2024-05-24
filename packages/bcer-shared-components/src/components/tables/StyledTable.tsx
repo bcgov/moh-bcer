@@ -1,48 +1,36 @@
 
 import React, { ReactElement, CSSProperties } from 'react';
-import { styled } from '@mui/material/styles';
 import { Paper, IconButton } from '@mui/material';
 import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
 import MaterialTable, { Toolbar } from '@mui/material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-
 import { StyledButton } from '@/index';
 
-const PREFIX = 'StyledTable';
 
 const classes = {
-  root: `${PREFIX}-root`,
-  editButtonWrapper: `${PREFIX}-editButtonWrapper`,
-  editButton: `${PREFIX}-editButton`,
-  deleteIcon: `${PREFIX}-deleteIcon`,
-  tableHeader: `${PREFIX}-tableHeader`,
-  checkbox: `${PREFIX}-checkbox`
-};
-
-const Root = styled('div')({
-  [`& .${classes.root}`]: {
+  root: {
     border: '1px solid #CDCED2',
     borderRadius: '5px',
     boxShadow: 'none',
     padding: '0px 1px 0px 1px'
   },
-  [`& .${classes.editButtonWrapper}`]: {
+  editButtonWrapper: {
     display: 'flex',
     alignItems: 'center'
   },
-  [`& .${classes.editButton}`]: {
+  editButton: {
     width: '90px',
     fontSize: '14px',
     minWidth: '90px',
     lineHeight: '18px',
   },
-  [`& .${classes.deleteIcon}`]: {
+  deleteIcon: {
     color: '#ff534a'
   },
-  [`& .${classes.tableHeader}`]: {
+  tableHeader: {
     display: 'contents',
   },
-  [`& .${classes.checkbox}`]: {
+  checkbox: {
     '& .MuiIconButton-colorSecondary':{
       '&:hover': {
         background: 'rgba(0, 83, 164, .03)',
@@ -56,7 +44,7 @@ const Root = styled('div')({
       color: '#0053A4'
     },
   }
-});
+};
 
 /**
  * Applies styling to a table's header component
@@ -115,14 +103,14 @@ const CustomActions = (props: any) => {
 
   return props.action.icon === 'edit'
     ?
-    <div className={classes.editButtonWrapper}>
-      <StyledButton className={classes.editButton} variant='outlined' onClick={(event) => props.action.onClick(event, props.data)} >
+    <div style={classes.editButtonWrapper}>
+      <StyledButton sx={classes.editButton} variant='outlined' onClick={(event) => props.action.onClick(event, props.data)} >
         Edit
       </StyledButton>
     </div>
     :
       <IconButton
-        className={classes.deleteIcon}
+        sx={classes.deleteIcon}
         onClick={(event) => props.action.onClick(event, props.data)}
         size="large">
         <DeleteOutlinedIcon/>
@@ -133,8 +121,7 @@ const CustomActions = (props: any) => {
  * Override for MTable Container component
  */
 const CustomContainer = (props: any) => {
-
-  return <Paper className={`${classes.root} ${classes.checkbox}`} {...props} />
+  return <Paper sx={`${classes.root} ${classes.checkbox}`} {...props} />
 }
 
 /**

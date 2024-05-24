@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { makeStyles, CircularProgress, Typography, Box } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import { makeStyles, CircularProgress, Typography, Box } from '@mui/material';
 import { BusinessDashboard, LocationType } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
 
@@ -9,22 +10,29 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import moment from 'moment';
 import { LocationStatus } from '@/constants/localEnums';
 
-const useStyles = makeStyles({
-  title: {
+const PREFIX = 'Overview';
+
+const classes = {
+  title: `${PREFIX}-title`,
+  reportingPeriodDisclaimer: `${PREFIX}-reportingPeriodDisclaimer`
+};
+
+const Root = styled('div')({
+  [`& .${classes.title}`]: {
     color: '#0F327F',
     paddingBottom: '30px',
     paddingTop: 0,
   },
-  reportingPeriodDisclaimer: {
+  [`& .${classes.reportingPeriodDisclaimer}`]: {
     display: 'flex',
     padding: '10px 15px',
     marginBottom: '20px'
   }
-})
+});
 
 export default function MyDashboard () {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [{ data, error, loading }] = useAxiosGet<{
     locations: BusinessLocation[];
@@ -33,7 +41,7 @@ export default function MyDashboard () {
 
   useEffect(() => {
     if(appGlobal && !appGlobal.myBusinessComplete) {
-      history.push('/')
+      navigate('/')
     }
   }, [appGlobal])
 
@@ -56,7 +64,7 @@ export default function MyDashboard () {
   }
 
   return (
-    <div>
+    <Root>
       <Typography variant='h5' className={classes.title}>My Dashboard</Typography>
       {
         loading ? <CircularProgress /> :
@@ -96,6 +104,6 @@ export default function MyDashboard () {
           :
         null
       }
-    </div>
-  )
+    </Root>
+  );
 }

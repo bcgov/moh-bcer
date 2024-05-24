@@ -107,7 +107,7 @@ export function StyledTextField ({
       name={name}
       component={TextInput}
       label={label}
-      fullWidth={fullWidth}
+      fullWidth={fullWidth? fullWidth : undefined}
       disabled={isDisabled}
       variant={variant}
       placeholder={placeholder}

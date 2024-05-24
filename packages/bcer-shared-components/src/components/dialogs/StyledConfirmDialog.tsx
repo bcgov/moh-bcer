@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, makeStyles } from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { Fragment, ReactElement } from 'react';
@@ -8,41 +8,30 @@ import { StyledCheckboxProps, CheckboxInputProps } from '@/constants/interfaces/
 import { StyledDialog } from '@/index';
 import { StyledConfirmDialogProps } from '@/constants/interfaces/dialogInterfaces';
 
-const PREFIX = 'StyledConfirmDialog';
-
-const classes = {
-  emptyHelper: `${PREFIX}-emptyHelper`,
-  formControl: `${PREFIX}-formControl`,
-  contentWrapper: `${PREFIX}-contentWrapper`
-};
-
-const StyledField
- = styled(Field
-)({
-  [`& .${classes.emptyHelper}`]: {
-    height: '22px'
+const StyledFormControlLabel = styled(FormControlLabel)({ 
+  paddingTop: '15px',
+  fontSize: '14px',
+  '& .MuiIconButton-colorSecondary': {
+    '&:hover': {
+      background: 'rgba(0, 83, 164, .03)',
+    }
   },
-  [`& .${classes.formControl}`]: {
-    paddingTop: '15px',
-    fontSize: '14px',
-    '& .MuiIconButton-colorSecondary':{
-      '&:hover': {
-        background: 'rgba(0, 83, 164, .03)',
-      }
-    },
-    '& .MuiCheckbox-root': {
-      color: 'rgba(0, 0, 0, 0.54)',
+  '& .MuiCheckbox-root': {
+    color: 'rgba(0, 0, 0, 0.54)',
+  },
+  '& .Mui-checked': {
+    color: '#0053A4'
+  },
+});
 
-    },
-    '& .Mui-checked': {
-      color: '#0053A4'
-    },
-  },
-  [`& .${classes.contentWrapper}`]: {
-    display: 'flex',
-    flexDirection: 'column',
-    fontSize: '16px'
-  },
+const StypledEmptyHelper = styled('div')({ 
+  height: '22px'
+});
+
+const StyledContentWrapper = styled('div')({ 
+  display: 'flex',
+  flexDirection: 'column',
+  fontSize: '16px'
 });
 
 function CheckboxInput ({
@@ -59,8 +48,7 @@ function CheckboxInput ({
 
   return (
     <Fragment>
-      <FormControlLabel
-        className={classes.formControl}
+      <StyledFormControlLabel
         label={label}
         disabled={disabled}
         labelPlacement="end"
@@ -76,7 +64,7 @@ function CheckboxInput ({
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
-          : <div className={classes.emptyHelper} >{' '}</div>
+          : <StypledEmptyHelper>{' '}</StypledEmptyHelper>
       }
     </Fragment>
   )
@@ -128,13 +116,13 @@ export function StyledConfirmDialog(
           cancelHandler={() => setOpen(false)}
           acceptHandler='submit'
         >
-          <div className={classes.contentWrapper}>
+          <StyledContentWrapper>
             {dialogMessage}
             <StyledCheckbox
               name='confirmed'
               label={checkboxLabel}
             />
-          </div>
+          </StyledContentWrapper>
         </StyledDialog>
       </Form>
     </Formik>

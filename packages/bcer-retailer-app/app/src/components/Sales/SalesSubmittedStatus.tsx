@@ -1,16 +1,20 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { makeStyles } from '@mui/material';
 
-interface IProps {
-  isSubmitted: boolean;
-}
+const PREFIX = 'SalesSubmittedStatus';
 
-const useStyles = makeStyles({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  dot: `${PREFIX}-dot`
+};
+
+const Root = styled('div')({
+  [`&.${classes.root}`]: {
     display: 'flex',
     alignItems: 'center',
   },
-  dot: {
+  [`& .${classes.dot}`]: {
     width: '12px',
     height: '12px',
     borderRadius: '50%',
@@ -20,12 +24,17 @@ const useStyles = makeStyles({
       isSubmitted ? '#7ED321' : '#D0021B',
   },
 });
+
+interface IProps {
+  isSubmitted: boolean;
+}
+
 export default function SalesSubmittedStatus({ isSubmitted }: IProps) {
-  const classes = useStyles({ isSubmitted });
+
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <div className={classes.dot} />
       <header>{isSubmitted ? 'Submitted' : 'Not Submitted'}</header>
-    </div>
+    </Root>
   );
 }

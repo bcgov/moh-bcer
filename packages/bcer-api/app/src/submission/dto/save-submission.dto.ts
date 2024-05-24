@@ -14,7 +14,7 @@ export class SaveSubmissionDTO {
 
   @ApiProperty({
     description: 'Id of the submission to save',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   submissionId: string;
 

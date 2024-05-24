@@ -1,93 +1,62 @@
 import { Box, IconButton, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const PREFIX = 'StyledToast';
-
 const classes = {
-  container: `${PREFIX}-container`,
-  successTitle: `${PREFIX}-successTitle`,
-  warningTitle: `${PREFIX}-warningTitle`,
-  errorTitle: `${PREFIX}-errorTitle`,
-  success: `${PREFIX}-success`,
-  successMessage: `${PREFIX}-successMessage`,
-  warning: `${PREFIX}-warning`,
-  error: `${PREFIX}-error`,
-  successBottomBorder: `${PREFIX}-successBottomBorder`,
-  errorBottmBorder: `${PREFIX}-errorBottmBorder`,
-  warningBottomBorder: `${PREFIX}-warningBottomBorder`
-};
-
-const StyledBox = styled(Box)((
-  {
-    theme
-  }
-) => ({
-  [`& .${classes.container}`]: {
+  container: {
     backgroundColor: '#F8F4F4',
     padding: '20px',
     width: '600px',
     marginTop: '20px',
     boxShadow: '2px 2px 20px 5px rgba(0,0,0,0.15)',
   },
-
-  [`& .${classes.successTitle}`]: { 
-    fontSize: '18px', 
-    fontWeight: 600, 
-    color: '#3E3C3B' 
+  successTitle: {
+    fontSize: '18px',
+    fontWeight: 600,
+    color: '#3E3C3B',
   },
-
-  [`& .${classes.warningTitle}`]: {
+  warningTitle: {
     fontSize: '18px',
     fontWeight: 600,
     color: 'orange',
   },
-
-  [`& .${classes.errorTitle}`]: {
+  errorTitle: {
     fontSize: '18px',
     fontWeight: 600,
     color: '#ff0033',
   },
-
-  [`& .${classes.success}`]: {
+  success: {
     color: '#43A047',
     fontSize: '14px',
   },
-
-  [`& .${classes.successMessage}`]: { 
-    fontSize: '14px', 
-    color: '#3E3C3B' 
+  successMessage: {
+    fontSize: '14px',
+    color: '#3E3C3B',
   },
-
-  [`& .${classes.warning}`]: {
+  warning: {
     color: 'orange',
     fontSize: '14px',
   },
-
-  [`& .${classes.error}`]: {
+  error: {
     color: '#ff0033',
     fontSize: '14px',
   },
-
-  [`& .${classes.successBottomBorder}`]: {
+  successBottomBorder: {
     backgroundColor: '#43A047',
     height: '5px',
   },
-
-  [`& .${classes.errorBottmBorder}`]: {
+  errorBottmBorder: {
     backgroundColor: '#ff0033',
     height: '5px',
   },
-
-  [`& .${classes.warningBottomBorder}`]: {
+  warningBottomBorder: {
     backgroundColor: 'orange',
     height: '5px',
   }
-}));
+};
 
 export interface StyledToastProps {
   onClose?: ()=>void,
@@ -122,8 +91,8 @@ export function StyledToast({
     }
   
     return (
-      <StyledBox>
-        <Box position="relative" className={classes.container}>
+      <Box>
+        <Box position="relative" sx={classes.container}>
           {onClose && (
             <Box position="absolute" top={5} right={5}>
               <IconButton onClick={onClose} size="large">
@@ -144,21 +113,21 @@ export function StyledToast({
             <Box flex={0.94}>
               {type === 'success' && (
                 <Typography
-                  className={classes.successTitle}
+                  sx={classes.successTitle}
                 >
                   {title}
                 </Typography>
               )}
               {type === 'warning' && (
                 <Typography
-                  className={classes.warningTitle}
+                  sx={classes.warningTitle}
                 >
                   {title}
                 </Typography>
               )}
               {type === 'error' && (
                 <Typography
-                  className={classes.errorTitle}
+                  sx={classes.errorTitle}
                 >
                   {title}
                 </Typography>
@@ -169,10 +138,10 @@ export function StyledToast({
                     <Box display="flex" key={message}>
                       <Box mr={2}>
                         <CheckCircleIcon
-                          className={classes.success}
+                          sx={classes.success}
                         />
                       </Box>
-                      <Typography className={classes.successMessage}>
+                      <Typography sx={classes.successMessage}>
                         {message}
                       </Typography>
                     </Box>
@@ -184,10 +153,10 @@ export function StyledToast({
                     <Box display="flex" key={message}>
                       <Box mr={2}>
                         <ErrorOutlineIcon
-                          className={classes.warning}
+                          sx={classes.warning}
                         />
                       </Box>
-                      <Typography className={classes.warning}>
+                      <Typography sx={classes.warning}>
                         {message}
                       </Typography>
                     </Box>
@@ -199,10 +168,10 @@ export function StyledToast({
                     <Box display="flex" key={message}>
                       <Box mr={2}>
                         <CancelIcon
-                          className={classes.error}
+                          sx={classes.error}
                         />
                       </Box>
-                      <Typography className={classes.error}>
+                      <Typography sx={classes.error}>
                         {message}
                       </Typography>
                     </Box>
@@ -211,9 +180,9 @@ export function StyledToast({
             </Box>
           </Box>
         </Box>
-        {type === 'success' && <Box className={classes.successBottomBorder} />}
-        {type === 'warning' && <Box className={classes.warningBottomBorder} />}
-        {type === 'error' && <Box className={classes.errorBottmBorder} />}
-      </StyledBox>
+        {type === 'success' && <Box sx={classes.successBottomBorder} />}
+        {type === 'warning' && <Box sx={classes.warningBottomBorder} />}
+        {type === 'error' && <Box sx={classes.errorBottmBorder} />}
+      </Box>
     );
   }

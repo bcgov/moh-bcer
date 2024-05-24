@@ -1,20 +1,12 @@
 import { truncateString } from '@/utils';
-import { styled } from '@mui/material/styles';
 import { Tooltip } from '@mui/material';
 import React from 'react';
 
-const PREFIX = 'StyledTableColumn';
-
 const classes = {
-  tooltip: `${PREFIX}-tooltip`
-};
-
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
-const Root = styled('div')(() => ({
-  [`& .${classes.tooltip}`]: {
+  tooltip: {
     fontSize: 14,
   }
-}));
+};
 
 /**
  * 
@@ -31,10 +23,10 @@ export function StyledTableColumn({
 }) {
 
   return value?.length > length ? (
-    <Tooltip title={value || ''} classes={{ tooltip: classes.tooltip }}>
+    <Tooltip title={value || ''} sx={classes.tooltip}>
       <div>{truncateString(value, length)}</div>
     </Tooltip>
   ) : (
-    (<Root>{value}</Root>)
+    <>{value}</>
   );
 }

@@ -1,22 +1,15 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { Box, Tooltip } from '@mui/material';
 import { StyledButton } from '@/components/buttons';
 import { StyledButtonProps } from '@/constants/interfaces/buttonInterfaces';
 
-const PREFIX = 'StyledMenu';
-
 const classes = {
-  paper: `${PREFIX}-paper`
-};
-
-const StyledBox = styled(Box)({
-  [`& .${classes.paper}`]: {
+  paper: {
     border: '1px solid #d3d4d5',
   },
-});
+};
 
 export interface StyledMenuProps {
   items: StyledMenuItems[];
@@ -64,7 +57,7 @@ export function StyledMenus({
   };
 
   return (
-    <StyledBox>
+    <Box>
       <StyledButton
         aria-controls="customized-menu"
         aria-haspopup="true"
@@ -80,9 +73,8 @@ export function StyledMenus({
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
-        classes={{
-          paper: classes.paper
-        }}>
+        sx = {classes.paper} 
+        >
         {items?.map(({ text, icon, handler, disabled, tooltip }) => (
           <MenuItem onClick={handler} disabled={disabled} key={text}>
             <Tooltip title={tooltip ?? ''}>
@@ -95,6 +87,6 @@ export function StyledMenus({
           </MenuItem>
         ))}
       </StyledMenu>
-    </StyledBox>
+    </Box>
   );
 }

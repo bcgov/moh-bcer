@@ -5,14 +5,13 @@ import React, {
   useState,
   useEffect,
 } from 'react';
+import { styled } from '@mui/material/styles';
 import { Form, Formik, FormikErrors, FormikTouched } from 'formik';
 import {
   StyledDialog,
   StyledButton,
 } from 'vaping-regulation-shared-components';
-import { makeStyles } from '@material-ui/core';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import {
   IBusinessLocationValues,
@@ -25,13 +24,20 @@ import ViewLocation from '@/components/MyBusiness/locations/ViewLocation';
 import { NoiStatus } from '@/constants/localEnums';
 import { LocationUtil } from '@/utils/location.util';
 
-const useStyles = makeStyles({
-  addIcon: {
+const PREFIX = 'LocationsEditForm';
+
+const classes = {
+  addIcon: `${PREFIX}-addIcon`,
+  addButton: `${PREFIX}-addButton`
+};
+
+const Root = styled('div')({
+  [`& .${classes.addIcon}`]: {
     fontSize: '16px',
     paddingRight: '8px',
     alignSelf: 'center',
   },
-  addButton: {
+  [`& .${classes.addButton}`]: {
     minWidth: '160px',
   },
 });
@@ -50,7 +56,7 @@ export default function LocationsEditForm({
     isViewOnly?: boolean;
   };
 }) {
-  const classes = useStyles();
+
   const { isOpen, toggleOpen, isAddNew, isViewOnly } = openProps;
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
   const [initialErrors, setInitialErrors] =
@@ -114,7 +120,7 @@ export default function LocationsEditForm({
   };
 
   return (
-    <div>
+    <Root>
       {openProps.isAddNew ? (
         <StyledButton
           className={classes.addButton}
@@ -189,6 +195,6 @@ export default function LocationsEditForm({
           )}
         </Formik>
       ) : null}
-    </div>
+    </Root>
   );
 }

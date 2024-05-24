@@ -1,5 +1,4 @@
-import { Checkbox, FormControlLabel, makeStyles, TextField } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Checkbox, FormControlLabel, TextField } from '@mui/material';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { Fragment, ReactElement, useState } from 'react';
 import * as yup from 'yup';
@@ -8,27 +7,13 @@ import DatePicker from '@mui/lab/DatePicker';
 import { InputFieldError } from '../generic';
 import { StyledCheckboxProps, CheckboxInputProps, DtPickerProps, StyledDatePickerProps } from '@/constants/interfaces/inputInterfaces';
 import { StyledDialog } from '@/index';
-import { StyledConfirmDateDialogProps, StyledConfirmDialogProps } from '@/constants/interfaces/dialogInterfaces';
-
-
-const PREFIX = 'StyledConfirmDateDialog';
+import { StyledConfirmDateDialogProps } from '@/constants/interfaces/dialogInterfaces';
 
 const classes = {
-  emptyHelper: `${PREFIX}-emptyHelper`,
-  formControl: `${PREFIX}-formControl`,
-  contentWrapper: `${PREFIX}-contentWrapper`,
-  root: `${PREFIX}-root`,
-  picker: `${PREFIX}-picker`,
-  icon: `${PREFIX}-icon`
-};
-
-const StyledField
- = styled(Field
-)({
-  [`& .${classes.emptyHelper}`]: {
+  emptyHelper: {
     height: '22px'
   },
-  [`& .${classes.formControl}`]: {
+  formControl:{
     paddingTop: '15px',
     fontSize: '14px',
     '& .MuiIconButton-colorSecondary':{
@@ -44,12 +29,12 @@ const StyledField
       color: '#0053A4'
     },
   },
-  [`& .${classes.contentWrapper}`]: {
+  contentWrapper:{
     display: 'flex',
     flexDirection: 'column',
     fontSize: '16px'
   },
-  [`& .${classes.root}`]: {
+  root: {
     backgroundColor: '#F5F5F5',
     height: '58px',
     width: '100%',
@@ -59,17 +44,14 @@ const StyledField
     },
     cursor: 'pointer',
   },
-  [`& .${classes.picker}`]: {
+  picker: {
     color: '#535353',
     fontSize: '16px',
     marginLeft: '9px',
     minWidth: '56px',
-    height: '19px'
+    height: '19px',
   },
-  [`& .${classes.icon}`]: {
-    color: 'white',
-  },
-});
+};
 
 function CheckboxInput ({
   field: { value, ...fieldRest },
@@ -85,7 +67,7 @@ function CheckboxInput ({
   return (
     <Fragment>
       <FormControlLabel
-        className={classes.formControl}
+        sx={classes.formControl}
         label={label}
         disabled={disabled}
         labelPlacement="end"
@@ -101,7 +83,7 @@ function CheckboxInput ({
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
-          : <div className={classes.emptyHelper} >{' '}</div>
+          : <div style={classes.emptyHelper} >{' '}</div>
       }
     </Fragment>
   )
@@ -158,7 +140,7 @@ export function StyledConfirmDateDialog(
           cancelHandler={() => setOpen(false)}
           acceptHandler='submit'
         >
-          <div className={classes.contentWrapper}>
+          <div style={{ ...classes.contentWrapper, flexDirection: 'column' }}>
             {dialogMessage}
             <DtPickerField 
               name="date" 
@@ -227,15 +209,15 @@ function DtPicker ({
   return (
     <Fragment>
       <FormControlLabel
-        className={classes.formControl}
+        sx={classes.formControl}
         label={label}
         disabled={disabled}
         labelPlacement="end"
         control={
           <LocalizationProvider>
              <DatePicker
-              className={classes.root}
-              inputProps={{ className: classes.picker }}
+              sx={classes.root}
+              inputProps={{ style: classes.picker }}
               TextFieldComponent={TextFieldComponent}
               label="Closing Date"
               format="LLLL dd, yyyy"
@@ -257,7 +239,7 @@ function DtPicker ({
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
-          : <div className={classes.emptyHelper} >{' '}</div>
+          : <div style={classes.emptyHelper} >{' '}</div>
       }
     </Fragment>
   )

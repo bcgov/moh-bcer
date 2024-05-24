@@ -19,24 +19,24 @@ const StyledAccordionBase = styled((props: AccordionProps) => (
   },
 }));
 
-const StyledAccordionSummary = styled((props: StyledAccordionSummaryProps) => (
+const StyledAccordionSummary = styled(({ isEditable, isDeletable, editCallback, deleteCallback, children, ...props }: StyledAccordionSummaryProps) => (
   <div style={{ display: 'flex'}}>
     <AccordionSummary
       expandIcon={<ArrowForwardIosSharp style={{color: '#0053A4', fontSize: '0.9rem'}}/>}
       {...props}
     >
-      {props.children}
+      {children}
     </AccordionSummary>
     <div  style={{ display: 'flex', paddingRight: '10px', backgroundColor: '#FAFAFA', alignItems: 'center' }}>
         {
-          props.isEditable 
+          isEditable 
             &&
-          <EditSharp style={{ color: '#0053A4', marginRight: '25px', cursor: 'pointer' }} onClick={() => props.editCallback && props.editCallback(props.id)}/>
+          <EditSharp style={{ color: '#0053A4', marginRight: '25px', cursor: 'pointer' }} onClick={() => editCallback && editCallback(props.id)}/>
         }
         {
-          props.isDeletable
+          isDeletable
             &&
-          <DeleteOutline style={{ color: 'red', cursor: 'pointer' }} onClick={() => props.deleteCallback && props.deleteCallback(props.id)}/>
+          <DeleteOutline style={{ color: 'red', cursor: 'pointer' }} onClick={() => deleteCallback && deleteCallback(props.id)}/>
         }
     </div>
   </div>
@@ -107,7 +107,7 @@ export function StyledAccordionGroup ({options, isEditable = false, isDeletable 
         onSubmit={(values) => updateOrder(values)} 
       >
         <Form style={{ display: 'flex', marginBottom: '20px' }}>
-          <StyledTextField label="" name="searchString" variant="outlined" helpText="Search by keyword..." />
+          <StyledTextField label="" name="searchString" variant="outlined" />
           <StyledButton type="submit" variant="contained" style={{ marginLeft: '5px'}} ><SearchOutlined/> Search</StyledButton>
         </Form>
       </Formik>
@@ -115,7 +115,7 @@ export function StyledAccordionGroup ({options, isEditable = false, isDeletable 
         order 
           &&
         order.map((element, index) => (
-          <StyledAccordionBase expanded={expanded === element.id} onChange={handleExpand(element.id)}>
+          <StyledAccordionBase key={element.id} expanded={expanded === element.id} onChange={handleExpand(element.id)}>
             <StyledAccordionSummary
               isEditable={isEditable}
               isDeletable={isDeletable}

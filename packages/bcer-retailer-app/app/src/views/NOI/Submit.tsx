@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, Redirect } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
-import { makeStyles, Typography } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import { makeStyles, Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 import { StyledButton, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
@@ -14,16 +15,28 @@ import { NoiUtil } from '@/utils/noi.util';
 import { NoiSubmissionTable } from './Tables';
 import FullScreen from '@/components/generic/FullScreen';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'Submit';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  submitWrapper: `${PREFIX}-submitWrapper`,
+  checkboxLabel: `${PREFIX}-checkboxLabel`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  helpTextWrapper: {
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -31,17 +44,17 @@ const useStyles = makeStyles({
     marginBottom: '30px',
     borderRadius: '5px',
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  submitWrapper: {
+  [`& .${classes.submitWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingTop: '30px'
   },
-  checkboxLabel: {
+  [`& .${classes.checkboxLabel}`]: {
     marginTop: '20px',
     '& .MuiIconButton-colorSecondary':{
       '&:hover': {
@@ -59,8 +72,8 @@ const useStyles = makeStyles({
 });
 
 export default function NoiSubmit() {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const [outstanding, setOutstanding] = useState<Array<BusinessLocation>>([]);
   const [selected, setSelected] = useState<Array<BusinessLocation>>([]);
   const submitTableFullscreenState = useState<boolean>(false);
@@ -105,10 +118,19 @@ export default function NoiSubmit() {
     }
   }, [error]);
 
-  return loading ? <CircularProgress /> : response?.status === 201 ? <Redirect to='/noi/success' /> : (
-    <>
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (response?.status === 201) {
+    navigate('/noi/success');
+    return null; // or any other fallback if needed
+  }
+
+  return(
+    <Root>
       <div>
-        <StyledButton onClick={() => history.push('/noi')}>
+        <StyledButton onClick={() => navigate('/noi')}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Cancel
         </StyledButton>
@@ -132,7 +154,7 @@ export default function NoiSubmit() {
         </FullScreen>
         
         <div className={classes.submitWrapper}>
-          <StyledButton variant='outlined' onClick={() => history.push('/noi')}>
+          <StyledButton variant='outlined' onClick={() => navigate('/noi')}>
             Back
           </StyledButton>
           <StyledButton
@@ -154,6 +176,6 @@ export default function NoiSubmit() {
         confirmHandler={confirmSubmit}
         acceptButtonText={'Submit Now'}
       />
-    </>
-  );
+    </Root>
+    );
 }

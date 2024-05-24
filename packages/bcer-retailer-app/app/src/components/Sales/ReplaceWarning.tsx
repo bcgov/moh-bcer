@@ -1,19 +1,28 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { makeStyles } from '@mui/material';
 
 import InfoIcon from 'assets/images/info.svg';
 
-const useStyles = makeStyles({
-  parent: {
+const PREFIX = 'ReplaceWarning';
+
+const classes = {
+  parent: `${PREFIX}-parent`,
+  warningIcon: `${PREFIX}-warningIcon`,
+  warningTextContainer: `${PREFIX}-warningTextContainer`
+};
+
+const Root = styled('div')({
+  [`&.${classes.parent}`]: {
     margin: '1rem 0',
     display: 'flex',
     alignItems: 'center',
     background: '#F8F2E4',
   },
-  warningIcon: {
+  [`& .${classes.warningIcon}`]: {
     marginLeft: '1.5rem',
   },
-  warningTextContainer: {
+  [`& .${classes.warningTextContainer}`]: {
     padding: '.5rem 1rem',
     height: '55px',
     display: 'flex',
@@ -30,15 +39,15 @@ interface IProps {
 }
 
 export default function ReplaceWarning({ content }: IProps) {
-  const classes = useStyles();
+
 
   return (
-    <div className={classes.parent}>
+    <Root className={classes.parent}>
       <div className={classes.warningIcon}>
         <img src={InfoIcon} />
       </div>
       <div className={classes.warningTextContainer}>{content}</div>
-    </div>
+    </Root>
   );
 }
 

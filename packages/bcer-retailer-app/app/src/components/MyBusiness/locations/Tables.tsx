@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/styles';
+import { styled } from '@mui/material/styles';
 
 import TableWrapper from '@/components/generic/TableWrapper';
 import {
@@ -8,15 +8,22 @@ import {
 } from '@/constants/localInterfaces';
 import { LocationUtil } from '@/utils/location.util';
 import LocationTable from './LocationTable';
-import { Box, Tooltip } from '@material-ui/core';
+import { Box, Tooltip } from '@mui/material';
 import { StyledButton } from 'vaping-regulation-shared-components';
 
-const useStyles = makeStyles({
-  sendIcon: {
+const PREFIX = 'Tables';
+
+const classes = {
+  sendIcon: `${PREFIX}-sendIcon`,
+  actionLink: `${PREFIX}-actionLink`
+};
+
+const StyledTableWrapper = styled(TableWrapper)({
+  [`& .${classes.sendIcon}`]: {
     height: '24px',
     paddingRight: '4px',
   },
-  actionLink: {
+  [`& .${classes.actionLink}`]: {
     color: 'blue',
     cursor: 'pointer',
     textDecoration: 'underline',
@@ -43,10 +50,10 @@ export function ExistingTable({
   handleActionButton,
   ...props
 }: ExistingTableProp) {
-  const classes = useStyles();
+
 
   return (
-    <TableWrapper
+    <StyledTableWrapper
       data={data}
       blockHeader="Existing Business Locations"
       tableHeader="Existing Business Locations"
@@ -62,6 +69,6 @@ export function ExistingTable({
       }
     >
       <LocationTable data={data} handleAction={handleAction} />
-    </TableWrapper>
+    </StyledTableWrapper>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import { makeStyles } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import {
   StyledButton,
@@ -15,6 +16,27 @@ import { getSalesReportYear } from '@/utils/time';
 import Loader from './Loader';
 import { ApiOperation } from '@/constants/localEnums';
 
+const PREFIX = 'withNav';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  footer: `${PREFIX}-footer`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
+    paddingRight: '5px',
+    color: '#285CBC',
+  },
+
+  [`& .${classes.footer}`]: {
+    marginTop: '1rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+});
+
 interface IProps {
   isAction?: boolean | Function;
   cancelRoute?: string;
@@ -22,19 +44,6 @@ interface IProps {
   confirmTitle?: string;
   confirmAction?: Function;
 }
-
-const useStyles = makeStyles({
-  buttonIcon: {
-    paddingRight: '5px',
-    color: '#285CBC',
-  },
-
-  footer: {
-    marginTop: '1rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-});
 
 export default function withNav<P>({
   cancelRoute = '',
@@ -45,8 +54,8 @@ export default function withNav<P>({
 }: IProps) {
   return function (WrappedComponent: React.ComponentType<P>) {
     const ComponentWithNav = (props: P) => {
-      const classes = useStyles();
-      const history = useHistory();
+
+      const navigate = useNavigate();
       const [sale, setSale] = useContext(SalesReportContext);
 
       const [{ response, loading: postLoading, error: postError }, post] =
@@ -62,7 +71,7 @@ export default function withNav<P>({
             saleReports: [],
             isConfirmOpen: false,
           });
-          history.push('/sales/success');
+          navigate('/sales/success');
         } catch (err) {
           console.log(err);
         }
@@ -91,7 +100,7 @@ export default function withNav<P>({
             <StyledButton
               variant="outlined"
               onClick={() => {
-                history.goBack();
+                navigate(-1);
               }}
             >
               Back
@@ -103,7 +112,7 @@ export default function withNav<P>({
                   confirmAction(setSale);
                   return;
                 }
-                history.push(nextRoute);
+                navigate(nextRoute);
               }}
             >
               {confirmTitle || 'Next'}
@@ -115,7 +124,7 @@ export default function withNav<P>({
       const periodYear = getSalesReportYear();
 
       return (
-        <>
+        (<Root>
           <Loader
             open={postLoading}
             message="Submitting sales report. Please wait…"
@@ -129,7 +138,7 @@ export default function withNav<P>({
                   saleReports: [],
                   isConfirmOpen: false,
                 });
-                history.push(cancelRoute);
+                navigate(cancelRoute);
               }}
             >
               <ArrowBackIcon className={classes.buttonIcon} />
@@ -157,7 +166,7 @@ export default function withNav<P>({
             acceptDisabled={postLoading}
             cancelDisabled={postLoading}
           />
-        </>
+        </Root>)
       );
     };
     return ComponentWithNav;
