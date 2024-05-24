@@ -4,8 +4,7 @@ const keycloak: Keycloak.KeycloakInstance = new (Keycloak as any)({
   realm: process.env.KEYCLOAK_REALM,
   url: process.env.BASE_KEYCLOAK_URL,
   clientId: process.env.KEYCLOAK_CLIENTID,
-  silentCheckSsoFallback: false,
-  onLoad: "login-required"
+  silentCheckSsoFallback: false
 });
 
 export default keycloak;
