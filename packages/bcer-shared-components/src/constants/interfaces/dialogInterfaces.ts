@@ -1,4 +1,4 @@
-import { DialogProps } from "@material-ui/core";
+import { DialogProps } from "@mui/material";
 import { ReactEventHandler } from "react";
 
 export interface StyledDialogProps extends DialogProps {

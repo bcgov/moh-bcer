@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useFormikContext } from 'formik';
 
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 
 import { useAxiosPatch } from '@/hooks/axios';
@@ -47,7 +47,7 @@ export default function SubmitBusinessInfoButton({ updateType }: SubmitBusinessI
   }, [error])
 
   return response?.status === 201 ? 
-    updateType === "businessInfoOnly" ? <Redirect to='/business/confirm'/> :  <Redirect to='/business/map' /> : (
+    updateType === "businessInfoOnly" ? <Navigate to='/business/confirm' replace /> :  <Navigate to='/business/map' replace /> : (
     <>
     {error && (
       <Grid container>

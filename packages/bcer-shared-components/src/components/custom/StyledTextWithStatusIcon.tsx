@@ -1,7 +1,18 @@
-import { Box, BoxProps, makeStyles } from '@material-ui/core';
+import { Box, BoxProps } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import React from 'react';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+
+const StyledBox = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+const StyledText = styled(Box)(() => ({
+  color: '#333333',
+  fontSize: '14px',
+}));
 
 export type TextWithStatusIconProps = {
   text: React.ReactNode;
@@ -10,39 +21,22 @@ export type TextWithStatusIconProps = {
   iconProps?: Object;
 };
 
-const useStyles = makeStyles(() => ({
-  box: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  text: {
-    color: '#333333',
-    fontSize: '14px',
-  },
-  successIcon: {
-    color: '#52C41A',
-  },
-  errorIcon: {
-    color: '#FAAD14',
-  },
-}));
-
 export function StyledTextWithStatusIcon({
   text,
   success,
   textProps = {},
   iconProps = {},
 }: TextWithStatusIconProps) {
-  const classes = useStyles();
+
   return (
-    <Box className={classes.box}>
+    <StyledBox>
       {success ? (
-        <CheckCircleIcon className={classes.successIcon} {...iconProps}/>
+        <CheckCircleIcon style={{ color: '#52C41A' }} {...iconProps}/>
       ) : (
-        <ErrorIcon className={classes.errorIcon} {...iconProps}/>
+        <ErrorIcon style={{ color: '#FAAD14' }} {...iconProps}/>
       )}
       <Box ml={1} />
-      <Box className={classes.text} {...textProps}>{text}</Box>
-    </Box>
+      <StyledText {...textProps}>{text}</StyledText>
+    </StyledBox>
   );
 }

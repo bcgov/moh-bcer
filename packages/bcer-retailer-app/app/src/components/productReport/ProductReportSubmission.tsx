@@ -1,18 +1,30 @@
 import React from 'react';
-import { makeStyles, Typography, Paper } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { makeStyles, Typography, Paper } from '@mui/material';
 
 import { SuccessStepEnum } from '@/constants/localEnums';
 import SuccessStep from '@/components/successStep/SuccessStep';
 import FileCheckGreen from '@/assets/images/file-check-green.png';
 
-const useStyles = makeStyles({
-  box: {
+const PREFIX = 'ProductReportSubmission';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  successBanner: `${PREFIX}-successBanner`,
+  bannerIcon: `${PREFIX}-bannerIcon`,
+  bannerText: `${PREFIX}-bannerText`,
+  description: `${PREFIX}-description`,
+  stepsSubtitle: `${PREFIX}-stepsSubtitle`
+};
+
+const Root = styled('div')({
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem 1.4rem 0rem 1.4rem',
     marginBottom: '30px'
   },
-  successBanner: {
+  [`& .${classes.successBanner}`]: {
     display: 'flex',
     backgroundColor: '#E7F9EA',
     borderRadius: '4px',
@@ -20,29 +32,29 @@ const useStyles = makeStyles({
     alignItems: 'center',
     marginBottom: '20px',
   },
-  bannerIcon: {
+  [`& .${classes.bannerIcon}`]: {
     height: '45px',
     paddingRight: '20px'
   },
-  bannerText: {
+  [`& .${classes.bannerText}`]: {
     fontWeight: 600,
     color: '#3A3A3A'
   },
-  description: {
+  [`& .${classes.description}`]: {
     color: '#565656',
     paddingBottom: '20px'
   },
-  stepsSubtitle: {
+  [`& .${classes.stepsSubtitle}`]: {
     paddingBottom: '20px'
   },
-})
+});
 
 
 export default function ProductReportSubmission () {
-  const classes = useStyles();
+
 
   return (
-    <div>
+    <Root>
       <Paper variant='outlined' className={classes.box} >
         <div className={classes.successBanner}>
           <img src={FileCheckGreen} className={classes.bannerIcon} />
@@ -57,6 +69,6 @@ export default function ProductReportSubmission () {
         <SuccessStep active={false} completed={true} step={SuccessStepEnum.product}/>
         <SuccessStep active={true} completed={false} step={SuccessStepEnum.manufacturing}/>
       </Paper>
-    </div>
-  )
+    </Root>
+  );
 }

@@ -14,7 +14,7 @@ export class ManufacturingDTO {
 
   @ApiProperty({
     description: 'Ids of the locations where this product is manufactured',
-    example: faker.random.uuid()
+    example: faker.datatype.uuid()
   })
   @IsNotEmpty()
   locationIds: string[];

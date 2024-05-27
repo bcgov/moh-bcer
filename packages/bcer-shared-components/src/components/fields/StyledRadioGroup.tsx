@@ -1,28 +1,21 @@
 
 import React, { ReactElement, Fragment, ChangeEvent } from 'react';
 import { Field, ErrorMessage } from 'formik'
-import { 
-  styled,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  makeStyles
-} from '@material-ui/core';
-
+import { styled, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import { InputFieldLabel, InputFieldError } from '@/components/generic';
 import { RadioGroupInputProps, StyledRadioProps } from '@/constants/interfaces/inputInterfaces';
 
-const useStyles = makeStyles({
+const classes = {
   icon: {
     borderRadius: '50%',
     width: 24,
     height: 24,
     boxShadow: 'inset 0 0 0 1px #808080, inset 0 -1px 0 #808080',
     backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-    'input:hover ~ &': {
+    '&:hover': {
       backgroundColor: '#ebf1f5',
     },
-    'input:disabled ~ &': {
+    '&:disabled': {
       boxShadow: 'none',
       background: 'rgba(206,217,224,.5)',
     },
@@ -38,21 +31,18 @@ const useStyles = makeStyles({
       backgroundImage: 'radial-gradient(#fff,#fff 32%,transparent 36%)',
       content: '""',
     },
-    'input:hover ~ &': {
+    '&:hover': {
       backgroundColor: '#2e6ead',
     },
   },
   emptyHelper: {
     height: '22px'
   }
-})
+};
 
-const StyledGroup = styled(RadioGroup)({
-});
+const StyledGroup = styled(RadioGroup)({});
 
-const StyledControlLabel = styled(FormControlLabel)({
-
-});
+const StyledControlLabel = styled(FormControlLabel)({});
 
 const StyledControl = styled(Radio)({
   root: {
@@ -71,7 +61,7 @@ function GroupedRadioButtons ({
   additionalChange,
   ...props
 }: RadioGroupInputProps):ReactElement {
-  const classes = useStyles();
+
 
   const touched = form.touched[field.name];
   const error = form.errors[field.name];
@@ -96,6 +86,7 @@ function GroupedRadioButtons ({
         {...field}
         {...props}
         onChange={handleChange}
+        as="div"
       >
         {options.map((option: any) => (
           <StyledControlLabel
@@ -107,8 +98,8 @@ function GroupedRadioButtons ({
             labelPlacement="end"
             control={
               <StyledControl 
-                checkedIcon={<span className={`${classes.icon} ${classes.checkedIcon}`} />}
-                icon={<span className={classes.icon} />}
+                checkedIcon={<span style={{...classes.icon, ...classes.checkedIcon}} />} // Fix: Pass style as an object
+                icon={<span style={classes.icon} />}
                 color={option.color || 'primary'} 
               />
             }
@@ -118,7 +109,7 @@ function GroupedRadioButtons ({
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={field.name} />} />
-          : <div className={classes.emptyHelper} >{' '}</div>
+          : <div style={classes.emptyHelper} >{' '}</div>
       }
     </Fragment>
   )
@@ -150,8 +141,8 @@ export function StyledRadioGroup ({
       name={name}
       component={GroupedRadioButtons}
       label={label}
+      row={row? row : undefined}
       options={options}
-      row={row}
       disabled={isDisabled}
       additionalChange={onChange}
     />

@@ -16,7 +16,7 @@ export class SubmissionDTO {
 
   @ApiProperty({
     description: 'Business id, the primary key for a business entity',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
     default: 'Happy Puff'
   })
   @IsOptional()
@@ -45,7 +45,7 @@ export class UpdateSubmissionDTO {
 
   @ApiProperty({
     description: 'Submission ID, if this is an update',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   @IsOptional()
   submissionId?: string;

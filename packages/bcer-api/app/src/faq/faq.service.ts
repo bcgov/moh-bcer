@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, IsNull } from "typeorm";
 import { FaqDTO } from "./dto/faq.dto";
 import { FaqEntity } from "./entities/faq.entity";
 
@@ -17,7 +17,7 @@ export class FaqService {
 
   async getFaqList(){
     // There will only ever be one faqList
-    const faqList = await this.faqRepository.findOne()
+    const faqList = await this.faqRepository.createQueryBuilder().take(1).getOne();
     if (faqList) {
       return faqList;
     } else {

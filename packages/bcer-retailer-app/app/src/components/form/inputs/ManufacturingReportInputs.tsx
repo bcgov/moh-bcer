@@ -1,25 +1,35 @@
 import React, { Fragment, useEffect, useContext } from 'react';
+import { styled } from '@mui/material/styles';
 import { Form, Field, FieldArray, useFormikContext, getIn } from 'formik';
-import { Divider, Grid, Typography, makeStyles, FormHelperText } from '@material-ui/core';
-import AddCircle from '@material-ui/icons/AddCircle';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import { Divider, Grid, Typography, makeStyles, FormHelperText } from '@mui/material';
+import AddCircle from '@mui/icons-material/AddCircle';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { Ingredient } from '@/constants/localInterfaces';
 import { StyledTextField, StyledButton } from 'vaping-regulation-shared-components'
 import { ManufacturingReportValues } from '@/components/form/validations/vManufacturing';
 
-const useStyles = makeStyles({
-  formTitle: {
+const PREFIX = 'ManufacturingReportInputs';
+
+const classes = {
+  formTitle: `${PREFIX}-formTitle`,
+  box: `${PREFIX}-box`,
+  closeButton: `${PREFIX}-closeButton`,
+  buttonIcon: `${PREFIX}-buttonIcon`
+};
+
+const StyledGrid = styled(Grid)({
+  [`& .${classes.formTitle}`]: {
     fontSize: '17px',
     fontWeight: 600,
     paddingBottom: '24px'
   },
-  box: {
+  [`& .${classes.box}`]: {
     outline: 'solid 1px whitesmoke',
     borderRadius: '2px',
     padding: '1rem',
     position: 'relative',
   },
-  closeButton: {
+  [`& .${classes.closeButton}`]: {
     padding: '10px',
     position: 'absolute',
     top: '-20px',
@@ -29,12 +39,12 @@ const useStyles = makeStyles({
       cursor: 'pointer',
     },
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px'
   },
-})
+});
 
 const blankIngredient = {
   name: '',
@@ -62,7 +72,7 @@ const ErrorMessage = ({ name }: { name: string }) => (
 );
 
 function ManufacturingReportInputs() {
-  const classes = useStyles();
+
   const { isValid, values, validateForm } = useFormikContext<ManufacturingReportValues>();
 
   useEffect(() => {
@@ -70,7 +80,7 @@ function ManufacturingReportInputs() {
   }, [validateForm]);
 
   return (
-    <Grid container spacing={2}>
+    <StyledGrid container spacing={2}>
       <Grid item xs={12}>
         <Typography variant='h6'>
           1. Name and contact information of the manufacturer of each ingredient.
@@ -161,7 +171,7 @@ function ManufacturingReportInputs() {
           )}
         </FieldArray>
       </Grid>
-    </Grid>
+    </StyledGrid>
   );
 }
 

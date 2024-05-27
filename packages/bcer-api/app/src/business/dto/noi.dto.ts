@@ -6,7 +6,7 @@ export class NoiDTO {
 
   @ApiProperty({
     description: 'User provided ID for this location',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   @IsNotEmpty()
   locationId: string;

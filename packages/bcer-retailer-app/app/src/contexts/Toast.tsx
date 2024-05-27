@@ -55,7 +55,14 @@ export const ToastContext = createContext(toastContextValues);
 export const ToastProvider = ({ children }: {children: React.ReactNode}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const handleOpen = (payload: ToastContextState) => dispatch({ type: 'OPEN', payload });
+  const handleOpen = (payload: ToastContextState) => {
+    if (payload) {
+      dispatch({ type: 'OPEN', payload });
+    } else {
+      console.error('ToastProvider.handleOpen: payload is null or undefined');
+    }
+  };
+
   const handleClose = () => dispatch({ type: 'CLOSE' });
 
   const contextValue = {

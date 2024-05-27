@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { makeStyles, Typography, Paper, Box } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Typography, Paper, Box } from '@mui/material';
 import { CSVLink } from 'react-csv';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import moment from 'moment';
 
 import {
@@ -20,16 +21,34 @@ import { useAxiosDelete, useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/utils/formatting';
 import { Form, Formik } from 'formik';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'DeleteProductSubmission';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  csvLink: `${PREFIX}-csvLink`,
+  submitWrapper: `${PREFIX}-submitWrapper`,
+  checkboxLabel: `${PREFIX}-checkboxLabel`,
+  highlightedText: `${PREFIX}-highlightedText`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71',
   },
-  helpTextWrapper: {
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -37,53 +56,53 @@ const useStyles = makeStyles({
     marginBottom: '30px',
     borderRadius: '5px',
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  box: {
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
     marginBottom: '20px',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px',
   },
-  tableRowCount: {
+  [`& .${classes.tableRowCount}`]: {
     paddingBottom: '10px',
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  submitWrapper: {
+  [`& .${classes.submitWrapper}`]: {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingTop: '30px',
   },
-  checkboxLabel: {
+  [`& .${classes.checkboxLabel}`]: {
     marginTop: '20px',
   },
-  highlightedText: {
+  [`& .${classes.highlightedText}`]: {
     fontWeight: 600,
     color: '#0053A4',
   },
 });
 
 export default function DeleteProductSubmissions() {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const [submissionDate, setSubmissionDate] = useState<string>();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [notAffectedLocations, setNotAffectedLocations] = useState<BusinessLocation[]>([]);
-  const { submissionId }: { submissionId: string } = useParams();
+  const { submissionId }: { submissionId?: string } = useParams();
 
   const [{ data: productsAndLocations }, getSubmission] = useAxiosGet(
     `/products?submissionId=${submissionId}`,
@@ -106,7 +125,7 @@ export default function DeleteProductSubmissions() {
   const confirmDelete = async() => {
     await request();
     if (!error) {
-      history.push('/products');
+      navigate('/products');
     } else {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(error) })
     }
@@ -132,9 +151,9 @@ export default function DeleteProductSubmissions() {
   }, []);
 
   return (
-    <>
+    (<Root>
       <div>
-        <StyledButton onClick={() => history.push('/products')}>
+        <StyledButton onClick={() => navigate('/products')}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Cancel
         </StyledButton>
@@ -308,6 +327,6 @@ export default function DeleteProductSubmissions() {
         setOpen={() => setDeleteConfirmOpen(false)}
         confirmHandler={confirmDelete}
       />
-    </>
+    </Root>)
   );
 }

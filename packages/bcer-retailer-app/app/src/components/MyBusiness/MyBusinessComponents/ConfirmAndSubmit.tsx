@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog, ProvinceLabels} from 'vaping-regulation-shared-components';
 import { Form, Formik } from 'formik';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/material';
 
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { BusinessLocationHeaders } from '@/constants/localEnums';
@@ -19,20 +20,36 @@ import { LocationUtil } from '@/utils/location.util';
 import { getInitialPagination } from '@/utils/util';
 
 
-const useStyles = makeStyles({
-  box: {
+const PREFIX = 'ConfirmAndSubmit';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  boxHeader: `${PREFIX}-boxHeader`,
+  boxDescription: `${PREFIX}-boxDescription`,
+  boxRow: `${PREFIX}-boxRow`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  csvLink: `${PREFIX}-csvLink`,
+  rowTitle: `${PREFIX}-rowTitle`,
+  rowContent: `${PREFIX}-rowContent`,
+  editButton: `${PREFIX}-editButton`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.box}`]: {
     padding: '20px',
     borderRadius: '10px',
     border: '1px solid #CDCED2',
     backgroundColor: '#fff',
     marginBottom: '20px',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     fontSize: '17px',
     fontWeight: 600,
     lineHeight: '22px',
   },
-  boxHeader: {
+  [`& .${classes.boxHeader}`]: {
     fontSize: '17px',
     fontWeight: 600,
     display: 'flex',
@@ -40,43 +57,43 @@ const useStyles = makeStyles({
     alignItems: 'center',
     paddingBottom: '15px',
   },
-  boxDescription: {
+  [`& .${classes.boxDescription}`]: {
     fontSize: '14px',
     color: '#3A3A3A',
     lineHeight: '20px',
     paddingBottom: '15px',
   },
-  boxRow: {
+  [`& .${classes.boxRow}`]: {
     display: 'flex',
     paddingBottom: '20px',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  rowTitle: {
+  [`& .${classes.rowTitle}`]: {
     fontSize: '14px',
     color: '#424242',
     width: '300px'
   },
-  rowContent: {
+  [`& .${classes.rowContent}`]: {
     fontSize: '14px',
     fontWeight: 600,
     color: '#3A3A3A',
   },
-  editButton: {
+  [`& .${classes.editButton}`]: {
     fontSize: '14px',
     width: '150px',
     minWidth: '150px'
   }
-})
+});
 
 export default function ConfirmAndSubmit () {
-  const classes = useStyles();
+
 
   const [businessInfo, setBusinessInfo ] = useContext(BusinessInfoContext);
   const [appGlobal, setAppGlobalContext ] = useContext(AppGlobalContext);
@@ -133,7 +150,7 @@ export default function ConfirmAndSubmit () {
   }
 
   return (
-    <>
+    (<Root>
       <div className={classes.box}>
         <div className={classes.boxHeader}>
           Business Detail
@@ -301,6 +318,6 @@ export default function ConfirmAndSubmit () {
           :
             null
       }
-    </>
-  )
+    </Root>)
+  );
 }

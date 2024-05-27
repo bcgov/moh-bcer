@@ -1,11 +1,64 @@
-
 import React, { useMemo } from 'react';
-import { 
-  makeStyles
-} from '@material-ui/core';
+import { styled } from '@mui/material/styles';
 import { useDropzone } from 'react-dropzone';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import CancelIcon from '@material-ui/icons/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+
+const PREFIX = 'StyledDropzone';
+
+const classes = {
+  fileName: `${PREFIX}-fileName`,
+  inputField: `${PREFIX}-inputField`,
+  icon: {
+    width: '90px',
+    height: '70px',
+    paddingBottom: '20px'
+  },
+  descriptionWrapper: `${PREFIX}-descriptionWrapper`,
+  description: `${PREFIX}-description`,
+  uploadOpenLink: `${PREFIX}-uploadOpenLink`,
+  subtext: `${PREFIX}-subtext`,
+  errorText: `${PREFIX}-errorText`
+};
+
+const Root = styled('div')({
+  [`& .${classes.fileName}`]: {
+    display: 'flex',
+    lineHeight: '35px',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  [`& .${classes.inputField}`]: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '170px'
+  },
+  [`& .${classes.descriptionWrapper}`]: {
+    paddingBottom: '10px'
+  },
+  [`& .${classes.description}`]: {
+    display: 'flex',
+    fontSize: '17px',
+    color: '#000',
+    fontWeight: 600
+  },
+  [`& .${classes.uploadOpenLink}`]: {
+    fontSize: '17px',
+    color: '#0053A4',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    fontWeight: 600
+  },
+  [`& .${classes.subtext}`]: {
+    fontSize: '14px',
+    color: '#333333'
+  },
+  [`& .${classes.errorText}`]: {
+    color: 'red',
+    padding: '10px 0px 10px 0px',
+    fontSize: '16px'
+  }
+});
 
 const baseStyle = {
   display: 'flex',
@@ -33,50 +86,6 @@ const rejectStyle = {
   borderColor: '#ff1744'
 };
 
-const useStyles = makeStyles({
-  fileName: {
-    display: 'flex',
-    lineHeight: '35px',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputField: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    height: '170px'
-  },
-  icon: {
-    width: '90px',
-    height: '70px',
-    paddingBottom: '20px'
-  },
-  descriptionWrapper:{
-    paddingBottom: '10px'
-  },
-  description: {
-    display: 'flex',
-    fontSize: '17px',
-    color: '#000',
-    fontWeight: 600
-  },
-  uploadOpenLink: {
-    fontSize: '17px',
-    color: '#0053A4',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-    fontWeight: 600
-  },
-  subtext: {
-    fontSize: '14px',
-    color: '#333333'
-  },
-  errorText: {
-    color: 'red',
-    padding: '10px 0px 10px 0px',
-    fontSize: '16px'
-  }
-});
-
 
 /**
  * Styled radio group reusable component
@@ -89,7 +98,7 @@ const useStyles = makeStyles({
  *
  */
 export function StyledDropzone(props: {fileUploaded: boolean, actionText: string, uploadCallbackHandler: Function, icon?: string, displayValidity?: boolean}) {
-  const classes = useStyles();
+
 
   const {
     acceptedFiles,
@@ -102,7 +111,7 @@ export function StyledDropzone(props: {fileUploaded: boolean, actionText: string
     isDragReject,
   } = useDropzone({
     noClick: true,
-    accept: '.csv',
+    accept: { "text/csv": [".csv"] },
     maxSize: 5000000,
     onDrop: (file: any) => props.uploadCallbackHandler(file)
     // disabled: props.fileUploaded
@@ -129,13 +138,13 @@ export function StyledDropzone(props: {fileUploaded: boolean, actionText: string
   ]);
 
   return (
-    <div>
+    <Root>
       <div {...getRootProps({style})} className={classes.inputField}>
         <input {...getInputProps()} />
         {
           props.icon
           ? 
-          <img className={classes.icon} src={props.icon}/>
+          <img style={classes.icon} src={props.icon}/>
           : null
         }
         <div className={classes.descriptionWrapper}>
@@ -183,6 +192,6 @@ export function StyledDropzone(props: {fileUploaded: boolean, actionText: string
             </div>
         : null
       }
-    </div>
+    </Root>
   );
 }

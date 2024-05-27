@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import { CSVLink } from 'react-csv';
 import {
   makeStyles,
@@ -6,7 +7,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import {
   StyledDialog,
@@ -28,75 +29,104 @@ import { SalesReportContext } from '@/contexts/SalesReport';
 import ReplaceWarning from '@/components/Sales/ReplaceWarning';
 import Loader from '@/components/Sales/Loader';
 
-const useStyles = makeStyles(
-  (
-    theme // TODO: grab any color data from theme once implemented
-  ) =>
-    createStyles({
-      title: {
-        color: '#002C71',
-        fontSize: '27px',
-        fontWeight: 600,
-        padding: '30px 0px 20px 0px ',
-      },
-      description: {
-        color: '#0053A4',
-        fontSize: '20px',
-        fontWeight: 600,
-        paddingBottom: '30px',
-      },
-      box: {
-        display: 'flex',
-        padding: '20px',
-        borderRadius: '10px',
-        border: '1px solid #CDCED2',
-        backgroundColor: '#fff',
-        marginBottom: '20px',
-      },
-      boxTitle: {
-        fontSize: '17px',
-        fontWeight: 600,
-        lineHeight: '22px',
-      },
-      boxDescription: {
-        fontSize: '16px',
-        color: '#3A3A3A',
-        lineHeight: '20px',
-      },
-      radioGroup: {
-        width: '50px',
-      },
-      boxHeader: {
-        width: '100%',
-        display: 'inline-flex',
-        margin: '5px 0px 5px 0px',
-      },
-      textWrapper: {
-        paddingBottom: '20px',
-      },
-      linkWrapper: {
-        textDecorationColor: '#1E5DB1',
-      },
-      linkText: {
-        display: 'inline',
-        color: '#1E5DB1',
-      },
-      boxContent: {
-        display: 'block',
-        width: '100%',
-      },
-      dialogTitle: {
-        size: '20px',
-        color: '#0053A4',
-        borderBottom: '1px solid #CCCCCC',
-        padding: '0px 0px 16px 0px',
-        margin: '16px 24px 0px 24px',
-      },
-    })
-);
+const PREFIX = 'SaleUpload';
+
+const classes = {
+  title: `${PREFIX}-title`,
+  description: `${PREFIX}-description`,
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  boxDescription: `${PREFIX}-boxDescription`,
+  radioGroup: `${PREFIX}-radioGroup`,
+  boxHeader: `${PREFIX}-boxHeader`,
+  textWrapper: `${PREFIX}-textWrapper`,
+  linkWrapper: `${PREFIX}-linkWrapper`,
+  linkText: `${PREFIX}-linkText`,
+  boxContent: `${PREFIX}-boxContent`,
+  dialogTitle: `${PREFIX}-dialogTitle`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    // TODO: grab any color data from theme once implemented
+    theme
+  }
+) => ({
+  [`& .${classes.title}`]: {
+    color: '#002C71',
+    fontSize: '27px',
+    fontWeight: 600,
+    padding: '30px 0px 20px 0px ',
+  },
+
+  [`& .${classes.description}`]: {
+    color: '#0053A4',
+    fontSize: '20px',
+    fontWeight: 600,
+    paddingBottom: '30px',
+  },
+
+  [`& .${classes.box}`]: {
+    display: 'flex',
+    padding: '20px',
+    borderRadius: '10px',
+    border: '1px solid #CDCED2',
+    backgroundColor: '#fff',
+    marginBottom: '20px',
+  },
+
+  [`& .${classes.boxTitle}`]: {
+    fontSize: '17px',
+    fontWeight: 600,
+    lineHeight: '22px',
+  },
+
+  [`& .${classes.boxDescription}`]: {
+    fontSize: '16px',
+    color: '#3A3A3A',
+    lineHeight: '20px',
+  },
+
+  [`& .${classes.radioGroup}`]: {
+    width: '50px',
+  },
+
+  [`& .${classes.boxHeader}`]: {
+    width: '100%',
+    display: 'inline-flex',
+    margin: '5px 0px 5px 0px',
+  },
+
+  [`& .${classes.textWrapper}`]: {
+    paddingBottom: '20px',
+  },
+
+  [`& .${classes.linkWrapper}`]: {
+    textDecorationColor: '#1E5DB1',
+  },
+
+  [`& .${classes.linkText}`]: {
+    display: 'inline',
+    color: '#1E5DB1',
+  },
+
+  [`& .${classes.boxContent}`]: {
+    display: 'block',
+    width: '100%',
+  },
+
+  [`& .${classes.dialogTitle}`]: {
+    size: '20px',
+    color: '#0053A4',
+    borderBottom: '1px solid #CCCCCC',
+    padding: '0px 0px 16px 0px',
+    margin: '16px 24px 0px 24px',
+  }
+}));
 
 function SaleUplad() {
-  const classes = useStyles({}); // TODO: add theme from MUI
+
 
   const [providedHeaders, setProvidedHeaders] = useState([]);
   const [confirmDialogOpen, setConfirmOpen] = useState<boolean>(false);
@@ -181,7 +211,7 @@ function SaleUplad() {
   };
 
   return (
-    <>
+    (<Root>
       <div>
         <Loader open={mappedLoading} message="File processing. Please wait…" />
         <div className={classes.title}>
@@ -274,7 +304,7 @@ function SaleUplad() {
           </StyledDialog>
         ) : null}
       </div>
-    </>
+    </Root>)
   );
 }
 

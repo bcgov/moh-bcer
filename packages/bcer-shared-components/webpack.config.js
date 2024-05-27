@@ -1,4 +1,3 @@
-
 const path = require('path')
 const { merge } = require('webpack-merge');
 const SRC_PATH = path.join(__dirname, 'src')
@@ -14,8 +13,9 @@ const PATH_ALIASES = {
   'react': path.resolve(__dirname, './node_modules/react') ,
   'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
   'formik': path.resolve(__dirname, './node_modules/formik'), 
-  '@material-ui': path.resolve(__dirname, './node_modules/@material-ui'), 
+  '@mui': path.resolve(__dirname, './node_modules/@mui'), 
   'assets': path.resolve(__dirname, 'src', 'assets'),
+  '@types': path.resolve(__dirname, './node_modules/@types'),
 };
 
 const commonConfig = merge([
@@ -31,12 +31,12 @@ const commonConfig = merge([
           amd: "React",          
           root: "react"      
       },      
-      "react-dom": {          
-          commonjs: "react-dom",          
-          commonjs2: "react-dom",          
-          amd: "ReactDOM",          
-          root: "reactDOM"      
-      },
+      // "react-dom": {          
+      //     commonjs: "react-dom",          
+      //     commonjs2: "react-dom",          
+      //     amd: "ReactDOM",          
+      //     root: "reactDOM"      
+      // },
       "formik": {          
         commonjs: "formik",          
         commonjs2: "formik",          
@@ -49,50 +49,37 @@ const commonConfig = merge([
         amd: "material-table",          
         root: "material-table"
       },
-      "react-dropzone": {
-        commonjs: "react-dropzone",          
-        commonjs2: "react-dropzone",          
-        amd: "react-dropzone",          
-        root: "react-dropzone"
-      },
+      // "react-dropzone": {
+      //   commonjs: "react-dropzone",          
+      //   commonjs2: "react-dropzone",          
+      //   amd: "react-dropzone",          
+      //   root: "react-dropzone"
+      // },
       "jspdf": {
         commonjs: "jspdf",          
         commonjs2: "jspdf",          
         amd: "jspdf",          
         root: "jspdf"
       },
-      "@material-ui/icons": {
-        commonjs: "@material-ui/icons",          
-        commonjs2: "@material-ui/icons",          
-        amd: "@material-ui/icons",          
-        root: "@material-ui/icons"
+      "@mui/icons-material": {
+        commonjs: "@mui/icons-material",          
+        commonjs2: "@mui/icons-material",          
+        amd: "@mui/icons-materials",          
+        root: "@mui/icons-material"
       },
-      "@material-ui/core": {
-        commonjs: "@material-ui/core",          
-        commonjs2: "@material-ui/core",          
-        amd: "@material-ui/core",          
-        root: "@material-ui/core"
+      "@mui/lab": {
+        commonjs: "@mui/lab",          
+        commonjs2: "@mui/lab",          
+        amd: "@mui/lab",          
+        root: "@mui/lab"
       },
-      "@material-ui/lab": {
-        commonjs: "@material-ui/lab",          
-        commonjs2: "@material-ui/lab",          
-        amd: "@material-ui/lab",          
-        root: "@material-ui/lab"
-      },
-      "@material-ui/styles": {
-        commonjs: "@material-ui/styles",          
-        commonjs2: "@material-ui/styles",          
-        amd: "@material-ui/styles",          
-        root: "@material-ui/styles"
-      },
-      "@material-ui/core/styles": {
-        commonjs: "@material-ui/core/styles",          
-        commonjs2: "@material-ui/core/styles",          
-        amd: "@material-ui/core/styles",          
-        root: "@material-ui/core/styles"
+      "@mui/material": {
+        commonjs: "@mui/material",          
+        commonjs2: "@mui/material",          
+        amd: "@mui/material",
+        root: "@mui/material"
       },
     },
-    /@material-ui\/core\/.*/,
   ],
   },
 ])

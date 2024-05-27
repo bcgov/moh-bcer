@@ -10,21 +10,21 @@ export class SaleProductSoldDTO {
 
   @ApiProperty({
     description: 'Sales Report ID',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   @IsOptional()
   id: string;
   
   @ApiProperty({
     description: 'Product ID',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   @IsOptional()
   productSoldId: string;
 
   @ApiProperty({
     description: 'Location ID',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   @IsNotEmpty()
   locationId: string;

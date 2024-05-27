@@ -1,36 +1,44 @@
 import React, { useContext, useEffect } from 'react';
-import { Redirect, Link, useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { useAxiosPost } from '@/hooks/axios';
-import { makeStyles, CircularProgress, Typography } from '@material-ui/core';
-import classes from '*.module.css';
+import { CircularProgress, Typography } from '@mui/material';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 
-const useStyles = makeStyles({
-  splashContainer: {
+const PREFIX = 'Welcome';
+
+const classes = {
+  splashContainer: `${PREFIX}-splashContainer`,
+  splashWrapper: `${PREFIX}-splashWrapper`,
+  buttonWrapper: `${PREFIX}-buttonWrapper`
+};
+
+const Root = styled('div')({
+  [`&.${classes.splashContainer}`]: {
     display: 'flex',
     width: '100%',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  splashWrapper: {
+  [`& .${classes.splashWrapper}`]: {
     maxWidth: '950px'
   },
-  buttonWrapper: {
+  [`& .${classes.buttonWrapper}`]: {
     paddingTop: '30px',
     display: 'flex',
     justifyContent: 'flex-end'
   }
-})
+});
 
 export default function Welcome() {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
   const [{ data: profile, loading, error }] = useAxiosPost('/users/profile');
-  const businessInformation = profile?.business && profile?.business.legalName;
+  const businessInformation = profile?.business?.legalName;
 
   useEffect(() => {
     if (error) {
@@ -38,18 +46,27 @@ export default function Welcome() {
     }
   }, [error])
 
-  return loading ? <CircularProgress /> : businessInformation ? <Redirect to='/myDashboard' /> : (
-    <div className={classes.splashContainer}>
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (businessInformation) {
+    navigate('/myDashboard');
+    return null; // or any other fallback if needed
+  }
+
+  return (
+    <Root className={classes.splashContainer}>
       <div className={classes.splashWrapper}>
         <Typography variant='h5'>Welcome to E-Substances Reporting Application</Typography>
         <Typography variant='body1'>As a first-time user of this application, you need to finish the initial setup of your organization. Next time you login, you will not have to complete this step.</Typography>
         <Typography variant='body1'>If you have already submitted a product and manufacturing report by email to <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>, you will have to reupload this into the BCER.</Typography>
         <div className={classes.buttonWrapper}> 
-          <StyledButton variant='contained' onClick={() => history.push('/business/details')}>
+          <StyledButton variant='contained' onClick={() => navigate('/business/details')}>
             Start
           </StyledButton>
         </div>
       </div>
-    </div>
-  )
+    </Root>
+  );
 }

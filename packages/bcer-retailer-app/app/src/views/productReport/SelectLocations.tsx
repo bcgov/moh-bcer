@@ -1,9 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { makeStyles, Typography, Paper, Snackbar } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import { makeStyles, Typography, Paper, Snackbar } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 import { StyledTable, StyledButton, StyledConfirmDialog, LocationType, LocationTypeLabels } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
@@ -15,16 +16,29 @@ import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'SelectLocations';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  submitWrapper: `${PREFIX}-submitWrapper`,
+  checkboxLabel: `${PREFIX}-checkboxLabel`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  helpTextWrapper: {
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -32,27 +46,26 @@ const useStyles = makeStyles({
     marginBottom: '30px',
     borderRadius: '5px',
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  tableRowCount: {
+  [`& .${classes.tableRowCount}`]: {
     paddingBottom: '10px'
   },
-  submitWrapper: {
+  [`& .${classes.submitWrapper}`]: {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingTop: '30px'
   },
-  checkboxLabel: {
+  [`& .${classes.checkboxLabel}`]: {
     marginTop: '20px'
   },
 });
 
 export default function SelectLocations() {
-  const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [{ data: locations = [], loading, error }, get] = useAxiosGet(`/location`); 
   const [{ response, loading: patchLoading, error: patchError }, patch] = useAxiosPatch(`/products`, { manual: true });
@@ -86,7 +99,7 @@ export default function SelectLocations() {
 
   useEffect(() => {
     if (response && !error) {
-      history.push('/products/success')
+      navigate('/products/success')
     }
   }, [response]);
 
@@ -97,9 +110,9 @@ export default function SelectLocations() {
   }, [error]);
 
   return (
-    <>
+    (<Root>
       <div>
-        <StyledButton onClick={() => history.push('/products/add-reports')}>
+        <StyledButton onClick={() => navigate('/products/add-reports')}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Cancel
         </StyledButton>
@@ -184,6 +197,6 @@ export default function SelectLocations() {
         acceptDisabled={patchLoading}
         cancelDisabled={patchLoading}
       />
-    </>
+    </Root>)
   );
 }

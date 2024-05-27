@@ -1,10 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { FormikHelpers, useFormikContext } from 'formik';
-import { Grid, InputAdornment, makeStyles, Tooltip, TextField, Typography } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
+import { Grid, InputAdornment, makeStyles, Tooltip, TextField, Typography } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { StyledTextField, StyledRadioGroup, locationTypeOptions } from 'vaping-regulation-shared-components';
-import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason } from '@material-ui/lab';
-import HelpIcon from '@material-ui/icons/Help';
+import Autocomplete from '@mui/material/Autocomplete';
+import { AutocompleteChangeDetails, AutocompleteChangeReason } from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
 
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
@@ -12,48 +14,64 @@ import { useAxiosGet } from '@/hooks/axios';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 import { GeoCodeUtil } from '@/utils/geoCoder.util';
 
-const useStyles = makeStyles({
-  groupHeader: {
+const PREFIX = 'BusinessLocationInputs';
+
+const classes = {
+  groupHeader: `${PREFIX}-groupHeader`,
+  headerDescription: `${PREFIX}-headerDescription`,
+  gridItemLeft: `${PREFIX}-gridItemLeft`,
+  gridItemRight: `${PREFIX}-gridItemRight`,
+  optionalWrapper: `${PREFIX}-optionalWrapper`,
+  radioWrapper: `${PREFIX}-radioWrapper`,
+  autocompleteField: `${PREFIX}-autocompleteField`,
+  helpIcon: `${PREFIX}-helpIcon`,
+  tooltip: `${PREFIX}-tooltip`,
+  arrow: `${PREFIX}-arrow`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.groupHeader}`]: {
     display: 'flex',
     fontSize: '17px',
     fontWeight: 600,
     padding: '10px 0px'
   },
-  headerDescription:{
+  [`& .${classes.headerDescription}`]: {
     fontSize: '14px',
     fontWeight: 500,
     width: '800px'
   },
-  gridItemLeft: {
+  [`& .${classes.gridItemLeft}`]: {
     padding: '0px 15px 0px 0px'
   },
-  gridItemRight: {
+  [`& .${classes.gridItemRight}`]: {
     padding: '0px 0px 0px 15px'
   },
-  optionalWrapper:{
+  [`& .${classes.optionalWrapper}`]: {
     display: 'flex',
     alignItems: 'flex-end'
   },
-  radioWrapper: {
+  [`& .${classes.radioWrapper}`]: {
     padding: '0px 20px 15px 0px'
   },
-  autocompleteField: {
+  [`& .${classes.autocompleteField}`]: {
     '& .MuiAutocomplete-inputRoot': {
       padding: '0px 12px 0px 0px !important'
     }
   },
-  helpIcon: {
+  [`& .${classes.helpIcon}`]: {
     fontSize: '22px',
     color: '#0053A4'
   },
-  tooltip: {
+  [`& .${classes.tooltip}`]: {
     backgroundColor: '#0053A4',
     fontSize: '14px'
   },
-  arrow: {
+  [`& .${classes.arrow}`]: {
     color: '#0053A4'
   }
-})
+});
 
 const HealthAuthorities: { [key: string]: string } = {
   fraser: 'Fraser Health',
@@ -65,7 +83,7 @@ const HealthAuthorities: { [key: string]: string } = {
 };
 
 function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: IBusinessLocationValues, formikHelpers: FormikHelpers<IBusinessLocationValues>}) {
-  const classes = useStyles();
+
   const { values } = useFormikContext<IBusinessLocationValues>();
   const [ predictions, setPredictions ] = useState<Array<BCGeocoderAutocompleteData>>([]);
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
@@ -130,7 +148,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   }
 
   return (
-    <>
+    <Root>
       <div className={classes.groupHeader}>
         Please state your type of location
       </div>
@@ -140,7 +158,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
           options={locationTypeOptions()}
         />
       </div>
-
       {(values.location_type === "physical" || values.location_type === "both") &&
       <div className={classes.groupHeader}>
         Address of sales premises from which restricted e-substance sold 
@@ -149,7 +166,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         </Tooltip>
       </div>      
       }
-
       <Grid container spacing={2}>
         {(values.location_type === "physical" || values.location_type === "both") &&
         <Grid item xs={12} md={12} className={classes.gridItemLeft}>
@@ -245,7 +261,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         }
 
       </Grid>
-
       {(values.location_type === "physical" || values.location_type === "both") &&
       <>
       <div className={classes.groupHeader} >
@@ -275,15 +290,12 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         fullWidth
         disabled={true}/>
 
-      <TextField
-        name="health_authority"
-        type="hidden"/></>
+      <TextField variant="standard" name="health_authority" type="hidden" /></>
       )}
       
       {values.health_authority === 'other' && <StyledTextField name="health_authority_other" placeholder="Please Specify" fullWidth={false}/>}
       </>
       }
-
       <div className={classes.groupHeader}>
         Do you produce, formulate, package, repackage or prepare restricted e-substances for sale from this sales premises? <span style={{color: 'red'}}>*</span>
       </div>
@@ -296,7 +308,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
           {label: 'No', value: 'no'},
         ]}
       />
-    </>
+    </Root>
   );
 }
 

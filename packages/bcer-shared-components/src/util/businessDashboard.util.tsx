@@ -1,7 +1,7 @@
 import { HealthAuthorities, LocationTypeLabels, ReportStatus } from "@/constants/enums/genericEnums";
 import { LocationReportStatus, LocationRO } from "@/constants/interfaces/genericInterfaces";
-import { Tooltip } from "@material-ui/core";
-import Icon from '@material-ui/core/Icon';
+import { Tooltip } from "@mui/material";
+import Icon from '@mui/material/Icon';
 import moment from "moment";
 import React from 'react';
 

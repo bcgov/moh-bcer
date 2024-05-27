@@ -1,22 +1,28 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { Method } from 'axios';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { useKeycloak } from '@react-keycloak/web';
-import { makeStyles } from '@material-ui/core';
-import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import store from 'store';
 import useAxios from 'axios-hooks';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'Bottom';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`
+};
+
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#002C71',
     fontSize: '24px'
   }
-})
+});
 
 type OnAdvance = {
   datakey?: string,
@@ -49,11 +55,11 @@ export default function Bottom ({
   steps,
   currentStep,
 }: BottomStepperProps) {
-  const classes = useStyles();
+
 
   const [canAdvance, toggleCanAdvance] = useState(false);
-  const [keycloak] = useKeycloak();
-  const history = useHistory();
+  const {keycloak} = useKeycloak();
+  const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const [{ data, loading, error, response }, execute] = useAxios({
@@ -64,15 +70,15 @@ export default function Bottom ({
     }
   }, { manual: true });
 
-  const next = () => history.push(steps[currentStep + 1].path);
-  const previous = () => history.push(steps[currentStep - 1].path);
+  const next = () => navigate(steps[currentStep + 1].path);
+  const previous = () => navigate(steps[currentStep - 1].path);
 
   useEffect(() => {
     if (response?.status === 201 && !error) {
       if (isFinal) {
         setAppGlobal({ ...appGlobal, myBusinessComplete: true });
         store.remove('submissionId');
-        history.push(`/submission/${dataForContext.submissionId}`);
+        navigate(`/submission/${dataForContext.submissionId}`);
       } else next()
     }
   }, [response]);
@@ -114,7 +120,7 @@ export default function Bottom ({
   }, [dataForContext])
 
   return (
-    <div className={`${hasPrevious ? '' : 'first'} navButtons`}>
+    <Root className={`${hasPrevious ? '' : 'first'} navButtons`}>
       {
         hasPrevious
           &&
@@ -141,6 +147,6 @@ export default function Bottom ({
           </StyledButton>
         )
       }
-    </div>
+    </Root>
   );
 }

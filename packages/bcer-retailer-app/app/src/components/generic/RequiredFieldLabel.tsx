@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function RequiredFieldLabel ({label}: {label: string}) {
   return (
-    <div>
+    <span>
       {label}
       <span style={{color: 'red'}} > *</span>
-    </div>
+    </span>
   )
 }

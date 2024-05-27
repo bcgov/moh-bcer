@@ -5,7 +5,7 @@ import {
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import { GeneralUtil } from '@/utils/util';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAxiosGet, useAxiosPatch } from './axios';
 import { useToast } from './useToast';
 

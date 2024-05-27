@@ -1,35 +1,45 @@
 import React from 'react';
-import { Grid, makeStyles } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { Grid, makeStyles } from '@mui/material';
 import { StyledSelectField, StyledTextField } from 'vaping-regulation-shared-components'
 import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 import { provinceOptions } from '@/constants/arrays';
 
-const useStyles = makeStyles({
-  form: {
+const PREFIX = 'BusinessDetailsEditInputs';
+
+const classes = {
+  form: `${PREFIX}-form`,
+  formTitle: `${PREFIX}-formTitle`,
+  gridItemLeft: `${PREFIX}-gridItemLeft`,
+  gridItemRight: `${PREFIX}-gridItemRight`
+};
+
+const StyledGrid = styled(Grid)({
+  [`& .${classes.form}`]: {
     padding: '25px 20px 15px 20px',
     border: '1px solid #CDCED2',
     borderRadius: '5px',
     backgroundColor: '#fff'
   },
-  formTitle: {
+  [`& .${classes.formTitle}`]: {
     fontSize: '17px',
     fontWeight: 600,
     paddingBottom: '24px'
   },
-  gridItemLeft: {
+  [`& .${classes.gridItemLeft}`]: {
     padding: '0px 15px 0px 0px'
   },
-  gridItemRight: {
+  [`& .${classes.gridItemRight}`]: {
     padding: '0px 0px 0px 15px'
   }
-})
+});
 
 // BIG TODO: update with the 'is your location manufacturing' fields once Noel's PR is in
 export default function BusinessDetailsEditInputs() {
-  const classes = useStyles();
+
 
   return (
-    <Grid container >
+    <StyledGrid container >
 
       <Grid className={classes.gridItemLeft} item xs={12} md={6}>
         <StyledTextField
@@ -112,6 +122,6 @@ export default function BusinessDetailsEditInputs() {
         />
       </Grid>
 
-    </Grid>
+    </StyledGrid>
   );
 }

@@ -1,32 +1,43 @@
 import { BusinessLocation } from '@/constants/localInterfaces';
+import { styled } from '@mui/material/styles';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/utils/formatting';
-import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, makeStyles, Paper, Typography } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import { LocationType } from 'vaping-regulation-shared-components';
 import LocationDetailsSkeleton from '../generic/skeletons/LocationDetailsSkeleton';
 
-const useStyles = makeStyles({
-  box: {
+const PREFIX = 'LocationDetails';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  boxRow: `${PREFIX}-boxRow`,
+  rowTitle: `${PREFIX}-rowTitle`,
+  rowContent: `${PREFIX}-rowContent`
+};
+
+const StyledBox = styled(Box)({
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
     marginBottom: '20px',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px',
   },
-  boxRow: {
+  [`& .${classes.boxRow}`]: {
     display: 'flex',
     paddingBottom: '20px',
   },
-  rowTitle: {
+  [`& .${classes.rowTitle}`]: {
     fontSize: '14px',
     color: '#424242',
     width: '300px',
   },
-  rowContent: {
+  [`& .${classes.rowContent}`]: {
     fontSize: '14px',
     fontWeight: 600,
     color: '#3A3A3A',
@@ -38,7 +49,7 @@ export interface LocationDetailsProps {
 }
 
 function LocationDetails({ id }: LocationDetailsProps) {
-  const classes = useStyles();
+
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const [{ data: location, loading, error }, getLocation] =
@@ -53,7 +64,7 @@ function LocationDetails({ id }: LocationDetailsProps) {
     }
   }, [error]);
   return (
-    <Box>
+    <StyledBox>
       <Paper className={classes.box} variant="outlined">
         {location && (
           <Box>
@@ -107,7 +118,7 @@ function LocationDetails({ id }: LocationDetailsProps) {
         )}
         {(loading || error) && <LocationDetailsSkeleton rows={6} />}
       </Paper>
-    </Box>
+    </StyledBox>
   );
 }
 

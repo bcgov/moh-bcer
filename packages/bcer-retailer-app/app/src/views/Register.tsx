@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import store from 'store';
 import useAxios from 'axios-hooks';
 
@@ -9,7 +9,7 @@ import { formatError } from '@/utils/formatting';
 
 const Signup = () => {
   const [registerError, setRegisterError] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
 
   const [{ data, loading, error, response }, register] = useAxios({
@@ -24,7 +24,7 @@ const Signup = () => {
     if (response?.status === 201) {
       store.set('TOKEN', response.data.token);
       store.set('profile', response.data.profile);
-      history.push('/');
+      navigate('/');
     } 
   }, [data, loading, response, history]);
 
@@ -95,7 +95,7 @@ const Signup = () => {
             value={values.password}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <button className="BC-Gov-SecondaryButton" onClick={() => history.push('login')}>
+            <button className="BC-Gov-SecondaryButton" onClick={() => navigate('login')}>
               Login
             </button>
             <button className="BC-Gov-PrimaryButton" onClick={() => register({ data: { ...values, type: 'BO' } })}>

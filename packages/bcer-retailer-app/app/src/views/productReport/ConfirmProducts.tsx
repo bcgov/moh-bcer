@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import {
   makeStyles,
   Typography,
@@ -7,11 +8,11 @@ import {
   Box,
   FormControlLabel,
   Checkbox,
-} from '@material-ui/core';
+} from '@mui/material';
 import { CSVLink } from 'react-csv';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 import {
   StyledTable,
@@ -26,16 +27,34 @@ import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'ConfirmProducts';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  csvLink: `${PREFIX}-csvLink`,
+  submitWrapper: `${PREFIX}-submitWrapper`,
+  checkboxLabel: `${PREFIX}-checkboxLabel`,
+  formControl: `${PREFIX}-formControl`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71',
   },
-  helpTextWrapper: {
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -43,40 +62,40 @@ const useStyles = makeStyles({
     marginBottom: '30px',
     borderRadius: '5px',
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  box: {
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px',
   },
-  tableRowCount: {
+  [`& .${classes.tableRowCount}`]: {
     paddingBottom: '10px',
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     paddingBottom: '10px',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  submitWrapper: {
+  [`& .${classes.submitWrapper}`]: {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingTop: '30px',
   },
-  checkboxLabel: {
+  [`& .${classes.checkboxLabel}`]: {
     marginTop: '20px',
   },
-  formControl: {
+  [`& .${classes.formControl}`]: {
     fontSize: '14px',
     '& .MuiIconButton-colorSecondary': {
       '&:hover': {
@@ -93,8 +112,8 @@ const useStyles = makeStyles({
 });
 
 export default function ConfirmProducts() {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const [filterTable, setFilterTable] = useState(false);
   const viewFullscreenTable = useState<boolean>(false);
 
@@ -113,9 +132,9 @@ export default function ConfirmProducts() {
   }, [productInfo?.products]);
   
   return (
-    <>
+    (<Root>
       <div>
-        <StyledButton onClick={() => history.push('/products/add-reports')}>
+        <StyledButton onClick={() => navigate('/products/add-reports')}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Cancel
         </StyledButton>
@@ -213,13 +232,13 @@ export default function ConfirmProducts() {
         <div className={classes.submitWrapper}>
           <StyledButton
             variant="contained"
-            onClick={() => history.push('/products/select-locations')}
+            onClick={() => navigate('/products/select-locations')}
             disabled={!!uploadErrors?.length}
           >
             Next
           </StyledButton>
         </div>
       </div>
-    </>
+    </Root>)
   );
 }

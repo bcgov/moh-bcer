@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeycloakProvider } from "@react-keycloak/web";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
 
 export const createKeycloakStub = () => ({
   init: jest.fn().mockResolvedValue(true),
@@ -33,8 +33,8 @@ export const MockedAuthProvider = (props: MockedAuthProviderProps) => {
   const keycloak = { ...defaultMocks, ...mocks };
 
   return (
-    <KeycloakProvider keycloak={keycloak}>
+    <ReactKeycloakProvider authClient={keycloak}>
       {children}
-    </KeycloakProvider>
+    </ReactKeycloakProvider>
   );
 };

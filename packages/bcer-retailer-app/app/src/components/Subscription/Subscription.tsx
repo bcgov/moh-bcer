@@ -1,16 +1,14 @@
-import { Box, makeStyles, Typography } from '@material-ui/core';
-import React, { useState } from 'react';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import { Box, Typography } from '@mui/material';
+import React from 'react';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import SubscriptionDialog from './SubscriptionDialog';
 import { useSubscription } from '@/hooks/useSubscription';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
-import { Skeleton } from '@material-ui/lab';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import SubscriptionSkeleton from '../skeletons/SubscriptionSkeleton';
 import UnSubscribeDialog from './UnSubscribeDialog';
 
-const useStyles = makeStyles((theme) => ({
+const classes = {
   container: {
     padding: '20px',
     backgroundColor: '#002C71',
@@ -51,11 +49,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     columnGap: '4px',
-  },
-}));
+  }
+};
 
 function Subscription() {
-  const classes = useStyles();
   const {
     subscriptionData,
     subscriptionLoading,
@@ -68,10 +65,11 @@ function Subscription() {
     getInitialFormData,
     unSubscribe,
   } = useSubscription();
+
   return !subscriptionLoading ? (
     <Box
       mb={2}
-      className={
+      sx={
         subscriptionData?.confirmed
           ? classes.containerSubscribed
           : classes.container
@@ -80,25 +78,25 @@ function Subscription() {
       <Box flex={0.06}>
         <NotificationsActiveIcon
           fontSize="large"
-          className={classes.notifIcon}
+          sx={classes.notifIcon}
         />
       </Box>
       <Box flex={0.94}>
-        <Typography className={classes.title}>
+        <Typography sx={classes.title}>
           Subscribe To Our Text System Notification
         </Typography>
-        <Typography className={classes.helperText}>
+        <Typography sx={classes.helperText}>
           Get SMS Notification from BC E-substances Reporting. Please click on
           the subscribe button below to start receiving SMS Notification.
         </Typography>
         <Box display="flex">
-          <Box className={classes.buttonWrapper}>
+          <Box sx={classes.buttonWrapper}>
             <StyledButton
               variant="outlined"
               onClick={() => setOpenSubscribe(true)}
             >
               {subscriptionData?.confirmed ? (
-                <Box className={classes.subscribedButtonText}>
+                <Box sx={classes.subscribedButtonText}>
                   <DoneAllIcon /> Subscribed
                 </Box>
               ) : (
@@ -136,7 +134,7 @@ function Subscription() {
       )}
     </Box>
   ) : (
-    <Box className={classes.containerSubscribed} height={144} mb={2}>
+    <Box sx={classes.containerSubscribed} height={144} mb={2}>
       <SubscriptionSkeleton />
     </Box>
   );

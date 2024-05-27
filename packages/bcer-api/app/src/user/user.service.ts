@@ -28,12 +28,12 @@ export class UserService {
   }
 
   async findById(id: string): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ id });
+    const user = await this.userRepository.findOne({ where: { id: id }});
     return user;
   }
 
   async findByBCeID(bceid) {
-    const user = await this.userRepository.findOne({ bceid });
+    const user = await this.userRepository.findOne({ where: { bceid: bceid }});
     return user;
   }
 
@@ -107,7 +107,7 @@ export class UserService {
   }
 
   async unassignBusiness(businessId: string) {
-    const user = await this.userRepository.findOne({ businessId });
+    const user = await this.userRepository.findOne({ where: {businessId:businessId }});
     return await this.update({id: user.id, businessId: null});
   }
 

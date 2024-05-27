@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { makeStyles, Typography, Paper } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import { makeStyles, Typography, Paper } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import moment from 'moment';
 
 import { StyledTable, StyledButton, LocationTypeLabels, LocationType } from 'vaping-regulation-shared-components';
 import { BusinessLocationHeaders, SubmissionTypeEnum } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { ProductInfoContext } from '@/contexts/ProductReport';
-import SendIcon from '@material-ui/icons/Send';
+import SendIcon from '@mui/icons-material/Send';
 import ProductReportSubmission from '@/components/productReport/ProductReportSubmission';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
@@ -18,52 +19,77 @@ import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
 
-const useStyles = makeStyles({
-  bannerWrapper: {
+const PREFIX = 'Overview';
+
+const classes = {
+  bannerWrapper: `${PREFIX}-bannerWrapper`,
+  bannerIcon: `${PREFIX}-bannerIcon`,
+  bannerHeader: `${PREFIX}-bannerHeader`,
+  pageDescription: `${PREFIX}-pageDescription`,
+  highlightedText: `${PREFIX}-highlightedText`,
+  box: `${PREFIX}-box`,
+  title: `${PREFIX}-title`,
+  highlighted: `${PREFIX}-highlighted`,
+  listGroup: `${PREFIX}-listGroup`,
+  listRow: `${PREFIX}-listRow`,
+  listBullet: `${PREFIX}-listBullet`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  csvLink: `${PREFIX}-csvLink`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  sendIcon: `${PREFIX}-sendIcon`,
+  actionLink: `${PREFIX}-actionLink`,
+  buttonWrapper: `${PREFIX}-buttonWrapper`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.bannerWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
     backgroundColor: '#F8F2E4',
     borderRadius: '5px',
   },
-  bannerIcon: {
+  [`& .${classes.bannerIcon}`]: {
     fontSize: '45px',
     color: '#f3b229',
     paddingRight: '25px',
   },
-  bannerHeader: {
+  [`& .${classes.bannerHeader}`]: {
     fontWeight: 600,
     paddingBottom: '10px'
   },
-  pageDescription: {
+  [`& .${classes.pageDescription}`]: {
     color: '#000000',
     padding: '20px 0'
   },
-  highlightedText: {
+  [`& .${classes.highlightedText}`]: {
     fontWeight: 600,
     color: '#0053A4'
   },
-  box: {
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  highlighted: {
+  [`& .${classes.highlighted}`]: {
     fontWeight: 600,
     color: '#0053A4',
   },
-  listGroup: {
+  [`& .${classes.listGroup}`]: {
     paddingLeft: '15px'
   },
-  listRow: {
+  [`& .${classes.listRow}`]: {
     display: 'flex',
     paddingTop: '15px'
   },
-  listBullet: {
+  [`& .${classes.listBullet}`]: {
     margin: '10px 15px 0px 0px',
     minHeight: '6px',
     minWidth: '6px',
@@ -72,44 +98,44 @@ const useStyles = makeStyles({
     borderRadius: '5px',
     backgroundColor: '#0053A4'
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px'
   },
-  tableRowCount: {
+  [`& .${classes.tableRowCount}`]: {
     paddingBottom: '10px'
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px'
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
-  sendIcon: {
+  [`& .${classes.sendIcon}`]: {
     height: '24px',
     paddingRight: '4px'
   },
-  actionLink: {
+  [`& .${classes.actionLink}`]: {
     color: 'blue',
     cursor: 'pointer',
     textDecoration: 'underline'
   },
-  buttonWrapper: {
+  [`& .${classes.buttonWrapper}`]: {
     display: 'flex',
     alignItems: 'center'
   }
 });
 
 export default function ProductOverview() {
-  const classes = useStyles();
-  const history = useHistory();
-  const { location: { pathname } } = history;
+
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [withProducts, setWithProducts] = useState([]);
   const [withoutProducts, setWithoutProducts] = useState([]);
   const viewProductlessFullscreenTable = useState<boolean>(false);
@@ -160,7 +186,7 @@ export default function ProductOverview() {
 
   useEffect(() => {
     if (patchedSubmission && !patchError) {
-      history.push('/products/add-reports')
+      navigate('/products/add-reports')
     }
     if (pathname.includes('success')) {
       if (locations.length > 0 && !locations.find((l: BusinessLocation) => l.products?.length === 0 || l.productsCount === 0)) {
@@ -176,7 +202,7 @@ export default function ProductOverview() {
   }, [patchError]);
 
   return loading ? <CircularProgress /> : (
-    <>
+    (<Root>
       <div>
         <div className={classes.actionsWrapper}>
           <Typography className={classes.title} variant='h5'>Product Report</Typography>
@@ -351,7 +377,7 @@ export default function ProductOverview() {
                 actions={[
                   {
                     icon: tableAction,
-                    onClick: (event: any, rowData: any) => history.push(`/products/location/${rowData.id}`)
+                    onClick: (event: any, rowData: any) => navigate(`/products/location/${rowData.id}`)
                   }
                 ]}
                 data={withProducts}
@@ -393,7 +419,7 @@ export default function ProductOverview() {
                 actions={[
                   {
                     icon: tableAction,
-                    onClick: (event: any, rowData: any) => history.push(`/products/submission/${rowData.productUploadId}`)
+                    onClick: (event: any, rowData: any) => navigate(`/products/submission/${rowData.productUploadId}`)
                   }
                 ]}
                 data={productSubmissions}
@@ -402,6 +428,6 @@ export default function ProductOverview() {
           </TableWrapper>
         </FullScreen>
       </div>
-    </>
+    </Root>)
   );
 }

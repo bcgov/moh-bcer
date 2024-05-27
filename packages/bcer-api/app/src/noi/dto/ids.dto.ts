@@ -5,7 +5,7 @@ import * as faker from 'faker/locale/en_CA';
 export class IdsDTO {
   @ApiProperty({
     description: 'list of location uuids',
-    example: faker.random.uuid(),
+    example: faker.datatype.uuid(),
   })
   @IsNotEmpty()
   @IsUUID('all', {each: true})

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormHelperText } from '@material-ui/core';
+import { FormHelperText } from '@mui/material';
 
 export const InputFieldError = ({ error, ...props }: any) => {
   return (

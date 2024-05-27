@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import moment from 'moment';
-import { Grid, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import WarningIcon from '@material-ui/icons/Warning';
+import { Grid, Typography } from '@mui/material';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import { ExistingTable } from './Tables';
 import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
@@ -17,8 +17,16 @@ import { editLocationFormatting } from '@/utils/formatting';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import MassUpdateLocation from './MassUpdateLocation';
 
-const useStyles = makeStyles({
-  noiSubmittedBox: {
+const PREFIX = 'ExistingTableWrap';
+
+const classes = {
+  noiSubmittedBox: `${PREFIX}-noiSubmittedBox`,
+  warningIcon: `${PREFIX}-warningIcon`,
+  noiSubmittedBoxText: `${PREFIX}-noiSubmittedBoxText`
+};
+
+const Root = styled('div')({
+  [`& .${classes.noiSubmittedBox}`]: {
     display: 'flex',
     padding: '20px',
     borderRadius: '10px',
@@ -27,17 +35,17 @@ const useStyles = makeStyles({
     color: '#785400',
     marginBottom: '20px',
   },
-  warningIcon: {
+  [`& .${classes.warningIcon}`]: {
     color: '#785400'
   },
-  noiSubmittedBoxText: {
+  [`& .${classes.noiSubmittedBoxText}`]: {
     fontSize: '16px', 
     fontWeight: 600
   }
-})
+});
 
 export default function ExistingTableWrap() {
-  const classes = useStyles();
+
   const [businessInfo, setBusinessInfo] =
     useContext<[BIContext, Function]>(BusinessInfoContext);
   const { locations } = businessInfo;
@@ -164,7 +172,7 @@ export default function ExistingTableWrap() {
   };
 
   return (
-    <div>
+    <Root>
       <FullScreen fullScreenProp={[isFullScreen, setIsFullScreen]}>
         <ExistingTable
           data={existingLocations ? existingLocations : []}
@@ -275,6 +283,6 @@ export default function ExistingTableWrap() {
           />
         }
       </>
-    </div>
+    </Root>
   );
 }

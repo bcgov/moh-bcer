@@ -79,7 +79,7 @@ export const ProductReportCsvValidation = yup.object({
       'Container Capacity must be a valid number upto 999 with max 2 digit floating points eg 10, 32.87 etc'
     )
     .when('cartridgeCapacity', {
-      is: (cartCap) => !cartCap?.length,
+      is: (cartCap: string | any[]) => !cartCap?.length,
       then: () =>
         yup
           .string()

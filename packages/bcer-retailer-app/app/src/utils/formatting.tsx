@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
 import { ApiOperation } from '@/constants/localEnums';
 

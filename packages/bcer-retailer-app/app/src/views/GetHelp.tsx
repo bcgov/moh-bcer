@@ -1,15 +1,25 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core'
+import { styled } from '@mui/material/styles';
+import { Typography } from '@mui/material'
 
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import timeline from '@/assets/images/timeline.png';
 
-const useStyles = makeStyles({
-  parent: {
+const PREFIX = 'GetHelp';
+
+const classes = {
+  parent: `${PREFIX}-parent`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  boldedText: `${PREFIX}-boldedText`
+};
+
+const Root = styled('div')({
+  [`&.${classes.parent}`]: {
     padding: '1rem 2rem',
     overflowY: 'auto',
   },
-  helpTextWrapper: {
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '15px',
@@ -17,21 +27,19 @@ const useStyles = makeStyles({
     marginBottom: '20px',
     borderRadius: '5px',
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  boldedText: {
+  [`& .${classes.boldedText}`]: {
     fontWeight: 600
   }
-})
+});
 
 export default function GetHelp() {
-  const classes = useStyles();
-
   return (
-    <div className={classes.parent} >
+    <Root className={classes.parent} >
       <div className={classes.helpTextWrapper}>
         <ChatBubbleOutlineIcon className={classes.helperIcon} />
         <div>
@@ -104,6 +112,6 @@ export default function GetHelp() {
         </li>
       </ul>
       <img src={timeline} />
-    </div>
-  )
+    </Root>
+  );
 }

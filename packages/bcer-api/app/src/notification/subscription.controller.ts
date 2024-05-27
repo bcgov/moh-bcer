@@ -54,12 +54,8 @@ export class SubscriptionController {
   @HttpCode(HttpStatus.OK)
   @Roles('user')
   @Get()
-  async getSubscription(
-    @Request() req: RequestWithUser,
-  ): Promise<SubscriptionRO> {
-    const subscription = await this.notificationService.findSubscriptionByBusinessId(
-      req.ctx.businessId,
-    );
+  async getSubscription(@Request() req: RequestWithUser): Promise<SubscriptionRO> {
+    const subscription = await this.notificationService.findSubscriptionByBusinessId(req.ctx.businessId);
     return subscription?.toResponseObject();
   }
 }

@@ -1,12 +1,12 @@
 import { truncateString } from '@/utils';
-import { makeStyles, Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import React from 'react';
 
-const useStyles = makeStyles(() => ({
+const classes = {
   tooltip: {
     fontSize: 14,
-  },
-}));
+  }
+};
 
 /**
  * 
@@ -21,9 +21,9 @@ export function StyledTableColumn({
   value: string;
   length?: number;
 }) {
-  const classes = useStyles();
+
   return value?.length > length ? (
-    <Tooltip title={value || ''} classes={{ tooltip: classes.tooltip }}>
+    <Tooltip title={value || ''} sx={classes.tooltip}>
       <div>{truncateString(value, length)}</div>
     </Tooltip>
   ) : (

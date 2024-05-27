@@ -1,8 +1,7 @@
 
 import React, { ReactElement } from 'react';
-import { Dialog, DialogTitle, DialogContent, Slide, styled } from '@material-ui/core';
-import { TransitionProps } from '@material-ui/core/transitions/transition';
-
+import { Dialog, DialogTitle, DialogContent, Slide, styled } from '@mui/material';
+import { TransitionProps } from '@mui/material/transitions/transition';
 import { StyledDialogProps } from '@/constants/interfaces/dialogInterfaces';
 import { StyledDialogActions } from '@/index';
 
@@ -34,7 +33,7 @@ const StyledDialogContent = styled(DialogContent)({
  * Transition component - To be consumed by a Dialog's transitionComponent prop
  */
 const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & { children?: React.ReactElement<any, any> },
+  props: TransitionProps & { children: React.ReactElement<any, any> },
   ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;

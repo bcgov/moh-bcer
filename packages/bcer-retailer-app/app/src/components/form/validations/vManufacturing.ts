@@ -25,8 +25,8 @@ export const Validation = yup.object().shape({
       name: yup.string(),
       scientificName: yup.string().when('name', {
         is: (name: string) => name?.length,
-        then: yup.string().notRequired(),
-        otherwise: yup.string().min(1).required('A common name or a scientific name is required'),
+        then: () => yup.string().notRequired(),
+        otherwise: () => yup.string().min(1).required('A common name or a scientific name is required'),
       }),
       manufacturerName: yup.string().min(1).required('Manufacturer name is required'),
       manufacturerAddress: yup.string().min(1).required('Manufacturer address is required'),

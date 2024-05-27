@@ -1,4 +1,4 @@
-import { AccordionSummaryProps, StyledProps } from "@material-ui/core";
+import { AccordionSummaryProps} from "@mui/material";
 import { ReportStatus } from "../enums/genericEnums";
 
 export interface StyledWarningProps {

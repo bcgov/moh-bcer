@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useLocation } from 'react-router-dom';
 import store from 'store';
-
-import { makeStyles } from '@material-ui/core';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import WorkOutlineIcon from '@material-ui/icons/WorkOutline';
-import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
-import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
 
 import Top from '@/components/stepper/Top';
 import Bottom from '@/components/stepper/Bottom';
@@ -20,35 +19,39 @@ import { Method } from 'axios'
 import BusinessDetails from './MyBusinessComponents/BusinessDetails';
 import ConfirmLocations from './MyBusinessComponents/ConfirmLocations';
 import ConfirmAndSubmit from './MyBusinessComponents/ConfirmAndSubmit';
+
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import Subscription from '../Subscription/Subscription';
 
-const useStyles = makeStyles({
-    stepTitle: {
+const PREFIX = 'MyBusinessNav';
+
+const classes = {
+  stepTitle: `${PREFIX}-stepTitle`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+};
+
+const StyledBusinessInfoProvider = styled('div')({
+    [`& .${classes.stepTitle}`]: {
       fontSize: '27px',
       fontWeight: 600,
       color: '#002C71',
       paddingBottom: '20px',
     },
-    helpTextWrapper: {
+    [`& .${classes.helpTextWrapper}`]: {
       display: 'flex',
       alignItems: 'center',
       padding: '15px',
       backgroundColor: '#E0E8F0',
       marginBottom: '20px',
       borderRadius: '5px',
-    },
-    helperIcon: {
-      fontSize: '45px',
-      color: '#0053A4',
-      paddingRight: '25px',
-    },
-    helperText: {
-      fontSize: '16px',
-      lineHeight: '20px',
-      color: '#777777'
     }
+});
+
+const StyledChatBubbleOutlineIcon = styled(ChatBubbleOutlineIcon)({
+  fontSize: '45px',
+  color: '#0053A4',
+  paddingRight: '25px',
 });
 
 // NB: move steps to their own file
@@ -59,7 +62,7 @@ const steps = [
     label: 'Business Details',
     title: 'Confirm Your Business Details',
     path: '/business/details',
-    component: <Route key="details" exact path='/business/details' component={BusinessDetails} />,
+    component: <BusinessDetails />,
     helpText: <p>Please confirm the business details that were entered when registering for your BCeID.
                If you sell e-substances from this location, please add it as a location in the <b>"Add Business Locations"</b> section.
                You must also add any additional locations from which you sell e-substances.</p>,
@@ -85,7 +88,7 @@ const steps = [
     label: 'Confirm Locations',
     title: 'Confirm New Business Locations',
     path: '/business/map',
-    component: <Route key='map' exact path='/business/map' component={ConfirmLocations} />,
+    component: <ConfirmLocations/>,
     helpText: 'Confirm the details of the business locations that you have added on the previous page. You will be able to update this information at any time. Upon completion of this section you will be able to complete a Notice of Intent to sell E-substances and submit Product and Manufacturing Reports for each location you have listed.',
     canAdvanceChecks: [
       {
@@ -107,7 +110,7 @@ const steps = [
     label: 'Confirm Business Details and Submit',
     title: 'Confirm Business Details and Submit',
     path: '/business/confirm',
-    component: <Route key='confirm' exact path='/business/confirm' component={ConfirmAndSubmit} />,
+    component: <ConfirmAndSubmit/>,
     helpText: '',
     onAdvance: [{
       datakey: 'submissionId',
@@ -119,7 +122,7 @@ const steps = [
 ]
 
 export default function MyBusinessNav () {
-  const classes = useStyles({});
+
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const { pathname } = useLocation();
 
@@ -147,12 +150,12 @@ export default function MyBusinessNav () {
   
   useEffect(() => {
     (async () => {
-      const submissionId = store.get('submissionId') || businessInfo.submissionId
+      const submissionId = store.get('submissionId') || businessInfo.submissionId;
       // GET: returns an existing submission
       // POST: creates a new submission
-      await submissionId ?
-        get({ url:`/submission/${submissionId}` }) :
-        post({ data: Object.assign({}, { type: SubmissionTypeEnum.location }, { data: businessInfo }) })
+      (await submissionId) 
+        ? get({ url: `/submission/${submissionId}` }) 
+        : post({ data: Object.assign({}, { type: SubmissionTypeEnum.location }, { data: businessInfo }) })
     })();
   }, []);
 
@@ -225,34 +228,32 @@ export default function MyBusinessNav () {
   }, [pathname])
 
   return (
-    <BusinessInfoProvider value={[businessInfo, setBusinessInfo]}>
-      <Top steps={stepperOptions} currentStep={currentStep} />
-      {steps[currentStep].showSubscription && appGlobal.config?.enableSubscription && <Subscription />}
-      <div className={classes.stepTitle} >{steps[currentStep].title}</div>
-      {
-        steps[currentStep].helpText
-          &&
-        <div className={classes.helpTextWrapper}>
-          <ChatBubbleOutlineIcon className={classes.helperIcon} />
-          <div>
-            {steps[currentStep].helpText}
+    <StyledBusinessInfoProvider>
+      <BusinessInfoProvider value={[businessInfo, setBusinessInfo]}>
+        <Top steps={stepperOptions} currentStep={currentStep} />
+        {steps[currentStep].showSubscription && appGlobal.config?.enableSubscription && <Subscription />}
+        <div className={classes.stepTitle}>{steps[currentStep].title}</div>
+        {steps[currentStep].helpText && (
+          <div className={classes.helpTextWrapper}>
+            <StyledChatBubbleOutlineIcon />
+            <div>
+              {steps[currentStep].helpText}
+            </div>
           </div>
-        </div>
-      }
-      <Switch>
-        {steps.map(step => step.component)}
-      </Switch>
-      {currentStep > 0 && (
-        <Bottom
-          hasPrevious={currentStep > 0}
-          isFinal={currentStep === steps.length - 1}
-          setCurrentStep={setCurrentStep}
-          dataForContext={businessInfo}
-          steps={steps.map(step => ({ path: step.path }))}
-          currentStep={currentStep}
-          {...steps[currentStep]}
-        />
-      )}
-    </BusinessInfoProvider>
-  )
+        )}
+        {steps[currentStep].component}
+        {currentStep > 0 && (
+          <Bottom
+            hasPrevious={currentStep > 0}
+            isFinal={currentStep === steps.length - 1}
+            setCurrentStep={setCurrentStep}
+            dataForContext={businessInfo}
+            steps={steps.map(step => ({ path: step.path }))}
+            currentStep={currentStep}
+            {...steps[currentStep]}
+          />
+        )}
+      </BusinessInfoProvider>
+    </StyledBusinessInfoProvider>
+  );
 }

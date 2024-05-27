@@ -46,7 +46,7 @@ export class ReportService {
     }
 
     async getReport(id: string) {
-        return await this.reportRepository.findOne({ id });
+        return await this.reportRepository.findOne({ where: { id: id }});
     }
 
     async generateReport(user: UserEntity, request: ReportRequestDto) {

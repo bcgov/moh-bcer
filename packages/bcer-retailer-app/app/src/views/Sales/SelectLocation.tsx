@@ -1,27 +1,38 @@
 import React, { useEffect, useState, useContext } from 'react'
+import { styled } from '@mui/material/styles';
 import { StyledButton } from 'vaping-regulation-shared-components';
-import { Box, Grid, makeStyles, TextField, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Box, Grid, makeStyles, TextField, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { SalesReportContext } from '@/contexts/SalesReport';
 import { useAxiosGet } from '@/hooks/axios';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'SelectLocation';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  description: `${PREFIX}-description`,
+  box: `${PREFIX}-box`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  description: {
+  [`& .${classes.description}`]: {
     paddingBottom: '30px',
     paddingTop: '20px',
   },
-  box: {
+  [`& .${classes.box}`]: {
     display: 'flex',
     padding: '20px',
     borderRadius: '10px',
@@ -29,11 +40,11 @@ const useStyles = makeStyles({
     backgroundColor: '#fff',
     marginBottom: '20px',
   },
-})
+});
 
 export default function SelectSalesLocation() {
-  const history = useHistory();
-  const classes = useStyles();
+  const navigate = useNavigate();
+
 
   const [entry, setEntry] = useState<string>('year');
   const [salesReport, setSalesReport] = useContext(SalesReportContext);
@@ -75,14 +86,14 @@ export default function SelectSalesLocation() {
       locationId,
       address: locations.find((l: any) => l.id === locationId).addressLine1,
     });
-    history.push('/sales/submit');
+    navigate('/sales/submit');
   }
 
   const goBack = () => {
     if (entry === 'location') {
       setEntry('year');
     } else {
-      history.goBack();
+      navigate(-1);
     }
   }
   
@@ -106,14 +117,14 @@ export default function SelectSalesLocation() {
   }
 
   return (
-    <>
+    <Root>
       <div>
         <StyledButton onClick={goBack}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Back
         </StyledButton>
         <Typography className={classes.title} variant='h5'>New Sales Report</Typography>
-        <Grid container justify='center'>
+        <Grid container justifyContent='center'>
           <Grid item xs={12} md={6}>
             {
               entry === 'year' &&
@@ -198,6 +209,6 @@ export default function SelectSalesLocation() {
           </Grid>
         </Grid>
       </div>
-    </>
-  )
+    </Root>
+  );
 }

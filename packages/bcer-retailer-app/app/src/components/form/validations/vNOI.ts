@@ -49,7 +49,7 @@ export const Validation = yup.object({
   underage: yup.string().required('This is a required field'),
   underage_other: yup.string().when('underage', {
     is: 'other',
-    then: yup.string().required('Please provide details')
+    then: () => yup.string().required('Please provide details') as yup.StringSchema<string>,
   }),
   doingBusinessAs: yup.string(),
   ha: yup.string().required('Please select your Health Authority'),
