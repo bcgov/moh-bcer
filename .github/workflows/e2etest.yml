@@ -40,5 +40,5 @@ jobs:
           wait-on: 'http://localhost:3000/retailer, http://localhost:3000/portal'
           record: true
         env:
-          CYPRESS_RECORD_KEY: 'd6703994-08d4-4421-b52f-d7f02ee5cff0'
+          CYPRESS_RECORD_KEY: '11b57a63-2d0d-42ab-95f4-a6f9cbfc5a8e'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
