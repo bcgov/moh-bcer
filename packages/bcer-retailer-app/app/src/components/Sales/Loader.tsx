@@ -2,10 +2,11 @@ import React from 'react';
 import { Snackbar } from '@mui/material';
 
 interface IProps {
-  open: boolean;
-  message: string;
+  open?: boolean;
+  message?: string;
 }
-export default function Loader({ open, message }: IProps) {
+
+export default function Loader({ open = false, message = '' }: IProps) {
   return (
     <Snackbar
       open={open}
@@ -14,8 +15,3 @@ export default function Loader({ open, message }: IProps) {
     />
   );
 }
-
-Loader.defaultProps = {
-  open: false,
-  message: '',
-};

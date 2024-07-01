@@ -1,8 +1,7 @@
 import React, { ReactElement, Fragment } from 'react';
 import { Field } from 'formik'
-import { TextField, TextFieldProps } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import { styled } from '@mui/system';
+import { styled, TextField, TextFieldProps } from '@mui/material';
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
 import { InputFieldLabel } from '@/components/generic';
 import { SelectInputProps, SelectOptionProps, StyledSelectProps } from '@/constants/interfaces/inputInterfaces';
 /**
@@ -13,8 +12,8 @@ const StyledOutlinedSelect = (props: TextFieldProps) => (
   <TextField
     {...props}
     sx={{
-      '& .MuiSelect-root': {
-        padding: '11px',
+      '& .MuiSelect-select': {
+        padding: '11px !important',
         fontSize: '14px',
         color: '#333333',
         backgroundColor: '#CDCED2',
@@ -33,8 +32,8 @@ const StyledSelect = (props: TextFieldProps) => (
   <TextField
     {...props}
     sx={{
-      '& .MuiSelect-root': {
-        padding: '10px',
+      '& .MuiSelect-select': {
+        padding: '10px', 
         fontSize: '14px',
         color: '#333333',
         backgroundColor: '#F5F5F5',
@@ -49,8 +48,12 @@ const StyledSelect = (props: TextFieldProps) => (
  * Uses react styled() to apply styles to the MenuItem component
  * @returns A MUI ReactElement with specified styles
  */
-const StyledMenuItem = styled(MenuItem)({});
-
+const StyledMenuItem = (props: MenuItemProps) => (
+  <MenuItem
+    {...props}
+   />
+);
+  
 /**
  * Applies Formik implicit props to a MUI TextField
  * 
@@ -76,6 +79,7 @@ function SelectInput ({
       {label && <InputFieldLabel label={label} />}
       {variant === 'outlined' ? 
         <StyledOutlinedSelect
+          id = "outlined_select_TextField"
           select
           variant="outlined"
           fullWidth
@@ -94,6 +98,7 @@ function SelectInput ({
           }
         </StyledOutlinedSelect>
       : <StyledSelect
+          id = "filled_select_TextField"
           select
           variant="filled"
           fullWidth

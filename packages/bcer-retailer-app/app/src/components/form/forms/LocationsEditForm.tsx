@@ -27,20 +27,19 @@ import { LocationUtil } from '@/utils/location.util';
 const PREFIX = 'LocationsEditForm';
 
 const classes = {
-  addIcon: `${PREFIX}-addIcon`,
-  addButton: `${PREFIX}-addButton`
+  addIcon: {
+    [`${PREFIX}-addIcon`]: {
+      fontSize: '16px',
+      paddingRight: '8px',
+      alignSelf: 'center',
+    },
+  },
+  addButton: {
+    [`${PREFIX}-addButton`]: {
+      minWidth: '160px',
+    },
+  },
 };
-
-const Root = styled('div')({
-  [`& .${classes.addIcon}`]: {
-    fontSize: '16px',
-    paddingRight: '8px',
-    alignSelf: 'center',
-  },
-  [`& .${classes.addButton}`]: {
-    minWidth: '160px',
-  },
-});
 
 export default function LocationsEditForm({
   rowData,
@@ -120,14 +119,14 @@ export default function LocationsEditForm({
   };
 
   return (
-    <Root>
+    <div>
       {openProps.isAddNew ? (
         <StyledButton
-          className={classes.addButton}
+          sx={classes.addButton}
           variant="contained"
           onClick={() => toggleOpen(true)}
         >
-          <AddCircleIcon className={classes.addIcon} />
+          <AddCircleIcon sx={classes.addIcon} />
           Add Location
         </StyledButton>
       ) : null}
@@ -195,6 +194,6 @@ export default function LocationsEditForm({
           )}
         </Formik>
       ) : null}
-    </Root>
+    </div>
   );
 }

@@ -8,7 +8,7 @@ export default function BusinessDetails() {
   return (
     <>
       <BusinessDetailsForm>
-        <ExistingTableWrap />
+        {/* <ExistingTableWrap /> */}
         <AddLocations />
         <SubmitBusinessInfoButton />
       </BusinessDetailsForm>

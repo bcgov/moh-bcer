@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
 import moment from 'moment';
 import { Grid, Typography } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -17,16 +16,8 @@ import { editLocationFormatting } from '@/utils/formatting';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import MassUpdateLocation from './MassUpdateLocation';
 
-const PREFIX = 'ExistingTableWrap';
-
 const classes = {
-  noiSubmittedBox: `${PREFIX}-noiSubmittedBox`,
-  warningIcon: `${PREFIX}-warningIcon`,
-  noiSubmittedBoxText: `${PREFIX}-noiSubmittedBoxText`
-};
-
-const Root = styled('div')({
-  [`& .${classes.noiSubmittedBox}`]: {
+  noiSubmittedBox: {
     display: 'flex',
     padding: '20px',
     borderRadius: '10px',
@@ -35,19 +26,17 @@ const Root = styled('div')({
     color: '#785400',
     marginBottom: '20px',
   },
-  [`& .${classes.warningIcon}`]: {
+  warningIcon: {
     color: '#785400'
   },
-  [`& .${classes.noiSubmittedBoxText}`]: {
+  noiSubmittedBoxText: {
     fontSize: '16px', 
     fontWeight: 600
   }
-});
+};
 
 export default function ExistingTableWrap() {
-
-  const [businessInfo, setBusinessInfo] =
-    useContext<[BIContext, Function]>(BusinessInfoContext);
+  const [businessInfo, setBusinessInfo] = useContext<[BIContext, Function]>(BusinessInfoContext);
   const { locations } = businessInfo;
   const [locationId, setLocationId] = useState<string | null>(null);
   const [targetRow, setTargetRow] = useState<BusinessLocation>(null);
@@ -172,7 +161,7 @@ export default function ExistingTableWrap() {
   };
 
   return (
-    <Root>
+    <div>
       <FullScreen fullScreenProp={[isFullScreen, setIsFullScreen]}>
         <ExistingTable
           data={existingLocations ? existingLocations : []}
@@ -221,10 +210,9 @@ export default function ExistingTableWrap() {
                 locationContext?.noi?.status === 'submitted'
                   &&
                 <Grid item xs={12}>
-                  
-                  <div className={classes.noiSubmittedBox}>
-                    <WarningIcon className={classes.warningIcon}/>
-                    <Typography className={classes.noiSubmittedBoxText} >You already have an NOI submitted for this location</Typography>
+                  <div style={classes.noiSubmittedBox}>
+                    <WarningIcon sx={classes.warningIcon}/>
+                    <Typography sx={classes.noiSubmittedBoxText} >You already have an NOI submitted for this location</Typography>
                   </div>
                 </Grid>
               }
@@ -283,6 +271,6 @@ export default function ExistingTableWrap() {
           />
         }
       </>
-    </Root>
+    </div>
   );
 }

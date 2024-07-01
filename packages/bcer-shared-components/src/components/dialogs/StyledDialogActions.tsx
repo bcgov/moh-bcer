@@ -1,6 +1,6 @@
 
 import React, { ReactElement } from 'react';
-import { DialogActions, styled } from '@mui/material';
+import { DialogActions, DialogActionsProps, styled } from '@mui/material';
 import { useFormikContext } from 'formik';
 
 import { StyledButton } from '@/index';
@@ -10,11 +10,17 @@ import { StyledDialogActionProps } from '@/constants/interfaces/dialogInterfaces
  * Uses react styled() to apply styles to the dialog actions component
  * @returns A Material-UI ReactElement with specified styles
  */
-const StyledActions = styled(DialogActions)({
-  padding: '16px 0px 24px 0px',
-  margin: '0px 24px 0px 24px',
-  borderTop: '1px solid #CCCCCC'
-});
+const StyledActions = (props: DialogActionsProps) => (
+  <DialogActions
+  {...props}
+  sx={{
+    padding: '16px 0px 24px 0px',
+    margin: '0px 24px 0px 24px',
+    borderTop: '1px solid #CCCCCC'
+  }}
+  />
+);
+
 
 /**
  * Styled dialog actions reusable component

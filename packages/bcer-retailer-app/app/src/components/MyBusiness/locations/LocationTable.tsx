@@ -21,46 +21,49 @@ function LocationTable({
   ...props
 }: LocationTableProps): JSX.Element {
   return (
-    <StyledTable
-      options={{
-        fixedColumns: {
-          right: 1,
-        },
-        sorting: true,
-      }}
-      columns={[
-        {
-          title: 'Type of Location',
-          render: LocationUtil.renderLocationType
-        },
-        {
-          title: 'Address/URL',
-          render: LocationUtil.renderFullAddress,
-          sorting: false
-        },
-        {
-          title: 'Creation Date',
-          render: LocationUtil.renderCreationDate,
-          sorting: false,
-        },
-        {
-          title: 'Doing Business As',
-          render: LocationUtil.renderDoingBusinessAs,
-          sorting: false,
-        },
-        {
-          title: 'Status',
-          field: 'status',
-          render: LocationUtil.renderStatus,
-        },
-        {
-          render: LocationUtil.renderActions(handleAction),
-          sorting: false,
-        },
-      ]}
-      data={data}
-      {...props}
-    />
+    //TODO
+    //STH wrong with the StyledTable!!!!!!!!!!!!!!!!!!!!!!!!
+    // <StyledTable
+      // options={{
+      //   fixedColumns: {
+      //     right: 1,
+      //   },
+      //   maxColumnSort: 1,
+      // }}
+      // columns={[
+      //   {
+      //     title: 'Type of Location',
+      //     render: LocationUtil.renderLocationType
+      //   },
+      //   {
+      //     title: 'Address/URL',
+      //     render: LocationUtil.renderFullAddress,
+      //     maxColumnSort: 0
+      //   },
+      //   {
+      //     title: 'Creation Date',
+      //     render: LocationUtil.renderCreationDate,
+      //     maxColumnSort: 0
+      //   },
+      //   {
+      //     title: 'Doing Business As',
+      //     render: LocationUtil.renderDoingBusinessAs,
+      //     maxColumnSort: 0
+      //   },
+      //   {
+      //     title: 'Status',
+      //     field: 'status',
+      //     render: LocationUtil.renderStatus,
+      //   },
+      //   {
+      //     render: LocationUtil.renderActions(handleAction),
+      //     maxColumnSort: 0
+      //   },
+      // ]}
+      // data={data}
+      // {...props}
+    // />
+    <></>
   );
 }
 

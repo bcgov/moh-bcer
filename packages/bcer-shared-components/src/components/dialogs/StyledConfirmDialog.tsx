@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel } from '@mui/material';
+import { Checkbox, FormControlLabel, FormControlLabelProps} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { Fragment, ReactElement } from 'react';
@@ -8,7 +8,10 @@ import { StyledCheckboxProps, CheckboxInputProps } from '@/constants/interfaces/
 import { StyledDialog } from '@/index';
 import { StyledConfirmDialogProps } from '@/constants/interfaces/dialogInterfaces';
 
-const StyledFormControlLabel = styled(FormControlLabel)({ 
+const StyledFormControlLabel = (props: FormControlLabelProps) => (
+  <FormControlLabel
+  {...props}
+  sx={{
   paddingTop: '15px',
   fontSize: '14px',
   '& .MuiIconButton-colorSecondary': {
@@ -22,7 +25,10 @@ const StyledFormControlLabel = styled(FormControlLabel)({
   '& .Mui-checked': {
     color: '#0053A4'
   },
-});
+  }}
+  />
+);
+
 
 const StypledEmptyHelper = styled('div')({ 
   height: '22px'

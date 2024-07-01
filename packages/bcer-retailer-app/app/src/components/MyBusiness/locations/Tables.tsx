@@ -1,6 +1,4 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
-
 import TableWrapper from '@/components/generic/TableWrapper';
 import {
   BusinessLocation,
@@ -11,24 +9,17 @@ import LocationTable from './LocationTable';
 import { Box, Tooltip } from '@mui/material';
 import { StyledButton } from 'vaping-regulation-shared-components';
 
-const PREFIX = 'Tables';
-
 const classes = {
-  sendIcon: `${PREFIX}-sendIcon`,
-  actionLink: `${PREFIX}-actionLink`
-};
-
-const StyledTableWrapper = styled(TableWrapper)({
-  [`& .${classes.sendIcon}`]: {
+  sendIcon: {
     height: '24px',
     paddingRight: '4px',
   },
-  [`& .${classes.actionLink}`]: {
+  actionLink: {
     color: 'blue',
     cursor: 'pointer',
     textDecoration: 'underline',
-  },
-});
+  }
+};
 
 interface TableProp extends GenericTableProp {
   data: Array<BusinessLocation>;
@@ -51,9 +42,8 @@ export function ExistingTable({
   ...props
 }: ExistingTableProp) {
 
-
   return (
-    <StyledTableWrapper
+    <TableWrapper
       data={data}
       blockHeader="Existing Business Locations"
       tableHeader="Existing Business Locations"
@@ -69,6 +59,6 @@ export function ExistingTable({
       }
     >
       <LocationTable data={data} handleAction={handleAction} />
-    </StyledTableWrapper>
+    </TableWrapper>
   );
 }

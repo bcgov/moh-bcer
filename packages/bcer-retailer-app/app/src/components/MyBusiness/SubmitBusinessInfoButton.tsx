@@ -22,29 +22,33 @@ export default function SubmitBusinessInfoButton({ updateType }: SubmitBusinessI
   const { values, isValid } = useFormikContext();
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext)
 
-  const submit = async () => {
-    setBusinessInfo({
-      ...businessInfo,
-      details: values
-    })
-    await patch({
-      url: `submission/${businessInfo.submissionId}`,
-      data: {
-        data: {
-          ...businessInfo,
-          fileData: businessInfo.fileData,
-          details: values,
-          locations: businessInfo.locations,
-        }
-      }
-    })
-  }
+  useEffect(() => {// Store the form values in local storage
+    localStorage.setItem('BusinessDetailsValues', JSON.stringify(values))
+  }, [values])
 
   useEffect(() => {
     if (error) {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error])
+
+  const submit = async () => {
+    setBusinessInfo({ ...businessInfo, details: values })
+    const url = `submission/${businessInfo.submissionId}`;
+    const data = {
+      data: {
+        ...businessInfo,
+        fileData: businessInfo.fileData,
+        details: values,
+        locations: businessInfo.locations,
+      }
+    };
+  
+    console.log('URL:', url);
+    console.log('Data:', data);
+
+    await patch({ url, data });
+  }
 
   return response?.status === 201 ? 
     updateType === "businessInfoOnly" ? <Navigate to='/business/confirm' replace /> :  <Navigate to='/business/map' replace /> : (

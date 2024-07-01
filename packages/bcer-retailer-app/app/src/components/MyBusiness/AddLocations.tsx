@@ -99,7 +99,6 @@ const ContextHandler = (): null => {
 
 export default function AddLocations () {
 
-
   const [entry, setEntry] = useState<string>();
   const [tempEntryRef, setTempEntryRef] = useState<string>();
   const [providedHeaders, setProvidedHeaders] = useState([]);

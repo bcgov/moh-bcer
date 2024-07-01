@@ -1,6 +1,7 @@
 import React, { ReactNode, useEffect, FunctionComponent } from 'react';
 import { Formik, FormikProps, Form } from 'formik';
 import { Typography } from '@mui/material';
+import classnames from 'classnames';
 
 type BaseFormProps = {
   initialValues: Object; // from form/validations
@@ -31,17 +32,17 @@ const classes = {
 }
 
 export default function BaseForm({
+  initialValues,
+  schema,
+  Fields,
+  handleSubmit,
   title,
   subtitle,
   fetchData,
-  initialValues,
-  schema,
-  handleSubmit,
-  Fields,
   children,
   formClass,
-  useDefaultFormStyles,
   customFormStyles,
+  useDefaultFormStyles,
 }: BaseFormProps) {
 
   useEffect(() => {
@@ -49,21 +50,22 @@ export default function BaseForm({
   }, [fetchData]);
 
   return (
-  <Formik
-    initialValues={initialValues}
-    validationSchema={schema}
-    enableReinitialize
-    validateOnMount
-    onSubmit={async (values, actions) => handleSubmit(values, actions)}
-    children={props => (
-      <Form style={{...!!useDefaultFormStyles ? classes.form : {}, ...customFormStyles}}>  
-        {title && ( 
-          <Typography variant='h6' style={classes.formTitle}>{title}</Typography>
-        )}
-        <Fields {...props} />
-        {children}
-      </Form>
-    )}
-  />
+    <Formik
+      initialValues={initialValues}
+      validationSchema={schema}
+      enableReinitialize
+      validateOnMount
+      onSubmit={async (values, actions) => handleSubmit(values, actions)}
+      /* the data is stored in props.values below*/
+      children={props => (
+        <Form style={{...!!useDefaultFormStyles ? classes.form : {}, ...customFormStyles}}>  
+          {title && ( 
+            <Typography variant='h6' style={classes.formTitle}>{title}</Typography>
+          )}
+          <Fields {...props} />
+          {children}
+        </Form>
+      )}
+    />
   );
 }

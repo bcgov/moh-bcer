@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, BoxProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
 import { StyledErrorIcon, StyledSuccessIcon } from '../icons';
@@ -11,21 +11,26 @@ const classes = {
   success: `${PREFIX}-success`
 };
 
-const StyledBox = styled(Box)(() => ({
-  [`& .${classes.error}`]: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: '#FF534A',
-  },
+const StyledBox = (props: BoxProps) => (
+  <Box
+  {...props}
+  sx={{
+    [`& .${classes.error}`]: {
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#FF534A',
+    },
 
-  [`& .${classes.warning}`]: {},
+    [`& .${classes.warning}`]: {},
 
-  [`& .${classes.success}`]: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: '#2E8540',
-  }
-}));
+    [`& .${classes.success}`]: {
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#2E8540',
+    }
+  }}
+  />
+);
 
 export interface StyledStatusMessage {
   status: 'error' | 'warning' | 'success';

@@ -38,9 +38,9 @@ interface IProps {
   content?: string | React.ReactElement;
 }
 
-export default function ReplaceWarning({ content }: IProps) {
-
-
+export default function ReplaceWarning({ content = `Please know that all the previously submitted records for this location
+  and reporting period will be overridden, and only your new submission
+  will be kept.` }: IProps) {
   return (
     <Root className={classes.parent}>
       <div className={classes.warningIcon}>
@@ -50,9 +50,3 @@ export default function ReplaceWarning({ content }: IProps) {
     </Root>
   );
 }
-
-ReplaceWarning.defaultProps = {
-  content: `Please know that all the previously submitted records for this location
-  and reporting period will be overridden, and only your new submission
-  will be kept.`,
-};

@@ -2,10 +2,9 @@
 import React, { ReactElement, CSSProperties } from 'react';
 import { Paper, IconButton } from '@mui/material';
 import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
-import MaterialTable, { Toolbar } from '@mui/material';
+import MaterialTable, { MTableToolbar } from '@material-table/core';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { StyledButton } from '@/index';
-
 
 const classes = {
   root: {
@@ -90,17 +89,13 @@ const rowStyle = (rowData: any): CSSProperties => {
  */
 const CustomToolbar = (props: any) => {
   return (
-    <Toolbar  { ...props } />
+    <MTableToolbar  { ...props } />
   );
 }
 
-const Empty = () => (
-  null
-)
+const Empty = () => (null)
 
 const CustomActions = (props: any) => {
-
-
   return props.action.icon === 'edit'
     ?
     <div style={classes.editButtonWrapper}>
@@ -169,7 +164,6 @@ export function StyledTable ({
   return (
     // @ts-ignore
     <MaterialTable
-      variant="standard"
       components={customComponents}
       options={{
         headerStyle: headerStyle,
@@ -177,7 +171,7 @@ export function StyledTable ({
           color: 'primary',
         }),
         rowStyle: (rowData: any) => rowStyle(rowData),
-        sorting: false,
+        maxColumnSort: 0,
         pageSize: 5,
         paginationType: 'stepped',
         pageSizeOptions: [5, 6, 7, 8, 9, 10, 20],
@@ -198,7 +192,7 @@ export function StyledTable ({
         },
         ...localization
       }}
-      {...props} />
-	  
+      {...props}
+    />
   );
 }

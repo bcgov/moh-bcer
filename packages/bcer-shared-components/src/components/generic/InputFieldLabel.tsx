@@ -1,9 +1,7 @@
 import React from 'react';
 import { Typography, styled } from '@mui/material';
 
-const StyledTypography = styled(Typography)({
-  
-});
+const StyledTypography = styled(Typography)({});
 
 
 export const InputFieldLabel = ({ label, ...props }: any) => (

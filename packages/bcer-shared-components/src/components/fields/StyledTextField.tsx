@@ -1,7 +1,7 @@
 
 import React, { ReactElement, Fragment } from 'react';
 import { Field, ErrorMessage } from 'formik'
-import { styled } from '@mui/material/styles';
+import { TextFieldProps } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { InputFieldLabel, InputFieldError } from '@/components/generic';
 import { TextInputProps, StyledTextProps } from '@/constants/interfaces/inputInterfaces';
@@ -10,26 +10,41 @@ import { TextInputProps, StyledTextProps } from '@/constants/interfaces/inputInt
  * Uses react styled() to apply styles to the text field component
  * @returns A MUI ReactElement with specified styles
  */
-export const StyledTextInput = styled(TextField)(({ theme }) => ({
+export const StyledTextInput = (props: TextFieldProps) => (
+  <TextField
+  {...props}
+  sx={{
   '& .MuiFilledInput-root': {
     backgroundColor: '#F5F5F5',
   },
-  '& .MuiFilledInput-input': {
-    padding: '10px 10px 10px 14px',
+  '& .MuiFilledInput-input':{
+    padding: '10px 10px 10px 14px'
   },
-  '& .MuiFilledInput-underline:after': {
-    borderBottom: '2px solid #0053A4',
-  },
-  '& .MuiOutlinedInput-root': {
-    backgroundColor: '#FAFAFA',
-    borderRadius: '3px',
-  },
-  '& .MuiOutlinedInput-input': {
-    padding: '12px 10px 12px 14px',
-    fontSize: '14px',
-    lineHeight: '19px',
-  },
-}));
+  '& .MuiFilledInput-underline': {
+    '&:after': {
+      borderBottom: '2px solid #0053A4'
+    }
+  }
+  }}
+  />
+);
+
+export const StyledOutlinedInput = (props: TextFieldProps) => (
+  <TextField
+    {...props}
+    sx={{
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: '#FAFAFA',
+      borderRadius: '3px',
+    },
+    '& .MuiOutlinedInput-input':{
+      padding: '12px 10px 12px 14px',
+      fontSize: '14px',
+      lineHeight: '19px',
+    },
+    }}
+  />
+);
 
 /**
  * Applies Formik implicit props to a MUI TextField
@@ -61,7 +76,6 @@ function TextInput ({
           value={value || ''}
           {...fieldRest}
           {...props}
-          as={undefined} // Explicitly define 'as' prop as undefined
         />
       ) : (
         <StyledTextInput
@@ -71,7 +85,6 @@ function TextInput ({
           value={value || ''}
           {...fieldRest}
           {...props}
-          as={undefined} // Explicitly define 'as' prop as undefined
         />
       )}
       {
@@ -88,7 +101,7 @@ function TextInput ({
  *
  * @param isDisabled - `optional | default false` boolean flag for controlling disabled state
  * @param name - string for the field's name
- * @param label - string for the rfield's label text
+ * @param label - string for the field's label text
  * @param fullWidth - `optional | default true` boolean flag for the field's layout width
  * @returns object of type ReactElement
  *

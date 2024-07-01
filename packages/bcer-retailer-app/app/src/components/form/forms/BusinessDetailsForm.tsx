@@ -1,5 +1,4 @@
 import React, { ReactNode, useContext } from 'react';
-
 import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
 import BaseForm from '@/components/form/Base';
 import BusinessDetailsInputs from '@/components/form/inputs/BusinessDetailsInputs';
