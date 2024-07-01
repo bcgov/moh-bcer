@@ -7,9 +7,9 @@
   "defaultCommandTimeout": 5000,
   "retries": 3,
   "env": {
-    "auth_base_url": "https://keycloak.freshworks.club/auth",
-    "auth_realm": "vaping-test",
-    "auth_client_id": "CYPRESS",
+    "auth_base_url": "https://common-logon-test.hlth.gov.bc.ca/auth",
+    "auth_realm": "bcer",
+    "auth_client_id": "BCER",
     "chromeWebSecurity": false,
     "video": false
   }

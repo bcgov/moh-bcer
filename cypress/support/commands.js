@@ -32,7 +32,7 @@ const login = (user) => {
         return key + "=" + queryObject[key];
       })
       .join("&");
-    const url = authCompleteUrl + "?" + queryString;
+    const url = authCompleteUrl + "?" + queryString + "&kc_idp_hint=moh_idp";
     cy.request({
       url,
       followRedirect: true,

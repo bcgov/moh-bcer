@@ -12,6 +12,10 @@ export class GeneralUtil {
       query = `${query}&healthAuthority=${options.healthAuthority}`
     }
 
+    if(options.reports && options.reports !== 'all'){
+      query = `${query}&reports=${options.reports}`
+    }
+
     if(options.page || options.page === 0){
       query = `${query}&page=${options.page + 1}`
     }

@@ -8,6 +8,7 @@ import { LocationStatus } from 'src/location/enums/location-status.enum';
 import { LocationService } from 'src/location/location.service';
 import { BusinessReportType } from './enums/businessReportType.enum';
 import { HealthAuthority } from './enums/health-authority.enum';
+import { BusinessReportList } from './enums/businessReportList.enum';
 import { SearchDto } from './dto/search.dto';
 import { BusinessSearchCategory } from './enums/businessSearchCategory.enum';
 import { BusinessStatus } from './enums/business-status.enum';
@@ -109,25 +110,52 @@ export class BusinessService {
   }
 
   async getComplianceOverview(type?: BusinessReportType) {
-    const [businesses, total] = await this.listBusinesses();
-    let compliant = 0;
-    let nonCompliant = 0;
+    let compliant;
+    let nonCompliant;
+    let total;
+    // this is old code that may be depricated but kept for now 
+    // TODO: check if the type parameter is ever used or needed
+    if (type){
+      let [businesses, total1] = await this.listBusinesses();
+      compliant = 0;
+      nonCompliant = 0;
+      total = total1
 
-    businesses?.map(async (business) => {
-      const result = this.locationService.checkLocationReportComplete(
-        business?.locations || [],
-        {
-          type,
-          exitEarly: true,
-        }
-      );
-      if(result.earlyMissingConfirmed){
-        nonCompliant++;
-      }else{
-        compliant++;
-      } 
-    })
-    
+      businesses?.map(async (business) => {
+        const result = this.locationService.checkLocationReportComplete(
+          business?.locations || [],
+          {
+            type,
+            exitEarly: true,
+          }
+        );
+        if(result.earlyMissingConfirmed){
+          nonCompliant++;
+        }else{
+          compliant++;
+        } 
+      })
+    } else {
+      const qb1 = this.businessRepository.createQueryBuilder('business');
+      qb1.where("business.legalName IS NOT NULL AND business.legalName != ''");
+      total = await qb1.getCount();
+      
+      const qb2 = this.businessRepository.createQueryBuilder('business');
+      qb2.andWhere(`
+        (business.id  in  (
+          SELECT DISTINCT
+              business2.id
+          FROM "business" as business2
+          WHERE "business2"."legalName" IS NOT NULL AND "business2"."legalName" != ''
+          AND ("business2"."id" in( select business_id from noi_report_vw) 
+          OR "business2"."id"  in ( select business_id from manufacturing_report_vw )
+          OR "business2"."id"  in ( select business_id from sales_report_vw )
+          OR "business2"."id"  in ( select business_id from product_report_vw ))))
+        `);
+      nonCompliant = await qb2.getCount();
+
+      compliant = total - nonCompliant;
+    }
     return {compliant, nonCompliant, total };
   }
 
@@ -148,7 +176,8 @@ export class BusinessService {
   }
 
   async listBusinesses(query?: SearchDto, businessIds?: string[]){
-    const {search, category, page, pageSize} = query || {};
+    const {search, category, reports, page, pageSize} = query || {};
+
     const qb = this.businessRepository.createQueryBuilder('business');
     qb.leftJoinAndSelect('business.locations', 'location')
       .leftJoinAndSelect('location.noi', 'noi')
@@ -156,14 +185,43 @@ export class BusinessService {
       .loadRelationCountAndMap('location.productsCount', 'location.products')
       .loadRelationCountAndMap('location.manufacturesCount', 'location.manufactures')
       .where("coalesce(business.legalName, '') != ''")
+
+    if(reports === BusinessReportList.Outstanding){
+      qb.andWhere(`
+      (business.id  in  (
+        SELECT DISTINCT
+            business2.id
+        FROM "business" as business2
+        WHERE COALESCE("business2"."legalName", '') != ''
+        AND ("business2"."id" in( select business_id from noi_report_vw) 
+        OR "business2"."id"  in ( select business_id from manufacturing_report_vw )
+        OR "business2"."id"  in ( select business_id from sales_report_vw )
+        OR "business2"."id"  in ( select business_id from product_report_vw ))))
+      `);
+    } else if (reports === BusinessReportList.Complete) {
+      qb.andWhere(`
+        (business.id  not in  (
+          SELECT DISTINCT
+              business2.id
+          FROM "business" as business2
+          WHERE COALESCE("business2"."legalName", '') != ''
+          AND ("business2"."id" in( select business_id from noi_report_vw) 
+          OR "business2"."id"  in ( select business_id from manufacturing_report_vw )
+          OR "business2"."id"  in ( select business_id from sales_report_vw )
+          OR "business2"."id"  in ( select business_id from product_report_vw ))))
+      `);
+    }
     
     if (query) {
       if (query.orderBy === 'Business Name') {
-        qb.orderBy('LOWER("business"."businessName")', query.order);
+        qb.addSelect('REPLACE(TRIM("business"."businessName"), E\'\\t\', \'\')', 'b_businessname');
+        qb.orderBy('b_businessname', query.order);
       } else if (query.orderBy === 'Address') {
-        qb.orderBy('LOWER("business"."addressLine1")', query.order);
+        qb.addSelect('REPLACE(TRIM("business"."addressLine1"), E\'\\t\', \'\')', 'b_address_line1');
+        qb.orderBy('b_address_line1', query.order);
       } else if (query.orderBy === 'City') {
-        qb.orderBy('LOWER("business"."city")', query.order);
+        qb.addSelect('REPLACE(TRIM("business"."city"), E\'\\t\', \'\')', 'b_city');
+        qb.orderBy('b_city', query.order);
       }
     }
 
@@ -188,8 +246,8 @@ export class BusinessService {
     }
 
     if(page && pageSize){
-      qb.offset((page - 1) * pageSize);
-      qb.limit(pageSize);
+      qb.skip((page - 1) * pageSize);
+      qb.take(pageSize);
     }
     const businesses = await qb.getManyAndCount();
     return businesses;

@@ -37,7 +37,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           wait-on-timeout: 200
-          wait-on: 'http://localhost:3000/retailer, http://localhost:3000/portal'
+          wait-on: 'http://localhost:3000/retailer, http://localhost:3001/portal'
           record: true
         env:
           CYPRESS_RECORD_KEY: '11b57a63-2d0d-42ab-95f4-a6f9cbfc5a8e'
