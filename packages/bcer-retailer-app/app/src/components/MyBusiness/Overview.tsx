@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { makeStyles, CircularProgress, Typography, Box } from '@mui/material';
+import { CircularProgress, Typography, Box } from '@mui/material';
 import { BusinessDashboard, LocationType } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
 
