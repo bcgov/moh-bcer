@@ -31,7 +31,7 @@ export default function SubmitBusinessInfoButton({ updateType }: SubmitBusinessI
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error])
-
+  
   const submit = async () => {
     setBusinessInfo({ ...businessInfo, details: values })
     const url = `submission/${businessInfo.submissionId}`;

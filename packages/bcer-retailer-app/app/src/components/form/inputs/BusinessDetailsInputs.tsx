@@ -32,12 +32,14 @@ function BusinessDetailsInputs() {
   const [businessInfo, setBusinessInfo] = useContext<[BIContext, Function]>(BusinessInfoContext);
   const [initialState, setInitialState] = useState(null);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (Object.keys(businessInfo.details).length > 0) {
-      setInitialState(businessInfo.details);
+      if(businessInfo.details.legalName !== ''){
+        setInitialState(businessInfo.details);
+      }
     }
   },[businessInfo])
-  
+
   return (
     <FormBorderGrid container spacing={2}>
       <PaddedGrid item xs={12}>
