@@ -136,11 +136,11 @@ export function StyledTable ({
   localization,
   editable,
   ...props
-}: StyledTableProps):ReactElement {
+}: StyledTableProps): ReactElement {
 
   const toolbar = editable?.onBulkUpdate ? CustomToolbar : Empty;
 
-  const customComponents = {
+  const customComponents: { [key: string]: React.ComponentType<any> | (() => null) } = {
     Toolbar: toolbar,
     Container: CustomContainer,
     // Pagination: CustomPagination,
@@ -148,7 +148,7 @@ export function StyledTable ({
   const actions = []
   
   if (isEditable)  {
-    customComponents['Action'] = CustomActions
+    customComponents.Action = CustomActions
     actions.push(
       {
         icon: 'edit',
