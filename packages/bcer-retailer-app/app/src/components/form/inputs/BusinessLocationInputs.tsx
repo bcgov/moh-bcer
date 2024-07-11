@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { FormikHelpers, useFormikContext } from 'formik';
 import { Grid, InputAdornment, makeStyles, Tooltip, TextField, Typography } from '@mui/material';
@@ -13,6 +13,9 @@ import RequiredFieldLabel from '@/components/generic/RequiredFieldLabel';
 import { useAxiosGet } from '@/hooks/axios';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 import { GeoCodeUtil } from '@/utils/geoCoder.util';
+
+import { debounce } from 'lodash';
+import axios, { CancelTokenSource } from 'axios';
 
 const PREFIX = 'BusinessLocationInputs';
 
@@ -29,7 +32,6 @@ const classes = {
   arrow: `${PREFIX}-arrow`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')({
   [`& .${classes.groupHeader}`]: {
     display: 'flex',
@@ -89,6 +91,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
   const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
+  const [cancelTokenSource, setCancelTokenSource] = useState<CancelTokenSource | null>(null);
   
   useEffect(() => {
     formikHelpers.setFieldValue('location_type', values.location_type? values.location_type: 'physical');
@@ -129,10 +132,23 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
     }
   }
+
+  const debouncedGetAutocomplete = useCallback(
+    debounce((value: string) => {
+      if (cancelTokenSource) {
+        cancelTokenSource.cancel('Operation canceled due to new request.');
+      }
   
-  const getAutocomplete = (e: any) => {
-    getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
-  }
+      const source = axios.CancelToken.source();
+      setCancelTokenSource(source);
+  
+      getSuggestions({
+        url: GeoCodeUtil.getAutoCompleteUrl(value),
+        cancelToken: source.token,
+      });
+    }, 300),
+    []
+  )
 
   const doDetermineHealthAuthority = (long: number, lat: number) => {
     determineHealthAuthority({url: `/location/determine-health-authority?lat=${lat}&long=${long}`})
@@ -191,7 +207,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
                 autoComplete='off'
                 onChange={(e: any) => {
                   resetFieldsOnChange()
-                  getAutocomplete(e)
+                  debouncedGetAutocomplete(e.target.value);
                 }}
                 name="addressLine1"
                 fullWidth 
