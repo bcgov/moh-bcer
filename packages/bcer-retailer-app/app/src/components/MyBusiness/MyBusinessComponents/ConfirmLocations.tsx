@@ -35,8 +35,7 @@ const classes = {
   formControl: `${PREFIX}-formControl`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
-const Root = styled('div')({
+const Root = styled('div')(({ theme }) => ({
   [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
@@ -103,13 +102,12 @@ const Root = styled('div')({
     },
     '& .MuiCheckbox-root': {
       color: 'rgba(0, 0, 0, 0.54)',
-
     },
     '& .Mui-checked': {
       color: '#0053A4'
     },
   },
-});
+}));
 
 export default function ConfirmLocations () {
 

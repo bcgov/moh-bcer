@@ -107,10 +107,14 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
 
   useEffect(() => {
     if (data && data.features?.length > 0) {
-      setPredictions(data.features)
-      setAutocompleteOptions(data.features.map((e: BCGeocoderAutocompleteData) => e.properties.fullAddress))
-    }    
-  }, [data])
+      setPredictions(data.features);
+      setAutocompleteOptions(data.features.map((e: BCGeocoderAutocompleteData) => e.properties.fullAddress));
+    } else {
+      setPredictions([]);
+      setAutocompleteOptions([]);
+    }
+  }, [data]);
+  
 
   useEffect(() => {
     if(healthAuthority) {
@@ -119,19 +123,30 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       formikHelpers.setFieldValue('health_authority_display', haName);
     }
   }, [healthAuthority]);
-
-  const handleAutocompleteSelect = ( value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
-    const fullLocation = predictions.find(e => e.properties.fullAddress === value)
-    formikHelpers.setFieldValue('addressLine1', fullLocation ? fullLocation.properties.fullAddress : '')
-    formikHelpers.setFieldValue('geoAddressConfidence', fullLocation.properties.precisionPoints)
-    formikHelpers.setFieldValue('city', fullLocation.properties.localityName)
-    formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[0])
-    formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[1])
+  
+  const handleAutocompleteSelect = (value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
+    const fullLocation = predictions.find(e => e.properties.fullAddress === value);
     
-    if (fullLocation) {
-      doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
+    if (!fullLocation) {
+      // Handle the case when no matching prediction is found
+      console.log('No matching location found');
+      formikHelpers.setFieldValue('addressLine1', value || '');
+      // Reset other fields
+      formikHelpers.setFieldValue('geoAddressConfidence', '');
+      formikHelpers.setFieldValue('city', '');
+      formikHelpers.setFieldValue('longitude', '');
+      formikHelpers.setFieldValue('latitude', '');
+      return;
     }
-  }
+  
+    formikHelpers.setFieldValue('addressLine1', fullLocation.properties.fullAddress);
+    formikHelpers.setFieldValue('geoAddressConfidence', fullLocation.properties.precisionPoints);
+    formikHelpers.setFieldValue('city', fullLocation.properties.localityName);
+    formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[0]);
+    formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[1]);
+    
+    doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
+  }  
 
   const debouncedGetAutocomplete = useCallback(
     debounce((value: string) => {
@@ -145,6 +160,10 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       getSuggestions({
         url: GeoCodeUtil.getAutoCompleteUrl(value),
         cancelToken: source.token,
+      }).catch((error) => {
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        }
       });
     }, 300),
     []
