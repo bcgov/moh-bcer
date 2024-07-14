@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { makeStyles, Typography, Paper } from '@mui/material';
 import { StyledTable } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
+import { useParams } from 'react-router-dom';
 
 import { SuccessStepEnum, BusinessLocationHeaders } from '@/constants/localEnums';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
@@ -128,10 +129,9 @@ const Root = styled('div')({
 });
 
 
-export default function MyBusinessSubmission (props: any) {
-
-
-  const [{ data: submission, error }, get] = useAxiosGet(`/submission/${props.match.params.submissionId}`);
+export default function MyBusinessSubmission () {
+  const { submissionId } = useParams<{ submissionId: string }>();
+  const [{ data: submission, error }, get] = useAxiosGet(`/submission/${submissionId}`);
   const [details, setDetails] = useState<BusinessDetails>();
   const [locations, setlocations] = useState<Array<IBusinessLocationValues>>();
   const viewFullscreenTable = useState<boolean>(false);

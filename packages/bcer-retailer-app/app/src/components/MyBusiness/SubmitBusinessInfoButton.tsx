@@ -43,9 +43,6 @@ export default function SubmitBusinessInfoButton({ updateType }: SubmitBusinessI
         locations: businessInfo.locations,
       }
     };
-  
-    console.log('URL:', url);
-    console.log('Data:', data);
 
     await patch({ url, data });
   }

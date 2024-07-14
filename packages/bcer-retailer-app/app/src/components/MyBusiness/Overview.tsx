@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, Theme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgress, Typography, Box } from '@mui/material';
 import { BusinessDashboard, LocationType } from 'vaping-regulation-shared-components';
@@ -17,7 +17,7 @@ const classes = {
   reportingPeriodDisclaimer: `${PREFIX}-reportingPeriodDisclaimer`
 };
 
-const Root = styled('div')({
+const Root = styled('div')<{ theme?: Theme }>(({ theme }) => ({
   [`& .${classes.title}`]: {
     color: '#0F327F',
     paddingBottom: '30px',
@@ -28,10 +28,9 @@ const Root = styled('div')({
     padding: '10px 15px',
     marginBottom: '20px'
   }
-});
+}));
 
-export default function MyDashboard () {
-
+export default function MyDashboard() {
   const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [{ data, error, loading }] = useAxiosGet<{
@@ -40,7 +39,7 @@ export default function MyDashboard () {
   }>('/business/report-overview');
 
   useEffect(() => {
-    if(appGlobal && !appGlobal.myBusinessComplete) {
+    if (appGlobal && !appGlobal.myBusinessComplete) {
       navigate('/')
     }
   }, [appGlobal])
@@ -65,45 +64,42 @@ export default function MyDashboard () {
 
   return (
     <Root>
-      <Typography variant='h5' className={classes.title}>My Dashboard</Typography>
-      {
-        loading ? <CircularProgress /> :
-        data
-          ?
-            <>
-              <Box 
-                className={classes.reportingPeriodDisclaimer} 
-                style={{ 
-                  borderLeft: `10px solid ${data?.overview?.incompleteReports?.length ? '#F5A623' : '#0053A4'}`, 
-                  backgroundColor: data?.overview?.incompleteReports?.length ? 'rgba(245,166,35,0.1)' : 'rgba(0,83,164,0.1)'
-                }}
-              >
-                <Typography variant='subtitle1'>{getReportingText()}</Typography>
-              </Box>
-              <BusinessDashboard 
-                data={data}
-                showOverview={true}
-                showStatusMessage={true}
-                isRetailerPortal={true}
-                renderAddress={(l: BusinessLocation) => <span>{l.location_type === LocationType.online ? l.webpage : l.addressLine1}</span>}
-              />
+      <Typography variant='h5' className={classes.title}>
+        My Dashboard
+      </Typography>
+      {loading ? (
+        <CircularProgress />
+      ) : data ? (
+        <>
+          <Box 
+            className={classes.reportingPeriodDisclaimer} 
+            sx={{ 
+              borderLeft: `10px solid ${data?.overview?.incompleteReports?.length ? '#F5A623' : '#0053A4'}`, 
+              backgroundColor: data?.overview?.incompleteReports?.length ? 'rgba(245,166,35,0.1)' : 'rgba(0,83,164,0.1)'
+            }}
+          >
+            <Typography variant='subtitle1'>{getReportingText()}</Typography>
+          </Box>
+          <BusinessDashboard 
+            data={data}
+            showOverview={true}
+            showStatusMessage={true}
+            isRetailerPortal={true}
+            renderAddress={(l: BusinessLocation) => <span>{l.location_type === LocationType.online ? l.webpage : l.addressLine1}</span>}
+          />
 
-              {
-                data?.overview?.incompleteReports?.length === 0
-                  &&                  
-                <Typography variant='body1'>
-                  You have no outstanding reports to submit. Please make sure to continue updating your list of products and manufacturing throughout the year.
-                  On October 1st, 2022 you will have:
-                  <ul>
-                    <li>{data.locations.map(l => l.status !== LocationStatus.Closed).length} Notice of intents to renew</li>
-                    <li>{data.locations.length} Sales Reports to submit</li>
-                  </ul>
-                </Typography>
-              }
-            </>
-          :
-        null
-      }
+          {data?.overview?.incompleteReports?.length === 0 && (
+            <Typography variant='body1'>
+              You have no outstanding reports to submit. Please make sure to continue updating your list of products and manufacturing throughout the year.
+              On October 1st, 2022 you will have:
+              <ul>
+                <li>{data.locations.filter(l => l.status !== LocationStatus.Closed).length} Notice of intents to renew</li>
+                <li>{data.locations.length} Sales Reports to submit</li>
+              </ul>
+            </Typography>
+          )}
+        </>
+      ) : null}
     </Root>
   );
 }

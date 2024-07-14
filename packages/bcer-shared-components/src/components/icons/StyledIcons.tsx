@@ -3,25 +3,16 @@ import { styled } from '@mui/material/styles';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
+const PREFIX = 'StyledIcons';
+
 const classes = {
-  root: {
-    padding: '11px',
-    backgroundColor: '#FAF3CA',
-    border: '2px solid #F9F1C6',
-    borderRadius: '4px',
-    marginTop: '10px',
-    marginBottom: '10px',
-  },
-  error: {
-    backgroundColor: 'red',
-  },
-  success: {
-    backgroundColor: '#2E8540'
-  }
+  root: `${PREFIX}-root`,
+  error: `${PREFIX}-error`,
+  success: `${PREFIX}-success`
 };
 
-const Root = styled('span')(() => ({
-  [`& .${classes.root}`]: {
+const StyledSpan = styled('span')(({ theme }) => ({
+  [`&.${classes.root}`]: {
     justifyContent: 'center',
     alignItems: 'center',
     color: '#fff',
@@ -30,28 +21,26 @@ const Root = styled('span')(() => ({
     height: '48px',
     borderRadius: '4px'
   },
-
-  [`& .${classes.error}`]: {
+  [`&.${classes.error}`]: {
     backgroundColor: 'red',
   },
-
-  [`& .${classes.success}`]: {
+  [`&.${classes.success}`]: {
     backgroundColor: '#2E8540'
   }
 }));
 
 export function StyledErrorIcon() {
   return (
-    <Root sx={classes.error}>
-      <ErrorOutlineIcon sx={classes.root} />
-    </Root>
+    <StyledSpan className={`${classes.root} ${classes.error}`}>
+      <ErrorOutlineIcon />
+    </StyledSpan>
   );
 }
 
 export function StyledSuccessIcon() {
   return (
-    <Root sx={classes.success}>
-      <CheckCircleIcon sx={classes.root} />
-    </Root>
-  )
+    <StyledSpan className={`${classes.root} ${classes.success}`}>
+      <CheckCircleIcon />
+    </StyledSpan>
+  );
 }

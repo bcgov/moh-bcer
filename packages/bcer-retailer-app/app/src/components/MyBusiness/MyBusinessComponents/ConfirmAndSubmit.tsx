@@ -1,9 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog, ProvinceLabels} from 'vaping-regulation-shared-components';
+import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog, ProvinceLabels } from 'vaping-regulation-shared-components';
 import { Form, Formik } from 'formik';
-import { makeStyles } from '@mui/material';
-
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
@@ -18,7 +16,7 @@ import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { LocationUtil } from '@/utils/location.util';
 import { getInitialPagination } from '@/utils/util';
-
+import axios from 'axios';
 
 const PREFIX = 'ConfirmAndSubmit';
 
@@ -35,7 +33,6 @@ const classes = {
   editButton: `${PREFIX}-editButton`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')({
   [`& .${classes.box}`]: {
     padding: '20px',
@@ -92,11 +89,9 @@ const Root = styled('div')({
   }
 });
 
-export default function ConfirmAndSubmit () {
-
-
-  const [businessInfo, setBusinessInfo ] = useContext(BusinessInfoContext);
-  const [appGlobal, setAppGlobalContext ] = useContext(AppGlobalContext);
+export default function ConfirmAndSubmit() {
+  const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
+  const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
@@ -109,48 +104,60 @@ export default function ConfirmAndSubmit () {
   const { locations, details }: {
     details: any,
     locations: Array<any>,
-  }  = businessInfo;
+  } = businessInfo;
 
   useEffect(() => {
+    const source = axios.CancelToken.source();
     if (businessInfo?.submissionId) {
-      (async() => {
-        await patch({ data: { data: businessInfo } });
-      })()
+      (async () => {
+        try {
+          await patch({ data: { data: businessInfo }, cancelToken: source.token });
+        } catch (error) {
+          if (axios.isCancel(error)) {
+            console.log('Request canceled', error.message);
+          } else {
+            setAppGlobalContext({ ...appGlobal, networkErrorMessage: formatError(error) });
+          }
+        }
+      })();
     }
-  }, [businessInfo])
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
+  }, [businessInfo]);
 
   useEffect(() => {
     if (postError) {
-      setAppGlobalContext({...appGlobal, networkErrorMessage: formatError(postError)});
+      setAppGlobalContext({ ...appGlobal, networkErrorMessage: formatError(postError) });
     }
   }, [postError]);
-  
-  const confirmDelete = () => {
-    const remainder = newLocations.filter((element: IBusinessLocationValues) =>{
-      return element.tableData.id !== targetRow.tableData.id
-    })
-    const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
-    setBusinessInfo({...businessInfo, locations: [...existingLocations, ...remainder]});
-    setOpenDelete(false);
-  }
 
-  const confirmEditDetails = async(values: BusinessDetails) => {
-    setBusinessInfo({...businessInfo, details: values});
+  const confirmDelete = () => {
+    const remainder = newLocations.filter((element: IBusinessLocationValues) => {
+      return element.tableData.id !== targetRow.tableData.id;
+    });
+    const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
+    setBusinessInfo({ ...businessInfo, locations: [...existingLocations, ...remainder] });
+    setOpenDelete(false);
+  };
+
+  const confirmEditDetails = async (values: BusinessDetails) => {
+    setBusinessInfo({ ...businessInfo, details: values });
     setOpenEditDetails(false);
-  }
+  };
 
   const handleDelete = (rowData: IBusinessLocationValues) => {
     setTargetRow(rowData);
     setOpenDelete(true);
-  }
+  };
 
   const handleEdit = (rowData: IBusinessLocationValues) => {
     setTargetRow(rowData);
     setOpenEdit(true);
-  }
+  };
 
   return (
-    (<Root>
+    <Root>
       <div className={classes.box}>
         <div className={classes.boxHeader}>
           Business Detail
@@ -210,7 +217,7 @@ export default function ConfirmAndSubmit () {
             <div className={classes.rowContent}>
               {details.postal}
             </div>
-          </div>          
+          </div>
           <div className={classes.boxRow}>
             <div className={classes.rowTitle}>
               Province
@@ -246,43 +253,43 @@ export default function ConfirmAndSubmit () {
         </div>
       </div>
       <div className={classes.box}>
-      {
-        newLocations.length 
-          ?
-        <FullScreen fullScreenProp={viewFullscreenTable}>
-          <TableWrapper
-            tableHeader='New Business Locations'
-            tableSubHeader={`You have ${newLocations?.length} retail entries.`}
-            data={newLocations}
-            csvProps={{
-              headers: Object.keys(BusinessLocationHeaders),
-              data: newLocations?.map((l: any) => {
-                return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.doingBusinessAs, l.health_authority, l.manufacturing];
-              }),
-              filename: 'business_locations.csv'
-            }}
-            fullScreenProp={viewFullscreenTable} 
-            isOutlined={false}
-          >
-            <div style={{ overflowX: 'auto' }}>
-              <StyledTable
-                columns={LocationUtil.getTableColumns()}
-                options={{
-                  pageSize: getInitialPagination(newLocations),
-                  pageSizeOptions: [5, 10, 20, 30, 50]
-                }}
+        {
+          newLocations.length
+            ?
+            <FullScreen fullScreenProp={viewFullscreenTable}>
+              <TableWrapper
+                tableHeader='New Business Locations'
+                tableSubHeader={`You have ${newLocations?.length} retail entries.`}
                 data={newLocations}
-              />
-            </div>
-          </TableWrapper>
-        </FullScreen>
-        : null
-      }
-        </div>
+                csvProps={{
+                  headers: Object.keys(BusinessLocationHeaders),
+                  data: newLocations?.map((l: any) => {
+                    return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.doingBusinessAs, l.health_authority, l.manufacturing];
+                  }),
+                  filename: 'business_locations.csv'
+                }}
+                fullScreenProp={viewFullscreenTable}
+                isOutlined={false}
+              >
+                <div style={{ overflowX: 'auto' }}>
+                  <StyledTable
+                    columns={LocationUtil.getTableColumns()}
+                    options={{
+                      pageSize: getInitialPagination(newLocations),
+                      pageSizeOptions: [5, 10, 20, 30, 50]
+                    }}
+                    data={newLocations}
+                  />
+                </div>
+              </TableWrapper>
+            </FullScreen>
+            : null
+        }
+      </div>
       <LocationsEditForm rowData={targetRow} openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit }} />
       {
         isDeleteOpen
-          &&
+        &&
         <StyledConfirmDialog
           open={isDeleteOpen}
           maxWidth='xs'
@@ -296,28 +303,27 @@ export default function ConfirmAndSubmit () {
       {
         isEditDetailsOpen
           ?
-            <Formik
-              initialValues={businessInfo.details}
-              validationSchema={Validation}
-              onSubmit={(values: BusinessDetails) => confirmEditDetails(values)}
-            >
-              <Form>
-                <StyledDialog
-                  open={isEditDetailsOpen}
-                  title="Edit Business Details"
-                  maxWidth="xl"
-                  cancelButtonText="Cancel"
-                  acceptButtonText="Submit"
-                  cancelHandler={() => setOpenEditDetails(false)}
-                  acceptHandler="submit"
-                >
-                <BusinessDetailsEditInputs/>
-                </StyledDialog>
-              </Form>
-            </Formik>
-          :
-            null
+          <Formik
+            initialValues={businessInfo.details}
+            validationSchema={Validation}
+            onSubmit={(values: BusinessDetails) => confirmEditDetails(values)}
+          >
+            <Form>
+              <StyledDialog
+                open={isEditDetailsOpen}
+                title="Edit Business Details"
+                maxWidth="xl"
+                cancelButtonText="Cancel"
+                acceptButtonText="Submit"
+                cancelHandler={() => setOpenEditDetails(false)}
+                acceptHandler="submit"
+              >
+                <BusinessDetailsEditInputs />
+              </StyledDialog>
+            </Form>
+          </Formik>
+          : null
       }
-    </Root>)
+    </Root>
   );
 }
