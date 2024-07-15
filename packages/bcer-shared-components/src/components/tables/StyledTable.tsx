@@ -1,49 +1,59 @@
-
 import React, { ReactElement, CSSProperties } from 'react';
+import { styled } from '@mui/material/styles';
 import { Paper, IconButton } from '@mui/material';
 import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
-import MaterialTable, { MTableToolbar } from '@material-table/core';
+import MaterialTable, { MTableToolbar, Components } from '@material-table/core';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { StyledButton } from '@/index';
 
+const PREFIX = 'StyledTable';
+
 const classes = {
-  root: {
+  root: `${PREFIX}-root`,
+  editButtonWrapper: `${PREFIX}-editButtonWrapper`,
+  editButton: `${PREFIX}-editButton`,
+  deleteIcon: `${PREFIX}-deleteIcon`,
+  tableHeader: `${PREFIX}-tableHeader`,
+  checkbox: `${PREFIX}-checkbox`
+};
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  [`&.${classes.root}`]: {
     border: '1px solid #CDCED2',
     borderRadius: '5px',
     boxShadow: 'none',
     padding: '0px 1px 0px 1px'
   },
-  editButtonWrapper: {
+  [`& .${classes.editButtonWrapper}`]: {
     display: 'flex',
     alignItems: 'center'
   },
-  editButton: {
+  [`& .${classes.editButton}`]: {
     width: '90px',
     fontSize: '14px',
     minWidth: '90px',
     lineHeight: '18px',
   },
-  deleteIcon: {
+  [`& .${classes.deleteIcon}`]: {
     color: '#ff534a'
   },
-  tableHeader: {
+  [`& .${classes.tableHeader}`]: {
     display: 'contents',
   },
-  checkbox: {
-    '& .MuiIconButton-colorSecondary':{
+  [`&.${classes.checkbox}`]: {
+    '& .MuiIconButton-colorSecondary': {
       '&:hover': {
         background: 'rgba(0, 83, 164, .03)',
       }
     },
     '& .MuiCheckbox-root': {
       color: 'rgba(0, 0, 0, 0.54)',
-
     },
     '& .Mui-checked': {
       color: '#0053A4'
     },
   }
-};
+}));
 
 /**
  * Applies styling to a table's header component
@@ -54,7 +64,7 @@ const headerStyle: CSSProperties = {
   fontWeight: 600,
   borderBottom: '2px solid #F5A623',
   whiteSpace: 'nowrap',
-}
+};
 
 /**
  * Applies styling to a table's row component based on row index
@@ -82,42 +92,41 @@ const rowStyle = (rowData: any): CSSProperties => {
   }
 
   return cssProperty
-}
+};
 
 /**
  * Override for MTable Toolbar component
  */
 const CustomToolbar = (props: any) => {
   return (
-    <MTableToolbar  { ...props } />
+    <MTableToolbar { ...props } />
   );
-}
+};
 
-const Empty = () => (null)
+const Empty = () => null;
 
 const CustomActions = (props: any) => {
-  return props.action.icon === 'edit'
-    ?
-    <div style={classes.editButtonWrapper}>
-      <StyledButton sx={classes.editButton} variant='outlined' onClick={(event) => props.action.onClick(event, props.data)} >
-        Edit
-      </StyledButton>
-    </div>
-    :
-      <IconButton
-        sx={classes.deleteIcon}
-        onClick={(event) => props.action.onClick(event, props.data)}
-        size="large">
+  return (
+    props.action.icon === 'edit'
+      ?
+      <div className={classes.editButtonWrapper}>
+        <StyledButton className={classes.editButton} variant='outlined' onClick={(event) => props.action.onClick(event, props.data)} >
+          Edit
+        </StyledButton>
+      </div>
+      :
+      <IconButton className={classes.deleteIcon} onClick={(event) => props.action.onClick(event, props.data)} >
         <DeleteOutlinedIcon/>
-      </IconButton>;   
-}
+      </IconButton>
+  )   
+};
 
 /**
  * Override for MTable Container component
  */
 const CustomContainer = (props: any) => {
-  return <Paper sx={`${classes.root} ${classes.checkbox}`} {...props} />
-}
+  return <StyledPaper className={`${classes.root} ${classes.checkbox}`} {...props} />
+};
 
 /**
  * Styled table reusable component
@@ -140,29 +149,28 @@ export function StyledTable ({
 
   const toolbar = editable?.onBulkUpdate ? CustomToolbar : Empty;
 
-  const customComponents: { [key: string]: React.ComponentType<any> | (() => null) } = {
+  const customComponents: Partial<Components> = {
     Toolbar: toolbar,
     Container: CustomContainer,
-    // Pagination: CustomPagination,
-  }
-  const actions = []
+  };
+
+  const actions = [];
   
   if (isEditable)  {
-    customComponents.Action = CustomActions
+    customComponents.Action = CustomActions;
     actions.push(
       {
         icon: 'edit',
-        onClick: (event: any, rowData: any, ) => editHandler && editHandler(rowData)
+        onClick: (event: any, rowData: any) => editHandler && editHandler(rowData)
       },
       {
         icon: 'delete',
         onClick: (event: any, rowData: any) => deleteHandler && deleteHandler(rowData)
       }
-    )
+    );
   }
-  
+
   return (
-    // @ts-ignore
     <MaterialTable
       components={customComponents}
       options={{
@@ -170,8 +178,8 @@ export function StyledTable ({
         selectionProps: (rowData: any) => ({
           color: 'primary',
         }),
-        rowStyle: (rowData: any) => rowStyle(rowData),
-        maxColumnSort: 0,
+        rowStyle: rowData => rowStyle(rowData),
+        sorting: false,
         pageSize: 5,
         paginationType: 'stepped',
         pageSizeOptions: [5, 6, 7, 8, 9, 10, 20],

@@ -2,7 +2,6 @@ import React from 'react';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { LocationUtil } from '@/utils/location.util';
 import { StyledTable } from 'vaping-regulation-shared-components';
-import { nanoid } from 'nanoid'; //generating random IDs
 
 interface LocationTableProps {
   readonly data: ReadonlyArray<BusinessLocation>;
@@ -27,48 +26,43 @@ function LocationTable({
         fixedColumns: {
           right: 1,
         },
-        maxColumnSort: 1,
+        sorting: true,
       }}
       columns={[
         {
           title: 'Type of Location',
-          render: (rowData: BusinessLocation) => (
-            <div key={nanoid()}>{LocationUtil.renderLocationType(rowData)}</div>
-          )
+          field: 'location_type',
+          render: LocationUtil.renderLocationType,
+          sorting: true,
         },
         {
           title: 'Address/URL',
-          render: (rowData: BusinessLocation) => (
-            <div key={nanoid()}>{LocationUtil.renderFullAddress(rowData)}</div>
-          ),
-          maxColumnSort: 0,
+          field: 'addressLine1',
+          render: LocationUtil.renderFullAddress,
+          sorting: false,
         },
         {
           title: 'Creation Date',
-          render: (rowData: BusinessLocation) => (
-            <div key={nanoid()}>{LocationUtil.renderCreationDate(rowData)}</div>
-          ),
-          maxColumnSort: 0,
+          field: 'createdAt',
+          render: LocationUtil.renderCreationDate,
+          sorting: true,
         },
         {
           title: 'Doing Business As',
-          render: (rowData: BusinessLocation) => (
-            <div key={nanoid()}>{LocationUtil.renderDoingBusinessAs(rowData)}</div>
-          ),
-          maxColumnSort: 0,
+          field: 'doingBusinessAs',
+          render: LocationUtil.renderDoingBusinessAs,
+          sorting: true,
         },
         {
           title: 'Status',
           field: 'status',
-          render: (rowData: BusinessLocation) => (
-            <div key={nanoid()}>{LocationUtil.renderStatus(rowData)}</div>
-          ),
+          render: LocationUtil.renderStatus,
+          sorting: true,
         },
         {
-          render: (rowData: BusinessLocation) => (
-            <div key={nanoid()}>{LocationUtil.renderActions(handleAction)(rowData)}</div>
-          ),
-          maxColumnSort: 0,
+          title: 'Actions',
+          render: LocationUtil.renderActions(handleAction),
+          sorting: false,
         },
       ]}
       data={data}
