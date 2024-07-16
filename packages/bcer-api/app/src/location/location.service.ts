@@ -666,7 +666,8 @@ export class LocationService {
       underage: payload.underage,
       ha: haTranslation(payload.health_authority),
       ha_other: payload.health_authority_other,
-      manufacturing: payload.manufacturing === "yes" ? true : false
+      manufacturing: payload.manufacturing === "yes" ? true : false,
+      location_type:payload.location_type,
     }
     payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
     payload.latitude ? updateValue['latitude'] = payload.latitude : null;
