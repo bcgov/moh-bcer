@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
-import { makeStyles, Typography } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
+import { styled } from '@mui/material/styles';
+import { Typography, CircularProgress, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-
 import { StyledButton, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
@@ -15,28 +13,16 @@ import { NoiUtil } from '@/utils/noi.util';
 import { NoiSubmissionTable } from './Tables';
 import FullScreen from '@/components/generic/FullScreen';
 
-const PREFIX = 'Submit';
-
-const classes = {
-  buttonIcon: `${PREFIX}-buttonIcon`,
-  title: `${PREFIX}-title`,
-  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
-  helperIcon: `${PREFIX}-helperIcon`,
-  submitWrapper: `${PREFIX}-submitWrapper`,
-  checkboxLabel: `${PREFIX}-checkboxLabel`
-};
-
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
-const Root = styled('div')({
-  [`& .${classes.buttonIcon}`]: {
+const StyledWrapper = styled('div')(({ theme }) => ({
+  '& .buttonIcon': {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  [`& .${classes.title}`]: {
+  '& .title': {
     padding: '20px 0px',
-    color: '#002C71'
+    color: '#002C71',
   },
-  [`& .${classes.helpTextWrapper}`]: {
+  '& .helpTextWrapper': {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -44,123 +30,124 @@ const Root = styled('div')({
     marginBottom: '30px',
     borderRadius: '5px',
   },
-  [`& .${classes.helperIcon}`]: {
+  '& .helperIcon': {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  [`& .${classes.submitWrapper}`]: {
+  '& .submitWrapper': {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingTop: '30px'
+    paddingTop: '30px',
   },
-  [`& .${classes.checkboxLabel}`]: {
+  '& .checkboxLabel': {
     marginTop: '20px',
-    '& .MuiIconButton-colorSecondary':{
-      '&:hover': {
-        background: 'rgba(0, 83, 164, .03)',
-      }
-    },
     '& .MuiCheckbox-root': {
       color: 'rgba(0, 0, 0, 0.54)',
-
-    },
-    '& .Mui-checked': {
-      color: '#0053A4'
+      '&:hover': {
+        backgroundColor: 'rgba(0, 83, 164, .03)',
+      },
+      '&.Mui-checked': {
+        color: '#0053A4',
+      },
     },
   },
-});
+}));
 
 export default function NoiSubmit() {
-
   const navigate = useNavigate();
-  const [outstanding, setOutstanding] = useState<Array<BusinessLocation>>([]);
-  const [selected, setSelected] = useState<Array<BusinessLocation>>([]);
+  const [outstanding, setOutstanding] = useState<Array<BusinessLocation & { tableData: { checked: boolean } }>>([]);
+  const [isSubmitEnabled, setSubmitEnabled] = useState<boolean>(false);
   const submitTableFullscreenState = useState<boolean>(false);
-
   const [isConfirmOpen, setOpenConfirm] = useState<boolean>(false);
-  const [isConfirmChecked, setConfirmChecked] = useState<boolean>();
-  const [{ data, loading, error }] = useAxiosGet<{locations: BusinessLocation[]}>(`/business/report-overview`);
+  const [{ data, loading, error }] = useAxiosGet<{ locations: BusinessLocation[] }>(`/business/report-overview`);
   const [{ response, loading: postLoading, error: postError }, post] = useAxiosPost(`/noi`, { manual: true });
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const confirmSubmit = async () => {
-    const ids: Array<string> = selected.map((r:BusinessLocation) => r.id);
+    const ids: Array<string> = outstanding.filter((r) => r.tableData.checked).map((r) => r.id);
     await post({
       data: { locationIds: ids },
     });
-  }
+  };
 
   const submit = () => {
     setOpenConfirm(true);
-  }
+  };
 
-  const handleSelection = (rows: Array<BusinessLocation>) => {
-    setSelected(rows);
-  }
+  const handleSelection = (rows: Array<BusinessLocation & { tableData: { checked: boolean } }>) => {
+    setOutstanding((prevOutstanding) => {
+      const updatedOutstanding = prevOutstanding.map((row) => {
+        const isSelected = rows.some((r) => r.id === row.id);
+        return {
+          ...row,
+          tableData: { checked: isSelected },
+        };
+      });
+  
+      const hasCheckedRows = updatedOutstanding.some((row) => row.tableData.checked);
+      setSubmitEnabled(hasCheckedRows);
+
+      return updatedOutstanding;
+    });
+  };
 
   useEffect(() => {
     if (postError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(postError)})
+      setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(postError) });
     }
-  }, [postError])
+  }, [postError, appGlobal, setAppGlobal]);
 
   useEffect(() => {
     if (data?.locations?.length && !error) {
-      const outstanding:Array<BusinessLocation> = data.locations.filter(NoiUtil.outstandingNoi);
+      const outstanding: Array<BusinessLocation & { tableData: { checked: boolean } }> = data.locations.map((location) => ({
+        ...location,
+        tableData: { checked: false },
+      })).filter(NoiUtil.outstandingNoi);
       setOutstanding(outstanding);
     }
-  }, [data]);
-  
+  }, [data, error]);
+
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+      setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(error) });
     }
-  }, [error]);
+  }, [error, appGlobal, setAppGlobal]);
 
-  if (loading) {
-    return <CircularProgress />;
-  }
-
-  if (response?.status === 201) {
-    navigate('/noi/success');
-    return null; // or any other fallback if needed
-  }
-
-  return(
-    <Root>
+  if (loading) return <CircularProgress />;
+  if (response?.status === 201) return <Navigate to='/noi/success' />;
+ 
+  return (
+    <StyledWrapper>
       <div>
         <StyledButton onClick={() => navigate('/noi')}>
-          <ArrowBackIcon className={classes.buttonIcon} />
+          <ArrowBackIcon className="buttonIcon" />
           Cancel
         </StyledButton>
-        <Typography variant='h5'  className={classes.title}>
+        <Typography variant='h5' className="title">
           Confirm and Submit Notice of Intent
         </Typography>
-        <div className={classes.helpTextWrapper}>
-          <ChatBubbleOutlineIcon className={classes.helperIcon} />
+        <div className="helpTextWrapper">
+          <ChatBubbleOutlineIcon className="helperIcon" />
           <Typography variant='body1'>
             Select the location(s) for which you want to submit or renew the Notice of Intent.
           </Typography>
         </div>
-        <FullScreen
-          fullScreenProp={submitTableFullscreenState}
-        >
-          <NoiSubmissionTable 
+        <FullScreen fullScreenProp={submitTableFullscreenState}>
+          <NoiSubmissionTable
             data={outstanding}
             handleSelection={handleSelection}
             fullScreenProp={submitTableFullscreenState}
           />
         </FullScreen>
-        
-        <div className={classes.submitWrapper}>
+        <div className="submitWrapper">
           <StyledButton variant='outlined' onClick={() => navigate('/noi')}>
             Back
           </StyledButton>
           <StyledButton
             variant='contained'
             onClick={submit}
-            disabled={!selected.length}
+            disabled={!isSubmitEnabled}
           >
             Submit
           </StyledButton>
@@ -176,6 +163,6 @@ export default function NoiSubmit() {
         confirmHandler={confirmSubmit}
         acceptButtonText={'Submit Now'}
       />
-    </Root>
-    );
+    </StyledWrapper>
+  );
 }

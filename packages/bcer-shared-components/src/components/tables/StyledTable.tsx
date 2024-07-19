@@ -1,63 +1,36 @@
 import React, { ReactElement, CSSProperties } from 'react';
 import { styled } from '@mui/material/styles';
 import { Paper, IconButton } from '@mui/material';
-import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
-import MaterialTable, { MTableToolbar, Components } from '@material-table/core';
+import MaterialTable, { Components } from '@material-table/core';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { StyledTableProps } from '@/constants/interfaces/tableInterfaces';
 import { StyledButton } from '@/index';
 
-const PREFIX = 'StyledTable';
-
-const classes = {
-  root: `${PREFIX}-root`,
-  editButtonWrapper: `${PREFIX}-editButtonWrapper`,
-  editButton: `${PREFIX}-editButton`,
-  deleteIcon: `${PREFIX}-deleteIcon`,
-  tableHeader: `${PREFIX}-tableHeader`,
-  checkbox: `${PREFIX}-checkbox`
-};
-
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  [`&.${classes.root}`]: {
-    border: '1px solid #CDCED2',
-    borderRadius: '5px',
-    boxShadow: 'none',
-    padding: '0px 1px 0px 1px'
+  border: '1px solid #CDCED2',
+  borderRadius: '5px',
+  boxShadow: 'none',
+  padding: '0px 1px 0px 1px',
+  '& .MuiIconButton-colorSecondary:hover': {
+    background: 'rgba(0, 83, 164, .03)',
   },
-  [`& .${classes.editButtonWrapper}`]: {
-    display: 'flex',
-    alignItems: 'center'
+  '& .MuiCheckbox-root': {
+    color: 'rgba(0, 0, 0, 0.54)',
   },
-  [`& .${classes.editButton}`]: {
-    width: '90px',
-    fontSize: '14px',
-    minWidth: '90px',
-    lineHeight: '18px',
+  '& .Mui-checked': {
+    color: '#0053A4'
   },
-  [`& .${classes.deleteIcon}`]: {
-    color: '#ff534a'
-  },
-  [`& .${classes.tableHeader}`]: {
-    display: 'contents',
-  },
-  [`&.${classes.checkbox}`]: {
-    '& .MuiIconButton-colorSecondary': {
-      '&:hover': {
-        background: 'rgba(0, 83, 164, .03)',
-      }
-    },
-    '& .MuiCheckbox-root': {
-      color: 'rgba(0, 0, 0, 0.54)',
-    },
-    '& .Mui-checked': {
-      color: '#0053A4'
-    },
-  }
 }));
 
-/**
- * Applies styling to a table's header component
- */
+const EditButtonWrapper = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const StyledDeleteIcon = styled(IconButton)({
+  color: '#ff534a',
+});
+
 const headerStyle: CSSProperties = {
   color: '#002C71',
   fontSize: '14px',
@@ -66,12 +39,6 @@ const headerStyle: CSSProperties = {
   whiteSpace: 'nowrap',
 };
 
-/**
- * Applies styling to a table's row component based on row index
- * 
- * @param rowData - MTable rowData prop
- * @returns {CSSProperties} Object - CSS property object for a row
- */
 const rowStyle = (rowData: any): CSSProperties => {
   let cssProperty: CSSProperties = {
     backgroundColor: '#fff',
@@ -82,51 +49,54 @@ const rowStyle = (rowData: any): CSSProperties => {
   };
 
   if (rowData.tableData.id % 2 === 0) {
-    cssProperty.backgroundColor = '#fff'
+    cssProperty.backgroundColor = '#fff';
   } else {
-    cssProperty.backgroundColor = '#fafafa'
+    cssProperty.backgroundColor = '#fafafa';
   }
 
   if (rowData.error === true) {
-    cssProperty.backgroundColor = 'rgba(255, 0, 0, 0.2)'
+    cssProperty.backgroundColor = 'rgba(255, 0, 0, 0.2)';
   }
 
-  return cssProperty
+  return cssProperty;
 };
 
-/**
- * Override for MTable Toolbar component
- */
 const CustomToolbar = (props: any) => {
-  return (
-    <MTableToolbar { ...props } />
-  );
+  return <div {...props} />;
 };
 
 const Empty = () => null;
 
 const CustomActions = (props: any) => {
-  return (
-    props.action.icon === 'edit'
-      ?
-      <div className={classes.editButtonWrapper}>
-        <StyledButton className={classes.editButton} variant='outlined' onClick={(event) => props.action.onClick(event, props.data)} >
-          Edit
-        </StyledButton>
-      </div>
-      :
-      <IconButton className={classes.deleteIcon} onClick={(event) => props.action.onClick(event, props.data)} >
-        <DeleteOutlinedIcon/>
-      </IconButton>
-  )   
+  return props.action.icon === 'edit' ? (
+    <EditButtonWrapper>
+      <StyledButton
+        sx={{
+          width: '90px',
+          fontSize: '14px',
+          minWidth: '90px',
+          lineHeight: '18px',
+        }}
+        variant="outlined"
+        onClick={(event) => props.action.onClick(event, props.data)}
+      >
+        Edit
+      </StyledButton>
+    </EditButtonWrapper>
+  ) : (
+    <StyledDeleteIcon onClick={(event) => props.action.onClick(event, props.data)}>
+      <DeleteOutlinedIcon />
+    </StyledDeleteIcon>
+  );
 };
 
-/**
- * Override for MTable Container component
- */
 const CustomContainer = (props: any) => {
-  return <StyledPaper className={`${classes.root} ${classes.checkbox}`} {...props} />
+  return <StyledPaper {...props} />;
 };
+
+interface CustomComponents extends Components {
+  Action?: React.ComponentType<any>;
+}
 
 /**
  * Styled table reusable component
@@ -137,7 +107,7 @@ const CustomContainer = (props: any) => {
  * @returns object of type ReactElement
  *
  */
-export function StyledTable ({
+export function StyledTable({
   isEditable = false,
   editHandler,
   deleteHandler,
@@ -146,26 +116,25 @@ export function StyledTable ({
   editable,
   ...props
 }: StyledTableProps): ReactElement {
-
   const toolbar = editable?.onBulkUpdate ? CustomToolbar : Empty;
 
-  const customComponents: Partial<Components> = {
+  const customComponents: CustomComponents = {
     Toolbar: toolbar,
     Container: CustomContainer,
   };
 
   const actions = [];
-  
-  if (isEditable)  {
+
+  if (isEditable) {
     customComponents.Action = CustomActions;
     actions.push(
       {
         icon: 'edit',
-        onClick: (event: any, rowData: any) => editHandler && editHandler(rowData)
+        onClick: (event: any, rowData: any) => editHandler && editHandler(rowData),
       },
       {
         icon: 'delete',
-        onClick: (event: any, rowData: any) => deleteHandler && deleteHandler(rowData)
+        onClick: (event: any, rowData: any) => deleteHandler && deleteHandler(rowData),
       }
     );
   }
@@ -177,6 +146,7 @@ export function StyledTable ({
         headerStyle: headerStyle,
         selectionProps: (rowData: any) => ({
           color: 'primary',
+          checked: rowData.tableData.checked,
         }),
         rowStyle: rowData => rowStyle(rowData),
         sorting: false,
@@ -192,13 +162,13 @@ export function StyledTable ({
       editable={editable}
       localization={{
         header: {
-          actions: ' '
+          actions: ' ',
         },
         body: {
           addTooltip: 'Action',
-          ...localization?.body
+          ...localization?.body,
         },
-        ...localization
+        ...localization,
       }}
       {...props}
     />
