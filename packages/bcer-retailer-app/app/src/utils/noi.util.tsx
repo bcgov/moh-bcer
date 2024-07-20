@@ -9,7 +9,7 @@ import {
   ReportStatus,
 } from '@/constants/localEnums';
 import { BusinessLocation } from '@/constants/localInterfaces';
-import { Box, Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import moment from 'moment';
 import { ClassNameMap } from '@mui/material/styles';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';

@@ -1,150 +1,110 @@
+import React from 'react';
+import styled from 'styled-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { NoiPdfUtil } from '@/utils/noi.util';
-import { Box, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import React from 'react';
 import noiImage from '../../assets/images/noi.png';
 
-const Container = styled(Box)(({ theme }) => ({
-  height: '781px',
-  width: '535px',
-  position: 'relative',
-}));
+const Container = styled.div`
+  height: 781px;
+  width: 535px;
+  position: relative;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+`;
 
-const HeaderWrapper = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  zIndex: 100,
-  top: '128px',
-  left: '28px',
-  width: '100%',
-}));
+const HeaderWrapper = styled.div`
+  position: absolute;
+  z-index: 100;
+  top: 128px;
+  left: 28px;
+  width: 100%;
+`;
 
-const Header = styled(Typography)(({ theme }) => ({
-  fontSize: '20px',
-  lineHeight: '27px',
-  textAlign: 'center',
-  color: '#002C71',
-  fontWeight: 'bold',
-  marginBottom: '10px',
-}));
+const Header = styled.h1`
+  font-size: 20px;
+  line-height: 27px;
+  text-align: center;
+  color: #002C71;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin: 0;
+`;
 
-const HeaderV2 = styled(Typography)(({ theme }) => ({
-  fontSize: '20px',
-  lineHeight: '27px',
-  textAlign: 'center',
-  color: '#002C71',
-  fontWeight: 'bold',
-  marginBottom: '5px',
-}));
+const SubHeader = styled.h2`
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  color: #002C71;
+  font-weight: 400;
+  margin: 0;
+`;
 
-const SubHeader = styled(Typography)(({ theme }) => ({
-  fontSize: '16px',
-  lineHeight: '20px',
-  textAlign: 'center',
-  color: '#002C71',
-}));
+const BodyWrapper = styled.div`
+  position: absolute;
+  z-index: 100;
+  top: 212px;
+  left: 110px;
+  width: 375px;
+  padding-top: 15px;
+`;
 
-const BodyWrapper = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  zIndex: 100,
-  top: '212px',
-  left: '110px',
-  width: '375px',
-  paddingTop: '15px',
-}));
+const InfoWrapper = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
 
-const BodyWrapperV2 = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  zIndex: 100,
-  top: '212px',
-  left: '100px',
-  width: '395px',
-  paddingTop: '5px',
-}));
+const InfoLabel = styled.span`
+  color: #333;
+  font-size: 14px;
+  line-height: 19px;
+  flex: 0.55;
+`;
 
-const InfoWrapper = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  marginBottom: '20px',
-}));
+const InfoData = styled.span`
+  color: #333;
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: bold;
+  flex: 0.5;
+  overflow-wrap: anywhere;
+`;
 
-const InfoWrapperV3 = styled(Box)(({ theme }) => ({
-  marginBottom: '20px',
-  textAlign: 'center',
-}));
+const BottomTextWrapper = styled.div`
+  margin-bottom: 24px;
+`;
 
-const InfoLabel = styled(Typography)(({ theme }) => ({
-  color: '#333',
-  fontSize: '14px',
-  lineHeight: '19px',
-  flex: 0.55,
-}));
+const BottomText = styled.p`
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  color: #002C71;
+  margin: 0;
+`;
 
-const InfoLabelV2 = styled(Typography)(({ theme }) => ({
-  color: '#333',
-  fontSize: '12px',
-  lineHeight: '17px',
-  flex: 0.45,
-}));
+const DateWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
-const InfoData = styled(Typography)(({ theme }) => ({
-  color: '#333',
-  fontSize: '14px',
-  lineHeight: '19px',
-  fontWeight: 'bold',
-  flex: 0.5,
-  overflowWrap: 'anywhere',
-}));
+const DateBox = styled.div``;
 
-const InfoDataV2 = styled(Typography)(({ theme }) => ({
-  color: '#333',
-  fontSize: '12px',
-  lineHeight: '17px',
-  fontWeight: 'bold',
-  flex: 0.5,
-  overflowWrap: 'anywhere',
-}));
+const Date = styled.p`
+  font-size: 12px;
+  line-height: 19px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid black;
+  padding: 0 7px 7px;
+  margin-bottom: 5px;
+  color: #333;
+`;
 
-const InfoDataV3 = styled(Typography)(({ theme }) => ({
-  color: '#333',
-  fontSize: '11px',
-  lineHeight: '16px',
-  fontWeight: 'bold',
-  flex: 0.5,
-  overflowWrap: 'anywhere',
-}));
-
-const BottomTextWrapper = styled(Box)(({ theme }) => ({
-  marginBottom: '24px',
-}));
-
-const BottomTextWrapperV3 = styled(Box)(({ theme }) => ({
-  margin: '20px 0 30px',
-}));
-
-const BottomText = styled(Typography)(({ theme }) => ({
-  fontSize: '16px',
-  lineHeight: '22px',
-  textAlign: 'center',
-  color: '#002C71',
-}));
-
-const DateText = styled(Typography)(({ theme }) => ({
-  fontSize: '12px',
-  lineHeight: '19px',
-  textAlign: 'center',
-  fontWeight: 'bold',
-  borderBottom: '1px solid black',
-  padding: '0 7px 7px',
-  marginBottom: '5px',
-  color: '#333',
-}));
-
-const DateLabel = styled(Typography)(({ theme }) => ({
-  fontSize: '12px',
-  lineHeight: '17px',
-  textAlign: 'center',
-  color: '#333',
-}));
+const DateLabel = styled.p`
+  font-size: 12px;
+  line-height: 17px;
+  text-align: center;
+  color: #333;
+  margin: 0;
+`;
 
 type PdfProps = {
   location: BusinessLocation;
@@ -152,12 +112,6 @@ type PdfProps = {
 };
 
 function Pdf({ location, legalName }: PdfProps) {
-  const { responsiveClass } = new NoiPdfUtil(
-    location,
-    legalName,
-    {}
-  ).build();
-
   const formattedData = NoiPdfUtil.formatNoiData(location, legalName);
 
   return (
@@ -205,26 +159,26 @@ function Pdf({ location, legalName }: PdfProps) {
         </InfoWrapper>
         <BottomTextWrapper>
           <BottomText>
-            This e-substance retailer has submitted their Notice of Intent and is eligible to sell
+            This e-substance retailer has submitted their Notice of Intent and is eligible to sell 
             e-substances as of {formattedData.effectiveOperationDate}.
           </BottomText>
         </BottomTextWrapper>
-        <Box display="flex" justifyContent="space-between">
-          <Box>
-            <DateText>{formattedData.submissionDate}</DateText>
+        <DateWrapper>
+          <DateBox>
+            <Date>{formattedData.submissionDate}</Date>
             <DateLabel>Date Submitted</DateLabel>
-          </Box>
+          </DateBox>
           {!!formattedData.renewalDate && (
-            <Box>
-              <DateText>{formattedData.renewalDate}</DateText>
+            <DateBox>
+              <Date>{formattedData.renewalDate}</Date>
               <DateLabel>Date Renewed</DateLabel>
-            </Box>
+            </DateBox>
           )}
-          <Box>
-            <DateText>{formattedData.expiryDate}</DateText>
+          <DateBox>
+            <Date>{formattedData.expiryDate}</Date>
             <DateLabel>Date of Expiry</DateLabel>
-          </Box>
-        </Box>
+          </DateBox>
+        </DateWrapper>
       </BodyWrapper>
     </Container>
   );

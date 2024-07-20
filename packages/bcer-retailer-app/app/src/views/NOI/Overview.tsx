@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import ReactDOMServer from "react-dom/server";
+import { renderToStaticMarkup } from 'react-dom/server';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAxiosGet } from '@/hooks/axios';
-import { Box, Typography, CircularProgress, Button } from '@mui/material';
+import { Box, Typography, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
-import { Business, BusinessLocation } from '@/constants/localInterfaces';
+import { BusinessLocation } from '@/constants/localInterfaces';
 import { formatError } from '@/utils/formatting';
 import NoiSubmission from '@/components/Noi/NoiSubmission';
 import { NoiUtil } from '@/utils/noi.util';
@@ -14,16 +14,16 @@ import FullScreen from '@/components/generic/FullScreen';
 import jsPDF from 'jspdf';
 import Pdf from './Pdf';
 
-const StyledWrapper = styled('div')(({ theme }) => ({
-  '& .title': {
-    padding: '20px 0px',
-    color: '#002C71',
-  },
-  '& .actionsWrapper': {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px',
-  },
+
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  padding: '20px 0px',
+  color: '#002C71'
+}));
+
+const StyledActionsWrapper = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  paddingBottom: '10px'
 }));
 
 export default function NoiOverview() {
@@ -36,12 +36,12 @@ export default function NoiOverview() {
   const submittedFullscreenState = useState<boolean>(false);
   const [missingSales, setMissingSales] = useState<Array<BusinessLocation>>([]);
   const missingSalesFullScreenState = useState<boolean>(false);
-  const [{ data, loading, error }] = useAxiosGet<{ locations: BusinessLocation[] }>(`/business/report-overview`);
+  const [{ data, loading, error }] = useAxiosGet<{locations: BusinessLocation[]}>(`/business/report-overview`);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   useEffect(() => {
     if (location.pathname.includes('success') && !appGlobal.noiComplete) {
-      setAppGlobal({ ...appGlobal, noiComplete: true });
+      setAppGlobal({ ...appGlobal, noiComplete: true })
     }
   }, [location.pathname, appGlobal.noiComplete]);
 
@@ -58,27 +58,33 @@ export default function NoiOverview() {
 
   useEffect(() => {
     if (error) {
-      setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(error) });
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error]);
 
   async function printDocument(location: BusinessLocation) {
     const pdf = new jsPDF('p', 'pt', 'a4');
-    await pdf.html(ReactDOMServer.renderToStaticMarkup(<Pdf location={location} legalName={businessData?.legalName} />));
-    pdf.save(`NOI-${location.doingBusinessAs}-${location.city}`);
+    const markup = renderToStaticMarkup(<Pdf location={location} legalName={businessData?.legalName}/>);
+    await pdf.html(markup, {
+      callback: function (doc) {
+        doc.save(`NOI-${location.doingBusinessAs}-${location.city}`);
+      }
+    });
   }
 
   if (loading) return <CircularProgress />;
 
   return (
-    <StyledWrapper>
-      <div className="actionsWrapper">
-        <Typography className="title" variant='h5'>Notice of Intent</Typography>
-      </div>
-      {location.pathname === '/noi/success' ? <NoiSubmission /> : null}
-      <>
+    <Box>
+      <StyledActionsWrapper>
+        <StyledTitle variant='h5'>Notice of Intent</StyledTitle>
+      </StyledActionsWrapper>
+      {
+        location.pathname === '/noi/success' && <NoiSubmission />
+      }
+      <Box>
         <Typography variant='body1'>
-          Business owners must notify the Ministry of Health of their intent to sell restricted E-substances by submitting a Notice of Intent to sell E-Substances to the Ministry of Health. The Notice of Intent to Sell E-Substances is required for each separate sales premises for your business and for the sale of non-therapeutic nicotine E-substances. Business owners will be required to submit the following information:
+          Business owners must notify the Ministry of Health of their intent to sell restricted E-substances by submitting a, Notice of Intent to sell E-Substances to the Ministry of Health. The Notice of Intent to Sell E-Substances is required for each separate sales premises for your business and for the sale of non-therapeutic nicotine E-substances. Business owners will be required to submit the following information:
         </Typography>
         <ul>
           <li><Typography variant='body1'>Legal name of business</Typography></li>
@@ -97,27 +103,27 @@ export default function NoiOverview() {
         <Typography variant='body1'>
           Retailers can update business information and location details before an NOI has been submitted/renewed. Once the NOI has been submitted for a location, the location details cannot be edited.
         </Typography>
-      </>
+      </Box>
       <FullScreen fullScreenProp={outstandingFullscreenState}>
-        <OutstandingNoiTable
-          data={outstanding || []}
-          handleActionButton={() => { navigate('/noi/submit') }}
+        <OutstandingNoiTable 
+          data={outstanding || []} 
+          handleActionButton={() => navigate('/noi/submit')}
           fullScreenProp={outstandingFullscreenState}
         />
       </FullScreen>
       <FullScreen fullScreenProp={missingSalesFullScreenState}>
-        <NoiMissingSalesReportTable
+        <NoiMissingSalesReportTable 
           data={missingSales || []}
           fullScreenProp={missingSalesFullScreenState}
         />
       </FullScreen>
       <FullScreen fullScreenProp={submittedFullscreenState}>
-        <SubmittedNoiTable
+        <SubmittedNoiTable 
           data={submitted || []}
           fullScreenProp={submittedFullscreenState}
           downloadAction={printDocument}
         />
       </FullScreen>
-    </StyledWrapper>
+    </Box>
   );
 }

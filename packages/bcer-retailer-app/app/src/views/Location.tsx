@@ -32,7 +32,6 @@ const classes = {
   reportCell: `${PREFIX}-reportCell`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')({
   [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',

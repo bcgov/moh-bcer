@@ -15,11 +15,11 @@ const StyledSendIcon = styled(SendIcon)({
 });
 
 interface TableProp extends GenericTableProp {
-  data: Array<BusinessLocation & { tableData: { checked: boolean } }>;
+  data: Array<BusinessLocation>;
 }
 
 interface OutstandingNoiTableProp extends TableProp {
-  handleActionButton: React.MouseEventHandler<HTMLButtonElement>;
+  handleActionButton: Function;
 }
 
 interface SubmitNoiTableProp extends TableProp {
@@ -27,7 +27,7 @@ interface SubmitNoiTableProp extends TableProp {
 }
 
 interface SubmittedNoiTableProp extends TableProp {
-  downloadAction: (location: BusinessLocation) => void;
+  downloadAction: Function;
 }
 
 export function OutstandingNoiTable({
