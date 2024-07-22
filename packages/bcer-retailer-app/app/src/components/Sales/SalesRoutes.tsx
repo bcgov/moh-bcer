@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
 import store from 'store';
 
@@ -102,7 +102,6 @@ export default function SalesRoutes(){
   return(
     <>
       <SalesReportProvider value={[sales, setSales]}>
-        <Router>
           <Routes>
             <Route path='/sales' element={<SalesOverview />} />
             <Route path='/sales/upload' element={<SaleUpload />} />
@@ -110,7 +109,6 @@ export default function SalesRoutes(){
             <Route path='/sales/submit' element={<SubmitSalesReport />} />
             <Route path='/sales/success' element={<SuccessSalesReport />} />
           </Routes>
-        </Router>
       </SalesReportProvider>
     </>
   )

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
 import store from 'store';
 
@@ -97,20 +97,16 @@ export default function ProductRoutes(){
   }, [postError]);
 
   return(
-    <>
-      <ProductInfoProvider value={[productInfo, setProductInfo]}>
-        <Router>
-          <Routes>
-            <Route path='/products' element={<ProductOverview />} />
-            <Route path='/products/success' element={<ProductOverview />} />
-            <Route path='/products/add-reports' element={<AddProductReports />} />
-            <Route path='/products/confirm-products' element={<ConfirmProducts />} />
-            <Route path='/products/select-locations' element={<SelectLocations />} />
-            <Route path='/products/submission/:submissionId' element={<DeleteProductSubmissions />} />
-            <Route path='/products/location/:locationId' element={<LocationProducts />} />
-          </Routes>
-        </Router>
-      </ProductInfoProvider>
-    </>
+    <ProductInfoProvider value={[productInfo, setProductInfo]}>
+      <Routes>
+        <Route path='/products' element={<ProductOverview />} />
+        <Route path='/products/success' element={<ProductOverview />} />
+        <Route path='/products/add-reports' element={<AddProductReports />} />
+        <Route path='/products/confirm-products' element={<ConfirmProducts />} />
+        <Route path='/products/select-locations' element={<SelectLocations />} />
+        <Route path='/products/submission/:submissionId' element={<DeleteProductSubmissions />} />
+        <Route path='/products/location/:locationId' element={<LocationProducts />} />
+      </Routes>
+    </ProductInfoProvider>
   )
 }
