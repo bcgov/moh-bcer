@@ -61,6 +61,7 @@ const BusinessOwner = () => {
           <Route path='/myDashboard' element={<MyBusiness />} />
           <Route path='/submission/:submissionId' element={<MyBusinessSubmission />} />
           <Route path='/noi' element={<NoiOverview />} />
+          <Route path='/noi/success' element={<NoiOverview />} />
           <Route path='/noi/submit' element={<NoiSubmit />} />
           <Route path='/products/*' element={<ProductRoutes />} />
           <Route path='/manufacturing' element={<ManufacturingOverview />} />
