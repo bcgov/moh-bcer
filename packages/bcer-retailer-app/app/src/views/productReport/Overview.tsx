@@ -43,7 +43,6 @@ const classes = {
   buttonWrapper: `${PREFIX}-buttonWrapper`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')({
   [`& .${classes.bannerWrapper}`]: {
     display: 'flex',
@@ -133,7 +132,6 @@ const Root = styled('div')({
 });
 
 export default function ProductOverview() {
-
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [withProducts, setWithProducts] = useState([]);

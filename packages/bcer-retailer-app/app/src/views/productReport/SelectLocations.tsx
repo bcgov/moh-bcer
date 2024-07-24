@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
-import { makeStyles, Typography, Paper, Snackbar } from '@mui/material';
+import { Typography, Snackbar } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
@@ -28,7 +28,6 @@ const classes = {
   checkboxLabel: `${PREFIX}-checkboxLabel`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')({
   [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
@@ -68,6 +67,7 @@ export default function SelectLocations() {
   const navigate = useNavigate();
 
   const [{ data: locations = [], loading, error }, get] = useAxiosGet(`/location`); 
+  const [tableData, setTableData] = useState<Array<BusinessLocation & { tableData: { checked: boolean } }>>([]);
   const [{ response, loading: patchLoading, error: patchError }, patch] = useAxiosPatch(`/products`, { manual: true });
   const [isConfirmOpen, setOpenConfirm] = useState<boolean>(false);
   const viewFullscreenTable = useState<boolean>(false);
@@ -76,9 +76,10 @@ export default function SelectLocations() {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const confirmSubmit = async() => {
+    const selectedLocations = tableData.filter(location => location.tableData.checked).map(location => location.id);
     await patch({
       data: {
-        locationIds: productInfo.locations,
+        locationIds: selectedLocations,
         products: productInfo.products,
       }
     })
@@ -91,6 +92,16 @@ export default function SelectLocations() {
     });
   }, []);
 
+  useEffect(() => {
+    if (locations?.length) {
+      const locationsWithChecked = locations.map((location: any) => ({
+        ...location,
+        tableData: { checked: false }
+      }));
+      setTableData(locationsWithChecked);
+    }
+  }, [locations]);
+  
   useEffect(() => {
     if (patchError) {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(patchError)})
@@ -147,27 +158,37 @@ export default function SelectLocations() {
             fullScreenProp={viewFullscreenTable} 
           >
             <div style={{ overflowX: 'auto' }}>
-              <StyledTable
-                columns={[
-                  {title: 'Type of Location',  render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
-                  {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
-                  {title: 'Email Address', field: 'email'},
-                  {title: 'Phone Number', field: 'phone'},
-                ]}
-                data={locations}
-                options={{ 
-                  selection: true,
-                  pageSize: getInitialPagination(locations),
-                  pageSizeOptions: [5, 10, 20, 30, 50]
-                 }}
-                onSelectionChange={(rows: any) => {
-                  setSelectedProducts(rows.map((row: BusinessLocation) => row.id))
-                  setProductInfo({
-                    ...productInfo,
-                    locations: rows.map((row: BusinessLocation) => row.id)
-                  })
-                }}
-              />
+            <StyledTable
+              columns={[
+                {title: 'Type of Location',  render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
+                {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
+                {title: 'Email Address', field: 'email'},
+                {title: 'Phone Number', field: 'phone'},
+              ]}
+              data={tableData}
+              options={{ 
+                selection: true,
+                pageSize: getInitialPagination(tableData),
+                pageSizeOptions: [5, 10, 20, 30, 50]
+              }}
+              onSelectionChange={(rows: any) => {
+                const selectedIds = rows.map((row: BusinessLocation & { tableData: { checked: boolean } }) => row.id);
+                setSelectedProducts(selectedIds);
+                setProductInfo({
+                  ...productInfo,
+                  locations: selectedIds
+                });
+                setTableData(prevData => 
+                  prevData.map(row => ({
+                    ...row,
+                    tableData: {
+                      ...row.tableData,
+                      checked: selectedIds.includes(row.id)
+                    }
+                  }))
+                );
+              }}
+            />
             </div>
           </TableWrapper>
         </FullScreen>

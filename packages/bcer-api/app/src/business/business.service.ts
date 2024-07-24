@@ -1,4 +1,4 @@
-import { In, Repository, Brackets, getManager } from 'typeorm';
+import { In, Repository, Brackets, DataSource } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 
@@ -21,6 +21,7 @@ export class BusinessService {
     @InjectRepository(BusinessEntity)
     private readonly businessRepository: Repository<BusinessEntity>,
     private readonly locationService: LocationService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async createBusiness(dto?: BusinessDTO | SetupBusinessDTO) {
@@ -159,9 +160,8 @@ export class BusinessService {
     return {compliant, nonCompliant, total };
   }
 
-  async getBusinessIdsForHA(healthAuthority: HealthAuthority): Promise<string[]>{
-    const entityManger = getManager();
-    const businessIds = await entityManger.query(
+  async getBusinessIdsForHA(healthAuthority: HealthAuthority): Promise<string[]> {
+    const businessIds = await this.dataSource.query(
       `WITH full_bus_list AS
         (SELECT
         bus.id,
@@ -171,8 +171,8 @@ export class BusinessService {
         FROM business bus LEFT OUTER JOIN location loc ON bus.id = loc."businessId"
         GROUP BY bus."id", bus."legalName",bus."businessName",loc.health_authority)
         SELECT id FROM full_bus_list WHERE health_authority = $1`, [healthAuthority]
-      )
-      return businessIds.map(b => b.id);
+    );
+    return businessIds.map(b => b.id);
   }
 
   async listBusinesses(query?: SearchDto, businessIds?: string[]){

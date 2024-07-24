@@ -9,22 +9,21 @@ type Props<T> = {
   UseAutocompleteProps<T, boolean | undefined, boolean | undefined, boolean | undefined >;
 
 export function StyledAutocomplete(props: Props<any>) {
-  const { placeholder } = props;
+  const { placeholder, ...rest } = props;
+  
   return (
     <Autocomplete 
-      {...props}
+      {...rest}
       fullWidth
       renderInput={(params) => (
-        <div ref={params.InputProps.ref}>
-          <StyledTextInput 
-            {...params.inputProps}
-            placeholder={placeholder}
-            variant='filled'
-            fullWidth
-            color="primary"
-            size="medium"
-          />
-        </div>
+        <StyledTextInput
+          {...params}
+          placeholder={placeholder}
+          variant='filled'
+          fullWidth
+          color="primary"
+          size="medium"
+        />
       )}
     />
   )

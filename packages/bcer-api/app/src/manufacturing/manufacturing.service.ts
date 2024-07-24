@@ -1,4 +1,4 @@
-import { getConnectionManager, In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -13,6 +13,7 @@ export class ManufacturingService {
   constructor(
   @InjectRepository(ManufacturingEntity)
     private readonly manufacturingRepository: Repository<ManufacturingEntity>,
+    private readonly dataSource: DataSource,
   @InjectRepository(IngredientEntity)
     private readonly ingredientRepository: Repository<IngredientEntity>,
   @InjectRepository(LocationEntity)
@@ -49,8 +50,7 @@ export class ManufacturingService {
 
   async getLocationsWithManufactures(locationIds: string[]): Promise<Record<string, ManufacturingEntity[]>> {
     if (locationIds.length === 0) { return {} };
-    const db = getConnectionManager().get();
-    const locationManufactures = await db.query(`SELECT * FROM location_manufactures_manufacturing WHERE "locationId" IN ('${locationIds.join("','")}')`);
+    const locationManufactures = await this.dataSource.query(`SELECT * FROM location_manufactures_manufacturing WHERE "locationId" IN ($1)`,[locationIds.join("','")]);
 
     // Get all manufactures associated with the passed in locations
     const allManufactures = locationManufactures.reduce((all, lm) => {

@@ -40,7 +40,6 @@ const classes = {
   highlightedText: `${PREFIX}-highlightedText`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')({
   [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
@@ -138,7 +137,6 @@ const ContextHandler = (): null => {
 
 export default function AddProductReports() {
   const navigate = useNavigate();
-
 
   const [entry, setEntry] = useState<string>();
   const [providedHeaders, setProvidedHeaders] = useState([]);

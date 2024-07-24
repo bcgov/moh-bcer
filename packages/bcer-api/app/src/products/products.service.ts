@@ -1,4 +1,4 @@
-import { getConnectionManager, getManager, In, Repository } from 'typeorm';
+import { Repository, DataSource, QueryFailedError, In } from 'typeorm';
 import { ForbiddenException, Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
@@ -17,47 +17,60 @@ export class ProductsService {
     private readonly productRepository: Repository<ProductEntity>,
     @InjectRepository(LocationEntity)
     private readonly locationRepository: Repository<LocationEntity>,
-  ) { }
+    private readonly dataSource: DataSource,
+  ) {}
+
   async createProducts(dto: ProductsDTO, businessId: string) {
-    if (dto.locationIds.length * dto.products.length > 200000) {
-      throw new ForbiddenException('Attempting to create too many products');
-    }
-
-    const locations = await this.locationRepository.createQueryBuilder('locations')
-      .where('locations.id IN (:...locationIds)', { locationIds: dto.locationIds })
-      .getMany()
-    Logger.log(`Creating products for ${locations.length} locations`);
-
-    const productUploadId = uuid();
-
-    dto.products = dto.products.map(product => {
-      return {
-        ...product,
-        productUploadId,
-      };
-    });
+    if (dto.locationIds.length * dto.products.length > 200000) throw new ForbiddenException('Attempting to create too many products');
 
     try {
-      return await getManager().transaction(async transactionManager => {
-        const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId } })));
-        const savedProducts = await transactionManager.save(productEntities, { chunk: Math.ceil(productEntities.length / 300) });
+      const locations = await this.locationRepository.createQueryBuilder('locations')
+        .where('locations.id IN (:...locationIds)', { locationIds: dto.locationIds })
+        .getMany();
+      if (locations.length !== dto.locationIds.length) Logger.warn(`Not all provided location IDs were found. Expected: ${dto.locationIds.length}, Found: ${locations.length}`);
 
-        let sql = `INSERT INTO location_products_product("locationId", "productId") VALUES `;
-        const allProductLocations = [];
-        for (const locationId of dto.locationIds) {
-          savedProducts.forEach(product => {
-            allProductLocations.push({ locationId, productId: product.id });
-          });
+      const productUploadId = uuid();
+
+      dto.products = dto.products.map(product => {
+        return {
+          ...product,
+          productUploadId,
+        };
+      });
+
+      return await this.dataSource.transaction(async transactionManager => {
+        try {
+          const productEntities = this.productRepository.create(dto.products.map((product: any) => ({ ...product, business: { id: businessId } })));
+          const savedProducts = await transactionManager.save(productEntities, { chunk: Math.ceil(productEntities.length / 300) });
+          let sql = `INSERT INTO location_products_product("locationId", "productId") VALUES `;
+          const allProductLocations = [];
+          for (const locationId of dto.locationIds) {
+            savedProducts.forEach(product => {
+              allProductLocations.push({ locationId, productId: product.id });
+            });
+          }
+          const valuesToInsert = allProductLocations.map(pl => `('${pl.locationId}', '${pl.productId}')`).join(',');
+          sql += valuesToInsert;
+          const result = await transactionManager.query(sql);
+          return {
+            message: 'Products created successfully',
+            productCount: savedProducts.length,
+            locationCount: locations.length,
+            relationshipsCreated: allProductLocations.length
+          };
+        } catch (innerError) {
+          Logger.error('Error in transaction:', innerError);
+          throw innerError; 
         }
-
-        allProductLocations.forEach(pl => {
-          sql += `('${pl.locationId}', '${pl.productId}'),`;
-        });
-        sql = sql.slice(0, -1);
-        return await transactionManager.query(sql);
       });
     } catch (e) {
-      throw new UnprocessableEntityException('There was a problem creating these products');
+      Logger.error('Error in createProducts:', e);
+      if (e instanceof QueryFailedError) {
+        Logger.error('Query failed', e.stack);
+      } else {
+        Logger.error('Unexpected error', e.stack);
+      }
+      throw new UnprocessableEntityException('Error processing request');
     }
   }
 
@@ -83,8 +96,7 @@ export class ProductsService {
   async getLocationIdsForProducts(productIds: string[]): Promise<string[]> {
     if (productIds.length === 0) { return [] };
     // we only need one product to know which locations this product list applies to
-    const db = getConnectionManager().get();
-    const locationProducts = await db.query(`SELECT * FROM location_products_product WHERE "productId" = '${productIds[0]}'`);
+    const locationProducts = await this.dataSource.query(`SELECT * FROM location_products_product WHERE "productId" = $1`, [productIds[0]]);
     return locationProducts.map(lp => lp.locationId);
   }
 
@@ -100,8 +112,7 @@ export class ProductsService {
 
   async getLocationsWithProducts(locationIds: string[]): Promise<Record<string, ProductEntity[]>> {
     if (locationIds.length === 0) { return {} };
-    const db = getConnectionManager().get();
-    const locationProducts = await db.query(`SELECT * FROM location_products_product WHERE "locationId" IN ('${locationIds.join("','")}')`);
+    const locationProducts = await this.dataSource.query(`SELECT * FROM location_products_product WHERE "locationId" IN ($1)`, [locationIds.join("','")]);
 
     // Get all products associated with the passed in locations
     const allProducts = locationProducts.reduce((all, lp) => {
