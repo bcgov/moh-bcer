@@ -94,6 +94,7 @@ export default function ManufacturingSubmit() {
   const [selectedLocations, setSelectedLocations] = useState([]);
   const viewFullscreenTable = useState<boolean>(false);
   const [{ data: locations = [], loading, error }] = useAxiosGet(`/manufacturing/locations`);
+  const [tableData, setTableData] = useState<Array<BusinessLocation & { tableData: { checked: boolean } }>>([]);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   useEffect(() => {
@@ -101,7 +102,17 @@ export default function ManufacturingSubmit() {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error])
-
+  
+  useEffect(() => {
+    if (locations.length > 0) {
+      const initialTableData = locations.map((location: any) => ({
+        ...location,
+        tableData: { checked: false }
+      }));
+      setTableData(initialTableData);
+    }
+  }, [locations]);
+  
   return (loading) ? <CircularProgress /> : (
     <Root>
       <div>
@@ -129,23 +140,28 @@ export default function ManufacturingSubmit() {
               isOutlined={false} 
             >
               <div style={{ overflowX: 'auto', marginTop: '1rem' }}>
-                <StyledTable
-                  columns={[
-                    {title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
-                    {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
-                    {title: 'Email Address', field: 'email'},
-                    {title: 'Phone Number', field: 'phone'},
-                  ]}
-                  data={locations}
-                  options={{ 
-                    selection: true, 
-                    pageSize: getInitialPagination(locations),
-                    pageSizeOptions: [5, 10, 20, 30, 50] 
-                  }}
-                  onSelectionChange={(rows: any) => {
-                    setSelectedLocations(rows.map((row: BusinessLocation) => row.id))
-                  }}
-                />
+              <StyledTable
+                columns={[
+                  {title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
+                  {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
+                  {title: 'Email Address', field: 'email'},
+                  {title: 'Phone Number', field: 'phone'},
+                ]}
+                data={tableData}
+                options={{ 
+                  selection: true, 
+                  pageSize: getInitialPagination(tableData),
+                  pageSizeOptions: [5, 10, 20, 30, 50] 
+                }}
+                onSelectionChange={(rows: any) => {
+                  const updatedTableData = tableData.map(row => ({
+                    ...row,
+                    tableData: { ...row.tableData, checked: rows.some((selectedRow: BusinessLocation) => selectedRow.id === row.id) }
+                  }));
+                  setTableData(updatedTableData);
+                  setSelectedLocations(rows.map((row: BusinessLocation) => row.id));
+                }}
+              />
               </div>
             </TableWrapper>
           </FullScreen>
