@@ -9,7 +9,7 @@ export const getSalesReportYear = () => {
   const prevEndReport = moment(`${currentYear}-${ConfigDates.salesReportEnd}T23:59:59-07:00`);
 
   let year = 0;
-  let isAbleToEdit = false;
+  let isAbleToEdit = false; // true only during the reporting period, otherwise false
 
   if (current.isBefore(startReport)) {
     year = current.year() - 1;

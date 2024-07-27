@@ -37,6 +37,10 @@ export default function MyDashboard() {
     locations: BusinessLocation[];
     overview: BusinessReportStatus;
   }>('/business/report-overview');
+  const currentTime = moment();
+  const currentDay = currentTime.get('dayOfYear')
+  const startOfReporting = 274
+  const relevantYear = currentDay >= startOfReporting ? currentTime.add(1, 'year').format('yyyy') : currentTime.format('yyyy')
 
   useEffect(() => {
     if (appGlobal && !appGlobal.myBusinessComplete) {
@@ -45,11 +49,8 @@ export default function MyDashboard() {
   }, [appGlobal])
 
   const getReportingText = () => {
-    const currentTime = moment();
-    const currentDay = currentTime.get('dayOfYear')
     const endOfReporting = 15
     const startOfReporting = 274
-    const relevantYear = currentDay >= startOfReporting ? currentTime.add(1, 'year').format('yyyy') : currentTime.format('yyyy')
 
     if (currentDay >= startOfReporting || currentDay <= endOfReporting) {
       return `You are in the reporting period and have until January 15th ${relevantYear} to submit the outstanding reports.`
@@ -57,8 +58,8 @@ export default function MyDashboard() {
       if (data?.overview?.incompleteReports?.length) {
         return `Your outstanding reports must be submitted before the next reporting period that will start on October 1st ${relevantYear}.`
       } else {
-      }
         return `Thank you for submitting your reports, the next reporting period will start on October 1st ${relevantYear}.`
+      }
     } 
   }
 
@@ -88,16 +89,16 @@ export default function MyDashboard() {
             renderAddress={(l: BusinessLocation) => <span>{l.location_type === LocationType.online ? l.webpage : l.addressLine1}</span>}
           />
 
-          {data?.overview?.incompleteReports?.length === 0 && (
-            <Typography variant='body1'>
-              You have no outstanding reports to submit. Please make sure to continue updating your list of products and manufacturing throughout the year.
-              On October 1st, 2022 you will have:
-              <ul>
-                <li>{data.locations.filter(l => l.status !== LocationStatus.Closed).length} Notice of intents to renew</li>
-                <li>{data.locations.length} Sales Reports to submit</li>
-              </ul>
-            </Typography>
-          )}
+        {data?.overview?.incompleteReports?.length === 0 && (
+          <Typography variant='body1'>
+            You have no outstanding reports to submit. Please make sure to continue updating your list of products and manufacturing throughout the year.
+            On October 1st, {relevantYear} you will have:
+            <ul>
+              <li>{data.locations.filter(l => l.status !== LocationStatus.Closed).length} Notice of intents to renew</li>
+              <li>{data.locations.length} Sales Reports to submit</li>
+            </ul>
+          </Typography>
+        )}
         </>
       ) : null}
     </Root>

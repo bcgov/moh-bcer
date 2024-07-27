@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
 import store from 'store';
 
 import { SalesReportProvider } from '@/contexts/SalesReport';
 import SalesOverview from '@/views/Sales/Overview';
-import SelectSalesLocation from '@/views/Sales/SelectLocation';
 import SubmitSalesReport from '@/views/Sales/SubmitSales';
 import SuccessSalesReport from '@/views/Sales/Success';
-import CommingSoon from '@/views/CommingSoon';
 import SaleUpload from '@/views/Sales/SaleUpload';
 import { SubmissionTypeEnum } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import SaleReview from '@/views/Sales/SaleReview';
-
-
 
 export default function SalesRoutes(){
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
@@ -50,19 +46,21 @@ export default function SalesRoutes(){
       // GET: returns an existing submission
       // TODO: when we have a keycloak token, this GET should also return existing business and location data for the business entity
       // POST: creates a new submission
-      (await submissionId) 
-        ? get({ url: `/submission/${submissionId}` }) 
-        : post({
-            data: {
-              // NB: legal name of business is hard coded
-              // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
-              legalName: 'Happy Puff',
-              type: SubmissionTypeEnum.sales,
-              ...sales
-            }
-          });
+      if (submissionId) {
+        get({ url: `/submission/${submissionId}` });
+      } else {
+        post({
+          data: {
+            // NB: legal name of business is hard coded
+            // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
+            legalName: 'Happy Puff',
+            type: SubmissionTypeEnum.sales,
+            data: sales 
+          }
+        });
+      }
     })();
-  }, [sales.submissionId]);
+  }, []);
 
   useEffect(() => {
     if (submission && !error) {
@@ -98,18 +96,17 @@ export default function SalesRoutes(){
     }
   }, [postError]);
 
-
   return(
-    <>
-      <SalesReportProvider value={[sales, setSales]}>
-          <Routes>
-            <Route path='/sales' element={<SalesOverview />} />
-            <Route path='/sales/upload' element={<SaleUpload />} />
-            <Route path='/sales/review' element={<SaleReview />} />
-            <Route path='/sales/submit' element={<SubmitSalesReport />} />
-            <Route path='/sales/success' element={<SuccessSalesReport />} />
-          </Routes>
-      </SalesReportProvider>
-    </>
+    <SalesReportProvider value={[sales, setSales]}>
+      <Routes>
+        <Route path='/' element={<Outlet />}>
+          <Route path='' element={<SalesOverview />} />
+          <Route path='upload' element={<SaleUpload />} />
+          <Route path='review' element={<SaleReview />} />
+          <Route path='submit' element={<SubmitSalesReport />} />
+          <Route path='success' element={<SuccessSalesReport />} />
+        </Route>
+      </Routes>
+    </SalesReportProvider>
   )
 }

@@ -15,6 +15,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { getSalesReportYear } from '@/utils/time';
 import Loader from './Loader';
 import { ApiOperation } from '@/constants/localEnums';
+import moment from 'moment';
 
 const PREFIX = 'withNav';
 
@@ -121,7 +122,12 @@ export default function withNav<P>({
         );
       };
 
-      const periodYear = getSalesReportYear();
+      const getPeriodYear = (): number => {
+        const now = moment();
+        return now.isSameOrBefore(`${now.year()}-01-15`) ? now.year() - 1 : now.year();
+      };
+
+      const periodYear = getPeriodYear();
 
       return (
         (<Root>
