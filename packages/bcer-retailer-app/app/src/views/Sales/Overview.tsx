@@ -364,11 +364,24 @@ export default function SalesOverview() {
                           <SaveAltIcon
                             className={classes.buttonIcon}
                             onClick={async () => {
-                              await getDownload({
-                                url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
-                              });
-                              setDownloadFilename(rd.doingBusinessAs);
-                              csvRef.current.link.click();
+                              try {
+                                await getDownload({
+                                  url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
+                                });
+                                
+                                if (download && download.length > 0) {
+                                  setDownloadFilename(rd.doingBusinessAs || 'sales_report');
+                                  setTimeout(() => {
+                                    if (csvRef.current) {
+                                      csvRef.current.link.click();
+                                    }
+                                  }, 0);
+                                } else {
+                                  console.error('No data available for download');
+                                }
+                              } catch (error) {
+                                console.error('Error downloading CSV:', error);
+                              }
                             }}
                           />
                         </IconButton>
@@ -558,10 +571,24 @@ export default function SalesOverview() {
                             <SaveAltIcon
                               className={classes.buttonIcon}
                               onClick={async () => {
-                                await getDownload({
-                                  url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
-                                });
-                                csvRef.current.link.click();
+                                try {
+                                  await getDownload({
+                                    url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`, // or outstanding?.year for the Outstanding table
+                                  });
+                                  
+                                  if (download && download.length > 0) {
+                                    setDownloadFilename(rd.doingBusinessAs || 'sales_report');
+                                    setTimeout(() => {
+                                      if (csvRef.current) {
+                                        csvRef.current.link.click();
+                                      }
+                                    }, 0);
+                                  } else {
+                                    console.error('No data available for download');
+                                  }
+                                } catch (error) {
+                                  console.error('Error downloading CSV:', error);
+                                }
                               }}
                             />
                           </IconButton>
