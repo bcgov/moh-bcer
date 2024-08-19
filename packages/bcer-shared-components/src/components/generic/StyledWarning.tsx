@@ -1,9 +1,9 @@
 import { StyledWarningProps } from '@/constants/interfaces/genericInterfaces';
-import { Box, makeStyles, Typography } from '@material-ui/core'
-import ErrorIcon from '@material-ui/icons/Error';
+import { Box, Typography } from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 import React from 'react'
 
-const useStyles = makeStyles(theme => ({
+const classes = {
   root: {
     padding: '11px',
     backgroundColor: '#FAF3CA',
@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: '10px',
     marginBottom: '10px',
   },
-  icon:{
+  icon: {
     color: '#785400',
     fontSize: '22px',
   },
@@ -23,14 +23,14 @@ const useStyles = makeStyles(theme => ({
     marginLeft: '10px',
     fontWeight: 'bold',
   }
-}))
+};
 
 export function StyledWarning({text, textProps = {}, iconProps = {}, rootProps= {}}: StyledWarningProps) {
-  const classes = useStyles();
+
   return (
-    <Box className={classes.root} display='flex' alignItems='center' {...rootProps}>
-      <ErrorIcon className={classes.icon} {...iconProps}/>
-      <Typography className={classes.text} {...textProps}>{text}</Typography>
+    <Box sx={classes.root} display='flex' alignItems='center' {...rootProps}>
+      <ErrorIcon sx={classes.icon} {...iconProps}/>
+      <Typography sx={classes.text} {...textProps}>{text}</Typography>
     </Box>
-  )
+  );
 }

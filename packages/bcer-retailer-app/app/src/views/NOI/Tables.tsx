@@ -1,29 +1,17 @@
+import React from 'react';
 import TableWrapper from '@/components/generic/TableWrapper';
 import NoiTable from '@/components/Noi/NoiTable';
 import { BusinessLocationHeaders, NoiStatus } from '@/constants/localEnums';
-import {
-  BusinessLocation,
-  GenericTableProp,
-} from '@/constants/localInterfaces';
-import React from 'react';
-import { useHistory } from 'react-router';
-import { StyledButton } from 'vaping-regulation-shared-components';
-import SendIcon from '@material-ui/icons/Send';
-import { makeStyles } from '@material-ui/styles';
+import { BusinessLocation, GenericTableProp } from '@/constants/localInterfaces';
+import { styled } from '@mui/material/styles';
+import SendIcon from '@mui/icons-material/Send';
 import { NoiUtil } from '@/utils/noi.util';
-import { Typography } from '@material-ui/core';
 import { getInitialPagination } from '@/utils/util';
+import { StyledButton } from 'vaping-regulation-shared-components';
 
-const useStyles = makeStyles({
-  sendIcon: {
-    height: '24px',
-    paddingRight: '4px',
-  },
-  actionLink: {
-    color: 'blue',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  },
+const StyledSendIcon = styled(SendIcon)({
+  height: '24px',
+  paddingRight: '4px',
 });
 
 interface TableProp extends GenericTableProp {
@@ -31,15 +19,15 @@ interface TableProp extends GenericTableProp {
 }
 
 interface OutstandingNoiTableProp extends TableProp {
-    handleActionButton: Function;
+  handleActionButton: Function;
 }
 
 interface SubmitNoiTableProp extends TableProp {
-    handleSelection: Function; 
+  handleSelection: (rows: Array<BusinessLocation & { tableData: { checked: boolean } }>) => void;
 }
 
 interface SubmittedNoiTableProp extends TableProp {
-    downloadAction: Function;
+  downloadAction: Function;
 }
 
 export function OutstandingNoiTable({
@@ -48,8 +36,6 @@ export function OutstandingNoiTable({
   handleActionButton,
   ...props
 }: OutstandingNoiTableProp) {
-  const classes = useStyles();
-  
   return (
     <TableWrapper
       data={data}
@@ -58,19 +44,19 @@ export function OutstandingNoiTable({
       tableSubHeader={`You have ${data.length} retail locations that need a Notice of Intent`}
       tableButton={
         <StyledButton variant="contained" onClick={handleActionButton}>
-          <SendIcon className={classes.sendIcon} />
+          <StyledSendIcon />
           Submit Outstanding NOI
         </StyledButton>
       }
       csvProps={NoiUtil.getCsvProp(data, 'business_locations.csv')}
       fullScreenProp={fullScreenProp}
     >
-      <NoiTable 
+      <NoiTable
         options={{
           pageSize: getInitialPagination(data),
-          pageSizeOptions: [5, 10, 20, 30, 50]
+          pageSizeOptions: [5, 10, 20, 30, 50],
         }}
-        data={data} 
+        data={data}
       />
     </TableWrapper>
   );
@@ -80,9 +66,8 @@ export function SubmittedNoiTable({
   data,
   fullScreenProp,
   downloadAction,
-  ...prop
+  ...props
 }: SubmittedNoiTableProp) {
-
   return (
     <TableWrapper
       data={data}
@@ -101,20 +86,19 @@ export function SubmittedNoiTable({
             right: 1,
           },
           pageSize: getInitialPagination(data),
-          pageSizeOptions: [5, 10, 20, 30, 50]
+          pageSizeOptions: [5, 10, 20, 30, 50],
         }}
       />
     </TableWrapper>
   );
-};
+}
 
 export function NoiSubmissionTable({
   data,
   handleSelection,
   fullScreenProp,
   ...props
-}: SubmitNoiTableProp){
-
+}: SubmitNoiTableProp) {
   return (
     <TableWrapper
       data={data}
@@ -127,18 +111,23 @@ export function NoiSubmissionTable({
         options={{
           selection: true,
           pageSize: getInitialPagination(data),
-          pageSizeOptions: [5, 10, 20, 30, 50]
+          pageSizeOptions: [5, 10, 20, 30, 50],
+          selectionProps: (rowData: BusinessLocation & { tableData: { checked: boolean } }) => ({
+            checked: rowData.tableData.checked,
+          }),
         }}
-        onSelectionChange={handleSelection}
+        onSelectionChange={(rows: Array<BusinessLocation & { tableData: { checked: boolean } }>) => {
+          handleSelection(rows);
+        }}
       />
     </TableWrapper>
   );
-};
+}
 
 export function NoiMissingSalesReportTable({
   data,
   fullScreenProp,
-}: GenericTableProp){
+}: GenericTableProp) {
   return (
     <TableWrapper
       blockHeader={'NOI Renewal requiring Sales Report submission'}
@@ -147,9 +136,7 @@ export function NoiMissingSalesReportTable({
       tableSubHeader={`You have ${data.length} locations that require a Sales Report before their NOI can be renewed.`}
       fullScreenProp={fullScreenProp}
     >
-      <NoiTable 
-        data={data}
-      />
+      <NoiTable data={data} />
     </TableWrapper>
-  )
+  );
 }

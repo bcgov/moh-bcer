@@ -9,12 +9,12 @@ import {
   IsUrl,
   ValidateIf,
 } from 'class-validator';
-import * as faker from 'faker/locale/en_CA';
+import { faker } from '@faker-js/faker/locale/en_CA';
 export class SaveSubmissionDTO {
 
   @ApiProperty({
     description: 'Id of the submission to save',
-    example: faker.random.uuid(),
+    example: faker.string.uuid(),
   })
   submissionId: string;
 

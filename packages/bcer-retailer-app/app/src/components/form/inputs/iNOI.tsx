@@ -3,8 +3,13 @@ import { Field, ErrorMessage, FormikProps, useFormikContext } from 'formik';
 import ErrorComponent from '@/components/form/ErrorComponent';
 import S from '@/css/forms.module.scss';
 
+interface FormValues {
+  underage: string;
+  underage_other: string;
+}
+
 function NoiInputs(props: FormikProps<{}>) {
-  const { values, errors } = useFormikContext();
+  const { values, errors } = useFormikContext<FormValues>();
   return (
     <form onSubmit={props.handleSubmit}>
       <section>

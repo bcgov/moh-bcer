@@ -1,8 +1,7 @@
 import React, {useState, useEffect, ChangeEvent} from 'react';
-import DialogContent from '@material-ui/core/DialogContent';
-import {IconButton, Tooltip, Grid} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason } from '@material-ui/lab';
+import DialogContent from '@mui/material/DialogContent';
+import {IconButton, Tooltip, Grid, Autocomplete} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   addressValidationSchema, 
   webpageValidationSchema, 
@@ -10,7 +9,8 @@ import {
   phoneValidationSchema, 
   manufacturingValidationSchema, 
   underageValidationSchema, 
-  postalValidationSchema} from '@/constants/validate';
+  postalValidationSchema
+} from '@/constants/validate';
 import {StyledDialog, StyledTextField } from 'vaping-regulation-shared-components';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 import { useAxiosGet } from '@/hooks/axios';
@@ -25,11 +25,9 @@ interface StyledEditDialogProps {
     longitude?: number,
     latitude?: number,
     geo_confidence?:string
-    ) => void
+  ) => void
 }
 
-//This is the StyledEditDialog for the following location information on Location Details page, it validates the user's input and send the new content back to the StyledEditableTextField component
-// addressLine1 || postal || webpage || phone || email || underage || manufacturing
 export default function StyledEditDialog({type, saveChange}:StyledEditDialogProps) {
   const [content, setContent] = useState('');
   const [city, setCity] = useState('');
@@ -37,7 +35,7 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
   const [longitude, setLongitude] = useState(null);
   const [latitude, setLatitude] = useState(null);
   const [geo_confidence, setGeo_confidence] = useState('');
-	const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [errorText, seterrorText] = useState('');
   
   const locationInfoType: { [key: string]: string } = {
@@ -50,21 +48,28 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
     postal: 'Postal'
   };
 
-  useEffect(() => { //input validation
+  useEffect(() => {
     const contentObj: {[type: string]:any} = {}
     contentObj[type] = content;
-    {type === 'addressLine1' && addressValidationSchema.isValid(contentObj).then((valid:any) => {if(valid){seterrorText('')}else{seterrorText('Input Not Valid')}})}
-    {type === 'webpage' && webpageValidationSchema.isValid(contentObj).then((valid:any) => {if(valid){seterrorText('')}else{seterrorText('Input Not Valid')}})}
-    {type === 'email' && emailValidationSchema.isValid(contentObj).then((valid:any) => {if(valid){seterrorText('')}else{seterrorText('Input Not Valid')}})}
-    {type === 'phone' && phoneValidationSchema.isValid(contentObj).then((valid:any) => {if(valid){seterrorText('')}else{seterrorText('Input Not Valid')}})}
-    {type === 'manufacturing' && manufacturingValidationSchema.isValid(contentObj).then((valid:any) => {if(valid){seterrorText('')}else{seterrorText('Input Not Valid')}})}
-    {type === 'underage' && underageValidationSchema.isValid(contentObj).then((valid:any) => {if(valid){seterrorText('')}else{seterrorText('Input Not Valid')}})}
-    {type === 'postal' && postalValidationSchema.isValid(contentObj).then((valid:any) => {if(valid){seterrorText('')}else{seterrorText('Input Not Valid')}})}
-  }, [content])
+    const validationSchema = {
+      'addressLine1': addressValidationSchema,
+      'webpage': webpageValidationSchema,
+      'email': emailValidationSchema,
+      'phone': phoneValidationSchema,
+      'manufacturing': manufacturingValidationSchema,
+      'underage': underageValidationSchema,
+      'postal': postalValidationSchema
+    }[type];
+
+    if (validationSchema) {
+      validationSchema.isValid(contentObj).then((valid:boolean) => {
+        seterrorText(valid ? '' : 'Input Not Valid');
+      });
+    }
+  }, [content, type]);
 
   async function confirmContentChange() {
-    if(type === 'addressLine1' && !healthAuthority){
-      //if it's the address being updated, it will take some time for the system to get the health authority
+    if(type === 'addressLine1' && !health_authority){
       seterrorText('Please wait for the system to determine the Health Authority')
     }else{
       saveChange(content, city, health_authority, longitude, latitude, geo_confidence)
@@ -77,7 +82,6 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
     setOpen(false);
   }
 
-  //address auto complete
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
   const [ predictions, setPredictions ] = useState<Array<BCGeocoderAutocompleteData>>([]);
   const [{ data: suggestions, error:suggestionsError, loading:suggestionsLoading }, getSuggestions] = useAxiosGet('', { manual: true })
@@ -97,19 +101,19 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
     }
   }, [healthAuthority]);
 
-  const handleAutocompleteSelect = ( value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
+  const handleAutocompleteSelect = (event: React.SyntheticEvent<Element, Event>, value: string | null) => {
     const fullLocation = predictions.find((e: { properties: { fullAddress: any; }; }) => e.properties.fullAddress === value)
-    setContent(fullLocation ? fullLocation.properties.fullAddress : "")
-    setCity(fullLocation.properties.localityName)
-    setLongitude(fullLocation.geometry.coordinates[0])
-    setLatitude(fullLocation.geometry.coordinates[1])
-    setGeo_confidence(fullLocation.properties.precisionPoints)
     if (fullLocation) {
+      setContent(fullLocation.properties.fullAddress)
+      setCity(fullLocation.properties.localityName)
+      setLongitude(fullLocation.geometry.coordinates[0])
+      setLatitude(fullLocation.geometry.coordinates[1])
+      setGeo_confidence(fullLocation.properties.precisionPoints)
       doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
     }
   }
 
-  const getAutocomplete = (e: any) => {
+  const getAutocomplete = (e: React.ChangeEvent<HTMLInputElement>) => {
     getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
   }
 
@@ -120,11 +124,11 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
   return (
     <Grid>
       <Tooltip title="Edit" placement="top">
-            <IconButton style={{color: '#0053A5'}} onClick={() => setOpen(true)}>
-              <EditIcon />
-            </IconButton>
+        <IconButton style={{color: '#0053A5'}} onClick={() => setOpen(true)}>
+          <EditIcon />
+        </IconButton>
       </Tooltip>
- 			<StyledDialog 
+      <StyledDialog 
         open={open}
         cancelButtonText="Cancel"
         acceptButtonText="Save"
@@ -132,26 +136,23 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
         cancelHandler={cancelContentChange}
         acceptDisabled={errorText!==''}
         title="Edit Info"
-			>
+      >
         <DialogContent>
-          {type === "addressLine1"?
-             <Autocomplete
+          {type === "addressLine1" ?
+            <Autocomplete
               options={autocompleteOptions} 
               freeSolo
               value={content}
-              onChange={(e: ChangeEvent<{}>, value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any> ) => {handleAutocompleteSelect(value, reason, details)}}
-              renderInput={(params: any) => (
+              onChange={handleAutocompleteSelect}
+              renderInput={(params) => (
                 <StyledTextField 
                   {...params}
                   name={locationInfoType[type]}
                   label={locationInfoType[type]}
-                  error = {errorText===''? false : true}
+                  error={!!errorText}
                   helperText={errorText}
                   autoComplete='off'
-                  onChange={(e: any) => {
-                    setContent("")
-                    getAutocomplete(e)
-                  }}
+                  onChange={getAutocomplete}
                 />
               )}
             />
@@ -160,13 +161,13 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
               name={locationInfoType[type]}
               label={locationInfoType[type]}
               value={content}
-              onChange={(e:any) => setContent(e.target.value)}
-              error = {errorText===''? false : true}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
+              error={!!errorText}
               helperText={errorText}
             />
           }
         </DialogContent>
-			</StyledDialog>
+      </StyledDialog>
     </Grid>
   );
 }

@@ -1,39 +1,61 @@
 import { BusinessReportOverview } from '@/constants/localInterfaces';
+import { styled } from '@mui/material/styles';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
-import { Box, makeStyles, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import { StyledTextWithStatusIcon } from 'vaping-regulation-shared-components';
+import axios from 'axios';
 
-const useStyles = makeStyles(() => ({
-  title: {
+const PREFIX = 'ReportingSummary';
+
+const classes = {
+  title: `${PREFIX}-title`,
+  text: `${PREFIX}-text`
+};
+
+const StyledBox = styled(Box)(() => ({
+  [`& .${classes.title}`]: {
     fontWeight: 'bold',
     fontSize: '17px',
   },
-  text: {
+
+  [`& .${classes.text}`]: {
     fontSize: '14px',
     lineHeight: '18px',
     color: '#333',
-  },
+  }
 }));
 
 function ReportingSummary() {
-  const classes = useStyles();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
-  const [{data: reportOverview, loading: reportLoading, error: reportError}] = useAxiosGet<BusinessReportOverview>('/data/business/overview');
+  const [{data: reportOverview, loading: reportLoading, error: reportError}, getReportOverview] = useAxiosGet<BusinessReportOverview>('/data/business/overview');
 
   useEffect(() => {
-    if(reportError){
-      setAppGlobal({
-        ...appGlobal,
-        networkErrorMessage: formatError(reportError),
-      })
-    }
-  }, [reportError])
-  
+    const source = axios.CancelToken.source();
+    const fetchData = async () => {
+      try {
+        await getReportOverview({ cancelToken: source.token });
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          setAppGlobal({
+            ...appGlobal,
+            networkErrorMessage: formatError(error),
+          });
+        }
+      }
+    };
+    fetchData();
+    return () => {
+      source.cancel('Component unmounted');
+    };
+  }, []);
+
   return (
-    <Box>
+    <StyledBox>
       <Typography className={classes.title}>Businesses Overview</Typography>
       <Box mt={1} />
       {reportOverview && (
@@ -48,7 +70,7 @@ function ReportingSummary() {
           />
         </Box>
       )}
-    </Box>
+    </StyledBox>
   );
 }
 

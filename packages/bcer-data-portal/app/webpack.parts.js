@@ -1,39 +1,40 @@
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
-const { JsonFormatter } = require('tslint/lib/formatters');
 
 const postCSSLoader = {
   loader: 'postcss-loader',
   options: {
-    plugins: () => ([autoprefixer]),
+    postcssOptions: {
+      plugins: [
+        autoprefixer
+      ],
+    },
   },
 };
 
 exports.devServer = ({ host, port } = {}) => ({
   devServer: {
     historyApiFallback: true,
-    stats: 'errors-only',
     hot: true,
     open: true,
     host,
-    port,
+    port, // Using port 3000 internally
+    client: {
+      webSocketURL: 'auto://0.0.0.0:0/ws', // Correct: This allows automatic WebSocket URL detection
+    },
+    allowedHosts: 'all', // Correct: This allows connections from any host
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-    },
-    overlay: {
-      errors: true,
-      warnings: true,
     },
   },
 });
@@ -43,9 +44,9 @@ exports.loadJS = ({ include, exclude } = {}) => ({
     rules: [
       {
         test: /\.(ts|js)x?$/,
-        loaders: ['babel-loader', 'ts-loader'],
         include,
         exclude,
+        use: 'babel-loader',
       },
     ],
   },
@@ -174,8 +175,11 @@ exports.loadFonts = ({ include, exclude, options } = {}) => ({
         include,
         exclude,
         use: {
-          loader: 'file-loader',
-          options,
+          loader: 'url-loader',
+          options: {
+            limit: 10000, // Inline files smaller than 10 kB
+            ...options,
+          },
         },
       },
     ],
@@ -189,18 +193,37 @@ exports.generateSourceMaps = ({ type } = {}) => ({
 exports.bundleOptimization = ({ options } = {}) => ({
   optimization: {
     splitChunks: options,
-    minimizer: [new TerserPlugin()],
+    minimizer: [
+      new TerserPlugin(),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: [
+            'default',
+            {
+              discardComments: { removeAll: true },
+            },
+          ],
+        },
+      }),
+    ],
   },
 });
 
-exports.CSSOptimization = ({ options } = {}) => ({
-  plugins: [
-    new OptimizeCSSAssetsPlugin({
-      cssProcessor: cssnano,
-      cssProcessorOptions: options,
-      canPrint: false,
-    }),
-  ],
+exports.CSSOptimization = () => ({
+  optimization: {
+    minimizer: [
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: [
+            'default',
+            {
+              discardComments: { removeAll: true },
+            },
+          ],
+        },
+      }),
+    ],
+  },
 });
 
 exports.setEnvironmentVariable = (nodeEnv, dotEnv, assetPath) => ({
@@ -231,7 +254,7 @@ exports.setEnvironmentVariable = (nodeEnv, dotEnv, assetPath) => ({
         ASSET_PATH: JSON.stringify(assetPath),
         BASE_KEYCLOAK_URL: JSON.stringify(dotEnv.BASE_KEYCLOAK_URL),
         KEYCLOAK_REALM: JSON.stringify(dotEnv.KEYCLOAK_REALM),
-        KEYCLOAK_CLIENTID: JSON.stringify(dotEnv.KEYCLOAK_CLIENTID)
+        KEYCLOAK_CLIENTID: JSON.stringify(dotEnv.KEYCLOAK_CLIENTID),
       },
     }),
   ],
@@ -251,38 +274,25 @@ exports.clean = () => ({
   ],
 });
 
-exports.copy = (from, to) => ({
+exports.copy = (patterns = []) => ({
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [
-        {
-          from,
-          to,
-          globOptions: {
-            ignore: ['*.html']
-          }
-        },
-      ]
+      patterns: patterns.map((pattern) => ({ from: pattern })),
     }),
   ],
 });
 
 exports.registerServiceWorker = () => ({
   plugins: [
-    new SWPrecacheWebpackPlugin({
-      dontCacheBustUrlsMatching: /\.\w{8}\./,
-      filename: 'service-worker.js',
-      minify: true,
-      navigateFallback: '/index.html',
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
     }),
   ],
 });
 
 exports.extractManifest = () => ({
   plugins: [
-    new ManifestPlugin({
-      fileName: 'asset-manifest.json',
-    }),
+    new WebpackManifestPlugin(),
   ],
 });

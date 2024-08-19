@@ -1,18 +1,18 @@
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import {
   StyledButton,
   StyledConfirmDialog,
 } from 'vaping-regulation-shared-components';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useAxiosDelete } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 function Delete({ reportId }: { reportId: string }) {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [{ loading }, deleteReport] = useAxiosDelete('/manufacturing', {
@@ -21,7 +21,7 @@ function Delete({ reportId }: { reportId: string }) {
   const confirmDelete = async () => {
     try {
       await deleteReport({ url: `/manufacturing/${reportId}` });
-      history.push('/manufacturing');
+      navigate('/manufacturing');
     } catch (e) {
       setAppGlobal({
         ...appGlobal,

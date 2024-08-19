@@ -15,8 +15,8 @@ export default function useFileUpload(target: string): [
   },
   Function,
 ] {
-  const [fileData, setFileData] = useState<UploadSource | null>();
-  const [uploadError, setError] = useState();
+  const [fileData, setFileData] = useState<UploadSource | null>(null);
+  const [uploadError, setUploadError] = useState<any>(null);
   const [uploaded, toggleUploaded] = useState(false);
   const [sent, toggleSent] = useState(false);
   const [done, toggleDone] = useState(false);
@@ -29,31 +29,31 @@ export default function useFileUpload(target: string): [
         const formData: FormData = new FormData();
         formData.append('file', fileData);
         (async () => {
-          toggleSent(true)
-          await upload({ data: formData })
+          toggleSent(true);
+          await upload({ data: formData });
         })();
       } catch (error) {
-        setError(error);
+        setUploadError(error);
       }
     } else {
-      toggleSent(false)
-      toggleDone(false)
+      toggleSent(false);
+      toggleDone(false);
     }
   }, [fileData]);
 
   useEffect(() => {
     if (response?.status === 201) {
-      setError(false)
-      toggleDone(true)
+      setUploadError(null);
+      toggleDone(true);
     }
-  }, [response])
+  }, [response]);
 
   useEffect(() => {
     if (error) {
-      toggleDone(true)
-      setError(error)
+      toggleDone(true);
+      setUploadError(error);
     }
-  }, [error])
+  }, [error]);
   
-  return [{ uploadError, uploaded, sent, done, data, loading, fileData }, setFileData,];
+  return [{ uploadError, uploaded, sent, done, data, loading, fileData }, setFileData];
 }

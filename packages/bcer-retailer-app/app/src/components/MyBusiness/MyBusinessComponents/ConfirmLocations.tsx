@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { CSVLink } from 'react-csv';
-import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
+import { Checkbox, FormControlLabel, makeStyles, Typography } from '@mui/material';
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { StyledButton, StyledTable, StyledConfirmDialog } from 'vaping-regulation-shared-components';
-import WarningIcon from '@material-ui/icons/Warning';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
@@ -17,47 +18,64 @@ import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'ConfirmLocations';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  buttonIconLight: `${PREFIX}-buttonIconLight`,
+  csvLink: `${PREFIX}-csvLink`,
+  subHeader: `${PREFIX}-subHeader`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  tableWrapper: `${PREFIX}-tableWrapper`,
+  locationCount: `${PREFIX}-locationCount`,
+  tableWrapperSubheader: `${PREFIX}-tableWrapperSubheader`,
+  errorCountBox: `${PREFIX}-errorCountBox`,
+  warningIcon: `${PREFIX}-warningIcon`,
+  errorCountBoxText: `${PREFIX}-errorCountBoxText`,
+  formControl: `${PREFIX}-formControl`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
-  buttonIconLight: {
+  [`& .${classes.buttonIconLight}`]: {
     paddingRight: '5px',
     color: '#fff',
     fontSize: '20px',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  subHeader: {
+  [`& .${classes.subHeader}`]: {
     fontSize: '16px',
     color: '#A3A3A3',
     paddingBottom: '30px',
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px',
     alignItems: 'center',
   },
-  tableWrapper: {
+  [`& .${classes.tableWrapper}`]: {
     border: '1px solid #CDCED2',
     borderRadius: '5px',
     backgroundColor: '#fff',
     padding: '20px',
   },
-  locationCount: {
+  [`& .${classes.locationCount}`]: {
     fontSize: '14px',
     color: '#3A3A3A',
     paddingBottom: '10px'
   },
-  tableWrapperSubheader: {
+  [`& .${classes.tableWrapperSubheader}`]: {
     fontSize: '14px',
     color: '#3A3A3A',
   },
-  errorCountBox: {
+  [`& .${classes.errorCountBox}`]: {
     display: 'flex',
     padding: '20px',
     borderRadius: '10px',
@@ -67,15 +85,15 @@ const useStyles = makeStyles({
     marginBottom: '20px',
     alignItems: 'center',
   },
-  warningIcon: {
+  [`& .${classes.warningIcon}`]: {
     color: '#785400',
     padding: '0px 10px 0px 0px'
   },
-  errorCountBoxText: {
+  [`& .${classes.errorCountBoxText}`]: {
     fontSize: '16px', 
     fontWeight: 600
   },
-  formControl:{
+  [`& .${classes.formControl}`]: {
     fontSize: '14px',
     '& .MuiIconButton-colorSecondary':{
       '&:hover': {
@@ -84,16 +102,15 @@ const useStyles = makeStyles({
     },
     '& .MuiCheckbox-root': {
       color: 'rgba(0, 0, 0, 0.54)',
-
     },
     '& .Mui-checked': {
       color: '#0053A4'
     },
   },
-})
+}));
 
 export default function ConfirmLocations () {
-  const classes = useStyles();
+
 
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
@@ -138,7 +155,7 @@ export default function ConfirmLocations () {
   }
 
   return (
-    <>
+    (<Root>
       <div className={classes.subHeader} >
         Please confirm your business locations. Ensure that all locations have been entered correctly
         as they are required when submitting reports and your notice of intent to sell e-substances.
@@ -244,7 +261,6 @@ export default function ConfirmLocations () {
           openProps={{isOpen: isEditOpen, toggleOpen: setOpenEdit}} 
         />
       }
-
       {
         isDeleteOpen
           &&
@@ -258,6 +274,6 @@ export default function ConfirmLocations () {
           confirmHandler={confirmDelete} 
         />
       }
-    </>
-  )
+    </Root>)
+  );
 }

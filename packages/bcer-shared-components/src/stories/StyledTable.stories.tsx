@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { StyledTable } from '@/index';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 import { StyledButton } from '@/index';
 

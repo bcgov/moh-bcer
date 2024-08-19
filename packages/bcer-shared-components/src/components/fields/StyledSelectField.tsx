@@ -1,57 +1,66 @@
-
 import React, { ReactElement, Fragment } from 'react';
 import { Field } from 'formik'
-import { TextField, MenuItem, styled } from '@material-ui/core';
-
+import { styled, TextField, TextFieldProps } from '@mui/material';
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
 import { InputFieldLabel } from '@/components/generic';
 import { SelectInputProps, SelectOptionProps, StyledSelectProps } from '@/constants/interfaces/inputInterfaces';
-
 /**
  * Uses react styled() to apply styles to the text field component
- * @returns A Material-UI ReactElement with specified styles
+ * @returns A MUI ReactElement with specified styles
  */
-const StyledSelect = styled(TextField)({
-  '& .MuiSelect-root': {
-    padding: '10px',
-    fontSize: '14px',
-    color: '#333333',
-    backgroundColor: '#F5F5F5',
-    borderRadius: '3px 3px 0px 0px'
+const StyledOutlinedSelect = (props: TextFieldProps) => (
+  <TextField
+    {...props}
+    sx={{
+      '& .MuiSelect-select': {
+        padding: '11px !important',
+        fontSize: '14px',
+        color: '#333333',
+        backgroundColor: '#CDCED2',
+      },
+      '& .MuiOutlinedInput-root': {
+        borderTopLeftRadius: '3px',
+        borderBottomLeftRadius: '3px',
+        borderTopRightRadius: '0px',
+        borderBottomRightRadius: '0px',
+      }
+    }}
+  />
+);
 
-  }
-});
+const StyledSelect = (props: TextFieldProps) => (
+  <TextField
+    {...props}
+    sx={{
+      '& .MuiSelect-select': {
+        padding: '10px', 
+        fontSize: '14px',
+        color: '#333333',
+        backgroundColor: '#F5F5F5',
+        borderRadius: '3px 3px 0px 0px'
+      }
+    }}
+  />
+);
 
-const StyledOutlinedSelect = styled(TextField)({
-  '& .MuiSelect-root': {
-    padding: '11px',
-    fontSize: '14px',
-    color: '#333333',
-    backgroundColor: '#CDCED2',
-    
-  },
-  '& .MuiOutlinedInput-root': {
-    borderTopLeftRadius: '3px',
-    borderBottomLeftRadius: '3px',
-    borderTopRightRadius: '0px',
-    borderBottomRightRadius: '0px',
-  }
-})
 
 /**
  * Uses react styled() to apply styles to the MenuItem component
- * @returns A Material-UI ReactElement with specified styles
+ * @returns A MUI ReactElement with specified styles
  */
-const StyledMenuItem = styled(MenuItem)({
+const StyledMenuItem = (props: MenuItemProps) => (
+  <MenuItem
+    {...props}
+   />
+);
   
-});
-
 /**
- * Applies Formik implicit props to a Material-UI TextField
+ * Applies Formik implicit props to a MUI TextField
  * 
  * @param field - Formik's implicit field context `Type FieldAttributes<TextFieldProps>`
  * @param form - Formik's implicit form context `Type FormikProps<FormData>` 
- * @param props - Material-UI input props `Type TextFieldProps`
- * @returns A Material-UI ReactElement with Formik context
+ * @param props - MUI input props `Type TextFieldProps`
+ * @returns A MUI ReactElement with Formik context
  */
 function SelectInput ({
   field: { value, ...fieldRest },
@@ -60,7 +69,7 @@ function SelectInput ({
   options,
   variant,
   ...props
-}: SelectInputProps):ReactElement {
+}: SelectInputProps & { form: { errors: Record<string, string>, submitCount: number } }) {
 
   const error = form.errors[fieldRest.name];
   const submitCount = form.submitCount;
@@ -70,6 +79,7 @@ function SelectInput ({
       {label && <InputFieldLabel label={label} />}
       {variant === 'outlined' ? 
         <StyledOutlinedSelect
+          id = "outlined_select_TextField"
           select
           variant="outlined"
           fullWidth
@@ -88,6 +98,7 @@ function SelectInput ({
           }
         </StyledOutlinedSelect>
       : <StyledSelect
+          id = "filled_select_TextField"
           select
           variant="filled"
           fullWidth

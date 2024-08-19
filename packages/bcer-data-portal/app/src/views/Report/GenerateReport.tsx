@@ -1,22 +1,31 @@
 import { reportRequestOptions } from "@/constants/arrays";
+import { styled } from '@mui/material/styles';
 import { useAxiosPost } from "@/hooks/axios";
 import { useToast } from "@/hooks/useToast";
-import { Box, Checkbox, CircularProgress, FormControlLabel, Grid, Typography, makeStyles } from "@material-ui/core";
+import { Box, Checkbox, CircularProgress, FormControlLabel, Grid, Typography } from "@mui/material";
 import { FieldArray, Form, Formik } from "formik";
 import moment from "moment";
 import React from "react";
 import { StyledButton, StyledSelectField, StyledTextField } from "vaping-regulation-shared-components";
 
-const useStyles = makeStyles({
-    boxTitle: {
+const PREFIX = 'GenerateReport';
+
+const classes = {
+    boxTitle: `${PREFIX}-boxTitle`,
+    box: `${PREFIX}-box`,
+    checkboxesWrap: `${PREFIX}-checkboxesWrap`
+};
+
+const StyledBox = styled(Box)({
+    [`& .${classes.boxTitle}`]: {
         paddingBottom: '10px',
     },
-    box: {
+    [`&.${classes.box}`]: {
         border: 'solid 1px #CDCED2',
         borderRadius: '4px',
         padding: '1.4rem',
     },
-    checkboxesWrap: {
+    [`& .${classes.checkboxesWrap}`]: {
         '& label': {
             display: 'flex',
             paddingBottom: 10
@@ -25,7 +34,7 @@ const useStyles = makeStyles({
 });
 
 export function GenerateReport (props: any) {
-    const classes = useStyles();
+
     const { openToast } = useToast()
     const [{ error, loading }, generateReport] = useAxiosPost('/data/report/generate', { manual: true });
     
@@ -58,7 +67,7 @@ export function GenerateReport (props: any) {
     }
 
     return (
-        <Box className={classes.box}>
+        <StyledBox className={classes.box}>
             <Formik 
                 onSubmit={async (values,  { resetForm }) => {
                     const { data } = await generateReport({ data: values });
@@ -179,6 +188,6 @@ export function GenerateReport (props: any) {
                     </Form>
                 )}
             </Formik>
-        </Box>
-    )
+        </StyledBox>
+    );
 }

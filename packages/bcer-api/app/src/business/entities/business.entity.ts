@@ -62,25 +62,25 @@ export class BusinessEntity {
   province: string;
 
   @OneToMany(() => UserEntity, (user) => user.business)
-  users: []
+  users: UserEntity[];
 
   @OneToMany(() => LocationEntity, (location) => location.business)
-  locations: LocationEntity[]
+  locations: LocationEntity[];
 
   @OneToMany(() => NoiEntity, (noi) => noi.business)
-  nois: []
+  nois: NoiEntity[];
 
   @OneToMany(() => ProductEntity, (product) => product.business)
-  products: []
+  products: ProductEntity[];
 
   @OneToMany(() => ProductSoldEntity, (productSold) => productSold.business)
-  productSolds: []
+  productSolds: ProductSoldEntity[];
 
   @OneToMany(() => ManufacturingEntity, (manufacturingReport) => manufacturingReport.business)
-  manufactures: []
+  manufactures: ManufacturingEntity[];
 
   @OneToMany(() => SubmissionEntity, (submission) => submission.business)
-  submissions: []
+  submissions: SubmissionEntity[];
 
   @OneToOne(() => SubscriptionEntity, (subscription: SubscriptionEntity) => subscription.business, { nullable: true })
   subscription: SubscriptionEntity;
@@ -115,6 +115,7 @@ export class BusinessEntity {
   reportingStatus?: BusinessReportingStatusRO;
 
   complianceStatus?: BusinessReportingStatusRO;
+
   @OneToMany(
     () => NoteEntity,
     (note: NoteEntity) => note.business

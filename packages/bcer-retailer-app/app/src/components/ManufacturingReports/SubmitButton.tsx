@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useFormikContext } from 'formik';
 import { useAxiosPatch } from '@/hooks/axios';
 import { StyledButton, StyledConfirmDialog } from 'vaping-regulation-shared-components';
@@ -8,8 +8,8 @@ export default function ManufacturingReportSubmitButton({ selectedLocations }: {
 
   const [{ response, loading }, patch] = useAxiosPatch(`/manufacturing`, { manual: true });
   const [isConfirmOpen, setOpenConfirm] = useState<boolean>(false)
-
   const { values, isValid } = useFormikContext<{ productName: string, ingredients: any[] }>();
+  const navigate = useNavigate();
   const submit = async () => {
     await patch({
       data: {
@@ -19,8 +19,10 @@ export default function ManufacturingReportSubmitButton({ selectedLocations }: {
       }
     })
   }
-
-  return response?.status === 201 ? <Redirect to='/manufacturing?success=true' /> : (
+  
+  return (
+    <>
+    {response?.status === 201 ? navigate('/manufacturing?success=true') : (
     <>
       <StyledButton
         variant='contained'
@@ -38,5 +40,7 @@ export default function ManufacturingReportSubmitButton({ selectedLocations }: {
         checkboxLabel='I understand that I will be required to wait for 6 weeks from the time that I file or update my manufacturing report before I can sell my product.'
       />
     </>
-  )
+    )}
+    </>
+  );
 }

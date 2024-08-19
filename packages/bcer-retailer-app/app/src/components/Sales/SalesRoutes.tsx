@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
 import store from 'store';
 
 import { SalesReportProvider } from '@/contexts/SalesReport';
 import SalesOverview from '@/views/Sales/Overview';
-import SelectSalesLocation from '@/views/Sales/SelectLocation';
 import SubmitSalesReport from '@/views/Sales/SubmitSales';
 import SuccessSalesReport from '@/views/Sales/Success';
-import CommingSoon from '@/views/CommingSoon';
 import SaleUpload from '@/views/Sales/SaleUpload';
 import { SubmissionTypeEnum } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 import SaleReview from '@/views/Sales/SaleReview';
-
-
 
 export default function SalesRoutes(){
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
@@ -46,20 +42,25 @@ export default function SalesRoutes(){
 
   useEffect(() => {
     (async () => {
-      const submissionId = store.get('salesReportSubmissionId') || sales.submissionId
+      const submissionId = store.get('salesReportSubmissionId') || sales.submissionId;
       // GET: returns an existing submission
       // TODO: when we have a keycloak token, this GET should also return existing business and location data for the business entity
       // POST: creates a new submission
-      await submissionId ? get({ url:`/submission/${submissionId}` }) : post({
-        data: Object.assign({}, {
-          // NB: legal name of business is hard coded
-          // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
-          legalName: 'Happy Puff',
-          type: SubmissionTypeEnum.sales,
-        }, { data: sales })
-      })
-    })()
-  }, [])
+      if (submissionId) {
+        get({ url: `/submission/${submissionId}` });
+      } else {
+        post({
+          data: {
+            // NB: legal name of business is hard coded
+            // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
+            legalName: 'Happy Puff',
+            type: SubmissionTypeEnum.sales,
+            data: sales 
+          }
+        });
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (submission && !error) {
@@ -95,18 +96,17 @@ export default function SalesRoutes(){
     }
   }, [postError]);
 
-
   return(
-    <>
-      <SalesReportProvider value={[sales, setSales]} >
-        <Switch>
-          <Route exact path='/sales' component={SalesOverview} />
-          <Route exact path='/sales/upload' component={SaleUpload} />
-          <Route exact path='/sales/review' component={SaleReview} />
-          <Route exact path='/sales/submit' component={SubmitSalesReport} />
-          <Route exact path='/sales/success' component={SuccessSalesReport} />
-        </Switch>
-      </SalesReportProvider>
-    </>
+    <SalesReportProvider value={[sales, setSales]}>
+      <Routes>
+        <Route path='/' element={<Outlet />}>
+          <Route path='' element={<SalesOverview />} />
+          <Route path='upload' element={<SaleUpload />} />
+          <Route path='review' element={<SaleReview />} />
+          <Route path='submit' element={<SubmitSalesReport />} />
+          <Route path='success' element={<SuccessSalesReport />} />
+        </Route>
+      </Routes>
+    </SalesReportProvider>
   )
 }

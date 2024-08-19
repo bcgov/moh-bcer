@@ -1,40 +1,48 @@
-import { Box, Hidden, IconButton, makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { Box, IconButton, styled, useMediaQuery, useTheme } from '@mui/material';
+import { useLocation } from 'react-router-dom';
+import Drawer from '@mui/material/Drawer';
+import MenuIcon from '@mui/icons-material/Menu';
 import LeftPanel from './LeftPanel';
-import Drawer from '@material-ui/core/Drawer';
-import MenuIcon from '@material-ui/icons/Menu';
 import useLeaflet from '@/hooks/useLeaflet';
 import Leaflet from '@/components/generic/Leaflet';
 import { LocationConfig } from '@/constants/localInterfaces';
 
-const useStyles = makeStyles((theme) => ({
-  menu_leftPanelDrawer: {
+const StyledBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  width: '100%',
+  position: 'relative',
+  marginTop: '70px',
+  '&.menu_MapWrap': {
+    marginTop: '0 !important',
+    '& .MuiDrawer-paper': {
+      top: 140
+    }
+  },
+}));
+
+const StyledDrawer = styled(Drawer)(({ theme }) => ({
+  '&.menu_leftPanelDrawer': {
     flex: '0.42 0 auto',
     '& .MuiDrawer-paper': {
       '& .MuiBox-root': {
         paddingTop: 0
       }
     }
-  },
-  menu_MapWrap: {
-    marginTop: '0 !important',
-    '& .MuiDrawer-paper': {
-      top: 140
-    }
   }
 }));
 
 interface MapProps {
   config: LocationConfig;
-  asMenu?: Boolean
+  asMenu?: boolean;
 }
 
 function Map({asMenu, config}: MapProps) {
-  const classes = useStyles();
   const search = useLocation().search;
   const locationIds = new URLSearchParams(search).get('locations');
   const [open, setOpen] = useState<boolean>(true);
+  const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
 
   const {
     selectedLocations,
@@ -65,19 +73,16 @@ function Map({asMenu, config}: MapProps) {
   }, [open]);
 
   return (
-    <Box
-      display="flex"
-      width="100%"
-      position="relative"      
-      style= {{ marginTop: '70px' }}
-      className={asMenu && classes.menu_MapWrap}
-    >
-      <Drawer open={open} variant="persistent" 
-         ModalProps={{
+    <StyledBox id= 'mapComponent' className={asMenu ? 'menu_MapWrap' : ''}>
+      <StyledDrawer
+        open={open}
+        variant="persistent"
+        ModalProps={{
           keepMounted: true, // Better open performance on mobile.
         }}
-        className={asMenu && classes.menu_leftPanelDrawer}>
-        <Box minHeight="calc(100vh - 70px)" pt={8} >
+        className={asMenu ? 'menu_leftPanelDrawer' : ''}
+      >
+        <Box minHeight="calc(100vh - 70px)" pt={8}>
           <LeftPanel
             mapInMenu={asMenu}
             locations={selectedLocations}
@@ -100,10 +105,10 @@ function Map({asMenu, config}: MapProps) {
             setDisplayItinerary={setDisplayItinerary}
             onRender={onRender}
             downloadItinerary={downloadItinerary}
-            downloadingItinerary = {downloadingItinerary}
+            downloadingItinerary={downloadingItinerary}
           />
-        </Box>       
-      </Drawer>
+        </Box>      
+      </StyledDrawer>
 
       {open && !asMenu && <Box flex={0.35} />}
       <Box
@@ -115,12 +120,9 @@ function Map({asMenu, config}: MapProps) {
             <MenuIcon />
           </IconButton>
         )}
-        <Hidden smDown>
-          <Leaflet onRender={onRender} />
-        </Hidden>
-        
+        {isSmUp && <Leaflet onRender={onRender} />}
       </Box>
-    </Box>
+    </StyledBox>
   );
 }
 

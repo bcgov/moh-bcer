@@ -1,8 +1,15 @@
 import React, { FunctionComponent, ComponentProps } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { makeStyles } from '@mui/material';
 
-const useStyles = makeStyles({
-  errorP: {
+const PREFIX = 'ErrorComponent';
+
+const classes = {
+  errorP: `${PREFIX}-errorP`
+};
+
+const Root = styled('p')({
+  [`&.${classes.errorP}`]: {
     color: 'red',
     padding: '4px',
     fontSize: '0.75em',
@@ -11,10 +18,8 @@ const useStyles = makeStyles({
 });
 
 const ErrorComponent: FunctionComponent = (props: ComponentProps<any>) => {
-  const classes = useStyles();
-  return (
-    <p className={classes.errorP}>{props.children}</p>
-  );
+
+  return <Root className={classes.errorP}>{props.children}</Root>;
 };
 
 export default ErrorComponent;

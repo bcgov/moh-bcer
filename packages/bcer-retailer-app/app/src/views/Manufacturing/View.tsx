@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { useAxiosGet } from '@/hooks/axios';
-import { Box, Grid, makeStyles, Typography, Paper } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Box, Grid, makeStyles, Typography, Paper } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
-import { ManufacturingReport, BusinessLocation } from '@/constants/localInterfaces';
+import { BusinessLocation } from '@/constants/localInterfaces';
 import { HealthAuthorities } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
@@ -15,29 +16,39 @@ import Delete from './Delete';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 
-const useStyles = makeStyles({
-  box: {
+const PREFIX = 'View';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  boxTitle: `${PREFIX}-boxTitle`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem 1.4rem 0rem 1.4rem',
     margin: '30px 0',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px'
   },
 });
 
 export default function ManufacturingReport() {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const { reportId } = useParams<{reportId: string}>();
   const viewFullscreenTable = useState<boolean>(false)
   const [{ data: report, loading, error }] = useAxiosGet(`/manufacturing/${reportId}`);
@@ -50,9 +61,9 @@ export default function ManufacturingReport() {
   }, [error])
 
   return loading ? <CircularProgress /> : (
-    <>
+    (<Root>
       <div>
-        <StyledButton onClick={() => history.push('/manufacturing')}>
+        <StyledButton onClick={() => navigate('/manufacturing')}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Back
         </StyledButton>
@@ -149,6 +160,6 @@ export default function ManufacturingReport() {
           <Delete reportId={reportId}/>
         </Box>
       </div>
-    </>
+    </Root>)
   );
 }

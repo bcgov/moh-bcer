@@ -1,48 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { Typography } from '@mui/material';
 import { StyledHeaderMapperProps } from '@/constants/interfaces/inputInterfaces';
 import { Formik, Form } from 'formik';
 import { StyledSelectField } from '@/index';
 import * as Yup from 'yup';
 import { StyledButton } from '@/index';
 
+const PREFIX = 'StyledHeaderMapper';
 
-const useStyles = makeStyles({
-  header: {
+const classes = {
+  header: `${PREFIX}-header`,
+  headerText: `${PREFIX}-headerText`,
+  requiredColumn: `${PREFIX}-requiredColumn`,
+  csvHeaderColumn: `${PREFIX}-csvHeaderColumn`,
+  mapRow: `${PREFIX}-mapRow`,
+  rowText: `${PREFIX}-rowText`,
+  actionWrapper: `${PREFIX}-actionWrapper`
+};
+
+const Root = styled('div')({
+  [`& .${classes.header}`]: {
     display: 'flex',
     borderBottom: '2px solid #F5A623',
     padding: '20px',
-
   },
-  headerText: {
-    color: '#002C71',
-    fontWeight: 600
-  },
-  requiredColumn: {
-    width: '290px',
-    paddingRight: '20px'
-  },
-  csvHeaderColumn: {
-    width: '235px',
-    marginRight: '20px'
-    
-  },
-  previewColumn: {
-    width: '190px',
-  },
-  mapRow: {
+  [`& .${classes.mapRow}`]: {
     display: 'flex',
     padding: '20px 20px 0px 20px'
   },
-  rowText: {
-    color: '#333333'
-  },
-  actionWrapper: {
+  [`& .${classes.actionWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '16px'
   }
-})
+});
+
+const RootTypography = styled(Typography)({
+  [`& .${classes.headerText}`]: {
+    color: '#002C71',
+    fontWeight: 600
+  },
+  [`& .${classes.requiredColumn}`]: {
+    width: '290px',
+    paddingRight: '20px'
+  },
+  [`& .${classes.csvHeaderColumn}`]: {
+    width: '235px',
+    marginRight: '20px'
+  },
+  [`& .${classes.rowText}`]: {
+    color: '#333333'
+  },
+});
 
 // THIS IS WIP
 // const ContextHandler = ({setOptionsHandler, stateOptions}: ContextProps ): null => {
@@ -79,71 +89,79 @@ const useStyles = makeStyles({
  * @param cancelHandler `Function` - callback for cancelling the mapping
  * @returns ReactElement component
  */
-export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapCallback, cancelHandler}: StyledHeaderMapperProps) {
-  const classes = useStyles();
-  const [initialValues] = useState<Object>({});
+export function StyledHeaderMapper({
+  requiredHeaders,
+  providedHeaders,
+  updateMapCallback,
+  cancelHandler
+}: StyledHeaderMapperProps & { requiredHeaders: Record<string, string> }) {
+  const [initialValues] = useState<Record<string, string>>({});
   const [options] = useState(providedHeaders.map(h => ({value: h, label: h})));
-  const [validationSchema, setValidationSchema] = useState<Yup.ObjectSchema<any | undefined>>();
+  type ValidationSchemaType = Yup.AnyObjectSchema | undefined;
+  const [validationSchema, setValidationSchema] = useState<ValidationSchemaType>(undefined);
   const keys = Object.keys(requiredHeaders);
   const values: Array<string> = Object.values(requiredHeaders);
   
   useEffect(()=> {
-    let temp = {}
-    keys.map(k => {
-      let found = options.find(o => o.value === k)
-      found ? initialValues[k] = found.value : initialValues[k] = ''      
-      temp[k] = Yup.string().required('Required selection')
-    })
-    setValidationSchema(Yup.object().shape(temp))
+    let temp: Record<string, Yup.StringSchema> = {};
+    keys.forEach(k => {
+      let found = options.find(o => o.value === k);
+      initialValues[k] = found ? found.value : '';
+      temp[k] = Yup.string().required('Required selection');
+    });
+    const schema: Yup.AnyObjectSchema = Yup.object().shape(temp) as Yup.AnyObjectSchema;
+    setValidationSchema(schema)
   }, [])
   
   const testHandler = (values: any) => {
     updateMapCallback(values)
   }
 
-  return(
-    <>
-    {
-      validationSchema !== undefined && initialValues !== undefined
-        ?
-        <Formik 
-          onSubmit={values => testHandler(values)}
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-        >
-          <Form>
-            <div className={classes.header}>
-              <Typography variant='body2' className={`${classes.headerText} ${classes.requiredColumn}`}>Required field in our system</Typography>
-              <Typography variant='body2' className={`${classes.headerText} ${classes.csvHeaderColumn}`}>Field from your CSV file</Typography>
-            </div>
-            {
-              keys.map((header: string, index: number) => (
-                <>
-                  <div key={index} className={classes.mapRow}>
-                    <Typography variant='body1' className={`${classes.requiredColumn} ${classes.rowText}`}>
-                      {values[index]}
-                    </Typography>
-                    <div className={classes.csvHeaderColumn}>
-                      <StyledSelectField name={header} label='' options={options} />
-                    </div>
-                  </div>
-                </>
-              ))
-            }
-            <div className={classes.actionWrapper}>
+  return (
+    <Root>
+      <RootTypography>
+      {
+        validationSchema !== undefined && initialValues !== undefined
+          ?
+          <Formik 
+            onSubmit={values => testHandler(values)}
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+          >
+            <Form>
+              <div className={classes.header}>
+                <Typography variant='body2' className={`${classes.headerText} ${classes.requiredColumn}`}>Required field in our system</Typography>
+                <Typography variant='body2' className={`${classes.headerText} ${classes.csvHeaderColumn}`}>Field from your CSV file</Typography>
+              </div>
               {
-                cancelHandler
-                  ?
-                    <StyledButton variant='outlined' onClick={() => cancelHandler()}>Cancel</StyledButton>
-                  : null
+                keys.map((header: string, index: number) => (
+                  <>
+                    <div key={index} className={classes.mapRow}>
+                      <Typography variant='body1' className={`${classes.requiredColumn} ${classes.rowText}`}>
+                        {values[index]}
+                      </Typography>
+                      <div className={classes.csvHeaderColumn}>
+                        <StyledSelectField name={header} label='' options={options} />
+                      </div>
+                    </div>
+                  </>
+                ))
               }
-              <StyledButton variant='contained' type='submit'>Map Headers</StyledButton>
-            </div>
-            {/* <ContextHandler setOptionsHandler={setOptions} stateOptions={options}/> */}
-          </Form>
-        </Formik>
-      : null
-    }
-    </>
-  )
+              <div className={classes.actionWrapper}>
+                {
+                  cancelHandler
+                    ?
+                      <StyledButton variant='outlined' onClick={() => cancelHandler()}>Cancel</StyledButton>
+                    : null
+                }
+                <StyledButton variant='contained' type='submit'>Map Headers</StyledButton>
+              </div>
+              {/* <ContextHandler setOptionsHandler={setOptions} stateOptions={options}/> */}
+            </Form>
+          </Formik>
+        : null
+      }
+      </RootTypography>
+    </Root>
+  );
 }

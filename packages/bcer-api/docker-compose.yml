@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 
   application:
@@ -19,7 +17,6 @@ services:
       - DB_DATABASE=nest_api_dev
       - DB_USERNAME=vape_nestapi
       - DB_PASSWORD=543127394CEDED80469C14B45F9312CA
-      - DB_TEST_DATABASE=nest_api_test
       - DEPLOY_ENV=node-api-dev
       - LOGS_PATH=./../logs
       - MERGE_BRANCH=dev

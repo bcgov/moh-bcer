@@ -1,11 +1,12 @@
 import React, { useEffect, useContext, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import useFileUpload from '@/hooks/useFileUpload';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/material/styles';
 import { StyledDropzone } from 'vaping-regulation-shared-components';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ClearIcon from '@material-ui/icons/Clear';
+import CircularProgress from '@mui/material/CircularProgress';
+import ClearIcon from '@mui/icons-material/Clear';
 
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@mui/material';
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { ProductInfoContext } from '@/contexts/ProductReport';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
@@ -15,13 +16,26 @@ import uploadIcon from '@/assets/images/upload.png';
 import { SalesReportContext } from '@/contexts/SalesReport';
 import Loader from '@/components/Sales/Loader';
 
-const useStyles = makeStyles({
-  label: {
+const PREFIX = 'UploadArea';
+
+const classes = {
+  label: `${PREFIX}-label`,
+  uploadedFile: `${PREFIX}-uploadedFile`,
+  cancelIcon: `${PREFIX}-cancelIcon`,
+  contentWrapper: `${PREFIX}-contentWrapper`,
+  successfulFileIcon: `${PREFIX}-successfulFileIcon`,
+  uploadedDescription: `${PREFIX}-uploadedDescription`,
+  replaceText: `${PREFIX}-replaceText`,
+  filename: `${PREFIX}-filename`
+};
+
+const Root = styled('div')({
+  [`& .${classes.label}`]: {
     color: '#1EAEDB',
     textDecoration: 'underline',
     display: 'inline',
   },
-  uploadedFile: {
+  [`& .${classes.uploadedFile}`]: {
     display: 'flex',
     position: 'relative',
     alignItems: 'center',
@@ -29,30 +43,30 @@ const useStyles = makeStyles({
     backgroundColor: '#F2F6FA',
     padding: '15px 0px 15px 20px'
   },
-  cancelIcon: {
+  [`& .${classes.cancelIcon}`]: {
     position: 'absolute',
     top: '10px',
     right: '10px',
     padding: '0px'
   },
-  contentWrapper: {
+  [`& .${classes.contentWrapper}`]: {
     display: 'flex',
     alignItems: 'center'
   },
-  successfulFileIcon: {
+  [`& .${classes.successfulFileIcon}`]: {
     height: '30px',
     paddingRight: '20px',
   },
-  uploadedDescription: {
+  [`& .${classes.uploadedDescription}`]: {
     padding: '10px 0px 10px 0px'
   },
-  replaceText: {
+  [`& .${classes.replaceText}`]: {
     fontSize: '16px',
     color: '#0053A4',
     textDecoration: 'underline',
     cursor: 'pointer'
   },
-  filename: {
+  [`& .${classes.filename}`]: {
     fontSize: '14px',
     fontWeight: 600,
     color: '#424242',
@@ -61,7 +75,7 @@ const useStyles = makeStyles({
 
 
 export default function UploadArea({ handleUpload, endpoint, actionText }: { handleUpload: Function, endpoint: string, actionText: string }) {
-  const classes = useStyles();
+
   const [fileData, setFileData] = useState<any>();
   const [{ uploadError, data, loading, fileData: fileInformation }, upload] = useFileUpload(endpoint);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
@@ -116,7 +130,7 @@ export default function UploadArea({ handleUpload, endpoint, actionText }: { han
   }
 
   return (
-    <div>
+    <Root>
       <Loader open={loading} message="File processing. Please wait…" />
       {
         (!data && !fileData) || (businessInfo.entry === 'upload' && !businessInfo?.locations?.length) || (productInfo.entry === 'upload' )  || (!saleInfo?.saleReports?.length) ? (
@@ -138,10 +152,7 @@ export default function UploadArea({ handleUpload, endpoint, actionText }: { han
         ? 
           (
             <div className={classes.uploadedFile} >
-              <IconButton 
-                className={classes.cancelIcon}
-                onClick={handleResetUpload}
-              >
+              <IconButton className={classes.cancelIcon} onClick={handleResetUpload} size="large">
                 <ClearIcon /> 
               </IconButton>
               <div className={classes.contentWrapper} >
@@ -170,6 +181,6 @@ export default function UploadArea({ handleUpload, endpoint, actionText }: { han
           && 
         <p>Upload failed: {uploadError.message || 'Unknown error'}</p>
       } 
-    </div>
-  )
+    </Root>
+  );
 }

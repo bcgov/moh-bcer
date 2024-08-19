@@ -1,6 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/styles';
-
 import TableWrapper from '@/components/generic/TableWrapper';
 import {
   BusinessLocation,
@@ -8,10 +6,10 @@ import {
 } from '@/constants/localInterfaces';
 import { LocationUtil } from '@/utils/location.util';
 import LocationTable from './LocationTable';
-import { Box, Tooltip } from '@material-ui/core';
+import { Box, Tooltip } from '@mui/material';
 import { StyledButton } from 'vaping-regulation-shared-components';
 
-const useStyles = makeStyles({
+const classes = {
   sendIcon: {
     height: '24px',
     paddingRight: '4px',
@@ -20,8 +18,8 @@ const useStyles = makeStyles({
     color: 'blue',
     cursor: 'pointer',
     textDecoration: 'underline',
-  },
-});
+  }
+};
 
 interface TableProp extends GenericTableProp {
   data: Array<BusinessLocation>;
@@ -43,7 +41,6 @@ export function ExistingTable({
   handleActionButton,
   ...props
 }: ExistingTableProp) {
-  const classes = useStyles();
 
   return (
     <TableWrapper

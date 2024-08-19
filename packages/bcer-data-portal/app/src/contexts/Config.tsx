@@ -20,9 +20,16 @@ export const ConfigProvider = ({ children }: {children: React.ReactNode})  => {
     const [{ data: config }, getConfig] =
         useAxiosGet<Permissions>('/data/user/permissions');
 
-    useEffect(() => {
-        getConfig();
-    }, []);
+        useEffect(() => {
+            const fetchConfig = async () => {
+              try {
+                await getConfig();
+              } catch (error) {
+                console.log('User not logged in yet');
+              }
+            };
+            fetchConfig();
+          }, []);
 
     return (
         <ConfigContext.Provider value={{config: config || {permissions: {}, featureFlags: {}}}}>

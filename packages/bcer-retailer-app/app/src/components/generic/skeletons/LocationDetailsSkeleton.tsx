@@ -1,5 +1,5 @@
-import { Box } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
+import { Box } from '@mui/material';
+import { Skeleton } from '@mui/material'
 import React from 'react';
 
 export interface DetailsSkeletonProp {

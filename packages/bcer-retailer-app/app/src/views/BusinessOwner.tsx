@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import Welcome from '@/views/Welcome';
 import GetHelp from '@/views/GetHelp';
@@ -9,7 +9,6 @@ import FAQ from '@/views/FAQ';
 import MyBusinessNav from '@/components/MyBusiness/MyBusinessNav';
 import MyBusiness from '@/components/MyBusiness/Overview';
 import MyBusinessSubmission from '@/components/MyBusiness/MyBusinessSubmission';
-
 import NoiOverview from '@/views/NOI/Overview';
 import NoiSubmit from '@/views/NOI/Submit';
 
@@ -22,15 +21,22 @@ import Location from '@/views/Location';
 import ProductRoutes from '@/components/productReport/ProductRoutes';
 import SalesRoutes from '@/components/Sales/SalesRoutes';
 
-const useStyles = makeStyles({
-  parent: {
+const PREFIX = 'BusinessOwner';
+
+const classes = {
+  parent: `${PREFIX}-parent`,
+  contentWrapper: `${PREFIX}-contentWrapper`
+};
+
+const Root = styled('div')({
+  [`&.${classes.parent}`]: {
     width: '100%',
     padding: '2rem 2rem 4rem 2rem',
     display: 'flex',
     justifyContent: 'center',
     overflowY: 'auto'
   },
-  contentWrapper: {
+  [`& .${classes.contentWrapper}`]: {
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
@@ -39,7 +45,7 @@ const useStyles = makeStyles({
 });
 
 const BusinessOwner = () => {
-  const classes = useStyles();
+
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -48,26 +54,27 @@ const BusinessOwner = () => {
   }, [pathname]);
 
   return (
-    <div className={classes.parent}>
+    <Root className={classes.parent}>
       <div className={classes.contentWrapper}>
-        <Switch>
-          <Route exact path='/business/:step' component={MyBusinessNav} />
-          <Route exact path='/myDashboard' component={MyBusiness} />
-          <Route exact path='/submission/:submissionId' component={MyBusinessSubmission} />
-          <Route exact path={['/noi', '/noi/success']} component={NoiOverview} />
-          <Route exact path='/noi/submit' component={NoiSubmit} />
-          <Route path='/products' component={ProductRoutes} />
-          <Route exact path='/manufacturing' component={ManufacturingOverview} />
-          <Route exact path='/manufacturing/submit' component={ManufacturingSubmit} />
-          <Route exact path='/manufacturing/:reportId' component={ManufacturingReport} />
-          <Route path='/sales' component={SalesRoutes} />
-          <Route exact path='/view-location/:reportId' component={Location} />
-          <Route exact path='/gethelp' component={GetHelp} />
-          <Route exact path='/FAQ' component={FAQ} />
-          <Route path='/' render={() => <Welcome />} />
-        </Switch>
+        <Routes>
+          <Route path='/business/:step/*' element={<MyBusinessNav />} />
+          <Route path='/myDashboard' element={<MyBusiness />} />
+          <Route path='/submission/:submissionId' element={<MyBusinessSubmission />} />
+          <Route path='/noi' element={<NoiOverview />} />
+          <Route path='/noi/success' element={<NoiOverview />} />
+          <Route path='/noi/submit' element={<NoiSubmit />} />
+          <Route path='/products/*' element={<ProductRoutes />} />
+          <Route path='/manufacturing' element={<ManufacturingOverview />} />
+          <Route path='/manufacturing/submit' element={<ManufacturingSubmit />} />
+          <Route path='/manufacturing/:reportId' element={<ManufacturingReport />} />
+          <Route path='/sales/*' element={<SalesRoutes />} />
+          <Route path='/view-location/:reportId' element={<Location />} />
+          <Route path='/gethelp' element={<GetHelp />} />
+          <Route path='/FAQ' element={<FAQ />} />
+          <Route path='/*' element={<Welcome />} />
+        </Routes>
       </div>
-    </div>
+    </Root>
   );
 };
 export default BusinessOwner;

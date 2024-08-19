@@ -1,31 +1,40 @@
-import { Box, LinearProgress, Tooltip, Typography, makeStyles } from "@material-ui/core";
+import { Box, LinearProgress, Tooltip, Typography } from "@mui/material";
+import { styled } from '@mui/material/styles';
 import moment from "moment";
 import React from "react";
 import { StyledTable } from "vaping-regulation-shared-components";
 import { DownloadButton } from "./DownloadButton";
-import RefreshIcon from '@material-ui/icons/Refresh';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
-const useStyles = makeStyles({
-    boxTitle: {
+const PREFIX = 'ReportTable';
+
+const classes = {
+    boxTitle: `${PREFIX}-boxTitle`,
+    box: `${PREFIX}-box`,
+    reportTableWrap: `${PREFIX}-reportTableWrap`
+};
+
+const StyledBox = styled(Box)({
+    [`& .${classes.boxTitle}`]: {
         paddingBottom: '10px',
     },
-    box: {
+    [`&.${classes.box}`]: {
         border: 'solid 1px #CDCED2',
         borderRadius: '4px',
         padding: '1.4rem',
     },
-    reportTableWrap: {
+    [`& .${classes.reportTableWrap}`]: {
         '& tfoot': {
             display: 'none !important'
         }
     }
-})
+});
 
 export function ReportTable ({ reports, loading, refresh }: any) {
-    const classes = useStyles();
+
 
     return (
-        <Box className={classes.box}>
+        <StyledBox className={classes.box}>
             <Box display="flex" justifyContent="space-between">
                 <Typography className={classes.boxTitle} variant="subtitle1">
                     Generated Reports
@@ -56,6 +65,6 @@ export function ReportTable ({ reports, loading, refresh }: any) {
                     }
                 />
             </div>
-        </Box>
-    )
+        </StyledBox>
+    );
 }

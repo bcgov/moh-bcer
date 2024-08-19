@@ -49,7 +49,8 @@ export class SubmissionService {
 
   async getOne(id: string) {
     try {
-      const submission = await this.submissionRepository.findOne(id, {
+      const submission = await this.submissionRepository.findOne({
+        where: { id },
         relations: ['business']
       });
       return submission;
@@ -72,7 +73,10 @@ export class SubmissionService {
   }
 
   async mapSubmission(submissionId: string, { data }: UpdateSubmissionDTO) {
-    const submission = await this.submissionRepository.findOne({ id: submissionId }, { relations: ['business'] });
+    const submission = await this.submissionRepository.findOne({ 
+      where: { id: submissionId },
+      relations: ['business']
+    });
     const mapping = data.mapping;
     // apply mapping and save based on the type
     // CASE type is location: parse data and create entries in locations table

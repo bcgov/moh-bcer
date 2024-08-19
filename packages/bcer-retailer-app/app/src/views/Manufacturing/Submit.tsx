@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
-import { makeStyles, Typography } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import { Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 import ManufacturingReportForm from '@/components/form/forms/ManufacturingReportForm';
 import ManufacturingReportSubmitButton from '@/components/ManufacturingReports/SubmitButton';
@@ -19,16 +20,32 @@ import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'Submit';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  submitWrapper: `${PREFIX}-submitWrapper`,
+  section: `${PREFIX}-section`,
+  highlightedText: `${PREFIX}-highlightedText`
+};
+
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  helpTextWrapper: {
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -36,47 +53,48 @@ const useStyles = makeStyles({
     marginBottom: '30px',
     borderRadius: '5px',
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  box: {
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     padding: '10px 0px'
   },
-  tableRowCount: {
+  [`& .${classes.tableRowCount}`]: {
     paddingBottom: '10px'
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px'
   },
-  submitWrapper: {
+  [`& .${classes.submitWrapper}`]: {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingTop: '30px'
   },
-  section: {
+  [`& .${classes.section}`]: {
     margin: '2rem 0',
   },
-  highlightedText: {
+  [`& .${classes.highlightedText}`]: {
     fontWeight: 600,
     color: 'black'
   },
 });
 
 export default function ManufacturingSubmit() {
-  const classes = useStyles();
-  const history = useHistory();
+
+  const navigate = useNavigate();
   const [selectedLocations, setSelectedLocations] = useState([]);
   const viewFullscreenTable = useState<boolean>(false);
   const [{ data: locations = [], loading, error }] = useAxiosGet(`/manufacturing/locations`);
+  const [tableData, setTableData] = useState<Array<BusinessLocation & { tableData: { checked: boolean } }>>([]);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   useEffect(() => {
@@ -84,11 +102,21 @@ export default function ManufacturingSubmit() {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
     }
   }, [error])
-
+  
+  useEffect(() => {
+    if (locations.length > 0) {
+      const initialTableData = locations.map((location: any) => ({
+        ...location,
+        tableData: { checked: false }
+      }));
+      setTableData(initialTableData);
+    }
+  }, [locations]);
+  
   return (loading) ? <CircularProgress /> : (
-    <div>
+    <Root>
       <div>
-        <StyledButton onClick={() => history.push('/manufacturing')}>
+        <StyledButton onClick={() => navigate('/manufacturing')}>
           <ArrowBackIcon className={classes.buttonIcon} /> Back
         </StyledButton>
         <Typography variant='h5'  className={classes.title}>
@@ -112,23 +140,28 @@ export default function ManufacturingSubmit() {
               isOutlined={false} 
             >
               <div style={{ overflowX: 'auto', marginTop: '1rem' }}>
-                <StyledTable
-                  columns={[
-                    {title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
-                    {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
-                    {title: 'Email Address', field: 'email'},
-                    {title: 'Phone Number', field: 'phone'},
-                  ]}
-                  data={locations}
-                  options={{ 
-                    selection: true, 
-                    pageSize: getInitialPagination(locations),
-                    pageSizeOptions: [5, 10, 20, 30, 50] 
-                  }}
-                  onSelectionChange={(rows: any) => {
-                    setSelectedLocations(rows.map((row: BusinessLocation) => row.id))
-                  }}
-                />
+              <StyledTable
+                columns={[
+                  {title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`},
+                  {title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage : `${rd.addressLine1}, ${rd.postal}, ${rd.city}`},
+                  {title: 'Email Address', field: 'email'},
+                  {title: 'Phone Number', field: 'phone'},
+                ]}
+                data={tableData}
+                options={{ 
+                  selection: true, 
+                  pageSize: getInitialPagination(tableData),
+                  pageSizeOptions: [5, 10, 20, 30, 50] 
+                }}
+                onSelectionChange={(rows: any) => {
+                  const updatedTableData = tableData.map(row => ({
+                    ...row,
+                    tableData: { ...row.tableData, checked: rows.some((selectedRow: BusinessLocation) => selectedRow.id === row.id) }
+                  }));
+                  setTableData(updatedTableData);
+                  setSelectedLocations(rows.map((row: BusinessLocation) => row.id));
+                }}
+              />
               </div>
             </TableWrapper>
           </FullScreen>
@@ -137,6 +170,6 @@ export default function ManufacturingSubmit() {
           </div>
         </ManufacturingReportForm>
       </div>
-    </div>
+    </Root>
   );
 }

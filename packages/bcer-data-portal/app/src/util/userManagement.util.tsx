@@ -1,8 +1,8 @@
 import { UserDetails, UserSearchFields, UserUpdateFields } from '@/constants/localInterfaces';
-import { Box, IconButton, Tooltip } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import { Box, IconButton, Tooltip } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import React from 'react';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 
 export class UserManagementUtil {

@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useLocation, useHistory, Link } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import moment from 'moment';
 
 import { useAxiosGet } from '@/hooks/axios';
-import { Divider, Grid, makeStyles, Typography, Paper } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
-import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import SendIcon from '@material-ui/icons/Send';
+import { Divider, Grid, makeStyles, Typography, Paper } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import SendIcon from '@mui/icons-material/Send';
 
 import FileCheckGreen from '@/assets/images/file-check-green.png';
 
@@ -19,8 +20,39 @@ import { formatError } from '@/utils/formatting';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 
-const useStyles = makeStyles({
-  bannerWrapper: {
+const PREFIX = 'Overview';
+
+const classes = {
+  bannerWrapper: `${PREFIX}-bannerWrapper`,
+  bannerHeader: `${PREFIX}-bannerHeader`,
+  box: `${PREFIX}-box`,
+  tableBox: `${PREFIX}-tableBox`,
+  title: `${PREFIX}-title`,
+  highlighted: `${PREFIX}-highlighted`,
+  successBanner: `${PREFIX}-successBanner`,
+  bannerIcon: `${PREFIX}-bannerIcon`,
+  successImg: `${PREFIX}-successImg`,
+  bannerText: `${PREFIX}-bannerText`,
+  subtitleWrapper: `${PREFIX}-subtitleWrapper`,
+  floatRight: `${PREFIX}-floatRight`,
+  subtitle: `${PREFIX}-subtitle`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  sendIcon: `${PREFIX}-sendIcon`,
+  dividerGrid: `${PREFIX}-dividerGrid`,
+  viewLink: `${PREFIX}-viewLink`,
+  listGroup: `${PREFIX}-listGroup`,
+  listRow: `${PREFIX}-listRow`,
+  listBullet: `${PREFIX}-listBullet`,
+  pageDescription: `${PREFIX}-pageDescription`,
+  highlightedText: `${PREFIX}-highlightedText`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.bannerWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -28,31 +60,31 @@ const useStyles = makeStyles({
     marginBottom: '20px',
     borderRadius: '5px',
   },
-  bannerHeader: {
+  [`& .${classes.bannerHeader}`]: {
     fontWeight: 600,
     paddingBottom: '10px'
   },
-  box: {
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem 1.4rem 0rem 1.4rem',
     marginBottom: '30px',
   },
-  tableBox: {
+  [`& .${classes.tableBox}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '2rem',
     marginBottom: '30px',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  highlighted: {
+  [`& .${classes.highlighted}`]: {
     fontWeight: 600,
     color: '#0053A4',
   },
-  successBanner: {
+  [`& .${classes.successBanner}`]: {
     display: 'flex',
     backgroundColor: '#E7F9EA',
     borderRadius: '4px',
@@ -60,54 +92,54 @@ const useStyles = makeStyles({
     alignItems: 'center',
     marginBottom: '20px',
   },
-  bannerIcon: {
+  [`& .${classes.bannerIcon}`]: {
     fontSize: '45px',
     color: '#f3b229',
   },
-  successImg: {
+  [`& .${classes.successImg}`]: {
     maxHeight: '48px',
     marginRight: '2rem',
   },
-  bannerText: {
+  [`& .${classes.bannerText}`]: {
     fontWeight: 600,
     color: '#3A3A3A'
   },
-  subtitleWrapper: {
+  [`& .${classes.subtitleWrapper}`]: {
     display: 'flex',
     alignItems: 'bottom',
     justifyContent: 'space-between',
     padding: '30px 0px 10px 0px',
   },
-  floatRight: {
+  [`& .${classes.floatRight}`]: {
     float: 'right',
   },
-  subtitle: {
+  [`& .${classes.subtitle}`]: {
     color: '#0053A4',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px'
   },
-  tableRowCount: {
+  [`& .${classes.tableRowCount}`]: {
     paddingBottom: '10px'
   },
-  actionsWrapper: {
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px'
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
-  sendIcon: {
+  [`& .${classes.sendIcon}`]: {
     height: '24px',
     paddingRight: '4px'
   },
-  dividerGrid: {
+  [`& .${classes.dividerGrid}`]: {
     margin: '1rem 0'
   },
-  viewLink: {
+  [`& .${classes.viewLink}`]: {
     color: '#0053A4',
     fontSize: '16px',
     letterSpacing: '0',
@@ -117,15 +149,15 @@ const useStyles = makeStyles({
       backgroundColor: 'transparent',
     }
   },
-  listGroup: {
+  [`& .${classes.listGroup}`]: {
     paddingLeft: '15px',
     paddingBottom: '15px'
   },
-  listRow: {
+  [`& .${classes.listRow}`]: {
     display: 'flex',
     paddingTop: '15px'
   },
-  listBullet: {
+  [`& .${classes.listBullet}`]: {
     margin: '10px 15px 0px 0px',
     minHeight: '6px',
     minWidth: '6px',
@@ -134,19 +166,19 @@ const useStyles = makeStyles({
     borderRadius: '5px',
     backgroundColor: '#0053A4'
   },
-  pageDescription: {
+  [`& .${classes.pageDescription}`]: {
     padding: '20px 0'
   },
-  highlightedText: {
+  [`& .${classes.highlightedText}`]: {
     fontWeight: 600,
     color: '#0053A4'
   },
 });
 
 export default function ManufacturingOverview() {
-  const classes = useStyles();
+
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   let [success, setSuccess] = useState<boolean>(false);
   let viewFullscreenTable = useState<boolean>(false);
@@ -179,14 +211,14 @@ export default function ManufacturingOverview() {
   }, [success, appGlobal]);
 
   return loading ? <CircularProgress /> : (
-    <>
+    (<Root>
       <div>
-        <Grid container justify='space-between' alignItems='center'>
+        <Grid container justifyContent='space-between' alignItems='center'>
           <Grid item xs={8}>
             <Typography className={classes.title} variant='h5'>Manufacturing Report</Typography>
           </Grid>
           <Grid item xs={4}>
-            <StyledButton className={classes.floatRight} variant='contained' onClick={() => history.push('/manufacturing/submit')}>
+            <StyledButton className={classes.floatRight} variant='contained' onClick={() => navigate('/manufacturing/submit')}>
               <SendIcon className={classes.sendIcon} />
               Submit Manufacturing Report
             </StyledButton>
@@ -222,7 +254,7 @@ export default function ManufacturingOverview() {
                 <Typography variant='body1' className={classes.bannerHeader}>
                   If you forgot to specify that you manufacture at any locations, you need to go back to My Business and edit the location information.
                 </Typography>
-                <StyledButton variant='outlined' onClick={() => history.push('/business/details')}>
+                <StyledButton variant='outlined' onClick={() => navigate('/business/details')}>
                   <ArrowBack /> Back to My Business
                 </StyledButton>
               </Grid>
@@ -301,6 +333,6 @@ export default function ManufacturingOverview() {
           </TableWrapper>
         </FullScreen>
       </div>
-    </>
+    </Root>)
   );
 }

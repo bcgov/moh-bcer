@@ -1,9 +1,18 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
-import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
+import { styled } from '@mui/material/styles';
+import { makeStyles } from "@mui/material";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
-const useStyles = makeStyles({
-  helpTextWrapper: {
+const PREFIX = 'SaleBanner';
+
+const classes = {
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  helperText: `${PREFIX}-helperText`
+};
+
+const Root = styled('div')({
+  [`&.${classes.helpTextWrapper}`]: {
     display: "flex",
     alignItems: "center",
     padding: "15px",
@@ -11,12 +20,12 @@ const useStyles = makeStyles({
     marginBottom: "20px",
     borderRadius: "5px",
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: "45px",
     color: "#0053A4",
     paddingRight: "25px",
   },
-  helperText: {
+  [`& .${classes.helperText}`]: {
     fontSize: "16px",
     lineHeight: "22px",
     letterSpacing: 0,
@@ -28,11 +37,11 @@ interface IProps {
   content: string | React.ReactElement;
 }
 export default function SaleBanner({ content = "" }: IProps) {
-  const classes = useStyles();
+
   return (
-    <div className={classes.helpTextWrapper}>
+    <Root className={classes.helpTextWrapper}>
       <ChatBubbleOutlineIcon className={classes.helperIcon} />
       <div className={classes.helperText}>{content}</div>
-    </div>
+    </Root>
   );
 }

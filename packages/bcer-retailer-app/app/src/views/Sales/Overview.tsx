@@ -1,20 +1,18 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { CSVLink } from 'react-csv';
 import { useAxiosGet } from '@/hooks/axios';
 import {
-  makeStyles,
   Typography,
   Paper,
-  styled,
   Button,
   Dialog,
   Tooltip,
-} from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import moment from 'moment';
-import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+  CircularProgress,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 
 import { StyledTable, StyledButton } from 'vaping-regulation-shared-components';
 import {
@@ -33,6 +31,94 @@ import { getSalesReportYear } from '@/utils/time';
 import Loader from '@/components/Sales/Loader';
 import { LocationUtil } from '@/utils/location.util';
 import { getInitialPagination } from '@/utils/util';
+import moment from 'moment';
+
+const PREFIX = 'Overview';
+
+const classes = {
+  title: `${PREFIX}-title`,
+  reportingPeriodDisclaimer: `${PREFIX}-reportingPeriodDisclaimer`,
+  box: `${PREFIX}-box`,
+  subtitle: `${PREFIX}-subtitle`,
+  subtitleWrapper: `${PREFIX}-subtitleWrapper`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  csvLink: `${PREFIX}-csvLink`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  sendIcon: `${PREFIX}-sendIcon`,
+  actionLink: `${PREFIX}-actionLink`,
+  buttonWrapper: `${PREFIX}-buttonWrapper`,
+  editButton: `${PREFIX}-editButton`,
+  dialogWrap: `${PREFIX}-dialogWrap`,
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.title}`]: {
+    color: '#0F327F',
+    paddingBottom: '30px',
+    paddingTop: 0,
+  },
+  [`& .${classes.reportingPeriodDisclaimer}`]: {
+    display: 'flex',
+    padding: '10px 15px',
+    marginBottom: '20px'
+  },
+  [`& .${classes.box}`]: {
+    border: 'solid 1px #CDCED2',
+    borderRadius: '4px',
+    padding: '1.4rem',
+  },
+  [`& .${classes.subtitle}`]: {
+    color: '#0053A4',
+  },
+  [`& .${classes.subtitleWrapper}`]: {
+    display: 'flex',
+    alignItems: 'bottom',
+    justifyContent: 'space-between',
+    padding: '30px 0px 10px 0px',
+  },
+  [`& .${classes.boxTitle}`]: {
+    paddingBottom: '10px',
+  },
+  [`& .${classes.tableRowCount}`]: {
+    paddingBottom: '10px',
+  },
+  [`& .${classes.actionsWrapper}`]: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingBottom: '10px',
+  },
+  [`& .${classes.csvLink}`]: {
+    textDecoration: 'none',
+  },
+  [`& .${classes.buttonIcon}`]: {
+    color: '#285CBC',
+    fontSize: '20px',
+  },
+  [`& .${classes.sendIcon}`]: {
+    height: '24px',
+    paddingRight: '4px',
+  },
+  [`& .${classes.actionLink}`]: {
+    color: 'blue',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+  },
+  [`& .${classes.buttonWrapper}`]: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  [`& .${classes.editButton}`]: {
+    width: '90px',
+    fontSize: '14px',
+    minWidth: '90px',
+    lineHeight: '18px',
+  },
+  [`& .${classes.dialogWrap}`]: {
+    padding: '1rem 1.5rem',
+  },
+}));
 
 const IconButton = styled(Button)({
   minWidth: '30px !important',
@@ -70,115 +156,47 @@ const FullscreenButton = styled(Button)({
   },
 });
 
-const useStyles = makeStyles({
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-  },
-  title: {
-    padding: '20px 0px',
-    color: '#002C71',
-  },
-  subtitleWrapper: {
-    display: 'flex',
-    alignItems: 'bottom',
-    justifyContent: 'space-between',
-    padding: '30px 0px 10px 0px',
-  },
-  subtitle: {
-    color: '#0053A4',
-  },
-  boxTitle: {
-    paddingBottom: '10px',
-  },
-  tableRowCount: {
-    paddingBottom: '10px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px',
-  },
-  csvLink: {
-    textDecoration: 'none',
-  },
-  buttonIcon: {
-    color: '#285CBC',
-    fontSize: '20px',
-  },
-  sendIcon: {
-    height: '24px',
-    paddingRight: '4px',
-  },
-  actionLink: {
-    color: 'blue',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  },
-  buttonWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  editButton: {
-    width: '90px',
-    fontSize: '14px',
-    minWidth: '90px',
-    lineHeight: '18px',
-  },
-  dialogWrap: {
-    padding: '1rem 1.5rem',
-  },
-});
-
 export default function SalesOverview() {
-  const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const {
-    location: { pathname },
-  } = history;
-  const [
-    { data: outstanding, loading: outstandingLoading, error: outstandingError },
-  ] = useAxiosGet(`/sales/locations`);
-  const [
-    { data: submitted, loading: submittedLoading, error: submittedError },
-  ] = useAxiosGet(`/sales/locations?isSubmitted=${true}`);
-  const [
-    { data: download = [], loading: downloadLoading, error: downloadError },
-    getDownload,
-  ] = useAxiosGet(`/sales/download/`, { manual: true });
+  const [{ data: outstanding, loading: outstandingLoading, error: outstandingError }] = useAxiosGet(`/sales/locations`);
+  const [{ data: submitted, loading: submittedLoading, error: submittedError }] = useAxiosGet(`/sales/locations?isSubmitted=${true}`);
+  const [{ data: download = [], loading: downloadLoading, error: downloadError }, getDownload] = useAxiosGet(`/sales/download/`, { manual: true });
 
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [sale, setSale] = useContext(SalesReportContext);
 
-  // full screen
   const [nonSubmittedOpen, setNonSubmittedOpen] = useState(false);
   const [submittedOpen, setSubmittedOpen] = useState(false);
 
-  // download CSV
-  const [downloadFilename, setDownloadFilename] = useState<string>('');
+  const [downloadFilename, setDownloadFilename] = useState('');
   const csvRef = useRef(null);
 
+  //TODO: we don't have a salesReportComplete variable in appGlobal yet
   useEffect(() => {
-    if (pathname.includes('success') && !appGlobal.noiComplete) {
+    if (location.pathname.includes('success') && !appGlobal.noiComplete) {
       setAppGlobal({ ...appGlobal, noiComplete: true });
     }
-  }, [pathname, setAppGlobal, appGlobal]);
+  }, [location.pathname, setAppGlobal, appGlobal]);
 
-  const periodYear = getSalesReportYear();
+  const getPeriodYear = (): number => {
+    const now = moment();
+    return now.isSameOrBefore(`${now.year()}-01-15`) ? now.year() - 1 : now.year();
+  };
+  const periodYear = getPeriodYear();
 
   const commonColumns = LocationUtil.getTableColumns(['doingBusinessAs', 'address1', 'locationType']) as any;
 
   return outstandingLoading || submittedLoading ? (
     <CircularProgress />
   ) : (
-    <>
+    <Root>
+      <Loader
+        open={downloadLoading}
+        message="File downloading. Please wait…"
+      />
       <div>
-        <Loader
-          open={downloadLoading}
-          message="File downloading. Please wait…"
-        />
         <div className={classes.actionsWrapper}>
           <Typography className={classes.title} variant="h5">
             Sales Reports
@@ -266,7 +284,7 @@ export default function SalesOverview() {
                           file: undefined,
                           saleReports: [],
                         });
-                        history.push('/sales/upload');
+                        navigate('/sales/upload');
                       }}
                     >
                       Select
@@ -292,18 +310,18 @@ export default function SalesOverview() {
               You have {(submitted?.data || []).length} retail location(s) that
               have submitted a Sales Report.
             </Typography>
-
+  
             <Typography className={classes.tableRowCount} variant="body2">
-              If you would like to update the Sales Report, please click “
-              <strong>Select</strong>” for the location that you would like to
+              If you would like to update the Sales Report, please click "
+              <strong>Select</strong>" for the location that you would like to
               update. <strong>Note</strong>: updating your Sales Report will
               replace any reports that were previously submitted for this
               location and reporting period. You may download a copy of your
-              submitted report by selecting the download button beside “
-              <strong>Select</strong>”.
+              submitted report by selecting the download button beside "
+              <strong>Select</strong>".
             </Typography>
           </div>
-
+  
           <div>
             <SalesTable
               fullscreenButton={
@@ -346,16 +364,29 @@ export default function SalesOverview() {
                           <SaveAltIcon
                             className={classes.buttonIcon}
                             onClick={async () => {
-                              await getDownload({
-                                url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
-                              });
-                              setDownloadFilename(rd.doingBusinessAs);
-                              csvRef.current.link.click();
+                              try {
+                                await getDownload({
+                                  url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
+                                });
+                                
+                                if (download && download.length > 0) {
+                                  setDownloadFilename(rd.doingBusinessAs || 'sales_report');
+                                  setTimeout(() => {
+                                    if (csvRef.current) {
+                                      csvRef.current.link.click();
+                                    }
+                                  }, 0);
+                                } else {
+                                  console.error('No data available for download');
+                                }
+                              } catch (error) {
+                                console.error('Error downloading CSV:', error);
+                              }
                             }}
                           />
                         </IconButton>
                       </Tooltip>
-
+  
                       <StyledButton
                         className={classes.editButton}
                         variant="outlined"
@@ -371,7 +402,7 @@ export default function SalesOverview() {
                             file: undefined,
                             saleReports: [],
                           });
-                          history.push('/sales/upload');
+                          navigate('/sales/upload');
                         }}
                       >
                         Select
@@ -423,7 +454,6 @@ export default function SalesOverview() {
                   },
                   search: true,
                   searchFieldAlignment: 'left',
-                  
                 }}
                 columns={[
                   ...commonColumns,
@@ -456,7 +486,7 @@ export default function SalesOverview() {
                             file: undefined,
                             saleReports: [],
                           });
-                          history.push('/sales/upload');
+                          navigate('/sales/upload');
                         }}
                       >
                         Select
@@ -501,13 +531,13 @@ export default function SalesOverview() {
                 that have submitted a Sales Report.
               </Typography>
               <Typography className={classes.tableRowCount} variant="body2">
-                If you would like to update the Sales Report, please click “
-                <strong>Select</strong>” for the location that you would like to
+                If you would like to update the Sales Report, please click "
+                <strong>Select</strong>" for the location that you would like to
                 update. <strong>Note</strong>: updating your Sales Report will
                 replace any reports that were previously submitted for this
                 location and reporting period. You may download a copy of your
-                submitted report by selecting the download button beside “
-                <strong>Select</strong>”.
+                submitted report by selecting the download button beside "
+                <strong>Select</strong>".
               </Typography>
             </div>
             <div>
@@ -541,10 +571,24 @@ export default function SalesOverview() {
                             <SaveAltIcon
                               className={classes.buttonIcon}
                               onClick={async () => {
-                                await getDownload({
-                                  url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`,
-                                });
-                                csvRef.current.link.click();
+                                try {
+                                  await getDownload({
+                                    url: `/sales/download?locationId=${rd.id}&year=${submitted?.year}`, // or outstanding?.year for the Outstanding table
+                                  });
+                                  
+                                  if (download && download.length > 0) {
+                                    setDownloadFilename(rd.doingBusinessAs || 'sales_report');
+                                    setTimeout(() => {
+                                      if (csvRef.current) {
+                                        csvRef.current.link.click();
+                                      }
+                                    }, 0);
+                                  } else {
+                                    console.error('No data available for download');
+                                  }
+                                } catch (error) {
+                                  console.error('Error downloading CSV:', error);
+                                }
                               }}
                             />
                           </IconButton>
@@ -564,7 +608,7 @@ export default function SalesOverview() {
                               file: undefined,
                               saleReports: [],
                             });
-                            history.push('/sales/upload');
+                            navigate('/sales/upload');
                           }}
                         >
                           Select
@@ -588,6 +632,6 @@ export default function SalesOverview() {
           </div>
         </div>
       </Dialog>
-    </>
+    </Root>
   );
 }

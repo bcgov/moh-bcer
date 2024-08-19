@@ -1,20 +1,15 @@
-import { Checkbox, FormControlLabel, makeStyles, TextField } from '@material-ui/core';
+import { Checkbox, FormControlLabel, TextField } from '@mui/material';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { Fragment, ReactElement, useState } from 'react';
 import * as yup from 'yup';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
 import { InputFieldError } from '../generic';
 import { StyledCheckboxProps, CheckboxInputProps, DtPickerProps, StyledDatePickerProps } from '@/constants/interfaces/inputInterfaces';
 import { StyledDialog } from '@/index';
-import { StyledConfirmDateDialogProps, StyledConfirmDialogProps } from '@/constants/interfaces/dialogInterfaces';
+import { StyledConfirmDateDialogProps } from '@/constants/interfaces/dialogInterfaces';
 
-
-const useStyles = makeStyles({
+const classes = {
   emptyHelper: {
     height: '22px'
   },
@@ -56,10 +51,7 @@ const useStyles = makeStyles({
     minWidth: '56px',
     height: '19px',
   },
-  icon: {
-    color: 'white',
-  },
-})
+};
 
 function CheckboxInput ({
   field: { value, ...fieldRest },
@@ -67,8 +59,7 @@ function CheckboxInput ({
   label,
   disabled,
   ...props
-}: CheckboxInputProps):ReactElement {
-  const classes = useStyles();
+}: CheckboxInputProps & { form: { touched: Record<string, boolean>, errors: Record<string, string> } }) {
 
   const touched = form.touched[fieldRest.name];
   const error = form.errors[fieldRest.name];
@@ -76,7 +67,7 @@ function CheckboxInput ({
   return (
     <Fragment>
       <FormControlLabel
-        className={classes.formControl}
+        sx={classes.formControl}
         label={label}
         disabled={disabled}
         labelPlacement="end"
@@ -92,7 +83,7 @@ function CheckboxInput ({
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
-          : <div className={classes.emptyHelper} >{' '}</div>
+          : <div style={classes.emptyHelper} >{' '}</div>
       }
     </Fragment>
   )
@@ -122,7 +113,7 @@ export function StyledConfirmDateDialog(
     minDate,
     ...props
   }: StyledConfirmDateDialogProps): ReactElement {
-    const classes = useStyles();
+
 
   return (
     <Formik
@@ -149,7 +140,7 @@ export function StyledConfirmDateDialog(
           cancelHandler={() => setOpen(false)}
           acceptHandler='submit'
         >
-          <div className={classes.contentWrapper}>
+          <div style={{ ...classes.contentWrapper, flexDirection: 'column' }}>
             {dialogMessage}
             <DtPickerField 
               name="date" 
@@ -198,7 +189,7 @@ function StyledCheckbox ({
 
 
 const TextFieldComponent = (props: any) => {
-  return <TextField {...props} disabled={true} />;
+  return <TextField variant="standard" {...props} disabled={true} />;
 };
 
 function DtPicker ({
@@ -207,8 +198,7 @@ function DtPicker ({
   label,
   disabled,
   ...props
-}: DtPickerProps):ReactElement {
-  const classes = useStyles();
+}: DtPickerProps & { form: { touched: Record<string, boolean>, errors: Record<string, string> } }) {
 
   /** open calendar */
   const [open, setOpen] = useState(false);
@@ -219,15 +209,15 @@ function DtPicker ({
   return (
     <Fragment>
       <FormControlLabel
-        className={classes.formControl}
+        sx={classes.formControl}
         label={label}
         disabled={disabled}
         labelPlacement="end"
         control={
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-             <KeyboardDatePicker
-              className={classes.root}
-              inputProps={{ className: classes.picker }}
+          <LocalizationProvider>
+             <DatePicker
+              sx={classes.root}
+              inputProps={{ style: classes.picker }}
               TextFieldComponent={TextFieldComponent}
               label="Closing Date"
               format="LLLL dd, yyyy"
@@ -243,13 +233,13 @@ function DtPicker ({
               open={open}
               {...props}
              />
-          </MuiPickersUtilsProvider>
+          </LocalizationProvider>
         }
       />
       {
         touched && !!error 
           ? <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
-          : <div className={classes.emptyHelper} >{' '}</div>
+          : <div style={classes.emptyHelper} >{' '}</div>
       }
     </Fragment>
   )

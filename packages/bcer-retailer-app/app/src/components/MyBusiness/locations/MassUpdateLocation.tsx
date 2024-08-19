@@ -5,10 +5,9 @@ import { useAxiosPatch } from '@/hooks/axios';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import { useToast } from '@/hooks/useToast';
 import { LocationUtil } from '@/utils/location.util';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import {
   InputFieldError,
   StyledConfirmDialog,

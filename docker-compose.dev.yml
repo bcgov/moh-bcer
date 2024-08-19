@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   retailer-app:
     image: bcer-retailer-app:dev
@@ -26,6 +24,9 @@ services:
     build:
       context: ./packages
       dockerfile: Dockerfile.data-portal.dev
+    environment:
+      - PORT=3000
+      - WDS_SOCKET_PORT=3001
     ports:
       - "3001:3000"
     volumes:

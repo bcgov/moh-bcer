@@ -1,16 +1,9 @@
-import { noteValidateSchema } from '@/constants/validate';
-import {
-  Box,
-  CircularProgress,
-  InputAdornment,
-  makeStyles,
-} from '@material-ui/core';
-import { Form, Formik } from 'formik';
 import React from 'react';
-import {
-  StyledButton,
-  StyledTextField,
-} from 'vaping-regulation-shared-components';
+import { Box, CircularProgress, InputAdornment } from '@mui/material';
+import { styled } from '@mui/system';
+import { Form, Formik } from 'formik';
+import { StyledButton, StyledTextField } from 'vaping-regulation-shared-components';
+import { noteValidateSchema } from '@/constants/validate';
 
 export interface NoteFormProps {
   submit: (v: string) => void;
@@ -18,27 +11,24 @@ export interface NoteFormProps {
   loading: boolean;
   showFlag: boolean;
   flagForReview: (v: string) => void;
-  flagForReviewLoading: boolean
+  flagForReviewLoading: boolean;
 }
 
-const useStyles = makeStyles(() => ({
-  endAdornment: {
-    display: 'block',
-    position: 'relative',
-    bottom: '-40px',
+const EndAdornment = styled(InputAdornment)({
+  display: 'block',
+  position: 'relative',
+  bottom: '-40px',
+});
+
+const FlagForReviewButton = styled(StyledButton)({
+  marginLeft: 'auto', 
+  backgroundColor: 'red',
+  '&.Mui-disabled': {
+    background: 'grey',
   },
-  flagForReviewButton: {
-    marginLeft: 'auto', 
-    backgroundColor: 'red',
-    "& .Mui-disabled": {
-      background: "grey"
-    }
-  }
-}));
+});
 
 function NoteForm({ submit, getInitialValues, loading, showFlag, flagForReview, flagForReviewLoading }: NoteFormProps) {
-  const classes = useStyles();
-  
   return (
     <Box flexGrow={1}>
       <Formik
@@ -58,22 +48,17 @@ function NoteForm({ submit, getInitialValues, loading, showFlag, flagForReview, 
               rows={5}
               InputProps={{
                 endAdornment: (
-                  <InputAdornment
-                    className={classes.endAdornment}
-                    position="end"
-                  >
+                  <EndAdornment position="end">
                     {values.content.length}/1024
-                  </InputAdornment>
+                  </EndAdornment>
                 ),
               }}
             />
-            <Box display={'flex'}>
+            <Box display="flex">
               <StyledButton
                 variant="small-contained"
                 type="submit"
-                disabled={
-                  values.content === getInitialValues().content || loading
-                }
+                disabled={values.content === getInitialValues().content || loading}
               >
                 {loading ? <CircularProgress size={24} /> : 'Save'}
               </StyledButton>
@@ -81,24 +66,19 @@ function NoteForm({ submit, getInitialValues, loading, showFlag, flagForReview, 
               <StyledButton
                 variant="small-outlined"
                 onClick={() => helpers.resetForm()}
-                disabled={
-                  values.content === getInitialValues().content &&
-                  values.content.length
-                }
+                disabled={values.content === getInitialValues().content && values.content.length}
               >
                 cancel
               </StyledButton>
-              {showFlag &&
-              <StyledButton
-                variant="small-contained"
-                onClick={() => flagForReview(values.content)}
-                disabled={
-                  values.content === getInitialValues().content || flagForReviewLoading
-                }
-                className={classes.flagForReviewButton}
-              >
-                {flagForReviewLoading ? <CircularProgress size={24} /> : 'Flag for review'}
-              </StyledButton>}
+              {showFlag && (
+                <FlagForReviewButton
+                  variant="small-contained"
+                  onClick={() => flagForReview(values.content)}
+                  disabled={values.content === getInitialValues().content || flagForReviewLoading}
+                >
+                  {flagForReviewLoading ? <CircularProgress size={24} /> : 'Flag for review'}
+                </FlagForReviewButton>
+              )}
             </Box>
           </Form>
         )}

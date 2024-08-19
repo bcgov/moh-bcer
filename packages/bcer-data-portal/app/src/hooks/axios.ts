@@ -4,15 +4,15 @@ import store from 'store';
 // NB: this will configure axios globally, includes routes like Login that don't use these custom instances
 axios.defaults.baseURL = process.env.BASE_URL;
 
-function successInterceptor(request: AxiosRequestConfig) {
+function successInterceptor(request: AxiosRequestConfig): AxiosRequestConfig {
   if (request.headers) {
     request.headers['Authorization'] = `Bearer ${store.get('TOKEN')}`;
   } else {
     request.headers = {
       'Authorization': `Bearer ${store.get('TOKEN')}`,
-    }
+    };
   }
-  return request
+  return request;
 }
 
 const axiosPost = axios.create({
@@ -49,11 +49,11 @@ const axiosDelete = axios.create({
 });
 
 
-axiosPost.interceptors.request.use(successInterceptor)
-axiosPostForm.interceptors.request.use(successInterceptor)
-axiosPatch.interceptors.request.use(successInterceptor)
-axiosGet.interceptors.request.use(successInterceptor)
-axiosDelete.interceptors.request.use(successInterceptor);
+axiosPost.interceptors.request.use(successInterceptor as any)
+axiosPostForm.interceptors.request.use(successInterceptor as any)
+axiosPatch.interceptors.request.use(successInterceptor as any)
+axiosGet.interceptors.request.use(successInterceptor as any)
+axiosDelete.interceptors.request.use(successInterceptor as any);
 
 export const useAxiosPost = makeUseAxios({
   cache: false,

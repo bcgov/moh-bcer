@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   retailer-app:
     image: bcer-retailer-app:test
@@ -21,6 +19,9 @@ services:
     build:
       context: ./packages
       dockerfile: Dockerfile.data-portal.test
+    environment:
+      - PORT=3000
+      - WDS_SOCKET_PORT=3001
     ports:
       - "3002:3000"
     depends_on:

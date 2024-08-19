@@ -1,42 +1,41 @@
+import React, { useContext, useEffect, useState } from 'react';
 import { BusinessRO } from '@/constants/localInterfaces';
 import { BusinessStatus } from '@/constants/localEnums';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
 import { formatError } from '@/util/formatting';
-import { Box, Grid, Paper, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import React, { useContext, useEffect, useState } from 'react';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { ProvinceLabels, StyledButton, StyledConfirmDateDialog } from 'vaping-regulation-shared-components';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { LocationUtil } from '@/util/location.util';
 import moment from 'moment';
 import { ConfigContext } from '@/contexts/Config';
 
-const useStyles = makeStyles(() => ({
-  box: {
-    display: 'flex',
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-    boxShadow: 'none',
-    justifyContent: 'space-between',
-  },
-  cellTitle: {
-    fontSize: '20px',
-    fontWeight: 600,
-    color: '#0053A4',
-    paddingBottom: '12px',
-  },
-  rowContent: {
-    fontSize: '14px',
-    fontWeight: 600,
-  },
+const StyledBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  border: 'solid 1px #CDCED2',
+  borderRadius: '4px',
+  padding: '1.4rem',
+  boxShadow: 'none',
+  justifyContent: 'space-between',
+}));
+
+const CellTitle = styled(Typography)(({ theme }) => ({
+  fontSize: '20px',
+  fontWeight: 600,
+  color: '#0053A4',
+  paddingBottom: '12px',
+}));
+
+const RowContent = styled(Typography)(({ theme }) => ({
+  fontSize: '14px',
+  fontWeight: 600,
 }));
 
 function BusinessInfo({ businessId }: { businessId: string }) {
-  const classes = useStyles();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
-  const [isConfirmCloseDialogOpen, setIsConfirmCloseDialogOpen] = useState<Boolean>(false);
+  const [isConfirmCloseDialogOpen, setIsConfirmCloseDialogOpen] = useState<boolean>(false);
   const { config: authConfig } = useContext(ConfigContext);
   
   const [{ data, error }, get] = useAxiosGet<BusinessRO>(
@@ -58,21 +57,21 @@ function BusinessInfo({ businessId }: { businessId: string }) {
         networkErrorMessage: formatError(error || closeError),
       });
     }
-  }, [error, closeError]);
+  }, [error, closeError, appGlobal, setAppGlobal]);
 
   useEffect(() => {
     if(closeResponse) {
-      setIsConfirmCloseDialogOpen(false)
-      get()
+      setIsConfirmCloseDialogOpen(false);
+      get();
     }
-  }, [closeResponse])
+  }, [closeResponse, get]);
 
   return (
     <Box>
       {data && (
         <Grid item xs={12} id="locationInformation">
-          <Box display={'flex'}>
-            <Typography className={classes.cellTitle}>Business Information</Typography>
+          <Box display="flex">
+            <CellTitle>Business Information</CellTitle>
             {authConfig.permissions.SEND_TEXT_MESSAGES && data.status === BusinessStatus.Active &&
             <Box ml={3} style={{marginLeft: 'auto'}}>
               <StyledButton variant="contained" onClick={() => setIsConfirmCloseDialogOpen(true)} style={{minWidth: 150, backgroundColor: '#FF534A', fontWeight: 600 }}>
@@ -82,22 +81,18 @@ function BusinessInfo({ businessId }: { businessId: string }) {
           </Box>
           
           <Box pb={1}/>
-            <Paper className={classes.box}>
+            <StyledBox component={Paper}>
             <Grid container spacing={2}>
             <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Business Status</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.status}
-                  </Typography>
+                  <RowContent>{data.status}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Business legal name</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.legalName}
-                  </Typography>
+                  <RowContent>{data.legalName}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={12}>
@@ -105,94 +100,74 @@ function BusinessInfo({ businessId }: { businessId: string }) {
                   <Typography variant="body2">
                     Name under which business is conducted
                   </Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.businessName}
-                  </Typography>
+                  <RowContent>{data.businessName}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Address line 1</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.addressLine1}
-                  </Typography>
+                  <RowContent>{data.addressLine1}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Address line 2</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.addressLine2 || ''}
-                  </Typography>
+                  <RowContent>{data.addressLine2 || ''}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">City</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.city}
-                  </Typography>
+                  <RowContent>{data.city}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">Province</Typography>
-                  <Typography className={classes.rowContent}>
-                    {ProvinceLabels[data.province as keyof typeof ProvinceLabels]}
-                  </Typography>
+                  <RowContent>{ProvinceLabels[data.province as keyof typeof ProvinceLabels]}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">Postal code</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.postal}
-                  </Typography>
+                  <RowContent>{data.postal}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={6}>
                 <Box>
                   <Typography variant="body2">Phone number</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.phone}
-                  </Typography>
+                  <RowContent>{data.phone}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Email</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.email}
-                  </Typography>
+                  <RowContent>{data.email}</RowContent>
                 </Box>
               </Grid>
               <Grid item lg={4} xs={12}>
                 <Box>
                   <Typography variant="body2">Web page</Typography>
-                  <Typography className={classes.rowContent}>
-                    {data.webpage}
-                  </Typography>
+                  <RowContent>{data.webpage}</RowContent>
                 </Box>
               </Grid>
             </Grid>
-            </Paper>
+            </StyledBox>
         </Grid>
       )}
-      {
-        isConfirmCloseDialogOpen
-          &&
-          <StyledConfirmDateDialog
-            open={isConfirmCloseDialogOpen}
-            confirmHandler={closeBusiness}
-            dialogTitle="Confirm Your Closing Business"
-            setOpen={() => setIsConfirmCloseDialogOpen(false)}
-            dialogMessage="You are about to close this business. You may provide the date the business was Closed."
-            checkboxLabel="I confirm that I wish to close this business. I understand that this is only possible after closing all its locations or transferring locations to another active business."
-            maxDate={LocationUtil.getLocationCloseWindow().max}
-            minDate={LocationUtil.getLocationCloseWindow().min}
-            acceptDisabled = {closeLoading}
-          />                
-      }
+      {isConfirmCloseDialogOpen && (
+        <StyledConfirmDateDialog
+          open={isConfirmCloseDialogOpen}
+          confirmHandler={closeBusiness}
+          dialogTitle="Confirm Your Closing Business"
+          setOpen={() => setIsConfirmCloseDialogOpen(false)}
+          dialogMessage="You are about to close this business. You may provide the date the business was Closed."
+          checkboxLabel="I confirm that I wish to close this business. I understand that this is only possible after closing all its locations or transferring locations to another active business."
+          maxDate={LocationUtil.getLocationCloseWindow().max}
+          minDate={LocationUtil.getLocationCloseWindow().min}
+          acceptDisabled={closeLoading}
+        />                
+      )}
     </Box>
   );
 }

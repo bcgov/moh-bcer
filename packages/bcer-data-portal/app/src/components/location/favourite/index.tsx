@@ -1,7 +1,7 @@
 import React from "react"
 import AddFavourite from "./AddFavourite"
 import Favourites from "./Favourites"
-import { Box } from "@material-ui/core"
+import { Box } from "@mui/material"
 
 type FavouriteProps = {
     enableAdd: boolean,
@@ -13,11 +13,14 @@ type FavouriteProps = {
 }
 
 const Favourite = ({ enableAdd, handleSave, isSubmitting, submitSuccess, submitError, handleSetSearchParams }: FavouriteProps) => {
-    return (<Box
-                gridGap={10}
-                display="flex"
-            >
-            <AddFavourite enableAdd ={enableAdd} onSave={handleSave} isSubmitting={isSubmitting} submitSuccess={submitSuccess} submitError={submitError} />
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                gap: 1.25
+            }}
+        >
+            <AddFavourite enableAdd={enableAdd} onSave={handleSave} isSubmitting={isSubmitting} submitSuccess={submitSuccess} submitError={submitError} />
             <Favourites handleSetSearchParams={handleSetSearchParams} />
         </Box>
     )

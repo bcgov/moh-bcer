@@ -1,133 +1,110 @@
+import React from 'react';
+import styled from 'styled-components';
 import { BusinessLocation } from '@/constants/localInterfaces';
 import { NoiPdfUtil } from '@/utils/noi.util';
-import { Box, makeStyles, Typography } from '@material-ui/core';
-import React from 'react';
 import noiImage from '../../assets/images/noi.png';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    height: '781px',
-    width: '535px',
-    position: 'relative',
-  },
-  headerWrapper: {
-    position: 'absolute',
-    zIndex: 100,
-    top: '128px',
-    left: '28px',
-    width: '100%',
-  },
-  header: {
-    fontSize: '20px',
-    lineHeight: '27px',
-    textAlign: 'center',
-    color: '#002C71',
-    fontWeight: 'bold',
-    marginBottom: '10px',
-  },
-  headerV2: {
-    fontSize: '20px',
-    lineHeight: '27px',
-    textAlign: 'center',
-    color: '#002C71',
-    fontWeight: 'bold',
-    marginBottom: '5px',
-  },
-  subHeader: {
-    fontSize: '16px',
-    lineHeight: '20px',
-    textAlign: 'center',
-    color: '#002C71',
-  },
-  bodyWrapper: {
-    position: 'absolute',
-    zIndex: 100,
-    top: '212px',
-    left: '110px',
-    width: '375px',
-    paddingTop: '15px',
-  },
-  bodyWrapperV2: {
-    position: 'absolute',
-    zIndex: 100,
-    top: '212px',
-    left: '100px',
-    width: '395px',
-    paddingTop: '5px',
-  },
-  infoWrapper: {
-    display: 'flex',
-    marginBottom: '20px',
-  },
-  infoWrapperV3: {
-    marginBottom: '20px',
-    textAlign: 'center',
-  },
-  infoLabel: {
-    color: '#333',
-    fontSize: '14px',
-    lineHeight: '19px',
-    flex: 0.55,
-  },
-  infoLabelV2: {
-    color: '#333',
-    fontSize: '12px',
-    lineHeight: '17px',
-    flex: 0.45,
-  },
-  infoData: {
-    color: '#333',
-    fontSize: '14px',
-    lineHeight: '19px',
-    fontWeight: 'bold',
-    flex: 0.5,
-    overflowWrap: 'anywhere',
-  },
-  infoDataV2: {
-    color: '#333',
-    fontSize: '12px',
-    lineHeight: '17px',
-    fontWeight: 'bold',
-    flex: 0.5,
-    overflowWrap: 'anywhere',
-  },
-  infoDataV3: {
-    color: '#333',
-    fontSize: '11px',
-    lineHeight: '16px',
-    fontWeight: 'bold',
-    flex: 0.5,
-    overflowWrap: 'anywhere',
-  },
-  bottomTextWrapper: {
-    marginBottom: '24px',
-  },
-  bottomTextWrapperV3: {
-    margin: '20px 0 30px',
-  },
-  bottomText: {
-    fontSize: '16px',
-    lineHeight: '22px',
-    textAlign: 'center',
-    color: '#002C71',
-  },
-  date: {
-    fontSize: '12px',
-    lineHeight: '19px',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    borderBottom: '1px solid black',
-    padding: '0 7px 7px',
-    marginBottom: '5px',
-    color: '#333',
-  },
-  dateLabel: {
-    fontSize: '12px',
-    LineHeight: '17px',
-    textAlign: 'center',
-    color: '#333',
-  },
-}));
+const Container = styled.div`
+  height: 781px;
+  width: 535px;
+  position: relative;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+`;
+
+const HeaderWrapper = styled.div`
+  position: absolute;
+  z-index: 100;
+  top: 128px;
+  left: 28px;
+  width: 100%;
+`;
+
+const Header = styled.h1`
+  font-size: 20px;
+  line-height: 27px;
+  text-align: center;
+  color: #002C71;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin: 0;
+`;
+
+const SubHeader = styled.h2`
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  color: #002C71;
+  font-weight: 400;
+  margin: 0;
+`;
+
+const BodyWrapper = styled.div`
+  position: absolute;
+  z-index: 100;
+  top: 212px;
+  left: 110px;
+  width: 375px;
+  padding-top: 15px;
+`;
+
+const InfoWrapper = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+const InfoLabel = styled.span`
+  color: #333;
+  font-size: 14px;
+  line-height: 19px;
+  flex: 0.55;
+`;
+
+const InfoData = styled.span`
+  color: #333;
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: bold;
+  flex: 0.5;
+  overflow-wrap: anywhere;
+`;
+
+const BottomTextWrapper = styled.div`
+  margin-bottom: 24px;
+`;
+
+const BottomText = styled.p`
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  color: #002C71;
+  margin: 0;
+`;
+
+const DateWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const DateBox = styled.div``;
+
+const Date = styled.p`
+  font-size: 12px;
+  line-height: 19px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid black;
+  padding: 0 7px 7px;
+  margin-bottom: 5px;
+  color: #333;
+`;
+
+const DateLabel = styled.p`
+  font-size: 12px;
+  line-height: 17px;
+  text-align: center;
+  color: #333;
+  margin: 0;
+`;
 
 type PdfProps = {
   location: BusinessLocation;
@@ -135,124 +112,75 @@ type PdfProps = {
 };
 
 function Pdf({ location, legalName }: PdfProps) {
-  const classes = useStyles();
-  const { responsiveClass } = new NoiPdfUtil(
-    location,
-    legalName,
-    classes
-  ).build();
   const formattedData = NoiPdfUtil.formatNoiData(location, legalName);
+
   return (
-    <Box className={classes.container}>
-      <img src={noiImage} style={{ height: '841px', width: '595px' }} />
-      <Box className={classes.headerWrapper}>
-        <Typography className={responsiveClass.header}>
-          B.C. E-Substances Regulation
-        </Typography>
-        <Typography className={classes.subHeader}>
-          Notice of Intent to Sell E-Substances
-        </Typography>
-        <Typography className={classes.subHeader}>
-          Confirmation of Submission
-        </Typography>
-      </Box>
-      <Box className={responsiveClass.bodyWrapper}>
-        <Box className={responsiveClass.infoWrapper}>
-          <Typography className={responsiveClass.infoLabel}>
-            Type of Location:
-          </Typography>
-          <Typography className={responsiveClass.infoData}>
-            {formattedData.formattedLocationType}
-          </Typography>
-        </Box>
-        <Box className={responsiveClass.infoWrapper}>
-          <Typography className={responsiveClass.infoLabel}>
-            Business Name:
-          </Typography>
-          <Typography className={responsiveClass.infoData}>
-            {formattedData.businessName}
-          </Typography>
-        </Box>
-        <Box className={responsiveClass.infoWrapper}>
-          <Typography className={responsiveClass.infoLabel}>
-            Business Legal Name:
-          </Typography>
-          <Typography className={responsiveClass.infoData}>
-            {formattedData.legalName}
-          </Typography>
-        </Box>
-        {formattedData.locationType === 'online' ?
-        <Box className={responsiveClass.infoWrapper}>
-          <Typography className={responsiveClass.infoLabel}>
-            URL:
-          </Typography>
-          <Typography className={responsiveClass.infoData}>
-            {formattedData.webpage}            
-          </Typography>
-        </Box>:
-        <Box className={responsiveClass.infoWrapper}>
-          <Typography className={responsiveClass.infoLabel}>
-            Location:
-          </Typography>
-          <Typography className={responsiveClass.infoData}>
-            {formattedData.address}
-            <span style={{ display: 'inline-block' }}>
-              {formattedData.postal}
-            </span>
-          </Typography>
-        </Box>}
-        <Box className={responsiveClass.infoWrapper}>
-          <Typography className={responsiveClass.infoLabel}>
-            Location permits all ages:
-          </Typography>
-          <Typography className={responsiveClass.infoData}>
-            {formattedData.ageRestricted}
-          </Typography>
-        </Box>
-        <Box className={responsiveClass.infoWrapper}>
-          <Typography className={responsiveClass.infoLabel}>
-            Manufacture e-substances:
-          </Typography>
-          <Typography className={responsiveClass.infoData}>
-            {formattedData.manufacturing}
-          </Typography>
-        </Box>
-        <Box className={responsiveClass.bottomTextWrapper}>
-          <Typography className={classes.bottomText}>
+    <Container>
+      <img src={noiImage} style={{ height: '841px', width: '595px' }} alt="NOI Background" />
+      <HeaderWrapper>
+        <Header>B.C. E-Substances Regulation</Header>
+        <SubHeader>Notice of Intent to Sell E-Substances</SubHeader>
+        <SubHeader>Confirmation of Submission</SubHeader>
+      </HeaderWrapper>
+      <BodyWrapper>
+        <InfoWrapper>
+          <InfoLabel>Type of Location:</InfoLabel>
+          <InfoData>{formattedData.formattedLocationType}</InfoData>
+        </InfoWrapper>
+        <InfoWrapper>
+          <InfoLabel>Business Name:</InfoLabel>
+          <InfoData>{formattedData.businessName}</InfoData>
+        </InfoWrapper>
+        <InfoWrapper>
+          <InfoLabel>Business Legal Name:</InfoLabel>
+          <InfoData>{formattedData.legalName}</InfoData>
+        </InfoWrapper>
+        {formattedData.locationType === 'online' ? (
+          <InfoWrapper>
+            <InfoLabel>URL:</InfoLabel>
+            <InfoData>{formattedData.webpage}</InfoData>
+          </InfoWrapper>
+        ) : (
+          <InfoWrapper>
+            <InfoLabel>Location:</InfoLabel>
+            <InfoData>
+              {formattedData.address}
+              <span style={{ display: 'inline-block' }}>{formattedData.postal}</span>
+            </InfoData>
+          </InfoWrapper>
+        )}
+        <InfoWrapper>
+          <InfoLabel>Location permits all ages:</InfoLabel>
+          <InfoData>{formattedData.ageRestricted}</InfoData>
+        </InfoWrapper>
+        <InfoWrapper>
+          <InfoLabel>Manufacture e-substances:</InfoLabel>
+          <InfoData>{formattedData.manufacturing}</InfoData>
+        </InfoWrapper>
+        <BottomTextWrapper>
+          <BottomText>
             This e-substance retailer has submitted their Notice of Intent and is eligible to sell 
             e-substances as of {formattedData.effectiveOperationDate}.
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="space-between">
-          <Box>
-            <Typography className={classes.date}>
-              {formattedData.submissionDate}
-            </Typography>
-            <Typography className={classes.dateLabel}>
-              Date Submitted
-            </Typography>
-          </Box>
+          </BottomText>
+        </BottomTextWrapper>
+        <DateWrapper>
+          <DateBox>
+            <Date>{formattedData.submissionDate}</Date>
+            <DateLabel>Date Submitted</DateLabel>
+          </DateBox>
           {!!formattedData.renewalDate && (
-            <Box>
-              <Typography className={classes.date}>
-                {formattedData.renewalDate}
-              </Typography>
-              <Typography className={classes.dateLabel}>
-                Date Renewed
-              </Typography>
-            </Box>
+            <DateBox>
+              <Date>{formattedData.renewalDate}</Date>
+              <DateLabel>Date Renewed</DateLabel>
+            </DateBox>
           )}
-          <Box>
-            <Typography className={classes.date}>
-              {formattedData.expiryDate}
-            </Typography>
-            <Typography className={classes.dateLabel}>
-              Date of Expiry
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          <DateBox>
+            <Date>{formattedData.expiryDate}</Date>
+            <DateLabel>Date of Expiry</DateLabel>
+          </DateBox>
+        </DateWrapper>
+      </BodyWrapper>
+    </Container>
   );
 }
 

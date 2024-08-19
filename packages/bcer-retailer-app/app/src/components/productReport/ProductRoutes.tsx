@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
 import store from 'store';
 
@@ -42,20 +42,25 @@ export default function ProductRoutes(){
 
   useEffect(() => {
     (async () => {
-      const submissionId = store.get('productSubmissionId') || productInfo.submissionId
+      const submissionId = store.get('productSubmissionId') || productInfo.submissionId;
       // GET: returns an existing submission
       // TODO: when we have a keycloak token, this GET should also return existing business and location data for the business entity
       // POST: creates a new submission
-      await submissionId ? get({ url:`/submission/${submissionId}` }) : post({
-        data: Object.assign({}, {
-          // NB: legal name of business is hard coded
-          // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
-          legalName: 'Happy Puff',
-          type: SubmissionTypeEnum.product
-        }, { data: productInfo })
-      })
-    })()
-  }, [])
+      if (submissionId) {
+        get({ url: `/submission/${submissionId}` });
+      } else {
+        post({
+          data: {
+            // NB: legal name of business is hard coded
+            // when we have business name from BCeID, we will useKeycloak() to get this data OR read it from the token
+            legalName: 'Happy Puff',
+            type: SubmissionTypeEnum.product,
+            data: productInfo
+          }
+        });
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (submission && !error) {
@@ -92,17 +97,18 @@ export default function ProductRoutes(){
   }, [postError]);
 
   return(
-    <>
-      <ProductInfoProvider value={[productInfo, setProductInfo]} >
-        <Switch>
-          <Route exact path={['/products', '/products/success']} component={ProductOverview} />
-          <Route exact path='/products/add-reports' component={AddProductReports} />
-          <Route exact path='/products/confirm-products' component={ConfirmProducts} />
-          <Route exact path='/products/select-locations' component={SelectLocations} />
-          <Route exact path='/products/submission/:submissionId' component={DeleteProductSubmissions} />
-          <Route exact path='/products/location/:locationId' component={LocationProducts} />
-        </Switch>
-      </ProductInfoProvider>
-    </>
+    <ProductInfoProvider value={[productInfo, setProductInfo]}>
+      <Routes>
+        <Route path='/' element={<Outlet />}>
+          <Route path='' element={<ProductOverview />} />
+          <Route path='success' element={<ProductOverview />} />
+          <Route path='add-reports' element={<AddProductReports />} />
+          <Route path='confirm-products' element={<ConfirmProducts />} />
+          <Route path='select-locations' element={<SelectLocations />} />
+          <Route path='submission/:submissionId' element={<DeleteProductSubmissions />} />
+          <Route path='location/:locationId' element={<LocationProducts />} />
+        </Route>
+      </Routes>
+    </ProductInfoProvider>
   )
 }

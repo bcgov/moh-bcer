@@ -1,6 +1,6 @@
 import React, { SetStateAction } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 
 //reordering the result
 const reorder = (list: Object[], startIndex: number, endIndex: number) => {

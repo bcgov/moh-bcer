@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react'
+import { styled } from '@mui/material/styles';
 import { Form, Formik, useFormikContext } from 'formik';
 import { StyledButton, StyledRadioGroup, StyledAutocomplete, StyledHeaderMapper, mapToObject } from 'vaping-regulation-shared-components';
-import { Dialog, DialogContent, DialogTitle, makeStyles, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import { Dialog, DialogContent, DialogTitle, makeStyles, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 import { ProductsFileUploadRO, BusinessLocation } from '@/constants/localInterfaces';
 import { ProductReportDTOHeaders, ProductReportHeaders, SubmissionTypeEnum } from '@/constants/localEnums';
@@ -16,19 +17,42 @@ import { exampleProductReport } from '@/constants/exampleCsvData';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'AddProductReports';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  description: `${PREFIX}-description`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  boxDescription: `${PREFIX}-boxDescription`,
+  radioGroup: `${PREFIX}-radioGroup`,
+  boxHeader: `${PREFIX}-boxHeader`,
+  textWrapper: `${PREFIX}-textWrapper`,
+  linkWrapper: `${PREFIX}-linkWrapper`,
+  linkText: `${PREFIX}-linkText`,
+  boxContent: `${PREFIX}-boxContent`,
+  uploaderSubtitle: `${PREFIX}-uploaderSubtitle`,
+  continueWrapper: `${PREFIX}-continueWrapper`,
+  dialogTitle: `${PREFIX}-dialogTitle`,
+  highlightedText: `${PREFIX}-highlightedText`
+};
+
+const Root = styled('div')({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
-  title: {
+  [`& .${classes.title}`]: {
     padding: '20px 0px',
     color: '#002C71'
   },
-  description: {
+  [`& .${classes.description}`]: {
     paddingBottom: '30px'
   },
-  helpTextWrapper: {
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -36,12 +60,12 @@ const useStyles = makeStyles({
     marginBottom: '20px',
     borderRadius: '5px',
   },
-  helperIcon: {
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  box: {
+  [`& .${classes.box}`]: {
     display: 'flex',
     padding: '20px',
     borderRadius: '10px',
@@ -49,58 +73,58 @@ const useStyles = makeStyles({
     backgroundColor: '#fff',
     marginBottom: '20px',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     fontSize: '17px',
     fontWeight: 600,
     lineHeight: '22px',
   },
-  boxDescription: {
+  [`& .${classes.boxDescription}`]: {
     fontSize: '16px',
     color: '#3A3A3A',
     lineHeight: '20px',
   },
-  radioGroup: {
+  [`& .${classes.radioGroup}`]: {
     width: '50px',
   },
-  boxHeader: {
+  [`& .${classes.boxHeader}`]: {
     width: '100%',
     display: 'inline-flex',
     margin: '5px 0px 5px 0px',
   },
-  textWrapper: {
+  [`& .${classes.textWrapper}`]: {
     paddingBottom: '20px',
   },
-  linkWrapper: {
+  [`& .${classes.linkWrapper}`]: {
     textDecorationColor: '#1E5DB1'
   },
-  linkText: {
+  [`& .${classes.linkText}`]: {
     display: 'inline',
     color: '#1E5DB1',
   },
-  boxContent: {
+  [`& .${classes.boxContent}`]: {
     display: 'block',
     width: '100%'
   },
-  uploaderSubtitle: {
+  [`& .${classes.uploaderSubtitle}`]: {
     paddingBottom: '20px'
   },
-  continueWrapper: {
+  [`& .${classes.continueWrapper}`]: {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingTop: '15px'
   },
-  dialogTitle: {
+  [`& .${classes.dialogTitle}`]: {
     size: '20px',
     color: '#0053A4',
     borderBottom: '1px solid #CCCCCC',
     padding: '0px 0px 16px 0px',
     margin: '16px 24px 0px 24px'
   },
-  highlightedText: {
+  [`& .${classes.highlightedText}`]: {
     fontWeight: 600,
     color: '#0053A4'
   },
-})
+});
 
 const ContextHandler = (): null => {
   const { values, submitForm } = useFormikContext();
@@ -112,8 +136,7 @@ const ContextHandler = (): null => {
 };
 
 export default function AddProductReports() {
-  const history = useHistory();
-  const classes = useStyles();
+  const navigate = useNavigate();
 
   const [entry, setEntry] = useState<string>();
   const [providedHeaders, setProvidedHeaders] = useState([]);
@@ -192,7 +215,7 @@ export default function AddProductReports() {
   useEffect(() => {
     if (mappedSubmission && !mapError) {
       setProductInfo({...productInfo, products: mappedSubmission.data.products})
-      history.push('/products/confirm-products')
+      navigate('/products/confirm-products')
     }
   }, [mappedSubmission]);
 
@@ -212,7 +235,7 @@ export default function AddProductReports() {
   const selectFromLocation = async() => { 
     if (value) {
       await get({ url:`/location/${value.id}?includes=products` })
-      history.push('/products/confirm-products')
+      navigate('/products/confirm-products')
     }
   }
 
@@ -237,9 +260,9 @@ export default function AddProductReports() {
   }
 
   return (
-    <>
+    (<Root>
       <div>
-        <StyledButton onClick={() => history.push('/products')}>
+        <StyledButton onClick={() => navigate('/products')}>
           <ArrowBackIcon className={classes.buttonIcon} />
           Cancel
         </StyledButton>
@@ -362,6 +385,6 @@ export default function AddProductReports() {
           </Form>
         </Formik>
       </div>
-    </>
-  )
+    </Root>)
+  );
 }
