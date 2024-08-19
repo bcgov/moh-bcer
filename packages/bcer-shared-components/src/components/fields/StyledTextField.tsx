@@ -62,13 +62,13 @@ function TextInput ({
   placeholder,
   ...props
 }: TextInputProps):ReactElement {
-  const touched = form.touched[fieldRest.name];
-  const error = form.errors[fieldRest.name];
+  const touched = form.touched[fieldRest.name as keyof typeof form.touched];
+  const error = form.errors[fieldRest.name as keyof typeof form.errors];
   return (
     <Fragment>
       {label && <InputFieldLabel label={label} />}
       {variant === 'outlined' ? (
-        <StyledTextInput
+        <StyledOutlinedInput
           variant="outlined"
           placeholder={placeholder || ''}
           fullWidth

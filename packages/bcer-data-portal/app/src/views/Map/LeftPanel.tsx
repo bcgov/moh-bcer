@@ -1,12 +1,14 @@
-import { Avatar, Box, CircularProgress, Hidden, IconButton, InputLabel, makeStyles, MenuItem, Select, Typography } from '@material-ui/core';
+import { Avatar, Box, CircularProgress, IconButton, InputLabel, MenuItem, Select, Typography, Grid } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { styled, useTheme } from '@mui/material/styles';
 import React, { SetStateAction, useEffect, useState } from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
-import MapIcon from '@material-ui/icons/Map';
-import DirectionsIcon from '@material-ui/icons/Directions';
-import ArrowRightIcon from '@material-ui/icons/ArrowRightAltOutlined';
+import MapIcon from '@mui/icons-material/Map';
+import DirectionsIcon from '@mui/icons-material/Directions';
+import ArrowRightIcon from '@mui/icons-material/ArrowRightAltOutlined';
 import DragSort from '@/components/dragable';
 import LocationView from './LocationView';
-import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import MapControl from './MapControl';
 import Itinerary from './Itinerary';
 import LocationAutoComplete from './LocationAutoComplete';
@@ -17,7 +19,7 @@ import {
   BusinessLocation,
   RouteOptions,
 } from '@/constants/localInterfaces';
-import { useHistory, useLocation } from 'react-router';
+import { useNavigate, useLocation } from 'react-router-dom';
 import RouteStatics from './RouteStatics';
 import { AxiosError } from 'axios';
 import OptimizedOrder from './OptimizedOrder';
@@ -25,17 +27,32 @@ import { healthAuthorityOptions } from '@/constants/arrays';
 import store from 'store';
 import { useAxiosGet } from '@/hooks/axios';
 import Leaflet from '@/components/generic/Leaflet';
-import Grid from '@material-ui/core/Grid';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
+const PREFIX = 'LeftPanel';
+
+const classes = {
+  container: `${PREFIX}-container`,
+  header: `${PREFIX}-header`,
+  buttonText: `${PREFIX}-buttonText`,
+  label: `${PREFIX}-label`,
+  healthAuthoritySelectWrap: `${PREFIX}-healthAuthoritySelectWrap`,
+  mapWrap: `${PREFIX}-mapWrap`
+};
+
+const StyledBox = styled(Box)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.container}`]: {
     padding: '20px',
     minWidth: '32vw',
     [theme.breakpoints.down('xs')]: {
 
     }
   },
-  header: {
+
+  [`& .${classes.header}`]: {
     color: '#002C71',
     fontWeight: 'bold',
     fontSize: '27px',
@@ -43,16 +60,19 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 20,
     }
   },
-  buttonText: {
+
+  [`& .${classes.buttonText}`]: {
     size: '13px',
     color: '#234075',
     fontWeight: 500,
   },
-  label: {
+
+  [`& .${classes.label}`]: {
     fontSize: '16px',
     fontWeight: 'bold',
   },
-  healthAuthoritySelectWrap: {
+
+  [`& .${classes.healthAuthoritySelectWrap}`]: {
     '& label':{
       color: 'black',
     },
@@ -67,7 +87,8 @@ const useStyles = makeStyles((theme) => ({
       }   
     }
   },
-  mapWrap: {
+
+  [`& .${classes.mapWrap}`]: {
     height: 330,
     marginTop: 20,
     border: "1px solid #CDCED2",
@@ -125,13 +146,16 @@ function LeftPanel({
   downloadItinerary,
   downloadingItinerary
 }: LeftPanelProps) {
-  const classes = useStyles();
-  const history = useHistory();  
+
+  const navigate = useNavigate();
+  const location = useLocation();
   const search = useLocation().search;
   const routeHealthAuthority = new URLSearchParams(search).get('authority')
   const [healthAuthority, setHealthAuthority] = useState(routeHealthAuthority || store.get('KEYCLOAK_USER_HA')  || '');
   const [{ data, loading }, getLocationsWithHealthAuthority] =
     useAxiosGet(`data/location?all=true&includes=business,noi&authority=${healthAuthority}`, { manual: true });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
  
   useEffect(() => {   
     if (healthAuthority) {
@@ -149,8 +173,8 @@ function LeftPanel({
   }
 
   const setHAParam = () => {
-    const route = history.location.pathname;     
-    history.push(`${route}?authority=${healthAuthority}`);
+    const route = location.pathname;     
+    navigate(`${route}?authority=${healthAuthority}`);
   }
 
   useEffect(() => {
@@ -158,8 +182,8 @@ function LeftPanel({
       setLocations([...locations, clickedLocation])
   }, [clickedLocation])
 
-  return (     
-    <Box className={classes.container}>      
+  return (
+    <StyledBox className={classes.container}>      
       {mapInMenu &&  
       <>
         <Typography className={classes.header}>Map of Locations</Typography>
@@ -209,7 +233,7 @@ function LeftPanel({
           <StyledButton
             variant="small-outlined"
             size="small"
-            onClick={() => history.goBack()}
+            onClick={() => navigate(-1)}
           >
             Back
           </StyledButton>
@@ -229,7 +253,8 @@ function LeftPanel({
             size="small"
             onClick={() => window.open(createGoogleLink(), '_blank')}>
             <MapIcon fontSize="small" />
-            <Hidden smDown><Box ml={1} /></Hidden> Show in Google Map
+            <Box sx={{ display: { xs: 'none', sm: 'block' }, ml: 1 }} />
+            Show in Google Map
           </StyledButton>
         </Grid>
         <Grid item xs={4}>
@@ -240,7 +265,8 @@ function LeftPanel({
               style={{float: 'right'}}
               onClick={() => setDisplayItinerary(true)}>
               <DirectionsIcon fontSize="small" />
-              <Hidden smDown><Box ml={1} /></Hidden> Display Itinerary
+              <Box sx={{ display: { xs: 'none', sm: 'block' }, ml: 1 }} />
+              Display Itinerary
             </StyledButton>}
         </Grid>
         <Grid item xs={4}>
@@ -296,17 +322,19 @@ function LeftPanel({
           startingLocation={startingLocation}
         />
       )}
-      <Hidden smUp>
+      {isMobile && (
         <div className={classes.mapWrap}>          
           <Leaflet onRender={onRender} />
         </div>
-      </Hidden>
+      )}
       {routeData && <Itinerary directionData={routeData} />}
-      <Hidden smUp>
-        <Box mt={15} />
-        Not to be seen        
-      </Hidden>
-    </Box>
+      {isMobile && (
+        <>
+          <Box mt={15} />
+          Not to be seen
+        </>
+      )}
+    </StyledBox>
   );
 }
 

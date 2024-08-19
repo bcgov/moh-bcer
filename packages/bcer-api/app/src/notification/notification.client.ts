@@ -31,7 +31,7 @@ const createToken = (secret: string, clientId: string) => {
 class BCERNotifyAPIClient {
   private readonly apiKeyId: string;
   private readonly serviceId: string;
-  private proxyAgent: HttpsProxyAgent;
+  private proxyAgent: HttpsProxyAgent<string>;
   
   constructor(
       private readonly urlBase: string,
@@ -76,10 +76,12 @@ class BCERNotifyAPIClient {
     return axios(options);
   }
   
-  setProxyAgent(proxyAgent: HttpsProxyAgentOptions) {
-    this.proxyAgent = new HttpsProxyAgent(proxyAgent);
+  setProxyAgent(proxyAgent: HttpsProxyAgentOptions<string>) {
+    const options = proxyAgent as any;
+    console.log(options);
+    const proxyUrl = new URL(`http://${options.hostname || 'localhost'}:${options.port || '80'}`);
+    this.proxyAgent = new HttpsProxyAgent(proxyUrl);
   }
-  
 }
   
 
@@ -91,7 +93,7 @@ export class BCERNotifyClient extends NotifyClient {
     this.apiClient = new BCERNotifyAPIClient(apiEndpoint, apiKey);
   }
   
-  setProxy(config: HttpsProxyAgentOptions) {
+  setProxy(config: HttpsProxyAgentOptions<string>) {
     this.apiClient.setProxyAgent(config);
   }
 }

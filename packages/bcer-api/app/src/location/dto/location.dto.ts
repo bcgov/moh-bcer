@@ -9,8 +9,8 @@ import {
   IsUrl,
   ValidateIf,
 } from 'class-validator';
-import * as faker from 'faker/locale/en_CA';
 import { HealthAuthority } from 'src/business/enums/health-authority.enum'
+import { faker } from '@faker-js/faker/locale/en_CA';
 
 export class LocationDTO {
 
@@ -41,28 +41,28 @@ export class LocationDTO {
 
   @ApiProperty({
     description: 'Street Address of business',
-    example: faker.address.streetAddress()
+    example: faker.location.streetAddress()
   })
   @IsOptional()
   addressLine1: string;
 
   @ApiProperty({
     description: 'Street Address, line 2',
-    example: faker.address.streetAddress()
+    example: faker.location.streetAddress()
   })
   @IsNotEmpty()
   addressLine2: string;
 
   @ApiProperty({
     description: 'City',
-    example: faker.address.city()
+    example: faker.location.city()
   })
   @IsOptional()
   city: string;
 
   @ApiProperty({
     description: 'Postal Code',
-    example: faker.address.zipCode()
+    example: faker.location.zipCode()
   })
   @IsOptional()
   @IsPostalCode('CA')
@@ -70,7 +70,7 @@ export class LocationDTO {
 
   @ApiProperty({
     description: 'Location phone number',
-    example: faker.phone.phoneNumber()
+    example: faker.phone.number()
   })
   @IsNotEmpty()
   @IsPhoneNumber('CA')

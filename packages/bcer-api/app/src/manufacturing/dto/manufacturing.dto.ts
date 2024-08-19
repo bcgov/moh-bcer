@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IngredientDTO } from 'src/manufacturing/dto/ingredient.dto';
-import * as faker from 'faker/locale/en_CA';
+import { faker } from '@faker-js/faker/locale/en_CA';
 
 export class ManufacturingDTO {
   @ApiProperty({
@@ -14,7 +14,7 @@ export class ManufacturingDTO {
 
   @ApiProperty({
     description: 'Ids of the locations where this product is manufactured',
-    example: faker.datatype.uuid()
+    example: faker.string.uuid()
   })
   @IsNotEmpty()
   locationIds: string[];

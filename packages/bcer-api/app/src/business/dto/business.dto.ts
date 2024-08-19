@@ -8,12 +8,12 @@ import {
   IsUrl,
   ValidateIf,
 } from 'class-validator';
-import * as faker from 'faker/locale/en_CA';
+import { faker } from '@faker-js/faker/locale/en_CA';
 
 export class SetupBusinessDTO {
   @ApiProperty({
     description: 'Legal name of business',
-    example: faker.company.companyName()
+    example: faker.company.name()
   })
   @IsNotEmpty()
   legalName: string;
@@ -41,7 +41,7 @@ export class BusinessDTO {
 
   @ApiProperty({
     description: 'Legal name of business',
-    example: faker.company.companyName()
+    example: faker.company.name()
   })
   @IsNotEmpty()
   legalName: string;
@@ -55,28 +55,28 @@ export class BusinessDTO {
 
   @ApiProperty({
     description: 'Street Address of business',
-    example: faker.address.streetAddress()
+    example: faker.location.streetAddress()
   })
   @IsNotEmpty()
   addressLine1: string;
 
   @ApiProperty({
     description: 'Street Address, line 2',
-    example: faker.address.streetAddress()
+    example: faker.location.streetAddress()
   })
   @IsOptional()
   addressLine2: string;
 
   @ApiProperty({
     description: 'City',
-    example: faker.address.city()
+    example: faker.location.city()
   })
   @IsNotEmpty()
   city: string;
 
   @ApiProperty({
     description: 'Postal Code',
-    example: faker.address.zipCode()
+    example: faker.location.zipCode()
   })
   @IsNotEmpty()
   @IsPostalCode('CA')
@@ -84,7 +84,7 @@ export class BusinessDTO {
 
   @ApiProperty({
     description: 'Business phone number',
-    example: faker.phone.phoneNumber()
+    example: faker.phone.number()
   })
   @IsNotEmpty()
   @IsPhoneNumber('CA')

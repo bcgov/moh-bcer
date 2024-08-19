@@ -89,9 +89,13 @@ const RootTypography = styled(Typography)({
  * @param cancelHandler `Function` - callback for cancelling the mapping
  * @returns ReactElement component
  */
-export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapCallback, cancelHandler}: StyledHeaderMapperProps) {
-
-  const [initialValues] = useState<Object>({});
+export function StyledHeaderMapper({
+  requiredHeaders,
+  providedHeaders,
+  updateMapCallback,
+  cancelHandler
+}: StyledHeaderMapperProps & { requiredHeaders: Record<string, string> }) {
+  const [initialValues] = useState<Record<string, string>>({});
   const [options] = useState(providedHeaders.map(h => ({value: h, label: h})));
   type ValidationSchemaType = Yup.AnyObjectSchema | undefined;
   const [validationSchema, setValidationSchema] = useState<ValidationSchemaType>(undefined);
@@ -99,12 +103,12 @@ export function StyledHeaderMapper({requiredHeaders, providedHeaders, updateMapC
   const values: Array<string> = Object.values(requiredHeaders);
   
   useEffect(()=> {
-    let temp = {}
-    keys.map(k => {
-      let found = options.find(o => o.value === k)
-      found ? initialValues[k] = found.value : initialValues[k] = ''      
-      temp[k] = Yup.string().required('Required selection')
-    })
+    let temp: Record<string, Yup.StringSchema> = {};
+    keys.forEach(k => {
+      let found = options.find(o => o.value === k);
+      initialValues[k] = found ? found.value : '';
+      temp[k] = Yup.string().required('Required selection');
+    });
     const schema: Yup.AnyObjectSchema = Yup.object().shape(temp) as Yup.AnyObjectSchema;
     setValidationSchema(schema)
   }, [])

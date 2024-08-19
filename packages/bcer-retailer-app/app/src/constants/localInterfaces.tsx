@@ -83,6 +83,7 @@ export interface BusinessLocation {
   webpage: string;
   tableData?: {
     checked: boolean;
+    id: number;
   };
 }
 

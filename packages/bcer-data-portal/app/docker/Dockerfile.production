@@ -1,8 +1,8 @@
 # Create production build
 
-FROM node:17.3.0
+FROM node:20.11.0
 
-MAINTAINER FreshWorks <web@freshworks.io>
+LABEL maintainer="CGI"
 
 ENV PATH $PATH:/app/node_modules/.bin
 

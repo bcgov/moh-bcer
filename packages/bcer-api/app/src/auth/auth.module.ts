@@ -1,8 +1,8 @@
 import { DynamicModule, Module, Provider, Scope } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from './auth.service';
 import { KeycloakConnectOptions } from './interface/keycloakConnectOptions.interface';
-import { KEYCLOAK_CONNECT_OPTIONS, KEYCLOAK_INSTANCE } from 'src/auth/constants';
+import { KEYCLOAK_CONNECT_OPTIONS, KEYCLOAK_INSTANCE } from './constants';
 const Keycloak = require('keycloak-connect');
 
 export * from './decorators/scopes.decorator';

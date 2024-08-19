@@ -1,8 +1,8 @@
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { merge } = require('webpack-merge');
-const path = require('path');
 const parts = require('./webpack.parts');
+const path = require('path');
+const { merge } = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv');
 
 const DEVELOPMENT = 'development';
@@ -26,7 +26,7 @@ const PATH_ALIASES = {
   '@': path.resolve(__dirname, 'src'),
   react: path.resolve('./node_modules/react'),
   'formik': path.resolve('./node_modules/formik'),
-  '@material-ui': path.resolve('./node_modules/@material-ui'),
+  '@mui': path.resolve('./node_modules/@mui'),
   'assets': path.resolve(__dirname, 'src', 'assets'),
 };
 
@@ -70,7 +70,6 @@ const devConfig = merge([
       publicPath: ASSET_PATH,
       filename: 'bundle.js',
     },
-    watch: true,
     watchOptions: {
       ignored: /node_modules/,
       aggregateTimeout: 600,
@@ -143,11 +142,12 @@ const prodConfig = merge([
   parts.gZipCompression(),
   parts.registerServiceWorker(),
   parts.extractManifest(),
-  parts.copy(PATHS.public, path.join(PATHS.build, 'public')),
+  parts.copy([PATHS.public, path.join(PATHS.build, 'public')]),
 ]);
 
-module.exports = (env) => {
-  return env === PRODUCTION
-    ? merge(commonConfig, prodConfig, { mode: env })
-    : merge(commonConfig, devConfig, { mode: env });
+module.exports = () => {
+  const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+  return mode === 'production'
+    ? merge(commonConfig, prodConfig, { mode })
+    : merge(commonConfig, devConfig, { mode });
 };

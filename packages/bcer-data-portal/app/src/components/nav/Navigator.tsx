@@ -1,43 +1,38 @@
-import {
-  AppBar,
-  Box,
-  makeStyles
-} from '@material-ui/core';
 import React from 'react';
+import { AppBar, Box } from '@mui/material';
+import { styled } from '@mui/system';
 import AppMenu from './AppMenu';
 import Logout from './Logout';
 
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    backgroundColor: '#F1F1F1',
-    boxShadow: 'none',
-    width: '100%',
-    padding: '10px 30px',
+const StyledAppBar = styled(AppBar)({
+  backgroundColor: '#F1F1F1',
+  boxShadow: 'none',
+  width: '100%',
+  padding: '10px 30px',
+});
+
+const StyledBox = styled(Box)({
+  display: 'flex',
+  justifyContent: 'space-between',
+});
+
+const StyledAppMenu = styled(AppMenu)({
+  '& .MuiTabs-indicator': {
+    backgroundColor: '#fff',
   },
-  indicator: {
-    '& .MuiTabs-indicator:selected': {
-      backgroundColor: '#fff',
-    },
-  },
-  buttonWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+});
 
 function Navigator() {
-  const classes = useStyles();
-
   return (
     <div>
-      <AppBar position="static" className={classes.appBar}>
-        <Box display="flex" justifyContent="space-between">
+      <StyledAppBar position="static">
+        <StyledBox>
           <Box display="flex">           
-            <AppMenu orientation = "horizontal" />
+            <StyledAppMenu orientation="horizontal" />
           </Box>
           <Logout variant='dialog-cancel' />          
-        </Box>
-      </AppBar>
+        </StyledBox>
+      </StyledAppBar>
     </div>
   );
 }

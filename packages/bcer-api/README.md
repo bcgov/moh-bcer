@@ -136,7 +136,7 @@ In order to create a migration, run `npm run migrate:create -- -n MigrationName`
 If you see any issues with running or generating migrations, please check that directories are being referred to properly. For example, migrations will need to point to what's in `dist` where your migrations sit, and same with entities. Please check `ormconfig.js` to amend this.
 
 In short:
-- When you make entity changes, first run `npm run migrate:run` and then `npm run migrate:create -- -n MigrationName`.
+- When you make entity changes, first run `npm run migrate:run` and then `npm run migrate:create -- -n MigrationName`. //todo
 
 ## Common Issues
 - If you see any issues with respect to the database when you're running it, the best thing to check is `ormconfig.js`. Check that the entities is where you expect them to be.

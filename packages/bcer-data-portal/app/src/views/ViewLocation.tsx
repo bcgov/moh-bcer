@@ -1,11 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, CircularProgress, Grid, Hidden, makeStyles, Paper, Typography } from '@material-ui/core'
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { Box, CircularProgress, Grid, Hidden, Paper, Typography } from '@mui/material'
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Formik, useFormikContext } from 'formik';
 import moment from 'moment';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import PrintIcon from '@material-ui/icons/Print';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import PrintIcon from '@mui/icons-material/Print';
 
 import { useAxiosGet, useAxiosPatch } from '@/hooks/axios';
 import { Business, LocationConfig, UserRO } from '@/constants/localInterfaces';
@@ -33,30 +36,60 @@ import { LocationUtil } from '@/util/location.util';
 import ReactDOMServer from 'react-dom/server';
 import { LocationDetailsPdf } from '@/components/location/LocationDetailsPdf';
 import jsPDF from 'jspdf';
-import { useScreenshot } from "use-react-screenshot";
+import html2canvas from 'html2canvas';
 
-const useStyles = makeStyles((theme) => ({
-  contentWrapper: {
+const PREFIX = 'ViewLocation';
+
+const classes = {
+  contentWrapper: `${PREFIX}-contentWrapper`,
+  content: `${PREFIX}-content`,
+  clickBack: `${PREFIX}-clickBack`,
+  cellTitle: `${PREFIX}-cellTitle`,
+  box: `${PREFIX}-box`,
+  toc: `${PREFIX}-toc`,
+  rowContent: `${PREFIX}-rowContent`,
+  tableBox: `${PREFIX}-tableBox`,
+  dialogWrap: `${PREFIX}-dialogWrap`,
+  subtitleWrapper: `${PREFIX}-subtitleWrapper`,
+  subtitle: `${PREFIX}-subtitle`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  mapBox: `${PREFIX}-mapBox`,
+  breadcrumbWrap: `${PREFIX}-breadcrumbWrap`,
+  businessName: `${PREFIX}-businessName`,
+  rightDivWrap: `${PREFIX}-rightDivWrap`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.contentWrapper}`]: {
     display: 'flex',
     width: '100%',
     justifyContent: 'center',
   },
-  content: {
+
+  [`& .${classes.content}`]: {
     maxWidth: '1440px',
     width: '95%',
     padding: '20px 30px'
   },
-  clickBack: {
+
+  [`& .${classes.clickBack}`]: {
     cursor: 'pointer',
     color: 'rgba(51, 51, 51, 0.5)',
   },
-  cellTitle: {
+
+  [`& .${classes.cellTitle}`]: {
     fontSize: '20px',
     fontWeight: 600,
     color: '#0053A4',
     paddingBottom: '12px'
   },
-  box: {
+
+  [`& .${classes.box}`]: {
     display: 'flex',
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
@@ -64,7 +97,8 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'none',
     justifyContent: 'space-between',    
   },
-  toc: {
+
+  [`& .${classes.toc}`]: {
     display: 'block',
     position: 'fixed',
     height: '270px',
@@ -102,11 +136,13 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   },
-  rowContent: {
+
+  [`& .${classes.rowContent}`]: {
     fontSize: '14px',
     fontWeight: 600,
   },
-  tableBox: {
+
+  [`& .${classes.tableBox}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
     padding: '1.4rem !important',
@@ -116,31 +152,38 @@ const useStyles = makeStyles((theme) => ({
       paddingTop: 0
     }
   },
-  dialogWrap: {
+
+  [`& .${classes.dialogWrap}`]: {
     marginTop: '100px',
     padding: '1rem 1.5rem',
   },
-  subtitleWrapper: {
+
+  [`& .${classes.subtitleWrapper}`]: {
     display: 'flex',
     alignItems: 'bottom',
     justifyContent: 'space-between',
     padding: '30px 0px 10px 0px',
   },
-  subtitle: {
+
+  [`& .${classes.subtitle}`]: {
     color: '#0053A4',
   },
-  boxTitle: {
+
+  [`& .${classes.boxTitle}`]: {
     paddingBottom: '10px',
   },
-  actionsWrapper: {
+
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: '10px',
   },
-  mapBox: {
+
+  [`& .${classes.mapBox}`]: {
     height: '540px',
   },
-  breadcrumbWrap: {
+
+  [`& .${classes.breadcrumbWrap}`]: {
     [theme.breakpoints.down('xs')]: {
       position: 'fixed',
       zIndex: 1300,
@@ -152,7 +195,8 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: -10
     }
   },
-  businessName: {
+
+  [`& .${classes.businessName}`]: {
     [theme.breakpoints.down('xs')]: {
       position: 'fixed',
       zIndex: 1000,
@@ -161,13 +205,31 @@ const useStyles = makeStyles((theme) => ({
       height: 25,
     }
   },
-  rightDivWrap: {
+
+  [`& .${classes.rightDivWrap}`]: {
     [theme.breakpoints.down('xs')]: {
       position: 'relative',
       paddingTop: '65px !important'
     }
   }
 }));
+
+const useScreenshot = () => {
+  const [image, setImage] = useState<string | null>(null);
+
+  const takeScreenshot = useCallback(async (element: HTMLElement) => {
+    if (!element) {
+      return null;
+    }
+
+    const canvas = await html2canvas(element);
+    const dataUrl = canvas.toDataURL('image/png');
+    setImage(dataUrl);
+    return dataUrl;
+  }, []);
+
+  return [image, takeScreenshot] as const;
+};
 
 export default function ViewLocations() {
   return (
@@ -180,8 +242,8 @@ export default function ViewLocations() {
 }
 
 function LocationsContent() {
-  const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { values, setFieldValue }: {values: any, setFieldValue: Function} = useFormikContext();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [businessOwner, setBusinessOwner] = useState<UserRO>();
@@ -201,6 +263,8 @@ function LocationsContent() {
   const mapBoxRef = useRef(null);
   const userInfoRef = useRef(null);
   const [locationInfoUpdates, updateLocationInfo] = useState("");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [printing, setPrinting] = useState<Boolean>(false);
   const [locationStatusScreenshot, takeLocationStatusScreenshot] = useScreenshot();
@@ -252,10 +316,10 @@ function LocationsContent() {
   }, [data])
 
   useEffect(() => {
-    if(deleteData) {
-      history.push('/')
+    if (deleteData) {
+      navigate('/');
     }
-  }, [deleteData])
+  }, [deleteData, navigate]);
 
   useEffect(() => {
     if(closeResponse) {
@@ -328,10 +392,10 @@ function LocationsContent() {
   }
 
   const getBreadcrumb = () => {
-    if (appGlobal?.history?.pathname?.includes('business')) return 'Business Details'
-    else if (appGlobal?.history?.pathname?.includes('locations')) return 'Submitted Locations'
-    else return 'Previous Page'
-  }
+    if (location.pathname.includes('business')) return 'Business Details';
+    else if (location.pathname.includes('locations')) return 'Submitted Locations';
+    else return 'Previous Page';
+  };
 
   const getOptions = () => {
     const options = [
@@ -390,7 +454,7 @@ function LocationsContent() {
   }
 
   return (
-    <div className={classes.contentWrapper}>
+    <Root className={classes.contentWrapper}>
       <div className={classes.content}>
         {
           deleteLoading || closeLoading
@@ -398,7 +462,7 @@ function LocationsContent() {
             <CircularProgress/>
           :
             <>
-              <Typography variant="body1" className={classes.breadcrumbWrap}><span className={classes.clickBack} onClick={() => history.goBack()}>{getBreadcrumb()}</span> / Location Details</Typography>
+              <Typography variant="body1" className={classes.breadcrumbWrap}><span className={classes.clickBack} onClick={() => navigate(-1)}>{getBreadcrumb()}</span> / Location Details</Typography>
               {
                 data
                   &&
@@ -429,42 +493,59 @@ function LocationsContent() {
                         </Box>
                         <Paper className={classes.box} style={{ display: 'block'}}>
                           <Grid container spacing={2}>
-                          {!data.closedAt &&
-                            <Hidden smUp>
-                              <Grid item xs={6}> 
-                                  <StyledButton variant="contained" onClick={() => setConfirmTransferDialogOpen(true)} style={{minWidth: 100, fontWeight: 600}}>
+                            {!data.closedAt && isMobile && (
+                              <>
+                                <Grid item xs={6}> 
+                                  <StyledButton 
+                                    variant="contained" 
+                                    onClick={() => setConfirmTransferDialogOpen(true)} 
+                                    sx={{ minWidth: 100, fontWeight: 600 }}
+                                  >
                                     <ExitToAppIcon />&nbsp;&nbsp; Transfer 
                                   </StyledButton>                                  
-                              </Grid>
-                              <Grid item xs={6}>  
-                                  <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 100, backgroundColor: '#FF534A', fontWeight: 600}}>
+                                </Grid>
+                                <Grid item xs={6}>  
+                                  <StyledButton 
+                                    variant="contained" 
+                                    onClick={() => setConfirmCloseDialogOpen(true)} 
+                                    sx={{ minWidth: 100, backgroundColor: '#FF534A', fontWeight: 600 }}
+                                  >
                                     <HighlightOffIcon />&nbsp;&nbsp; Close  
                                   </StyledButton>
-                              </Grid>
-                            </Hidden>}
+                                </Grid>
+                              </>
+                            )}
                             <Grid item xs={12} md={4}>
-                                <Typography variant="body2">Status</Typography>
-                                <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
+                              <Typography variant="body2">Status</Typography>
+                              <Typography className={classes.rowContent}>{data.closedAt ? 'Closed' : 'Open'}</Typography>
                             </Grid>
                             <Grid item xs={12} md={4}>
-                              {data.closedAt && 
-                              <>
-                                <Typography variant="body2">Closed At</Typography>
-                                <Typography className={classes.rowContent}>{data.closedAt}</Typography>
-                              </>}
+                              {data.closedAt && (
+                                <>
+                                  <Typography variant="body2">Closed At</Typography>
+                                  <Typography className={classes.rowContent}>{data.closedAt}</Typography>
+                                </>
+                              )}
                             </Grid>
-                            {!data.closedAt &&
-                            <Hidden smDown>
-                              <Grid item xs={6} md={4} style={{display: 'flex', gap: 12, justifyContent: 'end'}}> 
-                                <StyledButton variant="contained" onClick={() => setConfirmTransferDialogOpen(true)} style={{minWidth: 150, fontWeight: 600}}>
+                            {!data.closedAt && !isMobile && (
+                              <Grid item xs={6} md={4} sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}> 
+                                <StyledButton 
+                                  variant="contained" 
+                                  onClick={() => setConfirmTransferDialogOpen(true)} 
+                                  sx={{ minWidth: 150, fontWeight: 600 }}
+                                >
                                   <ExitToAppIcon />&nbsp;&nbsp; Transfer 
                                 </StyledButton>
-                                <StyledButton variant="contained" onClick={() => setConfirmCloseDialogOpen(true)} style={{minWidth: 150, backgroundColor: '#FF534A', fontWeight: 600}}>
+                                <StyledButton 
+                                  variant="contained" 
+                                  onClick={() => setConfirmCloseDialogOpen(true)} 
+                                  sx={{ minWidth: 150, backgroundColor: '#FF534A', fontWeight: 600 }}
+                                >
                                   <HighlightOffIcon />&nbsp;&nbsp; Close  
                                 </StyledButton>
                               </Grid>
-                            </Hidden>}
-                          </Grid>                          
+                            )}
+                          </Grid>                         
                           <Box mt={3}>
                             <LocationReportStatus id={id}/>
                           </Box>
@@ -620,7 +701,7 @@ function LocationsContent() {
                           <Typography className={classes.cellTitle}>Map</Typography>
                           <StyledButton 
                             variant="small-outlined" 
-                            onClick={() => history.push(`/map?locations=${id}`)}
+                            onClick={() => navigate(`/map?locations=${id}`)}
                           >
                             Create Itinerary
                           </StyledButton>
@@ -700,6 +781,6 @@ function LocationsContent() {
             </>
         }
       </div>
-    </div>
-  )
+    </Root>
+  );
 }

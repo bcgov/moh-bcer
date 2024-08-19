@@ -1,22 +1,22 @@
 import React, {useState, useEffect, useRef} from 'react';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import {makeStyles} from '@material-ui/core';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import { styled } from '@mui/system';
 import useLocation from '@/hooks/useLocation';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import StyledEditDialog from './StyledEditDialog';
 
-const useStyles = makeStyles(() => ({
-  disabled: {
+const StyledTextField = styled(TextField)({
+  '& .MuiInputBase-input.Mui-disabled': {
     color: "black",
     fontSize: '14px',
     fontWeight: 600,
-    borderBottom: 0,
-    "&:before": {
-      borderBottom: 0
-    }
-  }
-}));
+    WebkitTextFillColor: "black",
+  },
+  '& .MuiInput-underline.Mui-disabled:before': {
+    borderBottomStyle: 'none',
+  },
+});
 
 interface StyledEditableTextFieldProps {
   id: string;
@@ -31,7 +31,6 @@ interface StyledEditableTextFieldProps {
 //  type: addressLine1 || postal || webpage || phone || email || underage || manufacturing
 //  onSuccessfulUpdate: the function to save the change to the note
 function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledEditableTextFieldProps) {
-  const classes = useStyles();
   const [content, setContent] = useState(value);
   const [city, setCity] = useState('');
   const [health_authority, setHealth_authority] = useState('');
@@ -44,34 +43,32 @@ function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledE
   const {showNetworkErrorMessage} = useNetworkErrorMessage();
   const notInitialRender = useRef(false);
 
-  const updateContent = async (data:string, city: string, health_authority:string, longitude: number, latitude:number, geo_confidence:string) => { //update the content returned from the StyledEditDialog
+  const updateContent = async (data:string, city: string, health_authority:string, longitude: number, latitude:number, geo_confidence:string) => {
     if(data!== "") {
-      {type==='addressLine1'? updateNoteMessage("address changed from " + content): updateNoteMessage(type + " changed from " + content)}
-      setContent(data)
-      setCity(city)
-      setLongitude(longitude)
-      setLatitude(latitude)
-      setGeo_confidence(geo_confidence)
-      setHealth_authority(health_authority)
+      updateNoteMessage(type === 'addressLine1' ? "address changed from " + content : type + " changed from " + content);
+      setContent(data);
+      setCity(city);
+      setLongitude(longitude);
+      setLatitude(latitude);
+      setGeo_confidence(geo_confidence);
+      setHealth_authority(health_authority);
     }
-    handleMouseOver()
+    handleMouseOver();
   }
   
-  useEffect(() => { //content changed => update the value in the database and add the change to the note
+  useEffect(() => {
     if(notInitialRender.current){
       const sendToDB  = async() =>{ 
-        //POST the change to DB
-        await updateLocationInfo(type, content)
-        if(city) await updateLocationInfo('city', city)
-        if(longitude) await updateLocationInfo('longitude', longitude)
-        if(latitude) await updateLocationInfo('latitude', latitude)
-        if(geo_confidence) await updateLocationInfo('geo_confidence', geo_confidence)
-        if(health_authority) await updateLocationInfo('health_authority', health_authority)
+        await updateLocationInfo(type, content);
+        if(city) await updateLocationInfo('city', city);
+        if(longitude) await updateLocationInfo('longitude', longitude);
+        if(latitude) await updateLocationInfo('latitude', latitude);
+        if(geo_confidence) await updateLocationInfo('geo_confidence', geo_confidence);
+        if(health_authority) await updateLocationInfo('health_authority', health_authority);
         
         if(patchLocationError){
           showNetworkErrorMessage(patchLocationError);
         }else{
-          //Add the Note
           if(type === 'addressLine1') type = 'address';
           onSuccessfulUpdate(noteMessage + " to " + content);
         }
@@ -80,32 +77,29 @@ function StyledEditableTextField({id, value, type, onSuccessfulUpdate} : StyledE
     }else{
       notInitialRender.current=true;
     }
-  }, [content])
+  }, [content]);
 
-  function handleMouseOver() {
+  const handleMouseOver = () => {
     setMouseOver(!mouseOver);
   };
 
   return (
-    <TextField
-      name = {type}
+    <StyledTextField
+      name={type}
       disabled={true}
       value={content}
       onMouseEnter={handleMouseOver}
       onMouseLeave={handleMouseOver}
       InputProps={{
-        classes: {
-          disabled: classes.disabled
-        },
         endAdornment: mouseOver ? (
           <InputAdornment position="end">
-            <StyledEditDialog type={type} saveChange={updateContent}></StyledEditDialog>
+            <StyledEditDialog type={type} saveChange={updateContent} />
           </InputAdornment>
-          ) : (
-            ""
-          )
+        ) : null
       }}
+      variant="standard"
     />
   );  
 }
+
 export default StyledEditableTextField;

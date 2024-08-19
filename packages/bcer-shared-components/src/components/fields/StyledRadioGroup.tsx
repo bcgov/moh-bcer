@@ -76,8 +76,7 @@ function GroupedRadioButtons ({
   disabled,
   additionalChange,
   ...props
-}: RadioGroupInputProps):ReactElement {
-
+}: RadioGroupInputProps & { form: { touched: Record<string, boolean>, errors: Record<string, string> } }) {
 
   const touched = form.touched[field.name];
   const error = form.errors[field.name];

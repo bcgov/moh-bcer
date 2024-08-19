@@ -1,29 +1,28 @@
-
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import React, { useContext } from "react";
+import { styled } from '@mui/material/styles';
 import { StyledTab, StyledTabs } from "../generic/StyledTab";
 import { routes } from '@/constants/routes';
-import { useHistory } from "react-router";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ConfigContext } from "@/contexts/Config";
 
-const useStyles = makeStyles((theme) => ({
-    indicator: {
-      '& .MuiTabs-indicator:selected': {
-        backgroundColor: '#fff',
-      },
-    },
+const StyledTabsWrapper = styled(StyledTabs)(({ theme }) => ({
+  '& .MuiTabs-indicator': {
+    backgroundColor: '#f1f1f1',
+  },
 }));
 
-function a11yProps(index: any) {
+function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
 
-function setInitial(path: string) {
-  if (Object.values(routes).includes(path)) {
-    return path;
+type RouteValue = typeof routes[keyof typeof routes];
+
+function setInitial(path: string): RouteValue {
+  if (Object.values(routes).includes(path as RouteValue)) {
+    return path as RouteValue;
   } else {
     return routes.root;
   }
@@ -34,19 +33,18 @@ interface AppMenuProps {
 }
 
 const AppMenu = ({ orientation } : AppMenuProps) => {
-  const history = useHistory();
-  const classes = useStyles();
-  const [value, setValue] = React.useState(setInitial(history.location.pathname));
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [value, setValue] = React.useState<RouteValue>(setInitial(location.pathname));
   const { config } = useContext(ConfigContext);
     
-  const handleChange = (event: any, newValue: any) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: RouteValue) => {
     setValue(newValue);
-    history.push(newValue);
+    navigate(newValue);
   };
 
   return (
-    <StyledTabs
-      className={classes.indicator}
+    <StyledTabsWrapper
       value={value}
       onChange={handleChange}
       textColor="primary"
@@ -92,18 +90,19 @@ const AppMenu = ({ orientation } : AppMenuProps) => {
       <StyledTab
         disableRipple
         label="Map"
-        {...a11yProps(4)}
+        {...a11yProps(5)}
         value={routes.mapMenu}
       />          
       {config.permissions.SEND_TEXT_MESSAGES && (
         <StyledTab
           disableRipple
           label="Report"
-          {...a11yProps(4)}
+          {...a11yProps(6)}
           value={routes.report}
         />
       )}        
-    </StyledTabs>)
+    </StyledTabsWrapper>
+  )
 }
 
 export default AppMenu;

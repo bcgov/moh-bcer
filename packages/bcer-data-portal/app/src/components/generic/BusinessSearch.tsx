@@ -1,51 +1,56 @@
-import { Box, Grid, Link, Typography } from '@material-ui/core';
-import { Form, Formik } from 'formik';
 import React from 'react';
+import { Box, Grid, Button, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import { Form, Formik } from 'formik';
 import {
   StyledButton,
   StyledSelectField,
   StyledTextField,
 } from 'vaping-regulation-shared-components';
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@mui/icons-material/Search';
 import { healthAuthorityOptions } from '@/constants/arrays';
 import { SearchQueryBuilder } from '@/constants/localInterfaces';
 import useBusiness from '@/hooks/useBusiness';
-import makeStyles from "@material-ui/core/styles/makeStyles";
 
-const useStyles = makeStyles((theme) => ({
-  searchWrap: {
-    [theme.breakpoints.down('xs')]: {
-      '& p.MuiTypography-body1': {
-        fontSize: 14
-      }
-    }
+const SearchWrap = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.down('xs')]: {
+    '& p.MuiTypography-body1': {
+      fontSize: 14,
+    },
   },
-  search: {
-    
+}));
+
+const Search = styled(Grid)({});
+
+const SearchText = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.down('xs')]: {
+    marginTop: -23,
   },
-  searchText: {
-    [theme.breakpoints.down('xs')]: {
-      marginTop: -23
-    }
+}));
+
+const HaFilter = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.down('xs')]: {
+    paddingTop: '0 !important',
   },
-  haFilter: {
-    [theme.breakpoints.down('xs')]: {
-      paddingTop: '0 !important'
-    }
+}));
+
+const SearchButton = styled(Grid)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  [theme.breakpoints.down('xs')]: {
+    paddingTop: '0 !important',
+    textAlign: 'center',
   },
-  searchButton: {
-    [theme.breakpoints.down('xs')]: {
-      paddingTop: '0 !important',
-      marginTop: -17,
-      textAlign: 'center'
-    }
+}));
+
+const ClearFilterButton = styled(Button)({
+  color: 'red',
+  textDecoration: 'underline',
+  fontWeight: 'bold',
+  '&:hover': {
+    backgroundColor: 'transparent',
   },
-  clearFilterLink: {
-    color: 'red',
-    textDecoration: 'underline',
-    fontWeight: 'bold'
-  }
-}))
+});
 
 export type BusinessSearchProps = {
   onSubmit: (v: Partial<SearchQueryBuilder>) => void;
@@ -55,7 +60,7 @@ export type BusinessSearchProps = {
     label: string;
   }>;
   showHealthAuthority?: boolean;
-  onReset: () => void
+  onReset: () => void;
 };
 
 function BusinessSearch({
@@ -63,13 +68,10 @@ function BusinessSearch({
   initialCategory,
   categoryOptions,
   showHealthAuthority,
-  onReset
-}: BusinessSearchProps) {  
-  const classes = useStyles();
-  const {
-    searchOptions,
-  } = useBusiness();  
-  
+  onReset,
+}: BusinessSearchProps) {
+  const { searchOptions } = useBusiness();
+
   return (
     <Box my={2}>
       <Formik
@@ -77,15 +79,16 @@ function BusinessSearch({
           onSubmit({
             ...values,
             page: 0,
-          })
+          });
         }}
         initialValues={{
           category: searchOptions.category || initialCategory,
           search: searchOptions.search,
-          healthAuthority: showHealthAuthority ? searchOptions.healthAuthority : 'all',
+          healthAuthority: showHealthAuthority
+            ? searchOptions.healthAuthority
+            : 'all',
         }}
       >
-        
         <Form>
           <Box
             alignContent="center"
@@ -93,59 +96,55 @@ function BusinessSearch({
             justifyContent="end"
             display="flex"
             minHeight="100%"
-            padding="0 0 12px">            
-            <Link
-              className={classes.clearFilterLink}
-              component="button"
-              variant="body2"
-              type = "reset"
-              onClick={onReset}
-              >
+            padding="0 0 12px"
+          >
+            <ClearFilterButton variant="text" type="reset" onClick={onReset}>
               Clear all filters
-            </Link>  
-          </Box> 
-          <Grid container spacing={2} className={classes.searchWrap}>            
-            <Grid item container spacing={0} xs={12} lg={8} className={classes.search}>
+            </ClearFilterButton>
+          </Box>
+          <SearchWrap container spacing={2}>
+            <Search item container spacing={0} xs={12} lg={8}>
               <Grid item lg={12}>
-                <Typography>Search (Address, Business Name, Legal Name etc.)</Typography>     
+                <Typography>Search (Address, Business Name, Legal Name etc.)</Typography>
               </Grid>
-              {categoryOptions &&
-              <Grid item lg={3} xs={12}>                  
-                <StyledSelectField
-                  name="category"
-                  variant="outlined"
-                  options={categoryOptions}                  
-                />
-              </Grid>}
-              <Grid item lg={9} xs={12} className={classes.searchText}>
+              {categoryOptions && (
+                <Grid item lg={3} xs={12}>
+                  <StyledSelectField
+                    name="category"
+                    variant="outlined"
+                    options={categoryOptions}
+                  />
+                </Grid>
+              )}
+              <SearchText item lg={9} xs={12}>
                 <StyledTextField
                   variant="outlined"
                   name="search"
                   placeholder="Type in keyword.."
                 />
-              </Grid>              
-            </Grid>
+              </SearchText>
+            </Search>
 
-            <Grid item xs={12} lg={2} className={classes.haFilter}>   
+            <HaFilter item xs={12} lg={2}>
               {showHealthAuthority && (
                 <StyledSelectField
                   name="healthAuthority"
                   options={healthAuthorityOptions}
                   label="Health Authority"
                   variant="outlined"
-                />  
+                />
               )}
-            </Grid>
+            </HaFilter>
 
-            <Grid item xs={12} lg={2} className={classes.searchButton}>
+            <SearchButton item xs={12} lg={2}>
               <Grid>&nbsp;</Grid>
               <StyledButton variant="dialog-accept" type="submit">
                 <SearchIcon />
                 <Box mr={1} />
                 Search
               </StyledButton>
-            </Grid>
-          </Grid>          
+            </SearchButton>
+          </SearchWrap>
         </Form>
       </Formik>
     </Box>

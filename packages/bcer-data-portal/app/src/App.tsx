@@ -1,7 +1,8 @@
-import React, { useContext, useEffect } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { useHistory } from 'react-router';
-import { Hidden, makeStyles } from '@material-ui/core';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { useMediaQuery } from '@mui/material';
+import { styled } from '@mui/system';
+import { useTheme } from '@mui/material/styles';
 
 import Header from '@/components/Header';
 import Locations from './views/Locations';
@@ -23,38 +24,37 @@ import MapMenu from './views/MapMenu';
 import MobileNav from './components/nav/MobileNav';
 import Report from './views/Report/Overview';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    minHeight: '100vh',
-  },
-  nav: {
-    paddingTop: '70px',
-    flex: '1',
-    maxWidth: '100%',
-    [theme.breakpoints.down('xs')]: {
-      paddingTop: 62,
-      position: 'fixed',
-      width: '100%',
-      zIndex: 99999999
-    }
-  },
-  appBody: {
-    display: 'flex',
-    flex: '1',
-    maxWidth: '100%',
-    [theme.breakpoints.down('xs')] : {
-      paddingTop: 90
-    }
-  },
+const Root = styled('div')(({ theme }) => ({
+  minHeight: '100vh',
+}));
+
+const Nav = styled('div')(({ theme }) => ({
+  paddingTop: '70px',
+  flex: '1',
+  maxWidth: '100%',
+  [theme.breakpoints.down('sm')]: {
+    paddingTop: 62,
+    position: 'fixed',
+    width: '100%',
+    zIndex: 99999999
+  }
+}));
+
+const AppBody = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flex: '1',
+  maxWidth: '100%',
+  [theme.breakpoints.down('sm')]: {
+    paddingTop: 90
+  }
 }));
 
 const App = () => {
-  const classes = useStyles();
-  const history = useHistory();
+  const location = useLocation();
   const { config } = useContext(ConfigContext);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
-
-  //Creates or updated logged in user in database
+  const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
   const [{error}] = useAxiosPost('/data/user/profile');
 
   useEffect(() => {
@@ -65,38 +65,33 @@ const App = () => {
       })
     }
   }, [error])
-  
+
   return (
-    <div className={classes.root}>
+    <Root>
       <div>
         <Header />
-        {history.location.pathname != routes.map && (
-          <div className={classes.nav}>
-            <Hidden smDown>
-              <Navigator />
-            </Hidden>
-            <Hidden smUp>
-              <MobileNav />
-            </Hidden>
-          </div>
+        {location.pathname !== routes.map && (
+          <Nav>
+            {isSmUp ? <Navigator /> : <MobileNav />}
+          </Nav>
         )}
       </div>
-      <div className={classes.appBody}>
-        <Switch>
-          <Route exact path={routes.root} component={Dashboard} />
-          <Route exact path={routes.submittedLocations} component={Locations} />
-          <Route exact path={`${routes.viewLocation}/:id`} component={ViewLocation} />
-          <Route exact path={routes.getHelp} component={GetHelp} />
-          <Route exact path={routes.FAQManagement} component={FAQManagement} />
-          <Route exact path={routes.userManagement} component={UserManagement} />
-          {config.featureFlags.TEXT_MESSAGES && <Route exact path={routes.sendNotification} component={SendNotification} /> }
-          <Route exact path={routes.map} component={Map} />
-          <Route exact path={`${routes.viewBusiness}/:id`} component={BusinessDetails} />
-          <Route exact path={routes.mapMenu} component={MapMenu} />
-          <Route exact path={routes.report} component={Report} />
-        </Switch>
-      </div>
-    </div>
+      <AppBody>
+        <Routes>
+          <Route path={routes.root} element={<Dashboard />} />
+          <Route path={routes.submittedLocations} element={<Locations />} />
+          <Route path={`${routes.viewLocation}/:id`} element={<ViewLocation />} />
+          <Route path={routes.getHelp} element={<GetHelp />} />
+          <Route path={routes.FAQManagement} element={<FAQManagement />} />
+          <Route path={routes.userManagement} element={<UserManagement />} />
+          {config.featureFlags.TEXT_MESSAGES && <Route path={routes.sendNotification} element={<SendNotification />} />}
+          <Route path={routes.map} element={<Map />} />
+          <Route path={`${routes.viewBusiness}/:id`} element={<BusinessDetails />} />
+          <Route path={routes.mapMenu} element={<MapMenu />} />
+          <Route path={routes.report} element={<Report />} />
+        </Routes>
+      </AppBody>
+    </Root>
   );
 };
 

@@ -69,7 +69,7 @@ function SelectInput ({
   options,
   variant,
   ...props
-}: SelectInputProps):ReactElement {
+}: SelectInputProps & { form: { errors: Record<string, string>, submitCount: number } }) {
 
   const error = form.errors[fieldRest.name];
   const submitCount = form.submitCount;

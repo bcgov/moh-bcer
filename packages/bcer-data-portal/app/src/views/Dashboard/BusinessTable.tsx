@@ -1,31 +1,28 @@
 import AutoSubmitFormik from '@/components/AutoSubmitFormik';
 import { BusinessList, SearchQueryBuilder } from '@/constants/localInterfaces';
 import { BusinessFilter } from '@/hooks/useBusiness';
-import { Box, CircularProgress, LinearProgress } from '@material-ui/core';
+import { Box, CircularProgress, LinearProgress, styled } from '@mui/material';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import { StyledRadioGroup } from 'vaping-regulation-shared-components';
 import Table from './Table';
-import makeStyles from "@material-ui/core/styles/makeStyles";
 
-const useStyles = makeStyles((theme) => ({
-  businessFilterForm: {
-    [theme.breakpoints.down('xs')]: {
-      '& .MuiFormGroup-row': {
-        flexDirection: 'column',
+const BusinessFilterForm = styled(Form)(({ theme }) => ({
+  [theme.breakpoints.down('xs')]: {
+    '& .MuiFormGroup-row': {
+      flexDirection: 'column',
+    },
+    '& label.MuiFormControlLabel-root': {
+      '& span.MuiRadio-root': {
+        paddingTop: 2,
+        paddingBottom: 2,
       },
-      '& label.MuiFormControlLabel-root': {
-        '& span.MuiRadio-root': {
-          paddingTop: 2,
-          paddingBottom: 2
-        },
-        '& span.MuiFormControlLabel-label': {
-          fontSize: 14
-        }
-      }
-    }
-  }
-}))
+      '& span.MuiFormControlLabel-label': {
+        fontSize: 14,
+      },
+    },
+  },
+}));
 
 export interface BusinessTableProps {
   data: BusinessList;
@@ -42,7 +39,6 @@ function BusinessTable({
   totalRowCount,
   searchOptions,
 }: BusinessTableProps) {
-  const classes = useStyles();
   const initialValues: { reports: BusinessFilter } = {
     reports: BusinessFilter.All,
   };
@@ -54,7 +50,7 @@ function BusinessTable({
         onSubmit={() =>{}}
       >
         {({ values, setFieldValue }) => (
-          <Form className= {classes.businessFilterForm}>
+          <BusinessFilterForm>
             <StyledRadioGroup
               label={``}
               name="reports"
@@ -82,7 +78,7 @@ function BusinessTable({
               totalRowCount={totalRowCount}
               searchOptions={searchOptions}
             />
-          </Form>
+          </BusinessFilterForm>
         )}
       </Formik>
     </Box>

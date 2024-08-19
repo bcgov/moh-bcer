@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Grid,
-  makeStyles,
   Typography,
   Paper,
   Snackbar,
@@ -11,23 +10,20 @@ import {
   SnackbarContent,
   Tooltip,
   Link,
-  TextField,
   LinearProgress,
-  Divider
-} from '@material-ui/core';
-
-import { useHistory } from 'react-router-dom';
+  Divider,
+} from '@mui/material';
+import { MUIStyledCommonProps, styled, Theme } from '@mui/system';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Form, Formik } from 'formik';
 import { useAxiosGet, useAxiosPostFormData } from '@/hooks/axios';
 import { useKeycloak } from '@react-keycloak/web';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 import store from 'store';
 import {
@@ -52,191 +48,136 @@ import { healthAuthorityOptions} from '../constants/arrays'
 import Favourite from '@/components/location/favourite';
 import { useFavourite } from '@/hooks/useFavourite';
 
-const useStyles = makeStyles({
-  loadingWrapper: {
-    display: 'flex',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contentWrapper: {
-    display: 'flex',
-    width: '100%',
-    justifyContent: 'center',
-  },
-  content: {
-    maxWidth: '1440px',
-    width: '95%',
-    padding: '20px 30px',
-  },
-  helpTextWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '20px',
-    backgroundColor: '#E0E8F0',
-    marginBottom: '30px',
-    borderRadius: '5px',
-  },
-  helperIcon: {
-    fontSize: '45px',
-    color: '#0053A4',
-    paddingRight: '25px',
-  },
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-  },
-  title: {
-    padding: '10px 0px',
-    color: '#002C71',
-  },
-  highlighted: {
-    fontWeight: 600,
-    color: '#0053A4',
-  },
-  subtitleWrapper: {
-    display: 'flex',
-    alignItems: 'bottom',
-    justifyContent: 'space-between',
-    padding: '30px 0px 10px 0px',
-  },
-  subtitle: {
-    color: '#0053A4',
-  },
-  boxTitle: {
-    paddingBottom: '10px',
-  },
-  tableRowCount: {
-    paddingBottom: '10px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px',
-  },
-  csvLink: {
-    textDecoration: 'none',
-  },
-  buttonIcon: {
-    paddingRight: '5px',
-    color: '#285CBC',
-    fontSize: '20px',
-  },
-  buttonIconAlt: {
-    paddingRight: '5px',
-    color: 'white',
-    fontSize: '20px',
-  },
-  sendIcon: {
-    height: '24px',
-    paddingRight: '4px',
-  },
-  actionLink: {
-    color: 'blue',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  },
-  buttonWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  downloadSnackbar: {
-    height: '100px',
-    backgroundColor: 'white',
-    '& .MuiSnackbarContent-message': {
-      fontWeight: '600',
-      color: '#0053A4',
-    },
-    '& .MuiSnackbarContent-action': {
-      minWidth: '64px',
-    },
-  },
-  messageTextContent: {
-    paddingLeft: '10px',
-  },
-  fileLoading: {
-    fontSize: '2.5rem',
-    color: 'rgba(0, 0, 0, 0.2)',
-  },
-  fileComplete: {
-    fontSize: '2.5rem',
-    color: '#0053A4',
-  },
-  downloadButtonIcon: {
-    color: '#285CBC',
-    fontSize: '40px',
-  },
-  groupButtons: {
-    display: 'flex',
-    marginBottom: '1rem',
-    '& > * + *': {
-      marginLeft: '1rem',
-    },
-  },
-  reportTitle: {
-    minWidth: 150,   
-    width: 150 
-  },
-  reportStatusFilterTable: {
+const ContentWrapper = styled('div')({
+  display: 'flex',
+  width: '100%',
+  justifyContent: 'center',
+});
 
+const Content = styled('div')({
+  maxWidth: '1440px',
+  width: '95%',
+  padding: '20px 30px',
+});
+
+const HelpTextWrapper = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '20px',
+  backgroundColor: '#E0E8F0',
+  marginBottom: '30px',
+  borderRadius: '5px',
+});
+
+const HelperIcon = styled(GetAppIcon)({
+  fontSize: '45px',
+  color: '#0053A4',
+  paddingRight: '25px',
+});
+
+const BoxStyled = styled(Paper)({
+  border: 'solid 1px #CDCED2',
+  borderRadius: '4px',
+  padding: '1.4rem',
+});
+
+const Title = styled(Typography)({
+  padding: '10px 0px',
+  color: '#002C71',
+});
+
+const BoxTitle = styled(Typography)({
+  paddingBottom: '10px',
+});
+
+const TableRowCount = styled(Typography)({
+  paddingBottom: '10px',
+});
+
+const ActionsWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  paddingBottom: '10px',
+});
+
+const ActionLink = styled('span')({
+  color: 'blue',
+  cursor: 'pointer',
+  textDecoration: 'underline',
+});
+
+const ButtonWrapper = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const DownloadSnackbar = styled(SnackbarContent)({
+  height: '100px',
+  backgroundColor: 'white',
+  '& .MuiSnackbarContent-message': {
+    fontWeight: '600',
+    color: '#0053A4',
   },
-  reportStatus: {
-    minWidth: 30,    
-    paddingTop: 0,
-    paddingBottom: 0,
-    textAlign: 'center'
+  '& .MuiSnackbarContent-action': {
+    minWidth: '64px',
   },
-  reportSelect: {
-    paddingBottom: 7,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+});
+
+const MessageTextContent = styled('span')({
+  paddingLeft: '10px',
+});
+
+const FileLoading = styled(FileCopyIcon)({
+  fontSize: '2.5rem',
+  color: 'rgba(0, 0, 0, 0.2)',
+});
+
+const FileComplete = styled(FileCopyIcon)({
+  fontSize: '2.5rem',
+  color: '#0053A4',
+});
+
+const DownloadButtonIcon = styled(SaveAltIcon)({
+  color: '#285CBC',
+  fontSize: '40px',
+});
+
+const DateFilterTitle = styled('p')({
+  fontSize: '16px',
+  fontFamily: 'BCSans,Raleway,-apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif',
+  fontWeight: 400,
+  lineHeight: 1.5,
+  margin: 0,
+  width: '100%',
+  height: 'auto',
+  minHeight : '16px',
+});
+
+const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
+  backgroundColor: '#F5F5F5',
+  height: '40px',
+  width: '100%',
+  borderRadius: '2px',
+  '& .MuiInput-underline::before': {
+    display: 'none',
   },
-  radioGroup: {
-    display: 'inline-block'
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
   },
-  showMoreLink: {
-    float: 'right',
-    textDecoration: 'underline',
-    fontWeight: 'bold'
-  },
-  date_filter_title:{
-    fontSize: '16px',
-    fontFamily: 'BCSans,Raleway,-apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif',
-    fontWeight: 400,
-    lineHeight: 1.5,
-    margin: 0,
-    width: '100%',
-    height: 'auto',
-    minHeight : '16px',
-  },
-  root: {
-    backgroundColor: '#F5F5F5',
-    height: '40px',
-    width: '100%',
-    borderRadius: '2px',
-    '& .MuiInput-underline::before': {
-      display: 'none',
-    },
-    cursor: 'pointer',
-  },
-  picker: {
+  cursor: 'pointer',
+  '& .MuiInputBase-input': {
     color: '#535353',
     fontSize: '16px',
     marginLeft: '9px',
     minWidth: '56px',
     height: '19px',
   },
-  clearFilterLink: {
-    color: 'red',
-    textDecoration: 'underline',
-    fontWeight: 'bold'
-  }
-});
+}));
 
 export default function Locations() {
-  const classes = useStyles();
-  const history = useHistory();
-  const [keycloak] = useKeycloak();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { keycloak } = useKeycloak();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
@@ -278,15 +219,15 @@ export default function Locations() {
   const handleRouteWithHistory = (locationId: string) => {
     setAppGlobalContext({
       ...appGlobal,
-      history: history.location
+      history: location
     })
-    history.push(`/location/${locationId}`)
+    navigate(`/location/${locationId}`)
   }
 
   const tableColumns = [
     {
       title: 'Business Name',
-      render: (rd: BusinessLocation) => <span className={classes.actionLink} onClick={() => handleRouteWithHistory(rd.id)}>{rd.business.businessName}</span>,
+      render: (rd: BusinessLocation) => <ActionLink onClick={() => handleRouteWithHistory(rd.id)}>{rd.business.businessName}</ActionLink>,
       sortTitle: "Business Name",
       sorting: true,
       width: 400
@@ -389,12 +330,24 @@ export default function Locations() {
   const logout = () => {
     store.clearAll();
     keycloak.logout();
-    history.push('/');
+    navigate('/');
   };
 
-  //date filter
-  const [selectedFromDate, setFromDate] = useState(searchTerms.fromdate? new Date(searchTerms.fromdate) : null);
+  // Date filter
+  const [selectedFromDate, setFromDate] = useState(searchTerms.fromdate ? new Date(searchTerms.fromdate) : null);
   const [selectedToDate, setToDate] = useState(searchTerms.todate ? new Date(searchTerms.todate) : null);
+
+  const handleFromDateChange = (newValue: Date | null) => {
+    if (newValue && !isNaN(newValue.getTime())) {
+      setFromDate(newValue);
+    }
+  };
+
+  const handleToDateChange = (newValue: Date | null) => {
+    if (newValue && !isNaN(newValue.getTime())) {
+      setToDate(newValue);
+    }
+  };
 
   const search = (e: any) => {
     const authority = e.authority !== 'all' ? e.authority : undefined;
@@ -427,14 +380,14 @@ export default function Locations() {
       (searchTerms.term && searchTerms.term !== "") ||
       (searchTerms.authority && searchTerms.authority !== 'all') ||
       (searchTerms.location_type && searchTerms.location_type !== 'all') ||
-      (searchTerms.reporting_status && searchTerms.reporting_status !=='all') ||
-      (searchTerms.underage && searchTerms.underage !=='all') ||
+      (searchTerms.reporting_status && searchTerms.reporting_status !== 'all') ||
+      (searchTerms.underage && searchTerms.underage !== 'all') ||
       (searchTerms.noi_report && searchTerms.noi_report !== 'all') ||
       (searchTerms.product_report && searchTerms.product_report !== 'all') ||
       (searchTerms.manufacturing_report && searchTerms.manufacturing_report !== 'all') ||
-      (searchTerms.sales_report &&searchTerms.sales_report !== 'all') ||
-      (searchTerms.fromDate &&searchTerms.fromDate !== null) ||
-      (searchTerms.toDate &&searchTerms.toDate !== null)
+      (searchTerms.sales_report && searchTerms.sales_report !== 'all') ||
+      (searchTerms.fromdate && searchTerms.fromdate !== null) ||
+      (searchTerms.todate && searchTerms.todate !== null)
     ) {
       setHasSearchParam(true);
     } else {
@@ -522,29 +475,25 @@ export default function Locations() {
       handler: () => getReportsFile('all'),
       disabled: zipLoading || totalRowCount > 400,
       tooltip: totalRowCount > 1
-      ? 'Must be less than 400 locations to download'
-      : ''
+        ? 'Must be less than 400 locations to download'
+        : ''
     }
   ];
 
   const openMap = () => {
-    if(selectedRows?.length){
+    if (selectedRows?.length) {
       const ids: string[] = selectedRows.reduce((prev, current) => [...prev, current?.id], []);
-      history.push(`/map?locations=${ids.join(",")}`)
+      navigate(`/map?locations=${ids.join(",")}`)
     }
   }
 
-  const TextFieldComponent = (props: any) => {
-    return <TextField {...props} disabled={true} />;
-  };
-
-  const saveFavourite = (name: string) => {    
+  const saveFavourite = (name: string) => {
     if (hasSearchParams) {
-        const data = {title: name, searchParams: JSON.stringify(searchTerms)}
-        onSubmit(data);
-      } else {
-        console.log("No search")
-      }
+      const data = { title: name, searchParams: JSON.stringify(searchTerms) }
+      onSubmit(data);
+    } else {
+      console.log("No search")
+    }
   }
 
   const deserializeSearchParam = (searchParam: string) => {
@@ -553,271 +502,267 @@ export default function Locations() {
   }
 
   return (
-    <div className={classes.contentWrapper}>
-      <div className={classes.content}>
+    <ContentWrapper>
+      <Content>
         {error && (
           <>
-            <div className={classes.helpTextWrapper}>
-              <GetAppIcon className={classes.helperIcon} />
+            <HelpTextWrapper>
+              <HelperIcon />
               <Typography variant="body1">
                 You do not have the correct role to view this page.
               </Typography>
-            </div>
-            <div className={classes.buttonWrapper}>
+            </HelpTextWrapper>
+            <ButtonWrapper>
               <StyledButton variant="outlined" onClick={logout}>
                 Log Out
               </StyledButton>
-            </div>
+            </ButtonWrapper>
           </>
         )}
         {!error && (
           <>
-            <div className={classes.actionsWrapper}>
-              <Typography className={classes.title} variant="h5">
+            <ActionsWrapper>
+              <Title variant="h5">
                 Submitted Locations
-              </Typography>
-            </div>
-            <div className={classes.helpTextWrapper}>
-              <GetAppIcon className={classes.helperIcon} />
+              </Title>
+            </ActionsWrapper>
+            <HelpTextWrapper>
+              <HelperIcon />
               <Typography variant="body1">
                 You may download all submitted reports for one or more locations
                 by selecting them from the table below and clicking the
                 'Download Selected' button.
               </Typography>
-            </div>
+            </HelpTextWrapper>
             <Typography variant="body1">
               All locations submitted by the retailers can be viewed here.
-            </Typography>  
-            <br />          
-            <Paper className={classes.box} variant="outlined">
-              <Typography className={classes.boxTitle} variant="subtitle1">
+            </Typography>
+            <br />
+            <BoxStyled>
+              <BoxTitle variant="subtitle1">
                 Business Locations
-              </Typography>              
-             
+              </BoxTitle>
               <Formik
                 onSubmit={search}
                 initialValues={{
-                  search: searchTerms.term ? searchTerms.term: undefined,
-                  authority: searchTerms.authority || store.get('KEYCLOAK_USER_HA')  || 'all',
-                  location_type: searchTerms.location_type ? searchTerms.location_type: 'all',
-                  reporting_status: searchTerms.reporting_status ? searchTerms.reporting_status: 'all',
-                  underage: searchTerms.underage ? searchTerms.underage: 'all',
-                  noi_report: searchTerms.noi_report ? searchTerms.noi_report: 'all',
-                  product_report: searchTerms.product_report ? searchTerms.product_report: 'all',
-                  manufacturing_report: searchTerms.manufacturing_report ? searchTerms.manufacturing_report: 'all',
-                  sales_report:  searchTerms.sales_report ? searchTerms.sales_report: 'all',
+                  search: searchTerms.term ? searchTerms.term : undefined,
+                  authority: searchTerms.authority || store.get('KEYCLOAK_USER_HA') || 'all',
+                  location_type: searchTerms.location_type ? searchTerms.location_type : 'all',
+                  reporting_status: searchTerms.reporting_status ? searchTerms.reporting_status : 'all',
+                  underage: searchTerms.underage ? searchTerms.underage : 'all',
+                  noi_report: searchTerms.noi_report ? searchTerms.noi_report : 'all',
+                  product_report: searchTerms.product_report ? searchTerms.product_report : 'all',
+                  manufacturing_report: searchTerms.manufacturing_report ? searchTerms.manufacturing_report : 'all',
+                  sales_report: searchTerms.sales_report ? searchTerms.sales_report : 'all',
                   fromdate: searchTerms.fromdate ? searchTerms.fromdate : null,
                   todate: searchTerms.todate ? searchTerms.todate : null
                 }}
-                key = {JSON.stringify(searchTerms)}
-              >{props => {
-                const {
-                  resetForm
-                } = props;
-                return (
-                <Form>
-                  <Box
-                    alignContent="center"
-                    alignItems="center"
-                    justifyContent="end"
-                    display="flex"
-                    minHeight="100%"
-                    padding="0 0 12px"
-                    style = {{gap: 6}}
-                  >
-                    <Link
-                      className={classes.showMoreLink}
-                      component="button"
-                      variant="body2"
-                      type="button"
-                      onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}>
-                      {showMoreFilters ? "Show less filters" : "Show more filters"}
-                    </Link>
-                    <Divider orientation="vertical" flexItem />
-                    <Link
-                      className={classes.clearFilterLink}
-                      component="button"
-                      variant="body2"
-                      type="reset"
-                      onClick={() => {
-                        resetForm({ values: {search: null,
-                          authority: 'all', location_type: 'all',
-                          reporting_status: 'all', underage: 'all', noi_report: 'all', product_report: 'all',
-                          manufacturing_report: 'all', sales_report: 'all', fromdate: null, todate: null}
-                          
-                        });
-                        setSearchTerms({ page:0, pageSize: 20 })
-                      }}
-                      >
-
-                      Clear all filters
-                    </Link>  
-                  </Box>   
-                  <Grid container spacing={2}>
-                    <Grid item md={6} xs={12}>
-                      <StyledTextField
-                        name="search"
-                        label="Search (Address, Business Name, Legal Name, Doing Business As)"
-                      />
-                    </Grid>
-                    <Grid item md={3} xs={6}>
-                      <StyledSelectField
-                        name="authority"
-                        options={healthAuthorityOptions}
-                        label="Health Authority"
-                      />
-                    </Grid>
-                    <Grid item md={3} xs={6}>
-                      <StyledSelectField
-                        name="location_type"
-                        options={locationTypeOptions(true)}
-                        label="Location Type"
-                      />
-                    </Grid>   
-                    <Grid item md={3} xs={6}>
-                      <StyledSelectField
-                        name="underage"
-                        options={[
-                          {label: 'All', value: 'all'},
-                          {label: 'Yes', value: 'Yes'},
-                          {label: 'No', value: 'No'},
-                          {label: 'Other', value: 'other'}
-                        ]}
-                        label="Underage Allowed"
-                      />
-                    </Grid>                 
-                    <Grid item md={3} xs={6}>
-                      <StyledSelectField
-                        name="noi_report"
-                        options={reportingStatusOptions(false, true)}
-                        label="NOI Status"
-                      />                     
-                    </Grid>
-                    
-                    <Grid item md={3} xs={6}>
-                      <StyledSelectField
-                        name="product_report"
-                        options={reportingStatusOptions(false)}
-                        label="Product Report Status"
-                      />                     
-                    </Grid> 
-                    
-                    {(showMoreFilters || searchTerms.sales_report || searchTerms.todate || searchTerms.fromdate) 
-                    && 
-                    <>             
-                    <Grid item md={3} xs={6}>
-                      <StyledSelectField
-                        name="manufacturing_report"
-                        options={reportingStatusOptions(true)}
-                        label="Manufacturing Report Status"
-                      />                     
-                    </Grid> 
-                    <Grid item md={3} xs={6}>
-                      <StyledSelectField
-                        name="sales_report"
-                        options={reportingStatusOptions(true)}
-                        label="Sales Report Status"
-                      />                     
-                    </Grid>
-                    
-                    <Grid item md={3} xs={6}>
-                      <p className={classes.date_filter_title}>Location Creation Start Date</p>
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          className={classes.root}
-                          inputProps={{ className: classes.picker }}
-                          TextFieldComponent={TextFieldComponent}
-                          format="MM/dd/yyyy"
-                          maxDate = {selectedToDate? selectedToDate : moment()}
-                          maxDateMessage = 'Date should not be after the To date'
-                          minDate = {new Date(1900,1,1)}
-                          value={selectedFromDate ? moment(selectedFromDate) : null}
-                          onChange={setFromDate}
-                          showTodayButton={true}
-                          clearable={true}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                      <p className={classes.date_filter_title}/>
-                    </Grid>
-                    <Grid item md={3} xs={6}>
-                    <p className={classes.date_filter_title}>Location Creation End Date</p>
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          className={classes.root}
-                          inputProps={{ className: classes.picker }}
-                          TextFieldComponent={TextFieldComponent}
-                          format="MM/dd/yyyy"
-                          value={selectedToDate ? moment(selectedToDate) : null}
-                          maxDate = {moment()}
-                          minDate = {selectedFromDate ? selectedFromDate: new Date(1900,1,1)}
-                          maxDateMessage = 'Date should not be before the From date'
-                          onChange={setToDate}
-                          showTodayButton={true}
-                          clearable={true}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
-                      </MuiPickersUtilsProvider>
-                      <p className={classes.date_filter_title}/>
-                    </Grid>               
-                    </> }
-                    <Grid item md={3} xs={6}>                   
+                key={JSON.stringify(searchTerms)}
+              >
+                {props => {
+                  const {
+                    resetForm
+                  } = props;
+                  return (
+                    <Form>
                       <Box
                         alignContent="center"
                         alignItems="center"
+                        justifyContent="end"
                         display="flex"
                         minHeight="100%"
-                        gridGap={15}
+                        padding="0 0 12px"
+                        style={{ gap: 6 }}
                       >
-                        <StyledButton
-                          fullWidth
-                          variant="dialog-accept"
-                          type="submit"
-                          style={{width: '65%'}}
+                        <Link
+                          component="button"
+                          variant="body2"
+                          type="button"
+                          onClick={() => showMoreFilters ? setShowMoreFilter(false) : setShowMoreFilter(true)}
+                          sx={{
+                            float: 'right',
+                            textDecoration: 'underline',
+                            fontWeight: 'bold'
+                          }}
+                          >
+                          {showMoreFilters ? "Show less filters" : "Show more filters"}
+                        </Link>
+                        <Divider orientation="vertical" flexItem />
+                        <Link
+                          component="button"
+                          variant="body2"
+                          type="reset"
+                          onClick={() => {
+                            resetForm({
+                              values: {
+                                search: null,
+                                authority: 'all', location_type: 'all',
+                                reporting_status: 'all', underage: 'all', noi_report: 'all', product_report: 'all',
+                                manufacturing_report: 'all', sales_report: 'all', fromdate: null, todate: null
+                              }
+                            });
+                            setSearchTerms({ page: 0, pageSize: 20 })
+                          }}
+                          sx={{
+                            color: 'red',
+                            textDecoration: 'underline',
+                            fontWeight: 'bold'
+                          }}
                         >
-                          Search
-                        </StyledButton>
-                        <Favourite 
-                          enableAdd = {hasSearchParams}
-                          handleSave={saveFavourite}
-                          isSubmitting =  {isSubmitting}
-                          submitSuccess = {submitSuccess}
-                          submitError = {submitError}
-                          handleSetSearchParams = {deserializeSearchParam}
-                        />
+                          Clear all filters
+                        </Link>
                       </Box>
-                    </Grid>
-                  </Grid>                  
-                </Form>)
-              }}
+                      <Grid container spacing={1}>
+                        <Grid item md={6} xs={12} sx={{ p: 1 }}>
+                          <StyledTextField
+                            name="search"
+                            label="Search (Address, Business Name, Legal Name, Doing Business As)"
+                          />
+                        </Grid>
+                        <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                          <StyledSelectField
+                            name="authority"
+                            options={healthAuthorityOptions}
+                            label="Health Authority"
+                          />
+                        </Grid>
+                        <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                          <StyledSelectField
+                            name="location_type"
+                            options={locationTypeOptions(true)}
+                            label="Location Type"
+                          />
+                        </Grid>
+                        <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                          <StyledSelectField
+                            name="underage"
+                            options={[
+                              { label: 'All', value: 'all' },
+                              { label: 'Yes', value: 'Yes' },
+                              { label: 'No', value: 'No' },
+                              { label: 'Other', value: 'other' }
+                            ]}
+                            label="Underage Allowed"
+                          />
+                        </Grid>
+                        <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                          <StyledSelectField
+                            name="noi_report"
+                            options={reportingStatusOptions(false, true)}
+                            label="NOI Status"
+                          />
+                        </Grid>
+                        <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                          <StyledSelectField
+                            name="product_report"
+                            options={reportingStatusOptions(false)}
+                            label="Product Report Status"
+                          />
+                        </Grid>
+                        {(showMoreFilters || searchTerms.sales_report || searchTerms.todate || searchTerms.fromdate)
+                          &&
+                          <>
+                            <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                              <StyledSelectField
+                                name="manufacturing_report"
+                                options={reportingStatusOptions(true)}
+                                label="Manufacturing Report Status"
+                              />
+                            </Grid>
+                            <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                              <StyledSelectField
+                                name="sales_report"
+                                options={reportingStatusOptions(true)}
+                                label="Sales Report Status"
+                              />
+                            </Grid>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                              <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                                <DateFilterTitle>Location Creation Start Date</DateFilterTitle>
+                                <StyledDatePicker
+                                  value={selectedFromDate}
+                                  onChange={handleFromDateChange}
+                                  format="MM/dd/yyyy"
+                                  maxDate={selectedToDate ? selectedToDate : new Date()}
+                                  minDate={new Date(1900, 1, 1)}
+                                  disableHighlightToday={false}
+                                  slotProps={{
+                                    field: { clearable: true, onClear: () => setFromDate(null) },
+                                  }}
+                                />
+                                <DateFilterTitle/>
+                              </Grid>
+                              <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                                <DateFilterTitle>Location Creation End Date</DateFilterTitle>
+                                <StyledDatePicker
+                                  value={selectedToDate}
+                                  onChange={handleToDateChange}
+                                  format="MM/dd/yyyy"
+                                  maxDate={new Date()}
+                                  minDate={selectedFromDate ? selectedFromDate : new Date(1900, 1, 1)}
+                                  disableHighlightToday={false}
+                                  slotProps={{
+                                    field: { clearable: true, onClear: () => setToDate(null) },
+                                  }}
+                                />
+                                <DateFilterTitle/>
+                              </Grid>
+                            </LocalizationProvider>
+                          </>
+                        }
+                        <Grid item md={3} xs={6} sx={{ p: 1 }}>
+                          <Box
+                            alignContent="center"
+                            alignItems="center"
+                            display="flex"
+                            minHeight="100%"
+                            sx={{ gap: 1.875 }}
+                          >
+                            <StyledButton
+                              fullWidth
+                              variant="dialog-accept"
+                              type="submit"
+                              style={{ width: '65%' }}
+                            >
+                              Search
+                            </StyledButton>
+                            <Favourite
+                              enableAdd={hasSearchParams}
+                              handleSave={saveFavourite}
+                              isSubmitting={isSubmitting}
+                              submitSuccess={submitSuccess}
+                              submitError={submitError}
+                              handleSetSearchParams={deserializeSearchParam}
+                            />
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </Form>)
+                }}
               </Formik>
               <div>
-                <Typography className={classes.tableRowCount} variant="body2">
+                <TableRowCount variant="body2">
                   {totalRowCount} retail locations.
-                </Typography>
-                <Box display ='flex' justifyContent='flex-end' my={2}>
-                  <Box mx={2}/>
-                    <Tooltip title={selectedRows.length > 8 ? "Can't open map with more than 8 locations at a time" : ''}>
+                </TableRowCount>
+                <Box display='flex' justifyContent='flex-end' my={2}>
+                  <Box mx={2} />
+                  <Tooltip title={selectedRows.length > 8 ? "Can't open map with more than 8 locations at a time" : ''}>
                     <Box>
-                      <StyledButton 
-                        variant="small-outlined" 
-                        disabled={!selectedRows?.length || selectedRows.length >8}
+                      <StyledButton
+                        variant="small-outlined"
+                        disabled={!selectedRows?.length || selectedRows.length > 8}
                         onClick={openMap}
                       >
                         Show on Map
                       </StyledButton>
                     </Box>
                   </Tooltip>
-                  <Box mx={2}/>
-                  <StyledMenus items={menuOptions} buttonComponent="Download"/>
+                  <Box mx={2} />
+                  <StyledMenus items={menuOptions} buttonComponent="Download" />
                 </Box>
               </div>
-              <ReportStatusLegend /> <br/>
-              {loading ? <LinearProgress /> : <Box pt={0.5}/>}
+              <ReportStatusLegend /> <br />
+              {loading ? <LinearProgress /> : <Box pt={0.5} />}
               <div className={'tableDiv'}>
                 <StyledTable
                   columns={tableColumns}
@@ -862,7 +807,7 @@ export default function Locations() {
                         orderDirection: undefined,
                       });
                       return;
-                    }                    
+                    }
                     setSearchTerms({
                       ...searchTerms,
                       orderBy: orderColumn,
@@ -886,27 +831,22 @@ export default function Locations() {
                   }
                 />
               </div>
-            </Paper>
+            </BoxStyled>
           </>
         )}
-      </div>
+      </Content>
       <Snackbar
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <SnackbarContent
-          className={classes.downloadSnackbar}
+        <DownloadSnackbar
           message={
             <div>
-              <FileCopyIcon
-                className={
-                  zipLoading ? classes.fileLoading : classes.fileComplete
-                }
-              />
-              <span className={classes.messageTextContent}>
+              zipLoading ? <FileLoading/> : <FileComplete/>
+              <MessageTextContent>
                 {`locations-${moment().format('MMM-DD-hh-mm')}.zip`}
-              </span>
+              </MessageTextContent>
             </div>
           }
           action={
@@ -920,12 +860,12 @@ export default function Locations() {
                   setSnackbarOpen(false);
                 }}
               >
-                <SaveAltIcon className={classes.downloadButtonIcon} />
+                <DownloadButtonIcon/>
               </IconButton>
             )
           }
         />
       </Snackbar>
-    </div>
+    </ContentWrapper>
   );
 }

@@ -59,7 +59,7 @@ function CheckboxInput ({
   label,
   disabled,
   ...props
-}: CheckboxInputProps):ReactElement {
+}: CheckboxInputProps & { form: { touched: Record<string, boolean>, errors: Record<string, string> } }) {
 
   const touched = form.touched[fieldRest.name];
   const error = form.errors[fieldRest.name];
@@ -198,7 +198,7 @@ function DtPicker ({
   label,
   disabled,
   ...props
-}: DtPickerProps):ReactElement {
+}: DtPickerProps & { form: { touched: Record<string, boolean>, errors: Record<string, string> } }) {
 
   /** open calendar */
   const [open, setOpen] = useState(false);

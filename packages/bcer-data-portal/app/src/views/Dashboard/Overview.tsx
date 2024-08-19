@@ -3,22 +3,19 @@ import Page from '@/components/generic/Page';
 import { businessSearchCategoryOptions } from '@/constants/arrays';
 import { ConfigContext } from '@/contexts/Config';
 import useBusiness from '@/hooks/useBusiness';
-import { LinearProgress, makeStyles, Paper } from '@material-ui/core';
+import { LinearProgress, Paper, styled } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import BusinessTable from './BusinessTable';
 import ReportingSummary from './ReportingSummary';
 
-const useStyles = makeStyles(() => ({
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-  },
-}));
+const PaperBox = styled(Paper)({
+  border: 'solid 1px #CDCED2',
+  borderRadius: '4px',
+  padding: '1.4rem',
+});
+
 
 function Dashboard() {
-  const classes = useStyles();
-
   const { config } = useContext(ConfigContext);
 
   const {
@@ -41,7 +38,7 @@ function Dashboard() {
 
   return (
     <Page title='Dashboard' error={!businessLoading && !config.permissions.MANAGE_LOCATIONS}>
-      <Paper variant="outlined" className={classes.box}>
+      <PaperBox variant="outlined">
         <ReportingSummary />
         <BusinessSearch
           onSubmit={onChangeSearch}
@@ -57,7 +54,7 @@ function Dashboard() {
           totalRowCount={totalRowCount}
           searchOptions={searchOptions}
         />
-      </Paper>
+      </PaperBox>
     </Page>
   );
 }

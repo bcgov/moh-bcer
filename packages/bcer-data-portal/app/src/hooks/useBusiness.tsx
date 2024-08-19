@@ -2,9 +2,10 @@ import { BusinessList, BusinessRO, SearchQueryBuilder } from '@/constants/localI
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
 import { GeneralUtil } from '@/util/general.util';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAxiosGet } from './axios';
 import store from 'store';
+import axios from 'axios';
 
 export enum BusinessFilter {
   All = 'all',
@@ -54,11 +55,30 @@ function useBusiness() {
     });
   }
 
-  useEffect(() => {
-    localStorage.setItem('searchOptions', JSON.stringify(searchOptions));
-    const query = GeneralUtil.searchQueryBuilder(searchOptions);
-    getBusinesses({ url: `/data/business/businesses?${query}`});
-  }, [searchOptions])
+useEffect(() => {
+  localStorage.setItem('searchOptions', JSON.stringify(searchOptions));
+  const query = GeneralUtil.searchQueryBuilder(searchOptions);
+  const source = axios.CancelToken.source();
+  const fetchBusinesses = async () => {
+    try {
+      await getBusinesses({ 
+        url: `/data/business/businesses?${query}`,
+        cancelToken: source.token
+      });
+    } catch (error) {
+      if (!axios.isCancel(error)) {
+        setAppGlobal({
+          ...appGlobal,
+          networkErrorMessage: formatError(error),
+        });
+      }
+    }
+  };
+  fetchBusinesses();
+  return () => {
+    source.cancel('Operation canceled due to new request.');
+  };
+}, [searchOptions]);
 
   useEffect(() => {
     if(businessData?.data){

@@ -9,14 +9,14 @@ import {
   IsUrl,
   ValidateIf,
 } from 'class-validator';
-import * as faker from 'faker/locale/en_CA';
+import { faker } from '@faker-js/faker/locale/en_CA';
 import { SubmissionTypeEnum } from 'src/submission/enums/submission.enum';
 
 export class SubmissionDTO {
 
   @ApiProperty({
     description: 'Business id, the primary key for a business entity',
-    example: faker.datatype.uuid(),
+    example: faker.string.uuid(),
     default: 'Happy Puff'
   })
   @IsOptional()
@@ -45,7 +45,7 @@ export class UpdateSubmissionDTO {
 
   @ApiProperty({
     description: 'Submission ID, if this is an update',
-    example: faker.datatype.uuid(),
+    example: faker.string.uuid(),
   })
   @IsOptional()
   submissionId?: string;

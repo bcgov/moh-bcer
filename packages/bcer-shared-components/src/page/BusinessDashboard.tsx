@@ -24,34 +24,40 @@ const PREFIX = 'BusinessDashboard';
 const classes = {
   box: `${PREFIX}-box`,
   title: `${PREFIX}-title`,
-  retailerLegend: `${PREFIX}-retailerLegend`,
   legendTitle: `${PREFIX}-legendTitle`,
   legendItem: `${PREFIX}-legendItem`,
   retailerText: `${PREFIX}-retailerText`,
-  locationReportStatWrap: `${PREFIX}-locationReportStatWrap`,
 };
 
 const StyledBox = styled(Box)(({ theme }) => ({
   [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
+
     padding: '1.4rem',
   },
   [`& .${classes.title}`]: {
     fontWeight: 'bold',
     fontSize: '17px',
   },
-  [`& .${classes.retailerLegend}`]: {
-    display: 'flex',
-    border: '1px solid #CDCED2',
-    borderRadius: '4px',
-    padding: '12px 18px',
-    [theme.breakpoints.down('sm')]: {
-      display: 'block',
-    }
+  [`& .${classes.retailerText}`]: {
+    fontSize: '16px'
+  }
+}));
+
+const StyledLegend = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  border: '1px solid #CDCED2',
+  borderRadius: '4px',
+  padding: '12px 18px',
+  [theme.breakpoints.down('xs')]: {
+    display: 'block',
   },
   [`& .${classes.legendTitle}`]: {
-    fontWeight: 600
+    fontWeight: 600,
+  },
+  [`& .${classes.retailerText}`]: {
+    fontSize: '16px',
   },
   [`& .${classes.legendItem}`]: {
     display: 'flex',
@@ -59,19 +65,17 @@ const StyledBox = styled(Box)(({ theme }) => ({
     color: '#333333',
     fontSize: '14px'
   },
-  [`& .${classes.retailerText}`]: {
-    fontSize: '16px'
-  },
-  [`& .${classes.locationReportStatWrap}`]: {
-    [theme.breakpoints.down('sm')]: {
-      '& th': {
-        whiteSpace: 'pre-wrap !important',
-        textAlign: 'center',
-        padding: '0 5px'
-      },
-      '& td': {
-        textAlign: 'center'
-      }
+}));
+
+const StyledSpan = styled('span')(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    '& th': {
+      whiteSpace: 'pre-wrap !important',
+      textAlign: 'center',
+      padding: '0 5px'
+    },
+    '& td': {
+      textAlign: 'center'
     }
   }
 }));
@@ -281,7 +285,7 @@ export function LocationCompletedReportTable({
 
 export function ReportStatusLegend() {
   return (
-    <Box className={classes.retailerLegend}>
+    <StyledLegend>
       <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
         Legend:
       </Typography>
@@ -301,8 +305,8 @@ export function ReportStatusLegend() {
         {BusinessDashboardUtil.renderStatus(ReportStatus.NotRequired)}
         &nbsp; Not Required
       </div>
-    </Box>
-  )
+    </StyledLegend>
+  );
 }
 
 export function LocationReportStatusTable({status, loading}: {status: LocationReportStatus, loading?: boolean}){
@@ -311,7 +315,7 @@ export function LocationReportStatusTable({status, loading}: {status: LocationRe
       <Box py={1}>
         <ReportStatusLegend />
       </Box>
-      <span className={classes.locationReportStatWrap}>
+      <StyledSpan>
         <StyledTable 
           columns={BusinessDashboardUtil.getLocationColumn()}
           data={ status? [status] : []}
@@ -321,7 +325,7 @@ export function LocationReportStatusTable({status, loading}: {status: LocationRe
           }}
           isLoading={loading}
         />
-      </span>
+      </StyledSpan>
     </>
   )
 }

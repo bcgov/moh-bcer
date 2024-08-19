@@ -64,7 +64,7 @@ const PublicRoute = ({ Component }: { Component: React.ElementType }) => {
   return keycloak.authenticated ? <Navigate to="/" replace /> : <Component />;
 };
 
-const Loader = () => (
+const Loader: React.FC = () => (
   <LinearProgress
     style={{ borderRadius: '5%', height: '5px', width: '95vw', margin: 'auto' }}
   />

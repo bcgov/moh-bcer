@@ -1,5 +1,5 @@
 import { useToast } from '@/hooks/useToast';
-import { Box, Slide, Snackbar } from '@material-ui/core';
+import { Box, Slide, Snackbar } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { StyledToast } from 'vaping-regulation-shared-components';

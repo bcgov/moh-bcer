@@ -6,7 +6,8 @@ import {
   IsUUID,
   Matches,
 } from 'class-validator';
-import * as faker from 'faker/locale/en_CA';
+import { faker } from '@faker-js/faker/locale/en_CA';
+
 
 export class SubscriptionDTO {
   @ApiProperty({

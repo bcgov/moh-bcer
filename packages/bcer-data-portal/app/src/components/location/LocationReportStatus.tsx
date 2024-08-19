@@ -1,23 +1,20 @@
+import React, { useEffect, useState } from 'react';
+import { Box, Tooltip, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { LocationReportStatusTable, StyledTable } from 'vaping-regulation-shared-components';
 import { ReportStatus } from '@/constants/localEnums';
 import { useAxiosGet } from '@/hooks/axios';
-import { Box, makeStyles, Tooltip, Typography } from '@material-ui/core';
-import React, { useEffect, useMemo, useState } from 'react';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import { LocationReportStatusTable, StyledTable } from 'vaping-regulation-shared-components';
-import { LocationReportStatus, LocationRO } from '@/constants/localInterfaces';
+import type { LocationReportStatus, LocationRO } from '@/constants/localInterfaces';
+const SubTitle = styled(Typography)({
+  color: '#333333',
+  fontSize: '14px',
+});
 
-const useStyles = makeStyles(() => ({
-  subTitle: {
-    color: '#333333',
-    fontSize: '14px',
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: '17px',
-  },
-}));
-
-
+const Title = styled(Typography)({
+  fontWeight: 'bold',
+  fontSize: '17px',
+});
 
 export function LocationReportStatus({ id }: { id: string }) {
   const [missing, setMissing] = useState(0);
@@ -39,13 +36,12 @@ export function LocationReportStatus({ id }: { id: string }) {
     setMissing(countMissing(data))
   }, [data])
 
-  const classes = useStyles();
   return (
     <Box>
-      <Typography className={classes.title}>Outstanding Reports</Typography>
-      <Typography className={classes.subTitle}>
+      <Title>Outstanding Reports</Title>
+      <SubTitle>
         This location has {missing} outstanding report
-      </Typography>
+      </SubTitle>
       <Box pt={1} pb={1}>
         <LocationReportStatusTable status={data} loading={loading}/>
       </Box>

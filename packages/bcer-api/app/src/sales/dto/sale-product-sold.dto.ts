@@ -4,27 +4,27 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import * as faker from 'faker/locale/en_CA';
+import { faker } from '@faker-js/faker/locale/en_CA';
 
 export class SaleProductSoldDTO {
 
   @ApiProperty({
     description: 'Sales Report ID',
-    example: faker.datatype.uuid(),
+    example: faker.string.uuid(),
   })
   @IsOptional()
   id: string;
   
   @ApiProperty({
     description: 'Product ID',
-    example: faker.datatype.uuid(),
+    example: faker.string.uuid(),
   })
   @IsOptional()
   productSoldId: string;
 
   @ApiProperty({
     description: 'Location ID',
-    example: faker.datatype.uuid(),
+    example: faker.string.uuid(),
   })
   @IsNotEmpty()
   locationId: string;

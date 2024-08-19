@@ -1,6 +1,6 @@
 import { Dialog } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
 
 const PREFIX = 'FullScreen';
@@ -24,10 +24,8 @@ interface FullScreenProp {
   children: React.ReactNode;
 }
 
-function FullScreen({
-  children,
-  fullScreenProp: [fullscreen, setFullscreen],
-}: FullScreenProp) {
+function FullScreen({ children, fullScreenProp: [initialFullscreen, setFullscreen] }: FullScreenProp) {
+  const [fullscreen, setFullscreenState] = useState<boolean>(initialFullscreen);
 
   return (
     <Root>
@@ -48,5 +46,4 @@ function FullScreen({
     </Root>
   );
 }
-
 export default FullScreen;

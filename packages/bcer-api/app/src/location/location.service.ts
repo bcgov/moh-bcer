@@ -673,8 +673,11 @@ export class LocationService {
     payload.latitude ? updateValue['latitude'] = payload.latitude : null;
     payload.longitude ? updateValue['longitude'] = payload.longitude : null;
     payload.geoAddressConfidence ? updateValue['geoAddressConfidence'] = payload.geoAddressConfidence : null;
-
-    const result = await this.locationRepository.update({id: locationId}, {...updateValue});
+    const locationTypeValue = LocationType[updateValue.location_type as keyof typeof LocationType];
+    const result = await this.locationRepository.update(
+      { id: locationId },
+      { ...updateValue, location_type: locationTypeValue }
+    );
   }
 
   /**

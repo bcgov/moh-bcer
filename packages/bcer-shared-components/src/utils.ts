@@ -6,8 +6,8 @@
  * @param targetKeys - `Enum` containing the expected output props as keys, and values matching the keys of the sourceObject 
  * @param sourceObject - `Object` containing keys matching the targetKeys Enum's values
  */
-export const mapToObject = (targetKeys: Object, sourceObject: Object): any => {
-  let constructedObject = {};
+export const mapToObject = (targetKeys: { [key: string]: string }, sourceObject: { [key: string]: any }): any => {
+  let constructedObject: { [key: string]: any } = {};
 
   for (let property in targetKeys) {
     constructedObject[property] = sourceObject[targetKeys[property]]

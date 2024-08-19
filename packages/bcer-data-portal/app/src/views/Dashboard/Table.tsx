@@ -2,7 +2,7 @@ import { BusinessRO, SearchQueryBuilder } from '@/constants/localInterfaces';
 import { DashboardUtil } from '@/util/dashboard.util';
 import useBusiness from '@/hooks/useBusiness';
 import { getInitialPagination } from '@/util/general.util';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import React from 'react';
 import { StyledTable } from 'vaping-regulation-shared-components';
 
