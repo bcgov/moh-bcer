@@ -144,10 +144,10 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
-      - name: Use Node.js 14
+      - name: Use Node.js 22
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 22
 
       - name: Build project shared components
         run: |
