@@ -33,11 +33,13 @@ const login = (user) => {
       })
       .join("&");
     const url = authCompleteUrl + "?" + queryString + "&kc_idp_hint=moh_idp";
+    cy.log('Auth URL:', url); 
     cy.request({
       url,
       followRedirect: true,
     })
       .then(function (response) {
+        cy.log('Initial Auth Response:', response);
         let html = document.createElement("html");
         html.innerHTML = response.body;
         let form = html.getElementsByTagName("form")[0];
@@ -56,6 +58,7 @@ const login = (user) => {
         });
       })
       .then(function (response) {
+        cy.log('Login Response:', response);
         expect(response.status).equal(200);
       });
   });
