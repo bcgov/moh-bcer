@@ -149,9 +149,11 @@ const prodConfig = merge([
   parts.copy([PATHS.public, path.join(PATHS.build, 'public')]),
 ]);
 
-module.exports = () => {
-  const mode = process.env.NODE_ENV;
-  return mode === 'production'
-    ? merge(commonConfig, prodConfig, { mode })
-    : merge(commonConfig, devConfig, { mode });
+module.exports = (env) => {
+  const mode = env === PRODUCTION ? PRODUCTION : DEVELOPMENT;
+  return merge(
+    commonConfig,
+    mode === PRODUCTION ? prodConfig : devConfig,
+    { mode }
+  );
 };
