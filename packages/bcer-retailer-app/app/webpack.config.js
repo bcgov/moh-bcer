@@ -151,11 +151,12 @@ const prodConfig = merge([
   parts.gZipCompression(),
   parts.registerServiceWorker(),
   parts.extractManifest(),
-  parts.copy([PATHS.public], path.join(PATHS.build, 'public')),
+  parts.copy([PATHS.public, path.join(PATHS.build, 'public')]),
 ]);
 
 module.exports = (env) => {
   const mode = env === PRODUCTION ? PRODUCTION : DEVELOPMENT;
+  console.log(`Webpack mode: ${mode}`);
   return merge(
     commonConfig,
     mode === PRODUCTION ? prodConfig : devConfig,
