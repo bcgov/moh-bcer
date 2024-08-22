@@ -154,7 +154,7 @@ const prodConfig = merge([
 ]);
 
 module.exports = () => {
-  const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+  const mode = process.env.NODE_ENV;
   return mode === 'production'
     ? merge(commonConfig, prodConfig, { mode })
     : merge(commonConfig, devConfig, { mode });
