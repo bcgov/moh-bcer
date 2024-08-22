@@ -87,9 +87,9 @@ services:
       context: ./.nginx
     ports:
       - "3000:80"
-    depends_on: 
+    depends_on:
       - retailer-app
-      - application
+      - data-portal
     networks:
       - backend
 

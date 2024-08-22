@@ -48,6 +48,10 @@ const commonConfig = merge([
     plugins: [
       new HtmlWebpackPlugin({
         template: PATHS.template,
+        filename: 'index.html',
+        inject: 'body',
+        scriptLoading: 'defer',
+        publicPath: '', // Ensure paths are relative
       }),
     ],
     resolve: {
