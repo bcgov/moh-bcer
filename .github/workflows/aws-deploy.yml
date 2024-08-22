@@ -176,8 +176,6 @@ jobs:
           cd packages/bcer-retailer-app/app
           npm install
           npm run build
-        env:
-          NODE_ENV: production  # Explicitly set NODE_ENV
 
       - name: Upload to S3 bucket retail app
         run: |
@@ -196,8 +194,6 @@ jobs:
           cd packages/bcer-data-portal/app
           npm install
           npm run build
-        env:
-          NODE_ENV: production  # Explicitly set NODE_ENV
 
       - name: Upload to S3 bucket data portal
         run: |
