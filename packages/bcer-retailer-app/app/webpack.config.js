@@ -131,6 +131,7 @@ const prodConfig = merge([
       },
     },
   }),
+  parts.copy(path.join(PATHS.src, 'assets', 'images'), path.join(PATHS.build, 'assets')),
   parts.bundleOptimization({
     options: {
       cacheGroups: {
