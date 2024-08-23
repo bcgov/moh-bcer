@@ -121,32 +121,32 @@ exports.loadImages = ({ include, exclude, urlLoaderOptions, fileLoaderOptions, i
         test: /\.(gif|png|jpe?g)$/,
         include,
         exclude,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 10 * 1024,
-          },
-        },
+        loader: 'url-loader',
+        options: urlLoaderOptions,
       },
       {
         test: /\.svg$/,
         include,
         exclude,
-        use: ['@svgr/webpack'],
+        use: [
+            {
+                loader: '@svgr/webpack'
+            },
+            {
+                loader: 'file-loader',
+                options: fileLoaderOptions,
+            }
+        ],
       },
       {
         test: /\.(gif|png|jpe?g|svg)$/,
         include,
         exclude,
-        use: [
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              bypassOnDebug: true,
-              ...imageLoaderOptions,
-            },
-          },
-        ],
+        loader: 'image-webpack-loader',
+        options: {
+          bypassOnDebug: true,
+          ...imageLoaderOptions,
+        },
       },
     ],
   },
