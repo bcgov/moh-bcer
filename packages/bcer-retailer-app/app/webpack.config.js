@@ -1,8 +1,8 @@
 const webpack = require('webpack');
-const parts = require('./webpack.parts');
-const path = require('path');
-const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { merge } = require('webpack-merge');
+const path = require('path');
+const parts = require('./webpack.parts');
 const dotenv = require('dotenv');
 
 const DEVELOPMENT = 'development';
@@ -34,7 +34,6 @@ const PATH_ALIASES = {
 };
 
 const env = dotenv.config().parsed;
-
 const envKeys = Object.keys(env).reduce((prev, next) => {
   prev[next] = env[next];
   return prev;
@@ -48,15 +47,16 @@ const commonConfig = merge([
     plugins: [
       new HtmlWebpackPlugin({
         template: PATHS.template,
-        filename: 'index.html',
-        inject: 'body',
-        scriptLoading: 'defer',
-        publicPath: '', // Ensure paths are relative
       }),
     ],
     resolve: {
       alias: PATH_ALIASES,
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      fallback: {
+        "crypto": require.resolve("crypto-browserify"),
+        "stream": require.resolve("stream-browserify"),
+        "vm": require.resolve("vm-browserify")
+      }
     },
   },
   parts.loadJS({
@@ -151,15 +151,16 @@ const prodConfig = merge([
   parts.gZipCompression(),
   parts.registerServiceWorker(),
   parts.extractManifest(),
-  parts.copy([PATHS.public, path.join(PATHS.build, 'public')]),
+  parts.copy('public', 'build/public'),
 ]);
 
 module.exports = (env) => {
-  const mode = env === PRODUCTION ? PRODUCTION : DEVELOPMENT;
-  console.log(`Webpack mode: ${mode}`);
+  const isProduction = env.production === true;
+  const mode = isProduction ? 'production' : 'development';
+  console.log(`Webpack mode: ${mode}`); // Log the mode
   return merge(
     commonConfig,
-    mode === PRODUCTION ? prodConfig : devConfig,
+    isProduction ? prodConfig : devConfig,
     { mode }
   );
 };

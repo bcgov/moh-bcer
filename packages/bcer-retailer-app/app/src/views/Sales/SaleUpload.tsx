@@ -206,7 +206,7 @@ function SaleUplad() {
     setConfirmOpen(false);
   };
 
-  const handleUpdateHeaders = (values: SalesReportCSVHeaders) => {
+  const handleUpdateHeaders = (values: { [key: string]: SalesReportCSVHeaders }) => {
     setMapping(mapToObject(SalesReportDTOHeaders, values));
   };
 

@@ -81,10 +81,10 @@ export default function NoiSubmit() {
         const isSelected = rows.some((r) => r.id === row.id);
         return {
           ...row,
-          tableData: { checked: isSelected },
+          tableData: { ...row.tableData, checked: isSelected },
         };
       });
-  
+
       const hasCheckedRows = updatedOutstanding.some((row) => row.tableData.checked);
       setSubmitEnabled(hasCheckedRows);
 
@@ -102,8 +102,8 @@ export default function NoiSubmit() {
     if (data?.locations?.length && !error) {
       const outstanding: Array<BusinessLocation & { tableData: { checked: boolean } }> = data.locations.map((location) => ({
         ...location,
-        tableData: { checked: false },
-      })).filter(NoiUtil.outstandingNoi);
+        tableData: { checked: false, id: 0 },
+      })).filter((l: BusinessLocation & { tableData: { checked: boolean, id: number } }) => NoiUtil.outstandingNoi(l));
       setOutstanding(outstanding);
     }
   }, [data, error]);

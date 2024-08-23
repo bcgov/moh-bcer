@@ -2,7 +2,7 @@ FROM node:22.0.0
 
 LABEL maintainer="CGI"
 
-ENV PATH $PATH:/usr/src/app/node_modules/.bin
+ENV PATH=$PATH:/usr/src/app/node_modules/.bin
 
 WORKDIR /usr/src/app
 

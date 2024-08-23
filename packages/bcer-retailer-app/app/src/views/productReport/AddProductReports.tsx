@@ -255,7 +255,7 @@ export default function AddProductReports() {
     }
   }
 
-  const handleUpdateHeaders = (values: ProductReportHeaders) => {
+  const handleUpdateHeaders = (values: { [key: string]: ProductReportHeaders }) => {
     setMapping(mapToObject(ProductReportDTOHeaders, values))
   }
 
