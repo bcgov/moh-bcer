@@ -177,7 +177,7 @@ export default function AddLocations () {
     setConfirmOpen(false);
   }
 
-  const handleUpdateHeaders = (values: BusinessLocationHeaders) => {
+  const handleUpdateHeaders = (values: { [key: string]: BusinessLocationHeaders }) => {
     setMapping(mapToObject(BusinessLocationDTOHeaders, values))
   }
 

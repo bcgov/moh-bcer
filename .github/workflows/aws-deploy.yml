@@ -166,11 +166,6 @@ jobs:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
-      - name: Log Environment Variables
-        run: |
-          echo "Logging environment variables:"
-          printenv
-
       - name: Build project retailer app
         run: |
           cd packages/bcer-retailer-app/app

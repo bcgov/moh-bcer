@@ -2,7 +2,7 @@ FROM node:22.0.0 as builder
 
 LABEL maintainer="CGI"
 
-ENV PATH $PATH:/usr/src/app/node_modules/.bin
+ENV PATH=$PATH:/usr/src/app/node_modules/.bin
 
 WORKDIR /usr/src/app
 
@@ -23,7 +23,7 @@ RUN cd ./bcer-shared-components && npm run build && cd ../
 # RUN cd ./bcer-shared-components && npm run build && cd ../
 
 RUN apt-get update
-RUN apt-get install libgl1 -y
+# RUN apt-get install libgl1 -y
 
 RUN cd ./bcer-retailer-app/app && npm i && cd ../../
 

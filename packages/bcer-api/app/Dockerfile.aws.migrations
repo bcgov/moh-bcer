@@ -1,6 +1,6 @@
 FROM node:22.0.0
 
-ENV PATH $PATH:/usr/src/app/node_modules/.bin
+ENV PATH=$PATH:/usr/src/app/node_modules/.bin
 
 WORKDIR '/app'
 

@@ -1,13 +1,14 @@
 const webpack = require('webpack');
-const parts = require('./webpack.parts');
-const path = require('path');
-const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { merge } = require('webpack-merge');
+const path = require('path');
+const parts = require('./webpack.parts');
 const dotenv = require('dotenv');
 
 const DEVELOPMENT = 'development';
 const PRODUCTION = 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
+
 const PATHS = {
   src: path.join(__dirname, 'src'),
   entry: path.join(__dirname, 'src', 'index.tsx'),
@@ -16,12 +17,14 @@ const PATHS = {
   build: path.join(__dirname, 'build'),
   node_modules: path.join(__dirname, 'node_modules'),
 };
+
 const BUILD_FILE_NAMES = {
   css: 'style/[name].[contenthash:4].css',
   bundle: 'js/bundle.[chunkhash:4].js',
   vendor: 'js/[id].[chunkhash:4].js',
   assets: 'assets/[name].[hash:4].[ext]',
 };
+
 const PATH_ALIASES = {
   '@': path.resolve(__dirname, 'src'),
   react: path.resolve('./node_modules/react'),
@@ -44,15 +47,16 @@ const commonConfig = merge([
     plugins: [
       new HtmlWebpackPlugin({
         template: PATHS.template,
-        filename: 'index.html',
-        inject: 'body',
-        scriptLoading: 'defer',
-        publicPath: '', // Ensure paths are relative
       }),
     ],
     resolve: {
       alias: PATH_ALIASES,
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      fallback: {
+        "crypto": require.resolve("crypto-browserify"),
+        "stream": require.resolve("stream-browserify"),
+        "vm": require.resolve("vm-browserify")
+      }
     },
   },
   parts.loadJS({
@@ -74,6 +78,7 @@ const devConfig = merge([
       publicPath: ASSET_PATH,
       filename: 'bundle.js',
     },
+    watch: true,
     watchOptions: {
       ignored: /node_modules/,
       aggregateTimeout: 600,
@@ -146,15 +151,16 @@ const prodConfig = merge([
   parts.gZipCompression(),
   parts.registerServiceWorker(),
   parts.extractManifest(),
-  parts.copy([PATHS.public, path.join(PATHS.build, 'public')]),
+  parts.copy('public', 'build/public'),
 ]);
 
 module.exports = (env) => {
-  const mode = env === PRODUCTION ? PRODUCTION : DEVELOPMENT;
-  console.log(`Webpack mode: ${mode}`);
+  const isProduction = env.production === true;
+  const mode = isProduction ? 'production' : 'development';
+  console.log(`Webpack mode: ${mode}`); // Log the mode
   return merge(
     commonConfig,
-    mode === PRODUCTION ? prodConfig : devConfig,
+    isProduction ? prodConfig : devConfig,
     { mode }
   );
 };
