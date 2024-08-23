@@ -23,7 +23,7 @@ RUN cd ./bcer-shared-components && npm run build && cd ../
 # RUN cd ./bcer-shared-components && npm run build && cd ../
 
 RUN apt-get update
-# RUN apt-get install libgl1 -y
+RUN apt-get install libgl1 -y
 
 RUN cd ./bcer-retailer-app/app && npm i && cd ../../
 

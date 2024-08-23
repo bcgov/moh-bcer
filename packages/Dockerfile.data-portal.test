@@ -14,7 +14,7 @@ COPY sources.list /etc/apt/sources.list
 # RUN apk add --no-cache git
 
 RUN apt-get update
-# RUN apt-get install libgl1 -y
+RUN apt-get install libgl1 -y
 
 
 RUN cd ./bcer-shared-components && npm install && cd ../
