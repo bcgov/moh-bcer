@@ -11,9 +11,6 @@ RUN npm install
 # Copy source files
 COPY . .
 
-# Copy .env file
-COPY .env .env
-
 # Build application
 RUN npm run build
 
