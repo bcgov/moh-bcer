@@ -12,6 +12,6 @@ COPY ./bcer-shared-components/package*.json ./bcer-shared-components/
 # Install dependencies
 RUN cd ./bcer-data-portal/app && npm i && cd ../
 
-EXPOSE 3000
+EXPOSE 3001
 
 CMD [ "npm", "--prefix", "./bcer-data-portal/app/", "run", "start" ]

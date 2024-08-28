@@ -667,16 +667,15 @@ export class LocationService {
       ha: haTranslation(payload.health_authority),
       ha_other: payload.health_authority_other,
       manufacturing: payload.manufacturing === "yes" ? true : false,
-      location_type:payload.location_type,
+      location_type:payload.location_type as LocationType,
     }
     payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
     payload.latitude ? updateValue['latitude'] = payload.latitude : null;
     payload.longitude ? updateValue['longitude'] = payload.longitude : null;
     payload.geoAddressConfidence ? updateValue['geoAddressConfidence'] = payload.geoAddressConfidence : null;
-    const locationTypeValue = LocationType[updateValue.location_type as keyof typeof LocationType];
     const result = await this.locationRepository.update(
       { id: locationId },
-      { ...updateValue, location_type: locationTypeValue }
+      { ...updateValue}
     );
   }
 

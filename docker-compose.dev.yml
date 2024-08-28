@@ -28,7 +28,7 @@ services:
       - PORT=3000
       - WDS_SOCKET_PORT=3001
     ports:
-      - "3001:3000"
+      - "3001:3001"
     volumes:
       - ./packages/bcer-data-portal:/usr/src/app/bcer-data-portal
       - ./packages/bcer-shared-components:/usr/src/app/bcer-shared-components
