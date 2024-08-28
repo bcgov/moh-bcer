@@ -14,9 +14,6 @@ COPY . .
 # Build application
 RUN npm run build
 
-# Debug: Print environment variables
-RUN printenv
-
 # Add health check
 HEALTHCHECK CMD curl --fail http://localhost:4000/ || exit 1
 

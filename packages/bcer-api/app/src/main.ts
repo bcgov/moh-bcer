@@ -17,6 +17,8 @@ import * as path from 'path';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 import * as dotenv from 'dotenv';
+import { dataSource } from './../datasource';
+console.log("dataSouce: " + dataSource);
 dotenv.config(envPath);
 (async function () {
   const httpsOptions = process.env.LOAD_CERTS === 'true' ? {
