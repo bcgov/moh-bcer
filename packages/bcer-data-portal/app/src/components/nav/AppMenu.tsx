@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { styled } from '@mui/material/styles';
 import { StyledTab, StyledTabs } from "../generic/StyledTab";
 import { routes } from '@/constants/routes';
@@ -37,7 +37,11 @@ const AppMenu = ({ orientation } : AppMenuProps) => {
   const location = useLocation();
   const [value, setValue] = React.useState<RouteValue>(setInitial(location.pathname));
   const { config } = useContext(ConfigContext);
-    
+
+  useEffect(() => {
+    setValue(location.pathname as RouteValue);
+  }, [location.pathname]);
+  
   const handleChange = (event: React.SyntheticEvent, newValue: RouteValue) => {
     setValue(newValue);
     navigate(newValue);
