@@ -1,4 +1,3 @@
-console.log("now using datasource.js under app folder")
 const { DataSource } = require('typeorm');
 const { join } = require('path');
 require('dotenv').config();
@@ -11,7 +10,7 @@ if (process.env.AWS_ENV === 'true') { entities = [join(__dirname, 'dist/**/**.en
 const synchronize = (['internal', 'docker'].includes(process.env.NODE_ENV)) ? true : false;
 const dropSchema = (['internal', 'docker'].includes(process.env.NODE_ENV)) ? true : false;
 
-const dataSource = new DataSource({
+const AppDataSource = new DataSource({
   name: 'default',
   type: 'postgres',
   host: process.env.DB_HOST,
@@ -29,4 +28,4 @@ const dataSource = new DataSource({
   }
 });
 
-module.exports = dataSource;
+module.exports = AppDataSource;
