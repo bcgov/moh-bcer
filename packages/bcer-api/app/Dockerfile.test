@@ -16,7 +16,7 @@ RUN npm run build:prem
 
 RUN npm install -g typeorm
 
-COPY ./.test-files/datasource.ts ./datasource.ts
+COPY ./.test-files/datasource.js ./datasource.js
 COPY ./.test-files/.env.test ./env
 
 CMD [ "npm", "run", "start:prod" ]

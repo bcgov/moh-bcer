@@ -17,8 +17,18 @@ import * as path from 'path';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 import * as dotenv from 'dotenv';
+import AppDataSource from './../datasource';
+console.log("dataSouce db type: " + AppDataSource.options.type);
+console.log("dataSouce host: " + AppDataSource.options.host);
 dotenv.config(envPath);
 (async function () {
+  AppDataSource.initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization", err)
+    })
   const httpsOptions = process.env.LOAD_CERTS === 'true' ? {
     key: process.env.PEM_KEY_PATH ? fs.readFileSync(process.env.PEM_KEY_PATH) : null,
     cert: process.env.PEM_CERT_PATH ? fs.readFileSync(process.env.PEM_CERT_PATH) : null,
