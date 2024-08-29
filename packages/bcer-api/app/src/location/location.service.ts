@@ -57,7 +57,7 @@ export class LocationService {
   ) { }
 
   async createLocations(dto: LocationDTO[], businessId: string) {
-    const business = await this.businessRepository.findOne(businessId);
+    const business = await this.businessRepository.findOne({where: { id: businessId }});
     // Filtering out any existing location
     dto = dto.filter(d => !(d as any).id);
 
@@ -282,7 +282,7 @@ export class LocationService {
     if (includes) {
       relations = includes.split(',');
     }
-    const location = await this.locationRepository.findOne(locationId, { relations });
+    const location = await this.locationRepository.findOne({ where: { id: locationId }, relations: relations });
     return location;
   }
 
@@ -291,7 +291,7 @@ export class LocationService {
     if (includes) {
       relations = includes.split(',');
     }
-    const location = await this.locationRepository.findOne(locationId, { relations, withDeleted: true });
+    const location = await this.locationRepository.findOne({where: { id: locationId }, relations: relations, withDeleted: true});
     return location;
   }
 
@@ -666,14 +666,17 @@ export class LocationService {
       underage: payload.underage,
       ha: haTranslation(payload.health_authority),
       ha_other: payload.health_authority_other,
-      manufacturing: payload.manufacturing === "yes" ? true : false
+      manufacturing: payload.manufacturing === "yes" ? true : false,
+      location_type:payload.location_type as LocationType,
     }
     payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
     payload.latitude ? updateValue['latitude'] = payload.latitude : null;
     payload.longitude ? updateValue['longitude'] = payload.longitude : null;
     payload.geoAddressConfidence ? updateValue['geoAddressConfidence'] = payload.geoAddressConfidence : null;
-
-    const result = await this.locationRepository.update({id: locationId}, {...updateValue});
+    const result = await this.locationRepository.update(
+      { id: locationId },
+      { ...updateValue}
+    );
   }
 
   /**
@@ -682,7 +685,7 @@ export class LocationService {
    * @reutrns
    */
   async getLocationsWithBusinessId(businessId: string){
-    return await this.locationRepository.find({ businessId });
+    return await this.locationRepository.find({ where: { businessId: businessId } });
 
   }
 
@@ -719,7 +722,7 @@ export class LocationService {
   }
 
   async getLocationsWithoutGeoCode(): Promise<LocationEntity[]> {
-    return await this.locationRepository.find({ geoAddressConfidence: null });
+    return await this.locationRepository.find({ where: { geoAddressConfidence: null }});
   }
 
   async updateGeoCodeForExistingLocations() {

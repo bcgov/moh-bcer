@@ -1,7 +1,8 @@
 import { Business, UserDetails } from '@/constants/localInterfaces';
+import { styled } from '@mui/material/styles';
 import { userEditValidationSchema } from '@/constants/validate';
 import { UserManagementUtil } from '@/util/userManagement.util';
-import { Box, makeStyles, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import { ErrorMessage, Form, Formik } from 'formik';
 import React from 'react';
 import {
@@ -13,6 +14,42 @@ import {
   StyledWarning,
 } from 'vaping-regulation-shared-components';
 
+const PREFIX = 'EditDialog';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  boldText: `${PREFIX}-boldText`,
+  helperText: `${PREFIX}-helperText`,
+  mergeContainer: `${PREFIX}-mergeContainer`
+};
+
+const StyledFormik = styled(Formik)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
+    color: '#333',
+  },
+
+  [`& .${classes.boldText}`]: {
+    size: '16px',
+    lineHeight: '24px',
+    fontWeight: 'bold',
+  },
+
+  [`& .${classes.helperText}`]: {
+    size: '13px',
+    lineHeight: '20px',
+  },
+
+  [`& .${classes.mergeContainer}`]: {
+    padding: '10px 20px 0px',
+    backgroundColor: '#E1E1E6',
+    borderRadius: '4px',
+  }
+}));
+
 interface EditDialogProps {
   businessData: Business[];
   open: boolean;
@@ -22,26 +59,6 @@ interface EditDialogProps {
   buttonLoading?: boolean;
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    color: '#333',
-  },
-  boldText: {
-    size: '16px',
-    lineHeight: '24px',
-    fontWeight: 'bold',
-  },
-  helperText: {
-    size: '13px',
-    lineHeight: '20px',
-  },
-  mergeContainer: {
-    padding: '10px 20px 0px',
-    backgroundColor: '#E1E1E6',
-    borderRadius: '4px',
-  },
-}));
-
 function EditDialog({
   businessData,
   open,
@@ -50,9 +67,9 @@ function EditDialog({
   submitHandler,
   buttonLoading,
 }: EditDialogProps) {
-  const classes = useStyles();
+
   return (
-    <Formik
+    <StyledFormik
       initialValues={UserManagementUtil.getUserUpdateInitialValues(targetUser)}
       onSubmit={submitHandler}
       validationSchema={userEditValidationSchema}
@@ -141,7 +158,7 @@ function EditDialog({
           </StyledDialog>
         </Form>
       )}
-    </Formik>
+    </StyledFormik>
   );
 }
 

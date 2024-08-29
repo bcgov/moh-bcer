@@ -1,3 +1,6 @@
+import React from 'react';
+import { styled } from '@mui/material/styles';
+import { Box, Paper, Typography } from '@mui/material';
 import { ReportStatus } from '@/constants/enums/genericEnums';
 import {
   BusinessReportStatus,
@@ -5,8 +8,6 @@ import {
   LocationRO,
 } from '@/constants/interfaces/genericInterfaces';
 import { BusinessDashboardUtil } from '@/util/businessDashboard.util';
-import { Box, makeStyles, Paper, Typography } from '@material-ui/core';
-import React from 'react';
 import { StyledStatusMessage, StyledTable, StyledTextWithStatusIcon } from '..';
 
 export type BusinessDashboardProps = {
@@ -18,47 +19,63 @@ export type BusinessDashboardProps = {
   renderAddress: (l: Partial<LocationRO>) => React.ReactNode;
 };
 
-const useStyles = makeStyles((theme) => ({
-  box: {
+const PREFIX = 'BusinessDashboard';
+
+const classes = {
+  box: `${PREFIX}-box`,
+  title: `${PREFIX}-title`,
+  legendTitle: `${PREFIX}-legendTitle`,
+  legendItem: `${PREFIX}-legendItem`,
+  retailerText: `${PREFIX}-retailerText`,
+};
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  [`& .${classes.box}`]: {
     border: 'solid 1px #CDCED2',
     borderRadius: '4px',
+
     padding: '1.4rem',
   },
-  title: {
+  [`& .${classes.title}`]: {
     fontWeight: 'bold',
     fontSize: '17px',
   },
-  retailerLegend: {
-    display: 'flex',
-    border: '1px solid #CDCED2',
-    borderRadius: '4px',
-    padding: '12px 18px',
-    [theme.breakpoints.down('xs')]: {
-      display: 'block',
-    }
+  [`& .${classes.retailerText}`]: {
+    fontSize: '16px'
+  }
+}));
+
+const StyledLegend = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  border: '1px solid #CDCED2',
+  borderRadius: '4px',
+  padding: '12px 18px',
+  [theme.breakpoints.down('xs')]: {
+    display: 'block',
   },
-  legendTitle: {
-    fontWeight: 600
+  [`& .${classes.legendTitle}`]: {
+    fontWeight: 600,
   },
-  legendItem: {
+  [`& .${classes.retailerText}`]: {
+    fontSize: '16px',
+  },
+  [`& .${classes.legendItem}`]: {
     display: 'flex',
     paddingLeft: '30px',
     color: '#333333',
     fontSize: '14px'
   },
-  retailerText: {
-    fontSize: '16px'
-  },
-  locationReportStatWrap: {
-    [theme.breakpoints.down('xs')]: {
-      '& th': {
-        whiteSpace: 'pre-wrap !important',
-        textAlign: 'center',
-        padding: '0 5px'
-      },
-      '& td': {
-        textAlign: 'center'
-      }
+}));
+
+const StyledSpan = styled('span')(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    '& th': {
+      whiteSpace: 'pre-wrap !important',
+      textAlign: 'center',
+      padding: '0 5px'
+    },
+    '& td': {
+      textAlign: 'center'
     }
   }
 }));
@@ -71,7 +88,6 @@ export function BusinessDashboard({
   renderAddress,
   isRetailerPortal = false
 }: BusinessDashboardProps) {
-  const classes = useStyles();
   let outstanding: LocationRO[] = [];
   let completed: LocationRO[] = [];
   let missingSales = 0;
@@ -89,8 +105,9 @@ export function BusinessDashboard({
       completed.push(l);
     }
   });
+
   return (
-    <Box>
+    <StyledBox>
       {data && (
         <Box>
           {data?.overview?.incompleteReports?.length ? (
@@ -123,8 +140,7 @@ export function BusinessDashboard({
                 data={outstanding}
               />
               {
-                isRetailerPortal
-                  &&
+                isRetailerPortal &&
                 <Typography className={classes.retailerText} style={{ paddingTop: '10px' }}>
                   You can submit outstanding reports for the above locations by navigating through the different respective menus on the left. 
                   If you're not planning on renewing your NOI for a location, you should close it on the "My Business" page or the system will 
@@ -149,7 +165,7 @@ export function BusinessDashboard({
           />
         </Paper>
       )}
-    </Box>
+    </StyledBox>
   );
 }
 
@@ -205,7 +221,10 @@ export function LocationOutstandingReportTable({
   renderAddress,
   data,
 }: LocationReportTableProps) {
-  const columns = BusinessDashboardUtil.getColumns(renderAddress);
+  const columns = BusinessDashboardUtil.getColumns(renderAddress).map(column => ({
+    ...column,
+    sorting: false
+  }));
 
   const getInitialPagination = () => {
     if (data.length <= 5) {
@@ -235,10 +254,12 @@ export function LocationCompletedReportTable({
     {
       title: 'Location',
       render: renderAddress,
+      sorting: false
     },
     {
       title: 'Creation Date',
       render: BusinessDashboardUtil.renderCreationDate,
+      sorting: false
     }
   ];
   
@@ -263,10 +284,8 @@ export function LocationCompletedReportTable({
 }
 
 export function ReportStatusLegend() {
-  const classes = useStyles();
-
   return (
-    <Box className={classes.retailerLegend}>
+    <StyledLegend>
       <Typography className={`${classes.legendTitle} ${classes.retailerText}`}>
         Legend:
       </Typography>
@@ -286,18 +305,17 @@ export function ReportStatusLegend() {
         {BusinessDashboardUtil.renderStatus(ReportStatus.NotRequired)}
         &nbsp; Not Required
       </div>
-    </Box>
-  )
+    </StyledLegend>
+  );
 }
 
 export function LocationReportStatusTable({status, loading}: {status: LocationReportStatus, loading?: boolean}){
-  const classes = useStyles();
   return(
     <>
       <Box py={1}>
         <ReportStatusLegend />
       </Box>
-      <span className={classes.locationReportStatWrap}>
+      <StyledSpan>
         <StyledTable 
           columns={BusinessDashboardUtil.getLocationColumn()}
           data={ status? [status] : []}
@@ -307,7 +325,7 @@ export function LocationReportStatusTable({status, loading}: {status: LocationRe
           }}
           isLoading={loading}
         />
-      </span>
+      </StyledSpan>
     </>
   )
 }

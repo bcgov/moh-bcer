@@ -2,7 +2,7 @@ import { BusinessLocation } from '@/constants/localInterfaces';
 import React, { useEffect, useState } from 'react';
 import { useAxiosGet } from '@/hooks/axios';
 import AutocompleteSearch from '@/components/generic/AutocompleteSearch';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import { StyledButton } from 'vaping-regulation-shared-components';
 
 interface LocationAutoCompleteProps {

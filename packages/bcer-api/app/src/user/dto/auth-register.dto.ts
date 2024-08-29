@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import * as faker from 'faker';
 import { UserTypeEnum } from 'src/user/enums/user-type.enum'
+import { faker } from '@faker-js/faker/locale/en_CA';
 
 export class AuthRegisterDTO {
   @ApiProperty({
     description: 'BCeID for this user',
-    example: faker.random.uuid(),
+    example: faker.string.uuid(),
   })
   @IsNotEmpty()
   bceid: string;
@@ -35,14 +35,14 @@ export class AuthRegisterDTO {
 
   @ApiProperty({
     description: 'the name occuring primarily',
-    example: faker.name.firstName(),
+    example: faker.person.firstName(),
   })
   @IsNotEmpty()
   firstName: string;
 
   @ApiProperty({
     description: 'name, the latter',
-    example: faker.name.lastName()
+    example: faker.person.lastName()
   })
   @IsNotEmpty()
   lastName: string;

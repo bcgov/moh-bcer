@@ -1,12 +1,11 @@
 
 import React, { ReactElement, Fragment } from 'react';
-import { styled, Button } from '@material-ui/core';
-
+import { styled, Button } from '@mui/material';
 import { StyledButtonProps } from '@/constants/interfaces/buttonInterfaces';
 
 /**
  * Uses react styled() to apply styles to the button component
- * @returns A Material-UI ReactElement with specified styles
+ * @returns A  ReactElement with specified styles
  */
 const StyledContainedButton = styled(Button)({
   minWidth: '250px',

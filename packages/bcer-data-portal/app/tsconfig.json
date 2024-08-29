@@ -15,11 +15,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "assets/*": ["./src/assets/*"]
+      "assets/*": ["./src/assets/*"],
+      "react": [ "./node_modules/@types/react" ]
     },
     "typeRoots": [
       "./node_modules/@types",
-      "./typings"
+      "./typings",
     ],
     "lib": [
       "dom",

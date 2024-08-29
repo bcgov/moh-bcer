@@ -1,6 +1,7 @@
 import React, { ReactNode, useEffect, FunctionComponent } from 'react';
 import { Formik, FormikProps, Form } from 'formik';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import classnames from 'classnames';
 
 type BaseFormProps = {
   initialValues: Object; // from form/validations
@@ -16,7 +17,7 @@ type BaseFormProps = {
   useDefaultFormStyles?: boolean;
 };
 
-const useStyles = makeStyles({
+const classes = {
   form: {
     padding: '25px 20px 15px 20px',
     border: '1px solid #CDCED2',
@@ -28,47 +29,43 @@ const useStyles = makeStyles({
     fontWeight: 600,
     paddingBottom: '24px'
   },
-})
-
+}
 
 export default function BaseForm({
+  initialValues,
+  schema,
+  Fields,
+  handleSubmit,
   title,
   subtitle,
   fetchData,
-  initialValues,
-  schema,
-  handleSubmit,
-  Fields,
   children,
   formClass,
-  useDefaultFormStyles,
   customFormStyles,
+  useDefaultFormStyles,
 }: BaseFormProps) {
-
-  const classes = useStyles();
 
   useEffect(() => {
     if (fetchData) fetchData();
   }, [fetchData]);
 
   return (
-    <>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={schema}
-        enableReinitialize
-        validateOnMount
-        onSubmit={async (values, actions) => handleSubmit(values, actions)}
-        children={props => (
-          <Form className={!!useDefaultFormStyles ? classes.form : formClass} style={customFormStyles}>
-            {title && (
-              <Typography variant='h6' className={classes.formTitle}>{title}</Typography>
-            )}
-            <Fields {...props} />
-            {children}
-          </Form>
-        )}
-      />
-    </>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={schema}
+      enableReinitialize
+      validateOnMount
+      onSubmit={async (values, actions) => handleSubmit(values, actions)}
+      /* the data is stored in props.values below*/
+      children={props => (
+        <Form style={{...!!useDefaultFormStyles ? classes.form : {}, ...customFormStyles}}>  
+          {title && ( 
+            <Typography variant='h6' style={classes.formTitle}>{title}</Typography>
+          )}
+          <Fields {...props} />
+          {children}
+        </Form>
+      )}
+    />
   );
 }

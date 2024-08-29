@@ -6,8 +6,7 @@ import {
   StyledDialog,
   StyledConfirmDialog,
 } from 'vaping-regulation-shared-components';
-import { makeStyles } from '@material-ui/core/styles';
-import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
+import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import {
@@ -21,7 +20,7 @@ import { LocationUtil } from '@/utils/location.util';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 
-const useStyles = makeStyles({
+const classes = {
   closeButton: {
     position: 'absolute',
     right: '10px',
@@ -39,10 +38,10 @@ const useStyles = makeStyles({
     color: '#285CBC',
     fontSize: '20px',
   },
-});
+}
 
 function BusinessLocationForm({ entry }: { entry: string }) {
-  const classes = useStyles();
+
   const [showManualEntryForm, toggleManualEntryForm] = useState(false);
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
@@ -103,12 +102,12 @@ function BusinessLocationForm({ entry }: { entry: string }) {
             : null
         }
         {entry === 'manual' && (
-          <div className={classes.buttonWrapper}>
+          <div style={classes.buttonWrapper}>
             <StyledButton
               variant="outlined"
               onClick={() => toggleManualEntryForm(true)}
             >
-              <AddCircleOutlinedIcon className={classes.buttonIcon} />
+              <AddCircleOutlinedIcon sx={classes.buttonIcon} />
               Add Location
             </StyledButton>
           </div>

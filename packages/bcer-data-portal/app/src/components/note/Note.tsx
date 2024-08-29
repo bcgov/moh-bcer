@@ -1,12 +1,4 @@
-import {
-  Box,
-  Collapse,
-  Grid,
-  ListItem,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core';
+import { Box, Collapse, Grid, ListItem, Paper, Typography, styled } from '@mui/material';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import StyledToolTip from '../generic/StyledToolTip';
@@ -15,38 +7,40 @@ import useNote, { NoteProps } from '@/hooks/useNote';
 import NoteForm from './NoteForm';
 import { StyledButton } from 'vaping-regulation-shared-components';
 
-const useStyles = makeStyles(() => ({
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-    boxShadow: 'none',
-  },
-  text: {
-    fontSize: '13px',
-  },
-  rightPanel: {
-    height: '210px',
-  },
-  noNotes: {
-    padding: '10px',
-    fontSize: '14px',
-  },
-  error: {
-    padding: '10px',
-    fontSize: '14px',
-    color: 'red',
-  },
-  cellTitle: {
-    fontSize: '20px',
-    fontWeight: 600,
-    color: '#0053A4',
-    paddingBottom: '12px',
-  },
+const StyledBox = styled(Box)(({ theme }) => ({
+  border: 'solid 1px #CDCED2',
+  borderRadius: '4px',
+  padding: '1.4rem',
+  boxShadow: 'none',
+}));
+
+const Text = styled(Typography)(({ theme }) => ({
+  fontSize: '13px',
+}));
+
+const RightPanel = styled(Paper)(({ theme }) => ({
+  height: '210px',
+}));
+
+const NoNotes = styled(Typography)(({ theme }) => ({
+  padding: '10px',
+  fontSize: '14px',
+}));
+
+const ErrorText = styled(Typography)(({ theme }) => ({
+  padding: '10px',
+  fontSize: '14px',
+  color: 'red',
+}));
+
+const CellTitle = styled(Typography)(({ theme }) => ({
+  fontSize: '20px',
+  fontWeight: 600,
+  color: '#0053A4',
+  paddingBottom: '12px',
 }));
 
 function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) {
-  const classes = useStyles();
   const [showNotes, setShowNotes] = useState(true);
 
   const {
@@ -58,14 +52,14 @@ function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) 
     noteError,
     postLoading,
     flagForReview,
-    flagForReviewLoading
+    flagForReviewLoading,
   } = useNote({ targetId, type });
 
   useEffect(() => {
-     if (refresh) {
-      submit(refresh)
-     }
-  }, [refresh])
+    if (refresh) {
+      submit(refresh);
+    }
+  }, [refresh]);
 
   function RenderRow(props: any) {
     const { index, style } = props;
@@ -82,14 +76,14 @@ function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) 
       >
         <Box flex={1} marginRight={'10px'}>
           <StyledToolTip title={noteData[index]?.content}>
-            <Typography className={classes.text}>
+            <Text>
               <b>
                 {noteData[index]?.user?.firstName || ''}{' '}
                 {noteData[index]?.user.lastName || ''}
               </b>{' '}
               edited on{' '}
               <b>{moment(noteData[index]?.createdAt).format('MMM D, YYYY')}</b>
-            </Typography>
+            </Text>
           </StyledToolTip>
         </Box>
       </ListItem>
@@ -99,7 +93,7 @@ function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) 
   return (
     <Box>
       <Box display={'flex'}>
-        <Typography className={classes.cellTitle}>Notes</Typography>
+        <CellTitle>Notes</CellTitle>
         {showHideButton && (
           <Box ml={3}>
             <StyledButton
@@ -111,7 +105,7 @@ function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) 
           </Box>
         )}
       </Box>
-      <Paper variant="outlined" className={classes.box}>
+      <StyledBox>
         <Collapse in={showNotes}>
           <Box display={'flex'}>
             <Grid container spacing={3}>
@@ -119,15 +113,15 @@ function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) 
                 <NoteForm
                   submit={submit}
                   getInitialValues={getInitialValue}
-                  loading={postLoading || noteLoading }
+                  loading={postLoading || noteLoading}
                   showFlag={showFlag}
-                  flagForReview = {flagForReview}
-                  flagForReviewLoading = {flagForReviewLoading}
+                  flagForReview={flagForReview}
+                  flagForReviewLoading={flagForReviewLoading}
                 />
               </Grid>
-            
+
               <Grid item xs={12} lg={3}>
-                <Paper variant="outlined" className={classes.rightPanel}>
+                <RightPanel variant="outlined">
                   {!!noteData?.length ? (
                     <FixedSizeList
                       height={210}
@@ -138,20 +132,20 @@ function Note({ targetId, type, showHideButton, showFlag, refresh }: NoteProps) 
                       {RenderRow}
                     </FixedSizeList>
                   ) : noteError ? (
-                    <Typography className={classes.error}>
-                      Notwork error: Could not fetch existing notes
-                    </Typography>
+                    <ErrorText>
+                      Network error: Could not fetch existing notes
+                    </ErrorText>
                   ) : (
-                    <Typography className={classes.noNotes}>
+                    <NoNotes>
                       No one has made an edit on this note yet
-                    </Typography>
+                    </NoNotes>
                   )}
-                </Paper>
+                </RightPanel>
               </Grid>
             </Grid>
           </Box>
         </Collapse>
-      </Paper>
+      </StyledBox>
     </Box>
   );
 }

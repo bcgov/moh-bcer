@@ -1,32 +1,29 @@
 import React from 'react';
-import { Tab, Tabs } from '@material-ui/core';
-import { withStyles } from '@material-ui/styles';
+import { Tab, Tabs, TabProps } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-export const StyledTab = withStyles((theme) => ({
-  root: {
-    textTransform: 'none',
-    fontSize: '17px',
-    lineHeight: '22px',
-    minWidth: 72,
-    fontWeight: theme.typography.fontWeightRegular,
-    marginRight: theme.spacing(4),
-    '&:hover': {
-      color: '#0053A4',
-      opacity: 1,
-    },
-    '&$selected': {
-      color: '#0053A4',
-      fontWeight: 'bold',
-    },
-    '&:focus': {
-      color: '#0053A4',
-    },
+export const StyledTab = styled(Tab)(({ theme }) => ({
+  textTransform: 'none',
+  fontSize: '17px',
+  lineHeight: '22px',
+  minWidth: 72,
+  fontWeight: theme.typography.fontWeightRegular,
+  marginRight: theme.spacing(4),
+  '&:hover': {
+    color: '#0053A4',
+    opacity: 1,
   },
-  selected: {},
-}))(Tab);
+  '&.Mui-selected': {
+    color: '#0053A4',
+    fontWeight: 'bold',
+  },
+  '&:focus': {
+    color: '#0053A4',
+  },
+}));
 
-export const StyledTabs = withStyles({
-    indicator: {
-        backgroundColor: '#f1f1f1',
-      },
-})(Tabs);
+export const StyledTabs = styled(Tabs)({
+  '& .MuiTabs-indicator': {
+    backgroundColor: '#f1f1f1',
+  },
+});

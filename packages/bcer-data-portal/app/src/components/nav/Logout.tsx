@@ -1,39 +1,37 @@
-import { routes } from "@/constants/routes";
-import { Box, makeStyles } from "@material-ui/core";
-import { useKeycloak } from "@react-keycloak/web";
 import React from "react";
-import { useHistory } from "react-router";
+import { Box } from "@mui/material";
+import { styled } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";
 import { StyledButton } from "vaping-regulation-shared-components";
 import store from 'store';
+import { routes } from "@/constants/routes";
 
-const useStyles = makeStyles((theme) => ({    
-    buttonWrapper: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-  }));
+const ButtonWrapper = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+});
 
 interface LogoutProps {
-    variant: "dialog-accept" | "dialog-cancel"
+  variant: "dialog-accept" | "dialog-cancel"
 }
 
 const Logout = ({ variant }: LogoutProps) => {
-  const classes = useStyles();
-  const history = useHistory();
-  const [keycloak] = useKeycloak();
+  const navigate = useNavigate();
+  const { keycloak } = useKeycloak();
     
   const logout = () => {
     store.clearAll();
     keycloak.logout();
-    history.push(routes.root);
+    navigate(routes.root);
   }
 
   return (
-    <Box>
-      <StyledButton variant={variant} className={classes.buttonWrapper} onClick={logout}>
+    <ButtonWrapper>
+      <StyledButton variant={variant} onClick={logout}>
         Log Out
       </StyledButton>
-    </Box>
+    </ButtonWrapper>
   )
 }
 

@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useKeycloak } from '@react-keycloak/web';
 import store from 'store';
 import { HealthAuthority } from '@/constants/localEnums';
 
-export default function KeycloakRedirect () {
-  const [keycloak] = useKeycloak();
-
-  const setUserHealthAuthority = (username: any) => {
+export default function KeycloakRedirect() {
+  const { keycloak } = useKeycloak();
+  const navigate = useNavigate();
+  console.log('keycloak.tsx file here', keycloak.token);
+  const setUserHealthAuthority = (username: string) => {
     if (username.startsWith('iha')) {
       store.set('KEYCLOAK_USER_HA', HealthAuthority.INTERIOR);
     } else if (username.startsWith('nirhn') || username.startsWith('no')) {
@@ -26,22 +27,22 @@ export default function KeycloakRedirect () {
       store.set('TOKEN', keycloak.token);
 
       keycloak.loadUserInfo()
-      .then((profile: any) => {
-        const username = profile.preferred_username;
-        setUserHealthAuthority(username);
-      }).catch(function() {
+        .then((profile: any) => {
+          const username = profile.preferred_username;
+          setUserHealthAuthority(username);
+          navigate('/');
+        }).catch(function() {
           console.error('Failed to load user profile');
-      });
+          navigate('/');
+        });
+    } else if (keycloak.loginRequired) {
+      navigate('/login');
     }
-  }, [])
+  }, [keycloak.authenticated, keycloak.loginRequired, navigate]);
 
-  return keycloak.authenticated
-    ?
-      <Redirect to='/' />
-    :
-      keycloak.loginRequired
-    ?
-      <Redirect to='/login' />
-    :
-      <h4>Authenticating...</h4>
+  if (!keycloak.authenticated && !keycloak.loginRequired) {
+    return <h4>Authenticating...</h4>;
+  }
+
+  return null;
 }

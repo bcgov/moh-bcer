@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ext": "ts",
   "ignore": ["src/**/*.spec.ts"],
-  "exec": "TS_NODE_TRANSPILE_ONLY=true ts-node -r tsconfig-paths/register src/main.ts"
+  "exec": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main.ts"
 }

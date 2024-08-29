@@ -2,25 +2,33 @@ const env = process.env.NODE_ENV;
 let envPath;
 if (['development', 'test', 'production'].includes(env)) { envPath = { path: '.env' } };
 if (env === 'local') { envPath = { path: './../.env' } };
-require('dotenv').config(envPath);
-
 import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import * as bodyParser from 'body-parser';
-import { ClassValidationParser } from 'src/common/parsers/class-validation.parser';
+import { ClassValidationParser } from './common/parsers/class-validation.parser';
 import { CONFIG } from './common/common.config';
 import { documentation } from './common/common.documentation';
-import { GenericError, GenericException } from 'src/common/generic-exception';
-import { AppModule } from './app.module';
+import { GenericError, GenericException } from './common/generic-exception';
 import { WinstonModule } from 'nest-winston';
-
 import * as fs from 'fs';
 import * as path from 'path';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
-
+import * as dotenv from 'dotenv';
+import AppDataSource from './../datasource';
+console.log("dataSouce db type: " + AppDataSource.options.type);
+console.log("dataSouce host: " + AppDataSource.options.host);
+dotenv.config(envPath);
 (async function () {
+  AppDataSource.initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization", err)
+    })
   const httpsOptions = process.env.LOAD_CERTS === 'true' ? {
     key: process.env.PEM_KEY_PATH ? fs.readFileSync(process.env.PEM_KEY_PATH) : null,
     cert: process.env.PEM_CERT_PATH ? fs.readFileSync(process.env.PEM_CERT_PATH) : null,

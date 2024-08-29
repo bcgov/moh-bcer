@@ -1,49 +1,67 @@
 import { BCDirectionData } from '@/constants/localInterfaces';
+import { styled } from '@mui/material/styles';
 import {
   Box,
   CircularProgress,
-  makeStyles,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const useStyles = makeStyles(() => ({
-  result: {
+const PREFIX = 'Itinerary';
+
+const classes = {
+  result: `${PREFIX}-result`,
+  resultText: `${PREFIX}-resultText`,
+  directionText: `${PREFIX}-directionText`,
+  directionType: `${PREFIX}-directionType`,
+  directionWrapper: `${PREFIX}-directionWrapper`,
+  notificationWrapper: `${PREFIX}-notificationWrapper`,
+  label: `${PREFIX}-label`
+};
+
+const StyledBox = styled(Box)(() => ({
+  [`& .${classes.result}`]: {
     backgroundColor: '#E0E8F0',
     padding: '5px 15px',
     borderRadius: '4px',
   },
-  resultText: {
+
+  [`& .${classes.resultText}`]: {
     color: '#0053A4',
     fontSize: '16px',
     fontWeight: 'bold',
   },
-  directionText: {
+
+  [`& .${classes.directionText}`]: {
     maxWidth: '400px',
     padding: '5px 15px',
   },
-  directionType: {
+
+  [`& .${classes.directionType}`]: {
     maxWidth: '400px',
     padding: '5px 15px',
     fontWeight: 'bold',
   },
-  directionWrapper: {
+
+  [`& .${classes.directionWrapper}`]: {
     marginBottom: '8px',
     backgroundColor: 'rgba(46,133,64,0.1)',
     border: '1px solid #2E8540',
     borderRadius: '4px',
   },
-  notificationWrapper: {
+
+  [`& .${classes.notificationWrapper}`]: {
     marginBottom: '8px',
     backgroundColor: 'rgba(30,64,255,0.2)',
     border: '1px solid #2E8540',
     borderRadius: '4px',
   },
-  label: {
+
+  [`& .${classes.label}`]: {
     fontSize: '16px',
     fontWeight: 'bold',
-  },
+  }
 }));
 
 interface ItineraryProps {
@@ -51,7 +69,7 @@ interface ItineraryProps {
 }
 
 function Itinerary({ directionData }: ItineraryProps) {
-  const classes = useStyles();
+
   const { directions = [] } = directionData ?? {};
 
   const [hasMore, setHasMore] = useState(true);
@@ -81,7 +99,7 @@ function Itinerary({ directionData }: ItineraryProps) {
   };
 
   return (
-    <Box mt={2}>
+    <StyledBox mt={2}>
       {!!directions?.length && (
         <Box my={1}>
           <Typography className={classes.label}>Direction</Typography>
@@ -137,7 +155,7 @@ function Itinerary({ directionData }: ItineraryProps) {
           })}
         </InfiniteScroll>
       )}
-    </Box>
+    </StyledBox>
   );
 }
 

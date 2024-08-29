@@ -1,32 +1,52 @@
 import { useAxiosGet } from '@/hooks/axios';
-import { Box, LinearProgress, makeStyles, Typography } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { Box, LinearProgress, Typography } from '@mui/material';
 import React from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import Map from './Map';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { useKeycloak } from '@react-keycloak/web';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { routes } from '@/constants/routes';
 import { LocationConfig } from '@/constants/localInterfaces';
 
-const useStyles = makeStyles((theme) => ({
-  loadingWrapper: {
+const PREFIX = 'Overview';
+
+const classes = {
+  loadingWrapper: `${PREFIX}-loadingWrapper`,
+  contentWrapper: `${PREFIX}-contentWrapper`,
+  content: `${PREFIX}-content`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  buttonWrapper: `${PREFIX}-buttonWrapper`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`
+};
+
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.loadingWrapper}`]: {
     display: 'flex',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  contentWrapper: {
+
+  [`& .${classes.contentWrapper}`]: {
     display: 'flex',
     width: '100%',
     justifyContent: 'center',
   },
-  content: {
+
+  [`& .${classes.content}`]: {
     maxWidth: '1440px',
     width: '95%',
     padding: '20px 30px',
   },
-  helpTextWrapper: {
+
+  [`& .${classes.helpTextWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
     padding: '20px',
@@ -34,30 +54,33 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '30px',
     borderRadius: '5px',
   },
-  helperIcon: {
+
+  [`& .${classes.helperIcon}`]: {
     fontSize: '45px',
     color: '#0053A4',
     paddingRight: '25px',
   },
-  buttonWrapper: {
+
+  [`& .${classes.buttonWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
   },
-  actionsWrapper: {
+
+  [`& .${classes.actionsWrapper}`]: {
     display: 'flex',
     justifyContent: 'space-between',
-  },
+  }
 }));
 
 function Overview() {
-  const classes = useStyles();
-  const [keycloak] = useKeycloak();
-  const history = useHistory();
+
+  const {keycloak} = useKeycloak();
+  const navigate = useNavigate();
 
   const logout = () => {
     store.clearAll();
     keycloak.logout();
-    history.push(routes.root);
+    navigate(routes.root);
   };
   const [{ data: config, error, loading }, getData] = useAxiosGet<LocationConfig>(
     '/data/location/config'

@@ -2,11 +2,12 @@ import { BusinessLocation } from '@/constants/localInterfaces';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate, useLocation as useRouterLocation  } from 'react-router-dom';
 import { useAxiosGet, useAxiosPatch } from './axios';
 
 function useLocation(locationIds?: string) {
-  const history = useHistory();
+  const navigate = useNavigate();
+  const routerLocation = useRouterLocation();
   const [selectedLocations, setSelectedLocations] = useState<BusinessLocation[]>([]);
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   /**
@@ -67,9 +68,9 @@ function useLocation(locationIds?: string) {
    * Updates the route parameters
    * @param {string} ids location ids to be set in the route query
    */
-  const setRouteParam =  (ids: string[]) => {
-    const route = history.location.pathname;
-    history.push(`${route}?locations=${ids.join(',')}`);
+  const setRouteParam = (ids: string[]) => {
+    const currentPath = routerLocation.pathname;
+    navigate(`${currentPath}?locations=${ids.join(',')}`);
   };
 
   /**

@@ -1,10 +1,10 @@
 import React from 'react';
-import { OverridableComponent } from '@material-ui/core/OverridableComponent';
-import { SvgIconTypeMap } from '@material-ui/core';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
+import { SvgIconTypeMap } from '@mui/material';
 
 import { StyledStepper } from 'vaping-regulation-shared-components';
-import WorkOutlineOutlinedIcon from '@material-ui/icons/WorkOutlineOutlined';
-import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 
 type StepperTopProps = {
   steps: Array<{

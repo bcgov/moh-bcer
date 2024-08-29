@@ -1,44 +1,22 @@
-import { useAxiosGet } from '@/hooks/axios';
-import {
-  makeStyles,
-} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { BCGeocoderAutocompleteData } from '@/constants/localInterfaces';
 import AutocompleteSearch from '@/components/generic/AutocompleteSearch';
+import { useAxiosGet } from '@/hooks/axios';
 
-const useStyles = makeStyles({
-  groupHeader: {
-    display: 'flex',
-    fontSize: '17px',
-    fontWeight: 600,
-    padding: '10px 0px',
+const StyledAutocompleteSearch = styled(AutocompleteSearch)(({ theme }) => ({
+  '& .MuiAutocomplete-inputRoot': {
+    padding: '0px 12px 0px 0px !important',
   },
-  radioWrapper: {
-    padding: '0px 20px 15px 0px',
-  },
-  optionalField: {},
-  autocompleteField: {
-    '& .MuiAutocomplete-inputRoot': {
-      padding: '0px 12px 0px 0px !important',
-    },
-  },
-  helpIcon: {
-    fontSize: '22px',
-    color: '#0053A4',
-  },
-  tooltip: {
-    backgroundColor: '#0053A4',
-    fontSize: '14px',
-  },
-  arrow: {
-    color: '#0053A4',
-  },
-});
+}));
 
-function SearchLocation({ setSelect }: any) {
-  const classes = useStyles();
-  const [tOut, setTOut] = useState<any>();
-  const [predictions, setPredictions] = useState<Array<BCGeocoderAutocompleteData>>([]);
+interface SearchLocationProps {
+  setSelect: (value: BCGeocoderAutocompleteData) => void;
+}
+
+function SearchLocation({ setSelect }: SearchLocationProps) {
+  const [tOut, setTOut] = useState<NodeJS.Timeout | null>(null);
+  const [predictions, setPredictions] = useState<BCGeocoderAutocompleteData[]>([]);
 
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', {
     manual: true,
@@ -54,20 +32,20 @@ function SearchLocation({ setSelect }: any) {
     setSelect(value);
   };
 
-  const getAutocomplete = (value: any) => {
+  const getAutocomplete = (value: string) => {
     if (tOut) {
       clearTimeout(tOut);
     }
-    const a = setTimeout(() => {
+    const newTimeout = setTimeout(() => {
       getSuggestions({
         url: `https://geocoder.api.gov.bc.ca/addresses.json?minScore=50&maxResults=5&echo=false&autoComplete=true&brief=false&matchPrecision=occupant,unit,site,civic_number,block&addressString=${value}`,
       });
     }, 500);
-    setTOut(a);
+    setTOut(newTimeout);
   };
 
   return (
-    <AutocompleteSearch
+    <StyledAutocompleteSearch
       options={predictions}
       getOptionLabel={(p: BCGeocoderAutocompleteData) =>
         p.properties.fullAddress

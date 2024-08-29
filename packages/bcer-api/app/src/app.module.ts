@@ -33,6 +33,7 @@ import { FaqModule } from './faq/faq.module';
 import { FavouriteModule } from './favourite/favourite.module';
 import { ReportModule } from './report/report.module';
 
+
 const moduleImports = [
   AuthModule,
   CsvModule,
@@ -53,7 +54,7 @@ const moduleImports = [
   NoteModule,
   FaqModule,
   FavouriteModule,
-  ReportModule
+  ReportModule,
 ];
 
 @Module({

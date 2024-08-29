@@ -3,11 +3,11 @@ import {
   Box,
   Grid,
   InputAdornment,
-  makeStyles,
   Tooltip,
   Typography,
-} from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+  styled
+} from '@mui/material';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { Form, Formik } from 'formik';
 import { CSVLink } from 'react-csv';
 import moment from 'moment';
@@ -32,79 +32,100 @@ import { NotificationRO } from '@/constants/localInterfaces';
 import StyledToolTip from '@/components/generic/StyledToolTip';
 import { notificationValidationSchema } from '@/constants/validate';
 
-const useStyles = makeStyles({
-  contentWrapper: {
+const PREFIX = 'SendNotification';
+
+const classes = {
+  contentWrapper: `${PREFIX}-contentWrapper`,
+  content: `${PREFIX}-content`,
+  contentBox: `${PREFIX}-contentBox`,
+  endAdornment: `${PREFIX}-endAdornment`,
+  sendIcon: `${PREFIX}-sendIcon`,
+  contentTitle: `${PREFIX}-contentTitle`,
+  activityContainer: `${PREFIX}-activityContainer`,
+  activityRow: `${PREFIX}-activityRow`,
+  breakElement: `${PREFIX}-breakElement`,
+  dateTime: `${PREFIX}-dateTime`,
+  csvLink: `${PREFIX}-csvLink`,
+  downloadButton: `${PREFIX}-downloadButton`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  success: `${PREFIX}-success`,
+  successText: `${PREFIX}-successText`
+};
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  [`&.${classes.contentWrapper}`]: {
     display: 'flex',
     width: '100%',
     justifyContent: 'center',
   },
-  content: {
+  [`& .${classes.content}`]: {
     maxWidth: '1440px',
     width: '95%',
     padding: '20px 30px',
   },
-  contentBox: {
+  [`& .${classes.contentBox}`]: {
     border: '1px solid #CDCED2',
     borderRadius: '4px',
     marginTop: '20px',
   },
-  endAdornment: {
+  [`& .${classes.endAdornment}`]: {
     display: 'block',
     position: 'relative',
     bottom: '-40px',
   },
-  sendIcon: {
+  [`& .${classes.sendIcon}`]: {
     height: '24px',
     width: '24px',
     padding: '0px 5px 0px 5px',
   },
-  contentTitle: {
+  [`& .${classes.contentTitle}`]: {
     fontSize: '20px',
     color: '#0053A4',
   },
-  activityContainer: {
+  [`& .${classes.activityContainer}`]: {
     overflowY: 'scroll',
     height: '320px',
   },
-  activityRow: {
+  [`& .${classes.activityRow}`]: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  breakElement: {
+  [`& .${classes.breakElement}`]: {
     borderBottom: '1px solid #CDCED2',
   },
-  dateTime: {
+  [`& .${classes.dateTime}`]: {
     color: 'rgba(51, 51, 51, 0.7)',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  downloadButton: {
+  [`& .${classes.downloadButton}`]: {
     marginTop: '25px',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: 'white',
     fontSize: '20px',
   },
-  success: {
+  [`& .${classes.success}`]: {
     marginTop: '20px',
     backgroundColor: 'rgba(41,216,47,0.1)',
 
     display: 'flex',
     alignItems: 'center',
   },
-  successText: {
+  [`& .${classes.successText}`]: {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#2E8540',
     marginLeft: '15px',
   },
-});
+}));
+
 
 export default function SendNotification() {
-  const classes = useStyles();
+
   const { openToast } = useToast();
   const [pending, setPending] = useState<NotificationRO>();
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
@@ -215,7 +236,7 @@ export default function SendNotification() {
   }, []);
 
   return (
-    <Box className={classes.contentWrapper}>
+    <StyledBox className={classes.contentWrapper}>
       <Box className={classes.content}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -435,6 +456,6 @@ export default function SendNotification() {
           </Grid>
         </Grid>
       </Box>
-    </Box>
+    </StyledBox>
   );
 }

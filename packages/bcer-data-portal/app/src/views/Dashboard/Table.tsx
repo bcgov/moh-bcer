@@ -2,23 +2,24 @@ import { BusinessRO, SearchQueryBuilder } from '@/constants/localInterfaces';
 import { DashboardUtil } from '@/util/dashboard.util';
 import useBusiness from '@/hooks/useBusiness';
 import { getInitialPagination } from '@/util/general.util';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import React from 'react';
 import { StyledTable } from 'vaping-regulation-shared-components';
 
 export interface TableProps {
-  data: BusinessRO[],
-  [x: string]: unknown,
+  data: BusinessRO[];
+  onChangeSearch: Function;
+  totalRowCount: number;
+  searchOptions: SearchQueryBuilder;
 }
 
 function Table({
   data,
+  onChangeSearch,
+  totalRowCount,
+  searchOptions,
   ...props
 }: TableProps) {
-
-  const {
-    onChangeSearch,
-  } = useBusiness();
 
   return (
     <Box>
@@ -29,6 +30,16 @@ function Table({
           pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30, 50],
           sorting: true
+        }}
+        onChangePage={(page: number) => {
+          onChangeSearch({
+            page: page,
+          });
+        }}
+        onChangeRowsPerPage={(rowsPerPage: number) => {
+          onChangeSearch({
+            pageSize: rowsPerPage,
+          });
         }}
         onOrderChange={(orderColumn: number, orderDirection: any) => {
           if (orderColumn === -1) {
@@ -43,6 +54,8 @@ function Table({
             orderDirection: orderDirection.toUpperCase()
           })
         }}
+        page={searchOptions.page}
+        totalCount={totalRowCount}
         {...props}
       />
     </Box>

@@ -1,24 +1,21 @@
+import React, { useEffect, useState } from 'react';
+import { Box, Dialog, LinearProgress, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
 import { ManufacturesRO } from '@/constants/localInterfaces';
 import { useAxiosGet } from '@/hooks/axios';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
-import { Box, Dialog, LinearProgress, Paper, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import React, { useEffect, useState } from 'react';
-import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
 import ManufacturingIngredientsTable from './ManufacturingIngredientsTable';
 
-const useStyles = makeStyles(() => ({
-  dialogWrap: {
-    marginTop: '100px',
-    padding: '1rem 1.5rem',
-  },
-}));
+const DialogWrap = styled('div')({
+  marginTop: '100px',
+  padding: '1rem 1.5rem',
+});
 
 function LocationManufacturingTable({ locationId }: { locationId: string }) {
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
-  const classes = useStyles();
   const [selectedManufactureReport, setSelectedManufactureReport] = useState<ManufacturesRO>();
-  const [viewOpen, setViewOpen] = useState<boolean>();
+  const [viewOpen, setViewOpen] = useState<boolean>(false);
 
   const handleManufactureSelect = (manufactureReport: ManufacturesRO) => {
     setSelectedManufactureReport(manufactureReport);
@@ -34,11 +31,11 @@ function LocationManufacturingTable({ locationId }: { locationId: string }) {
 
   useEffect(() => {
     showNetworkErrorMessage(error)
-  }, [])
+  }, [error, showNetworkErrorMessage])
 
   return (
     <Box>
-      <Typography variant="body2" style={{ paddingBottom: '8px' }}>
+      <Typography variant="body2" sx={{ paddingBottom: '8px' }}>
         {data?.manufactures?.length} manufacturing reports submitted
       </Typography>
       {loading ? <LinearProgress /> : <Box pb={0.5} />}
@@ -69,23 +66,23 @@ function LocationManufacturingTable({ locationId }: { locationId: string }) {
           open={viewOpen}
           onClose={() => {
             setSelectedManufactureReport(null);
-            setViewOpen((open) => !open);
+            setViewOpen(false);
           }}
         >
-          <div className={classes.dialogWrap}>
+          <DialogWrap>
             <ManufacturingIngredientsTable
               ingredients={selectedManufactureReport.ingredients}
             />
-            <div>
+            <Box>
               <StyledButton
                 variant="outlined"
                 onClick={() => setViewOpen(false)}
-                style={{ margin: '1rem 0' }}
+                sx={{ margin: '1rem 0' }}
               >
                 Close
               </StyledButton>
-            </div>
-          </div>
+            </Box>
+          </DialogWrap>
         </Dialog>
       )}
     </Box>

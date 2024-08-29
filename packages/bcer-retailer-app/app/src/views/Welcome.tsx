@@ -1,55 +1,57 @@
 import React, { useContext, useEffect } from 'react';
-import { Redirect, Link, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { useAxiosPost } from '@/hooks/axios';
-import { makeStyles, CircularProgress, Typography } from '@material-ui/core';
-import classes from '*.module.css';
+import { styled } from '@mui/material/styles';
+import { CircularProgress, Typography } from '@mui/material';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
 
-const useStyles = makeStyles({
-  splashContainer: {
-    display: 'flex',
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  splashWrapper: {
-    maxWidth: '950px'
-  },
-  buttonWrapper: {
-    paddingTop: '30px',
-    display: 'flex',
-    justifyContent: 'flex-end'
-  }
-})
+const SplashContainer = styled('div')({
+  display: 'flex',
+  width: '100%',
+  height: '100%',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+const SplashWrapper = styled('div')({
+  maxWidth: '950px'
+});
+
+const ButtonWrapper = styled('div')({
+  paddingTop: '30px',
+  display: 'flex',
+  justifyContent: 'flex-end'
+});
 
 export default function Welcome() {
-  const classes = useStyles();
-  const history = useHistory();
-  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext)
+  const navigate = useNavigate();
+  const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [{ data: profile, loading, error }] = useAxiosPost('/users/profile');
   const businessInformation = profile?.business && profile?.business.legalName;
 
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)});
     }
-  }, [error])
+  }, [error, appGlobal, setAppGlobal]);
 
-  return loading ? <CircularProgress /> : businessInformation ? <Redirect to='/myDashboard' /> : (
-    <div className={classes.splashContainer}>
-      <div className={classes.splashWrapper}>
+  if (loading) return <CircularProgress />;
+  if (businessInformation) return <Navigate to='/myDashboard' replace />;
+
+  return (
+    <SplashContainer>
+      <SplashWrapper>
         <Typography variant='h5'>Welcome to E-Substances Reporting Application</Typography>
         <Typography variant='body1'>As a first-time user of this application, you need to finish the initial setup of your organization. Next time you login, you will not have to complete this step.</Typography>
         <Typography variant='body1'>If you have already submitted a product and manufacturing report by email to <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>, you will have to reupload this into the BCER.</Typography>
-        <div className={classes.buttonWrapper}> 
-          <StyledButton variant='contained' onClick={() => history.push('/business/details')}>
+        <ButtonWrapper>
+          <StyledButton variant='contained' onClick={() => navigate('/business/details')}>
             Start
           </StyledButton>
-        </div>
-      </div>
-    </div>
-  )
+        </ButtonWrapper>
+      </SplashWrapper>
+    </SplashContainer>
+  );
 }

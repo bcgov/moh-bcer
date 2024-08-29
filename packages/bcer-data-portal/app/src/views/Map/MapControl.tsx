@@ -1,6 +1,7 @@
 import AutoSubmitFormik from '@/components/AutoSubmitFormik';
+import { styled } from '@mui/material/styles';
 import { RouteOptions } from '@/constants/localInterfaces';
-import { Box, makeStyles, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import React, { SetStateAction, useEffect } from 'react';
 import {
@@ -9,9 +10,23 @@ import {
   StyledCheckboxInput,
 } from 'vaping-regulation-shared-components';
 
-const useStyles = makeStyles((theme) => ({
-  root: {},
-  routeOption: {
+const PREFIX = 'MapControl';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  routeOption: `${PREFIX}-routeOption`,
+  otherOptions: `${PREFIX}-otherOptions`,
+  text: `${PREFIX}-text`
+};
+
+const StyledBox = styled(Box)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.root}`]: {},
+
+  [`& .${classes.routeOption}`]: {
     padding: '5px 15px',
     maxHeight: '45px',
     overflow: 'hidden',
@@ -24,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   },
-  otherOptions: {
+
+  [`& .${classes.otherOptions}`]: {
     padding: '5px 15px',
     border: '1px solid #CDCED2',
     borderRadius: '4px',
@@ -35,10 +51,11 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   },
-  text: {
+
+  [`& .${classes.text}`]: {
     fontSize: '16px',
     fontWeight: 'bold',
-  },
+  }
 }));
 
 function MapControl({
@@ -50,9 +67,9 @@ function MapControl({
   setRouteOptions: React.Dispatch<SetStateAction<RouteOptions>>;
   setShowHALayer: React.Dispatch<SetStateAction<boolean>>;
 }) {
-  const classes = useStyles();
+
   return (
-    <Box>
+    <StyledBox>
       <Formik
         initialValues={initialRoutingOptions}
         onSubmit={(v) => setRouteOptions(v)}
@@ -163,7 +180,7 @@ function MapControl({
           </Form>
         )}
       </Formik>
-    </Box>
+    </StyledBox>
   );
 }
 

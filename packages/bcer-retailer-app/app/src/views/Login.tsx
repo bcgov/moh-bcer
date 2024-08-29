@@ -1,25 +1,44 @@
 import React from 'react';
+import { styled } from '@mui/material/styles';
 import { useKeycloak } from '@react-keycloak/web';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 import Header from '@/components/Header';
 import userLoginLogo from '@/assets/images/user-check-1.png';
 import userSignupLogo from '@/assets/images/user-plus.png';
 import arrowRight from '@/assets/images/arrow-right.png';
-import { Link } from 'react-router-dom';
 
-const useStyles = makeStyles({
-  splashContainer: {
+const PREFIX = 'Login';
+
+const classes = {
+  splashContainer: `${PREFIX}-splashContainer`,
+  splashWrapper: `${PREFIX}-splashWrapper`,
+  authButtonContainer: `${PREFIX}-authButtonContainer`,
+  authButtonIcon: `${PREFIX}-authButtonIcon`,
+  buttonImage: `${PREFIX}-buttonImage`,
+  arrowRight: `${PREFIX}-arrowRight`,
+  buttonText: `${PREFIX}-buttonText`,
+  authArrow: `${PREFIX}-authArrow`,
+  splashVerbiage: `${PREFIX}-splashVerbiage`,
+  splashVerbiageBold: `${PREFIX}-splashVerbiageBold`,
+  splashVerbiageLastParagraph: `${PREFIX}-splashVerbiageLastParagraph`,
+  getHelp: `${PREFIX}-getHelp`,
+  authContainer: `${PREFIX}-authContainer`,
+  body1: `${PREFIX}-body1`
+};
+
+const Root = styled('div')({
+  [`& .${classes.splashContainer}`]: {
     display: 'flex',
     width: '100%',
     marginTop: '70px',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  splashWrapper: {
+  [`& .${classes.splashWrapper}`]: {
     maxWidth: '950px'
   },
-  authButtonContainer: {
+  [`& .${classes.authButtonContainer}`]: {
     color: '#1E5DB1',
     display: 'block',
     textDecoration: 'none',
@@ -39,7 +58,7 @@ const useStyles = makeStyles({
       cursor: 'pointer',
     },
   },
-  authButtonIcon: {
+  [`& .${classes.authButtonIcon}`]: {
     height: '50px',
     width: '50px',
     margin: '19px',
@@ -47,55 +66,60 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     float: 'left',
   },
-  buttonImage: {
+  [`& .${classes.buttonImage}`]: {
     height: '24px',
     width: '24px',
     margin: '15px '
   },
-  arrowRight: {
+  [`& .${classes.arrowRight}`]: {
     height: '24px',
     width: '24px',
   },
-  buttonText: {
+  [`& .${classes.buttonText}`]: {
     height: '20px',
     width: '390px',
     margin: '32px 0px 0px 0px',
   },
-  authArrow: {
+  [`& .${classes.authArrow}`]: {
     height: '14px',
     width: '14px',
     margin: '-16px 23px 0px 0px',
     float: 'right'
   },
-  splashVerbiage: {
+  [`& .${classes.splashVerbiage}`]: {
     padding: '0px 0px 30px 0px',
   },
-  splashVerbiageBold: {
+  [`& .${classes.splashVerbiageBold}`]: {
     color: '#0053A4',
   },
-  splashVerbiageLastParagraph: {
+  [`& .${classes.splashVerbiageLastParagraph}`]: {
     paddingBottom: '30px',
   },
-  getHelp: {
+  [`& .${classes.getHelp}`]: {
     clear: 'both'
   },
-  authContainer: {
+  [`& .${classes.authContainer}`]: {
     borderTop: '1px solid gray',
     paddingTop: '20px'
+  },
+  [`& .${classes.body1}`]: {
+    fontSize: '16px',
+    lineHeight: '24px',
+    fontWeight: '400',
+    letterSpacing: '0.5px',
   }
 });
 
 const Login = () => {
-  const classes = useStyles();
-  const [keycloak, initialized] = useKeycloak();
-  return (
-    <>
-      <Header />
 
+  const {keycloak, initialized} = useKeycloak();
+  return (
+    (<Root>
+      <Header />
       <div className={classes.splashContainer}>
         <div className={classes.splashWrapper}>
           <Typography variant='h5'>E-Substances Reporting Application</Typography>
-          <Typography variant='body1' className={classes.splashVerbiage}>
+          <div className={`${classes.splashVerbiage} ${classes.body1}`}>
             The new <b className={classes.splashVerbiageBold}>E-Substances Regulation</b> introduced requirements for all businesses who currently
             sell E-substances or intend to sell E-substances in British Columbia. Business owners must notify the Ministry
             of Health of their intent to sell restricted E-substances 6 weeks prior to their first sale. Product Reports
@@ -116,7 +140,7 @@ const Login = () => {
             <br />
             <br />
             <b className={classes.splashVerbiageBold}>NOTE: Business owners that fail to submit their Notice of Intent and that fail to comply with the new reporting requirements may be subject to offences under the Public Health Act.</b>
-          </Typography>
+          </div>
           {
             initialized
               ?
@@ -148,7 +172,7 @@ const Login = () => {
           }
         </div>
       </div>
-    </>
+      </Root>)
   );
 };
 export default Login;
