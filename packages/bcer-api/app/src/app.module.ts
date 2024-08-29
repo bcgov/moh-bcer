@@ -32,8 +32,6 @@ import { NoteModule } from './note/note.module';
 import { FaqModule } from './faq/faq.module';
 import { FavouriteModule } from './favourite/favourite.module';
 import { ReportModule } from './report/report.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import AppDataSource from './../datasource'; 
 
 
 const moduleImports = [
@@ -57,9 +55,6 @@ const moduleImports = [
   FaqModule,
   FavouriteModule,
   ReportModule,
-  TypeOrmModule.forRootAsync({
-    useFactory: async () => AppDataSource.options, // Use the configuration from AppDataSource
-  }),
 ];
 
 @Module({
