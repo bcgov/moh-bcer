@@ -13,7 +13,7 @@ import { AuthMiddleware } from 'src/auth/middleware/auth.middleware';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { BusinessModule } from './business/business.module';
-// import { DatabaseModule } from './database/database.module';
+import { DatabaseModule } from './database/database.module';
 import { ErrorExceptionFilter } from 'src/common/filters/error-exception.filter';
 import { LocationModule } from './location/location.module';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
@@ -40,7 +40,7 @@ const moduleImports = [
   AuthModule,
   CsvModule,
   BusinessModule,
-  // DatabaseModule,
+  DatabaseModule,
   UserModule,
   SubmissionModule,
   NoiModule,
