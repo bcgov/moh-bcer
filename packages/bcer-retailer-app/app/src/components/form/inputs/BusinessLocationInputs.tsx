@@ -92,6 +92,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
   const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
   const [cancelTokenSource, setCancelTokenSource] = useState<CancelTokenSource | null>(null);
+  //TODO: Enhancement 1: Add Validation Check to Address Field
   
   useEffect(() => {
     formikHelpers.setFieldValue('location_type', values.location_type? values.location_type: 'physical');
@@ -299,7 +300,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       {(values.location_type === "physical" || values.location_type === "both") &&
       <>
       <div className={classes.groupHeader} >
-        Please state if persons under 19 years of age are permitted on the sales premises <span style={{color: 'red'}}>*</span>
+        Are persons under 19 years of age permitted on  the sales premises?<span style={{color: 'red'}}>*</span>
       </div>
 
       <div className={classes.optionalWrapper} >

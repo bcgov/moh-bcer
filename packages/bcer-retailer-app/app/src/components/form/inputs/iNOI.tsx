@@ -51,7 +51,7 @@ function NoiInputs(props: FormikProps<{}>) {
 
       <section>
         <p>
-          5. Please state if persons under 19 years of age are permitted on the sales premises*
+          5. Are persons under 19 years of age permitted on the sales premises?*
           <br />
           <small>
             If your retail location has unique circumstances surrounding age-restriction, please select "other" and describe in the comment box below.
