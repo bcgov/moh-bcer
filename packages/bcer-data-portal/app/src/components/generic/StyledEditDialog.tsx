@@ -120,10 +120,6 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
       
       // Wait for health authority determination
       await doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
-      
-      // All data is set, save and close the dialog
-      saveChange(fullLocation.properties.fullAddress, fullLocation.properties.localityName, health_authority, fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1], fullLocation.properties.precisionPoints)
-      setOpen(false);
     }
   }
 
@@ -153,6 +149,7 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
 
   //fetch suggestions
   const getAutocomplete = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContent("")
     const value = e.target.value;
     setInputValue(value);
     requestQueue.current.push(value);
@@ -177,13 +174,9 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
         <DialogContent>
           {type === "addressLine1" ?
             <Autocomplete
-              options={autocompleteOptions} 
+              options={autocompleteOptions}
               freeSolo
-              value={content}
-              inputValue={inputValue}
-              onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-              }}
+              disableCloseOnSelect
               onChange={handleAutocompleteSelect}
               renderInput={(params) => (
                 <StyledTextField 
