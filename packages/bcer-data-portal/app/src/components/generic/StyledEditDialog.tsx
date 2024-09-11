@@ -1,4 +1,4 @@
-import React, {useState, useEffect, ChangeEvent} from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import DialogContent from '@mui/material/DialogContent';
 import {IconButton, Tooltip, Grid, Autocomplete} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -37,7 +37,9 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
   const [geo_confidence, setGeo_confidence] = useState('');
   const [open, setOpen] = useState(false);
   const [errorText, seterrorText] = useState('');
-  
+  const [inputValue, setInputValue] = useState('');
+  const requestQueue = useRef<string[]>([]);
+  const isRequesting = useRef(false);
   const locationInfoType: { [key: string]: string } = {
     addressLine1: 'Address',
     webpage: 'Webpage',
@@ -101,26 +103,61 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
     }
   }, [healthAuthority]);
 
-  const handleAutocompleteSelect = (event: React.SyntheticEvent<Element, Event>, value: string | null) => {
+  //called when user select an option from the dropdown
+  const handleAutocompleteSelect = async (event: React.SyntheticEvent<Element, Event>, value: string | null) => {
+    // Clear the request queue to prevent further API calls
+    requestQueue.current = [];
+    isRequesting.current = false;
+  
     const fullLocation = predictions.find((e: { properties: { fullAddress: any; }; }) => e.properties.fullAddress === value)
     if (fullLocation) {
       setContent(fullLocation.properties.fullAddress)
+      setInputValue(fullLocation.properties.fullAddress)
       setCity(fullLocation.properties.localityName)
       setLongitude(fullLocation.geometry.coordinates[0])
       setLatitude(fullLocation.geometry.coordinates[1])
       setGeo_confidence(fullLocation.properties.precisionPoints)
-      doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
+      
+      // Wait for health authority determination
+      await doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
+      
+      // All data is set, save and close the dialog
+      saveChange(fullLocation.properties.fullAddress, fullLocation.properties.localityName, health_authority, fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1], fullLocation.properties.precisionPoints)
+      setOpen(false);
     }
   }
 
+  const processQueue = useCallback(async () => {
+    if (isRequesting.current || requestQueue.current.length === 0) return;
+    isRequesting.current = true;
+    const value = requestQueue.current.pop();
+    requestQueue.current = [];
+    try {
+      await getSuggestions({ url: GeoCodeUtil.getAutoCompleteUrl(value) });
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+    }
+    isRequesting.current = false;
+    processQueue();
+  }, [getSuggestions]);
+
+  const doDetermineHealthAuthority = useCallback(async (long: number, lat: number) => {
+    try {
+      await determineHealthAuthority({
+        url: `data/location/determine-health-authority-on-portal?lat=${lat}&long=${long}`
+      });
+    } catch (error) {
+      console.error('Error determining health authority:', error);
+    }
+  }, [determineHealthAuthority]);
+
+  //fetch suggestions
   const getAutocomplete = (e: React.ChangeEvent<HTMLInputElement>) => {
-    getSuggestions({url: GeoCodeUtil.getAutoCompleteUrl(e.target.value)})
-  }
-
-  const doDetermineHealthAuthority =  (long: number, lat: number) => {
-    determineHealthAuthority({url: `data/location/determine-health-authority-on-portal?lat=${lat}&long=${long}`});
-  }
-
+    const value = e.target.value;
+    setInputValue(value);
+    requestQueue.current.push(value);
+    processQueue();
+  };
   return (
     <Grid>
       <Tooltip title="Edit" placement="top">
@@ -143,6 +180,10 @@ export default function StyledEditDialog({type, saveChange}:StyledEditDialogProp
               options={autocompleteOptions} 
               freeSolo
               value={content}
+              inputValue={inputValue}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+              }}
               onChange={handleAutocompleteSelect}
               renderInput={(params) => (
                 <StyledTextField 

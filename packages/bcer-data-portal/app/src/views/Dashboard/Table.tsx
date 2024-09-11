@@ -1,9 +1,9 @@
 import { BusinessRO, SearchQueryBuilder } from '@/constants/localInterfaces';
 import { DashboardUtil } from '@/util/dashboard.util';
-import useBusiness from '@/hooks/useBusiness';
-import { getInitialPagination } from '@/util/general.util';
 import { Box } from '@mui/material';
-import React from 'react';
+import { getInitialPagination } from '@/util/general.util';
+import React, { useEffect, useCallback, useRef } from 'react';
+import { Query, QueryResult } from '@material-table/core';
 import { StyledTable } from 'vaping-regulation-shared-components';
 
 export interface TableProps {
@@ -20,42 +20,59 @@ function Table({
   searchOptions,
   ...props
 }: TableProps) {
+  const tableRef = useRef<any>(); //rerender the table when data is updated
+
+  useEffect(() => {
+    if (tableRef.current) {
+      tableRef.current.onQueryChange();
+    }
+  }, [data]);
+
+  const handlePageChange = (newPage: number, newPageSize: number) => {
+    onChangeSearch({
+      ...searchOptions,
+      page: newPage,
+      pageSize: newPageSize,
+    });
+  };
+
+  const handleColumnChange = (orderColumn: number, orderDirection: any) => {
+    if (orderColumn === -1) {
+      onChangeSearch({
+        orderBy: undefined,
+        orderDirection: undefined
+      })
+      return;
+    }
+    onChangeSearch({
+      orderBy: DashboardUtil.tableColumn[orderColumn].sortTitle,
+      orderDirection: orderDirection.toUpperCase()
+    })
+  };
+
+  const fetchData = useCallback((query: Query<BusinessRO>): Promise<QueryResult<BusinessRO>> =>
+    new Promise((resolve) => {
+      resolve({
+        data: data,
+        page: searchOptions.page,
+        totalCount: totalRowCount,
+      });
+    })
+  , [data, searchOptions.page, totalRowCount]);
 
   return (
     <Box>
       <StyledTable
+        tableRef={tableRef}
         columns={DashboardUtil.tableColumn}
-        data={data}
+        data={fetchData}
         options={{
           pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30, 50],
           sorting: true
         }}
-        onChangePage={(page: number) => {
-          onChangeSearch({
-            page: page,
-          });
-        }}
-        onChangeRowsPerPage={(rowsPerPage: number) => {
-          onChangeSearch({
-            pageSize: rowsPerPage,
-          });
-        }}
-        onOrderChange={(orderColumn: number, orderDirection: any) => {
-          if (orderColumn === -1) {
-            onChangeSearch({
-              orderBy: undefined,
-              orderDirection: undefined
-            })
-            return;
-          }
-          onChangeSearch({
-            orderBy: DashboardUtil.tableColumn[orderColumn].sortTitle,
-            orderDirection: orderDirection.toUpperCase()
-          })
-        }}
-        page={searchOptions.page}
-        totalCount={totalRowCount}
+        onPageChange={handlePageChange} //page change and page size change
+        onOrderChange={handleColumnChange} //column drag and sorting
         {...props}
       />
     </Box>

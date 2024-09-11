@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Grid,
@@ -13,7 +13,7 @@ import {
   LinearProgress,
   Divider,
 } from '@mui/material';
-import { MUIStyledCommonProps, styled, Theme } from '@mui/system';
+import { styled } from '@mui/system';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Form, Formik } from 'formik';
 import { useAxiosGet, useAxiosPostFormData } from '@/hooks/axios';
@@ -47,6 +47,7 @@ import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { healthAuthorityOptions} from '../constants/arrays'
 import Favourite from '@/components/location/favourite';
 import { useFavourite } from '@/hooks/useFavourite';
+import { Query, QueryResult } from '@material-table/core';
 
 const ContentWrapper = styled('div')({
   display: 'flex',
@@ -182,7 +183,8 @@ export default function Locations() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
+  const tableRef = useRef<any>(); //rerender the table when data is updated
+  
   const {
     onSubmit,
     isSubmitting, 
@@ -400,7 +402,42 @@ export default function Locations() {
   useEffect(() => {
     setTotalRowCount(data?.totalRows || 0);
     setLocations(data?.rows || []);
+    if (tableRef.current) {tableRef.current.onQueryChange();} //rerender the table when data is updated
   }, [data]);
+  
+  useEffect(() => {
+    if (locations && !error) {
+    } else {
+      if (error) {
+        setAppGlobalContext({
+          ...appGlobal,
+          networkErrorMessage: error?.response?.data?.message,
+        });
+      }
+    }
+  }, [error]);
+
+  const fetchLocations = useCallback((query: Query<BusinessLocation>): Promise<QueryResult<BusinessLocation>> =>
+    new Promise((resolve) => {
+      const locationsWithTableData = locations
+      ? locations.map((row: BusinessLocation) => ({
+          ...row,
+          tableData: {
+            ...row.tableData,
+            checked: !!selectedRows.find(
+              (selected) => selected.id === row.id
+            ),
+          },
+        }))
+      : [];
+
+      resolve({
+        data: locationsWithTableData,
+        page: searchTerms.page,
+        totalCount: totalRowCount,
+      });
+    })
+  , [locations, searchTerms.page, totalRowCount]);
 
   const getReportsFile = (requestFilter: string = 'selected') => {
     let postConfig: { url: string; data: Array<string> } = {
@@ -438,17 +475,6 @@ export default function Locations() {
     setSnackbarOpen(true);
   };
 
-  useEffect(() => {
-    if (locations && !error) {
-    } else {
-      if (error) {
-        setAppGlobalContext({
-          ...appGlobal,
-          networkErrorMessage: error?.response?.data?.message,
-        });
-      }
-    }
-  }, [error]);
 
   const menuOptions: StyledMenuItems[] = [
     {
@@ -765,7 +791,9 @@ export default function Locations() {
               {loading ? <LinearProgress /> : <Box pt={0.5} />}
               <div className={'tableDiv'}>
                 <StyledTable
+                  tableRef={tableRef}
                   columns={tableColumns}
+                  data={fetchLocations}
                   options={{
                     selection: true,
                     pageSize: searchTerms.pageSize, //getInitialPagination(locations),
@@ -787,16 +815,11 @@ export default function Locations() {
                     ];
                     setSelectedRows(finalRows);
                   }}
-                  onChangePage={(page: number) => {
+                  onPageChange={(newPage: number, newPageSize: number) => {
                     setSearchTerms({
                       ...searchTerms,
-                      page: page,
-                    });
-                  }}
-                  onChangeRowsPerPage={(rowsPerPage: number) => {
-                    setSearchTerms({
-                      ...searchTerms,
-                      pageSize: rowsPerPage,
+                      page: newPage,
+                      pageSize: newPageSize,
                     });
                   }}
                   onOrderChange={(orderColumn: number, orderDirection: any) => {
@@ -814,21 +837,6 @@ export default function Locations() {
                       orderDirection,
                     });
                   }}
-                  totalCount={totalRowCount}
-                  page={searchTerms.page}
-                  data={
-                    locations
-                      ? locations.map((row: BusinessLocation) => ({
-                          ...row,
-                          tableData: {
-                            ...row.tableData,
-                            checked: !!selectedRows.find(
-                              (selected) => selected.id === row.id
-                            ),
-                          },
-                        }))
-                      : []
-                  }
                 />
               </div>
             </BoxStyled>
