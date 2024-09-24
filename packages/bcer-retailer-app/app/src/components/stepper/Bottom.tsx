@@ -9,6 +9,7 @@ import store from 'store';
 import useAxios from 'axios-hooks';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/utils/formatting';
+import { useAxiosPost } from '@/hooks/axios';
 
 const PREFIX = 'Bottom';
 
@@ -61,17 +62,10 @@ export default function Bottom ({
   const {keycloak} = useKeycloak();
   const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
-
-  const [{ data, loading, error, response }, execute] = useAxios({
-
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${keycloak.token}`
-    }
-  }, { manual: true });
-
   const next = () => navigate(steps[currentStep + 1].path);
   const previous = () => navigate(steps[currentStep - 1].path);
+  const [{ data, loading, error, response }, execute] = useAxios({ headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${keycloak.token}`}}, { manual: true });
+  const [{ loading: emailNotificationLoading,  data: emailNotificationData }, sendEmail] = useAxiosPost('/location/notify-duplicate-locations', {manual: true});
 
   useEffect(() => {
     if (response?.status === 201 && !error) {
@@ -89,27 +83,6 @@ export default function Bottom ({
     }
   }, [error]);
 
-  const stepAction = async () => {
-    const { submissionId, ...rest } = dataForContext;
-    if (onAdvance) {
-      await Promise.all(onAdvance.map(async (advanceStep: OnAdvance) => {
-        if (advanceStep.execIf?.validate(dataForContext[advanceStep.execIf?.property])) {
-          await execute({
-            url: advanceStep.endpoint.includes('save') ? `${process.env.BASE_URL}/submission/${dataForContext.submissionId}/save` : `${advanceStep.endpoint}/${dataForContext.submissionId}`,
-            method: advanceStep.method,
-            data: {
-              submissionId,
-              data: advanceStep.datakey ? {
-                [advanceStep.datakey]: rest[advanceStep.datakey],
-                currentStep: rest.currentStep,
-              } : rest,
-            }
-          });
-        } else next();
-      }))
-    } else next();
-  }
-
   useEffect(() => {
     toggleCanAdvance(
       !canAdvanceChecks ||
@@ -118,6 +91,49 @@ export default function Bottom ({
       )
     )
   }, [dataForContext])
+
+  const handleSendEmail = async (dataForContext: any) => {
+    try {
+      const response = await sendEmail({ data: { dataForContext } });
+      console.log('Email sent successfully:', response.data);
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  };
+
+  const stepAction = async () => {
+    const { submissionId, ...rest } = dataForContext;
+  
+    try {
+      if (onAdvance) {
+        await Promise.all(onAdvance.map(async (advanceStep: OnAdvance) => {
+          if (advanceStep.execIf?.validate(dataForContext[advanceStep.execIf?.property])) {
+            await execute({
+              url: advanceStep.endpoint.includes('save') ? `${process.env.BASE_URL}/submission/${dataForContext.submissionId}/save` : `${advanceStep.endpoint}/${dataForContext.submissionId}`,
+              method: advanceStep.method,
+              data: {
+                submissionId,
+                data: advanceStep.datakey ? {
+                  [advanceStep.datakey]: rest[advanceStep.datakey],
+                  currentStep: rest.currentStep,
+                } : rest,
+              }
+            });
+          } else {
+            next();
+          }
+        }));
+      } else {
+        next();
+      }
+      // send out the email notification if duplicate locations being created
+      if (isFinal && window.location.href.includes('/business/confirm')) {
+        await handleSendEmail(dataForContext);
+      }
+    } catch (error) {
+      console.error('Error during stepAction:', error);
+    }
+  };  
 
   return (
     <Root className={`${hasPrevious ? '' : 'first'} navButtons`}>

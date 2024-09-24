@@ -110,6 +110,14 @@ resource "aws_secretsmanager_secret" "bcer_vaping_notification_email" {
   name = "${var.application}_vaping_notification_email"
 }
 
+resource "aws_secretsmanager_secret" "bcer_email_notification_template_id_for_duplicate_location_warning_to_retailer" {
+  name = "${var.application}_email_notification_template_id_for_duplicate_location_warning_to_retailer"
+}
+
+resource "aws_secretsmanager_secret" "bcer_email_notification_template_id_for_duplicate_location_warning_to_vapinginfo" {
+  name = "${var.application}_email_notification_template_id_for_duplicate_location_warning_to_vapinginfo"
+}
+
 resource "aws_secretsmanager_secret_version" "bcer_application_port" {
   secret_id     = aws_secretsmanager_secret.bcer_application_port.id
   secret_string = "changeme"
@@ -242,6 +250,16 @@ resource "aws_secretsmanager_secret_version" "bcer_text_generic_notification_tem
 
 resource "aws_secretsmanager_secret_version" "bcer_vaping_notification_email" {
   secret_id     = aws_secretsmanager_secret.bcer_vaping_notification_email.id
+  secret_string = "changeme"
+}
+
+resource "aws_secretsmanager_secret_version" "bcer_email_notification_template_id_for_duplicate_location_warning_to_retailer" {
+  secret_id     = aws_secretsmanager_secret.bcer_email_notification_template_id_for_duplicate_location_warning_to_retailer.id
+  secret_string = "changeme"
+}
+
+resource "aws_secretsmanager_secret_version" "bcer_email_notification_template_id_for_duplicate_location_warning_to_vapinginfo" {
+  secret_id     = aws_secretsmanager_secret.bcer_email_notification_template_id_for_duplicate_location_warning_to_vapinginfo.id
   secret_string = "changeme"
 }
 

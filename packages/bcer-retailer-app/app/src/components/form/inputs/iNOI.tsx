@@ -66,7 +66,7 @@ function NoiInputs(props: FormikProps<{}>) {
       </section>
 
       <section>
-        <p>6. Which regional health authority is the sales premises located in? <a href="https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries" target="_blank" rel="noopener noreferrer">A map of the regional health authorities</a></p>
+        <p>6. Which regional health authority is the sales premises located in? <a href="https://www2.gov.bc.ca/gov/content/health/about-bc-s-health-care-system/partners/health-authorities/regional-health-authorities" target="_blank" rel="noopener noreferrer">A map of the regional health authorities</a></p>
         <label><Field name="ha" type="radio" value="fraser" />Fraser Health</label>
         <label><Field name="ha" type="radio" value="interior" />Interior Health</label>
         <label><Field name="ha" type="radio" value="island" />Island Health</label>

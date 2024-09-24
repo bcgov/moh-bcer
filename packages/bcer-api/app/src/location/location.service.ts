@@ -30,6 +30,7 @@ import { LocationContactDTO } from './dto/locationContact.dto';
 import { LocationType } from './enums/location_type.enum';
 import { ConfigDates } from 'src/utils/configDates';
 import { CONFIG } from 'src/common/common.config';
+import { duplicateLocationAlertEmailService } from './duplicateLocationAlertEmailService';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -54,6 +55,7 @@ export class LocationService {
     @InjectRepository(SalesReportEntity)
     private readonly salesReportRepository: Repository<SalesReportEntity>,
     private geoCodeService: GeoCodeService,
+    private duplicateLocationAlertEmailService: duplicateLocationAlertEmailService,
   ) { }
 
   async createLocations(dto: LocationDTO[], businessId: string) {
@@ -869,5 +871,24 @@ export class LocationService {
         businessId: businessId,
       },
     );
+  }
+
+  /**
+ * Check if location address exists when a user add a new location
+ * @param fullAddress 
+ * @returns 
+ */
+  async checkAddressExists(fullAddress: string): Promise<boolean> {
+    const existingLocation = await this.locationRepository.findOne({ where: { addressLine1: fullAddress } });
+    return !!existingLocation;
+  }
+
+  /**
+ * Send email to the retailer and vapingInfo mailbox when new duplicate location(s) are created
+ * @param dataForContext 
+ * @returns 
+ */
+  async sendEmailNotification(dataForContext: any): Promise<boolean> {
+    return await this.duplicateLocationAlertEmailService.sendEmailNotification(dataForContext)
   }
 }

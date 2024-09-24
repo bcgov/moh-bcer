@@ -61,8 +61,7 @@ export function StyledDialog ({
   cancelDisabled,
   ...props
 }: StyledDialogProps):ReactElement {
-  
-  
+
   return (
     <Dialog
       TransitionComponent={Transition}
@@ -82,6 +81,7 @@ export function StyledDialog ({
         acceptHandler={acceptHandler}
         acceptDisabled={acceptDisabled || false}
         cancelDisabled={cancelDisabled || false}
+        showCancelButton={props.showCancelButton}
       />
     </Dialog>
   );

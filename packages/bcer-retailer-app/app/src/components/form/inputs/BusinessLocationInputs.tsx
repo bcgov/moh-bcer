@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { FormikHelpers, useFormikContext } from 'formik';
-import { Grid, InputAdornment, makeStyles, Tooltip, TextField, Typography } from '@mui/material';
+import { Grid, InputAdornment, Tooltip, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { StyledTextField, StyledRadioGroup, locationTypeOptions } from 'vaping-regulation-shared-components';
+import { StyledTextField, StyledRadioGroup, locationTypeOptions, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import Autocomplete from '@mui/material/Autocomplete';
 import { AutocompleteChangeDetails, AutocompleteChangeReason } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
@@ -91,9 +91,10 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
   const [{ data: healthAuthority, error: haError, loading: haLoading }, determineHealthAuthority] = useAxiosGet('', { manual: true })
+  const [{ data: addressExistsData }, checkAddressExists] = useAxiosGet('', { manual: true });
   const [cancelTokenSource, setCancelTokenSource] = useState<CancelTokenSource | null>(null);
-  //TODO: Enhancement 1: Add Validation Check to Address Field
-  
+  const [duplicateWarningDialog, openDuplicateWarningDialog] = useState<boolean>(false);
+
   useEffect(() => {
     formikHelpers.setFieldValue('location_type', values.location_type? values.location_type: 'physical');
     if (values) {
@@ -115,7 +116,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       setAutocompleteOptions([]);
     }
   }, [data]);
-  
 
   useEffect(() => {
     if(healthAuthority) {
@@ -124,40 +124,28 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
       formikHelpers.setFieldValue('health_authority_display', haName);
     }
   }, [healthAuthority]);
-  
-  const handleAutocompleteSelect = (value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
-    const fullLocation = predictions.find(e => e.properties.fullAddress === value);
-    
-    if (!fullLocation) {
-      // Handle the case when no matching prediction is found
-      console.log('No matching location found');
-      formikHelpers.setFieldValue('addressLine1', value || '');
-      // Reset other fields
-      formikHelpers.setFieldValue('geoAddressConfidence', '');
-      formikHelpers.setFieldValue('city', '');
-      formikHelpers.setFieldValue('longitude', '');
-      formikHelpers.setFieldValue('latitude', '');
-      return;
+
+  useEffect(() => {
+    if (addressExistsData) {
+      const addressExists = addressExistsData;
+      openDuplicateWarningDialog(addressExists);
+      formikHelpers.setFieldValue('addressExists', addressExists);
     }
-  
-    formikHelpers.setFieldValue('addressLine1', fullLocation.properties.fullAddress);
-    formikHelpers.setFieldValue('geoAddressConfidence', fullLocation.properties.precisionPoints);
-    formikHelpers.setFieldValue('city', fullLocation.properties.localityName);
-    formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[0]);
-    formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[1]);
-    
-    doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
-  }  
+  }, [addressExistsData]);
+
+  const docheckAddressExists = async(fullAddress: string) => {
+    await checkAddressExists({ url: `/location/check-address-exists?address=${fullAddress}` });
+  }
+
+  const doDetermineHealthAuthority = async(long: number, lat: number) => {
+    determineHealthAuthority({url: `/location/determine-health-authority?lat=${lat}&long=${long}`})
+  }
 
   const debouncedGetAutocomplete = useCallback(
     debounce((value: string) => {
-      if (cancelTokenSource) {
-        cancelTokenSource.cancel('Operation canceled due to new request.');
-      }
-  
+      if (cancelTokenSource) { cancelTokenSource.cancel('Operation canceled due to new request.'); }
       const source = axios.CancelToken.source();
       setCancelTokenSource(source);
-  
       getSuggestions({
         url: GeoCodeUtil.getAutoCompleteUrl(value),
         cancelToken: source.token,
@@ -170,10 +158,6 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     []
   )
 
-  const doDetermineHealthAuthority = (long: number, lat: number) => {
-    determineHealthAuthority({url: `/location/determine-health-authority?lat=${lat}&long=${long}`})
-  }
-
   const resetFieldsOnChange = () => {
     formikHelpers.setFieldValue('addressLine1', '')
     formikHelpers.setFieldValue('city', '')
@@ -181,6 +165,30 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     formikHelpers.setFieldValue('geoAddressConfidence', '')
     formikHelpers.setFieldValue('latitude', '')
     formikHelpers.setFieldValue('longitude', '')
+  }
+  
+  const handleAutocompleteSelect = async (value: any, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<any>) => {
+    const fullLocation = predictions.find(e => e.properties.fullAddress === value);
+    
+    if (!fullLocation) { // Handle the case when no matching prediction is found
+      console.log('No matching location found');
+      formikHelpers.setFieldValue('addressLine1', value || '');
+      formikHelpers.setFieldValue('geoAddressConfidence', '');
+      formikHelpers.setFieldValue('city', '');
+      formikHelpers.setFieldValue('longitude', '');
+      formikHelpers.setFieldValue('latitude', '');
+      return;
+    }
+  
+    await docheckAddressExists((fullLocation.properties.fullAddress)); //check if this address exists in the database
+
+    formikHelpers.setFieldValue('addressLine1', fullLocation.properties.fullAddress);
+    formikHelpers.setFieldValue('geoAddressConfidence', fullLocation.properties.precisionPoints);
+    formikHelpers.setFieldValue('city', fullLocation.properties.localityName);
+    formikHelpers.setFieldValue('longitude', fullLocation.geometry.coordinates[0]);
+    formikHelpers.setFieldValue('latitude', fullLocation.geometry.coordinates[1]);
+    
+    await doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
   }
 
   return (
@@ -317,7 +325,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
 
       <div className={classes.groupHeader}>
         Which regional health authority is the sales premises located in? A map of the regional health authorities can be found at the&nbsp;
-        <a href="https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries" target="_blank" rel="noopener noreferrer">following link</a>
+        <a href="https://www2.gov.bc.ca/gov/content/health/about-bc-s-health-care-system/partners/health-authorities/regional-health-authorities" target="_blank" rel="noopener noreferrer">following link</a>
         <span style={{color: 'red'}}> *</span>
       </div>
       {values.health_authority !== 'other' && (<><StyledTextField
@@ -336,7 +344,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         Do you produce, formulate, package, repackage or prepare restricted e-substances for sale from this sales premises? <span style={{color: 'red'}}>*</span>
       </div>
       <StyledRadioGroup
-      defaultValue="none"
+        defaultValue="none"
         name="manufacturing"
         default
         options={[
@@ -344,6 +352,28 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
           {label: 'No', value: 'no'},
         ]}
       />
+      {duplicateWarningDialog &&
+        <StyledConfirmDialog
+          open={duplicateWarningDialog}
+          setOpen={openDuplicateWarningDialog}
+          confirmHandler={() => openDuplicateWarningDialog(false)}
+          maxWidth='xs'
+          dialogTitle='Duplicate Location Warning'
+          dialogMessage={
+            <Typography variant="body1">
+              Warning: you are trying to create an account for an address that already exists in the system.
+              If you recognize this address, please try to recover your previous account by contacting{' '}
+              <a href="https://www.bceid.ca/clp/account_recovery.aspx" style={{ display: 'inline' }}>
+                Service BC Help Desk
+              </a>.
+              If this is a brand new business location, please proceed.
+            </Typography>
+          }      
+          checkboxLabel="I confirm this is a brand new business location."
+          acceptButtonText="OK"
+          showCancelButton={false}
+        />
+      }
     </Root>
   );
 }

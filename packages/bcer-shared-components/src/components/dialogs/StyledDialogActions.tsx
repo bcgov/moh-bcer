@@ -21,7 +21,6 @@ const StyledActions = (props: DialogActionsProps) => (
   />
 );
 
-
 /**
  * Styled dialog actions reusable component
  *
@@ -41,7 +40,8 @@ export function StyledDialogActions ({
   cancelHandler,
   acceptHandler,
   cancelDisabled = false,
-  acceptDisabled = false
+  acceptDisabled = false,
+  showCancelButton = true,
 }: StyledDialogActionProps):ReactElement {
   
   let submitHandler;
@@ -49,36 +49,37 @@ export function StyledDialogActions ({
     let { submitForm } = useFormikContext()
     submitHandler = submitForm;
   }
-  
+
   return (
-      <StyledActions style={{justifyContent: !acceptHandler || !cancelHandler ? 'flex-end' : 'space-between' }}>
-        <StyledButton 
+    <StyledActions style={{ justifyContent: !acceptHandler || !cancelHandler || !showCancelButton ? 'flex-end' : 'space-between' }}>
+      {showCancelButton && cancelHandler && ( // Conditionally render the cancel button
+        <StyledButton
           variant="dialog-cancel"
           onClick={cancelHandler}
           disabled={cancelDisabled}
         >
           {cancelButtonText}
         </StyledButton>
-        {
-          acceptHandler === "submit"
-            ? <StyledButton 
+      )}
+      {
+        acceptHandler === "submit"
+          ? <StyledButton
+              variant="dialog-accept"
+              onClick={submitHandler}
+              disabled={acceptDisabled}
+            >
+              {acceptButtonText}
+            </StyledButton>
+          : acceptHandler
+            ? <StyledButton
                 variant="dialog-accept"
-                onClick={submitHandler}
+                onClick={acceptHandler}
                 disabled={acceptDisabled}
               >
                 {acceptButtonText}
               </StyledButton>
-            : 
-              acceptHandler 
-                ? <StyledButton 
-                    variant="dialog-accept"
-                    onClick={acceptHandler}
-                    disabled={acceptDisabled}
-                  >
-                    {acceptButtonText}
-                  </StyledButton>
-                : null
-        }
-      </StyledActions>
+            : null
+      }
+    </StyledActions>
   );
 }

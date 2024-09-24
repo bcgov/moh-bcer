@@ -96,7 +96,6 @@ export default function ConfirmAndSubmit() {
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
   const [isEditDetailsOpen, setOpenEditDetails] = useState<boolean>();
-  const [isAddLocationOpen, setOpenAddLocation] = useState<boolean>(false);
   const viewFullscreenTable = useState<boolean>(false);
   const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/submission/${businessInfo.submissionId}`, { manual: true });
   const newLocations = businessInfo.locations.filter((l: any) => !l.id);
@@ -144,16 +143,6 @@ export default function ConfirmAndSubmit() {
   const confirmEditDetails = async (values: BusinessDetails) => {
     setBusinessInfo({ ...businessInfo, details: values });
     setOpenEditDetails(false);
-  };
-
-  const handleDelete = (rowData: IBusinessLocationValues) => {
-    setTargetRow(rowData);
-    setOpenDelete(true);
-  };
-
-  const handleEdit = (rowData: IBusinessLocationValues) => {
-    setTargetRow(rowData);
-    setOpenEdit(true);
   };
 
   return (
