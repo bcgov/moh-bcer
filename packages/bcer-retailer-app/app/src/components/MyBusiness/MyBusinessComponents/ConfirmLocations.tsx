@@ -123,20 +123,15 @@ export default function ConfirmLocations () {
   const [{ data: addressExistsData }, checkAddressExists] = useAxiosGet('', { manual: true });
   const [duplicateWarning, setDuplicateWarning] = useState<String>("");
   const [duplicateCount, setDuplicateCount] = useState<number>(0);
-  const [duplicateCheckDone, setDuplicateCheckDone] = useState<boolean>(false);
 
   useEffect(() => {
-    setNewLocations(businessInfo.locations.filter((l: any) => !l.id));
-    setDuplicateWarning("")
-    setDuplicateCheckDone(false);
+    setNewLocations(businessInfo.locations.filter((l: any) => !l.id)); //reset newLocations
   }, [businessInfo.locations])
 
   useEffect(() => {
-    if(!duplicateCheckDone){
-      validateAndCheckAddress();
-    }
-  }, [newLocations, duplicateCheckDone]);
-
+    validateCSV(BusinessCsvValidation, newLocations)
+    verifyDuplicates();
+  }, [newLocations]);
 
   useEffect(() => {
     if (uploadErrors !== undefined) {
@@ -168,34 +163,36 @@ export default function ConfirmLocations () {
     return response.data;
   }
 
-  const validateAndCheckAddress = async () => {
-    // Only run validation checks if newLocations is not empty
-    if (newLocations.length === 0) return; 
-
-    //check errors
-    validateCSV(BusinessCsvValidation, newLocations);
-
-    //check duplicates
+  const verifyDuplicates = async () => {
+    if (newLocations.length === 0) return;
+  
     const updatedLocations = [...newLocations];
     let duplicateWarnings = "";
     let duplicateCount = 0;
+    let hasChanges = false;
+  
     for (let i = 0; i < newLocations.length; i++) {
       const location = newLocations[i];
-      if (!location.tableData) location.tableData = {id:i};
+      if (!location.tableData) location.tableData = { id: i };
       if (location.addressLine1) {
         const addressExists = await docheckAddressExists(location.addressLine1);
         if (addressExists) {
           duplicateWarnings = duplicateWarnings + location.addressLine1 + '; ';
           duplicateCount++;
         }
-        updatedLocations[i] = { ...location, addressExists:addressExists };
+        if (updatedLocations[i].addressExists !== addressExists) {
+          updatedLocations[i] = { ...location, addressExists: addressExists };
+          hasChanges = true;
+        }
       }
     }
-    setNewLocations(updatedLocations);
+    if (hasChanges) {// Update the businessInfo state with the new locations only if there are changes
+      const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
+      setBusinessInfo({ ...businessInfo, locations: [...existingLocations, ...updatedLocations] });
+    }
     setDuplicateWarning(duplicateWarnings);
     setDuplicateCount(duplicateCount);
-    setDuplicateCheckDone(true);
-  };
+  };  
 
   return (
     (<Root>

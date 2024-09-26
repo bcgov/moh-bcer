@@ -1,6 +1,5 @@
-
 import React, { ReactElement, Fragment } from 'react';
-import { Field, ErrorMessage } from 'formik'
+import { Field, ErrorMessage } from 'formik';
 import { TextFieldProps } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { InputFieldLabel, InputFieldError } from '@/components/generic';
@@ -12,20 +11,20 @@ import { TextInputProps, StyledTextProps } from '@/constants/interfaces/inputInt
  */
 export const StyledTextInput = (props: TextFieldProps) => (
   <TextField
-  {...props}
-  sx={{
-  '& .MuiFilledInput-root': {
-    backgroundColor: '#F5F5F5',
-  },
-  '& .MuiFilledInput-input':{
-    padding: '10px 10px 10px 14px'
-  },
-  '& .MuiFilledInput-underline': {
-    '&:after': {
-      borderBottom: '2px solid #0053A4'
-    }
-  }
-  }}
+    {...props}
+    sx={{
+      '& .MuiFilledInput-root': {
+        backgroundColor: '#F5F5F5',
+      },
+      '& .MuiFilledInput-input': {
+        padding: '10px 10px 10px 14px',
+      },
+      '& .MuiFilledInput-underline': {
+        '&:after': {
+          borderBottom: '2px solid #0053A4',
+        },
+      },
+    }}
   />
 );
 
@@ -33,15 +32,15 @@ export const StyledOutlinedInput = (props: TextFieldProps) => (
   <TextField
     {...props}
     sx={{
-    '& .MuiOutlinedInput-root': {
-      backgroundColor: '#FAFAFA',
-      borderRadius: '3px',
-    },
-    '& .MuiOutlinedInput-input':{
-      padding: '12px 10px 12px 14px',
-      fontSize: '14px',
-      lineHeight: '19px',
-    },
+      '& .MuiOutlinedInput-root': {
+        backgroundColor: '#FAFAFA',
+        borderRadius: '3px',
+      },
+      '& .MuiOutlinedInput-input': {
+        padding: '12px 10px 12px 14px',
+        fontSize: '14px',
+        lineHeight: '19px',
+      },
     }}
   />
 );
@@ -60,8 +59,9 @@ function TextInput ({
   label,
   variant,
   placeholder,
+  warningMessage,
   ...props
-}: TextInputProps):ReactElement {
+}: TextInputProps): ReactElement {
   const touched = form.touched[fieldRest.name as keyof typeof form.touched];
   const error = form.errors[fieldRest.name as keyof typeof form.errors];
   return (
@@ -88,9 +88,13 @@ function TextInput ({
         />
       )}
       {
-        touched && !!error 
-          ? <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
-          : <div style={{ height: '22px' }} >{' '}</div>
+        touched && !!error ? (
+          <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
+        ) : warningMessage ? (
+          <p className="MuiFormHelperText-root Mui-error css-53ej5y-MuiFormHelperText-root" style={{ color: '#FFA500' }}> {warningMessage} </p>
+        ) : (
+          <div style={{ height: '22px' }}>{' '}</div>
+        )
       }
     </Fragment>
   );
@@ -106,13 +110,14 @@ function TextInput ({
  * @returns object of type ReactElement
  *
  */
-export function StyledTextField ({
+export function StyledTextField({
   isDisabled = false,
   name,
   label,
   fullWidth = true,
   variant,
   placeholder,
+  warningMessage,
   ...rest
 }: StyledTextProps) {
   return (
@@ -120,10 +125,11 @@ export function StyledTextField ({
       name={name}
       component={TextInput}
       label={label}
-      fullWidth={fullWidth? fullWidth : undefined}
+      fullWidth={fullWidth ? fullWidth : undefined}
       disabled={isDisabled}
       variant={variant}
       placeholder={placeholder}
+      warningMessage={warningMessage}
       {...rest}
     />
   );

@@ -107,8 +107,10 @@ export default function Bottom ({
     try {
       if (onAdvance) {
         await Promise.all(onAdvance.map(async (advanceStep: OnAdvance) => {
-          if (advanceStep.execIf?.validate(dataForContext[advanceStep.execIf?.property])) {        
-            await handleSendEmail(dataForContext);// send out the email notification if duplicate locations being created
+          if (advanceStep.execIf?.validate(dataForContext[advanceStep.execIf?.property])) {
+            if (isFinal) {
+              await handleSendEmail(dataForContext);// send out the email notification if duplicate locations being created
+            }
             await execute({
               url: advanceStep.endpoint.includes('save') ? `${process.env.BASE_URL}/submission/${dataForContext.submissionId}/save` : `${advanceStep.endpoint}/${dataForContext.submissionId}`,
               method: advanceStep.method,

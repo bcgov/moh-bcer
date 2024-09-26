@@ -94,6 +94,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const [{ data: addressExistsData }, checkAddressExists] = useAxiosGet('', { manual: true });
   const [cancelTokenSource, setCancelTokenSource] = useState<CancelTokenSource | null>(null);
   const [duplicateWarningDialog, openDuplicateWarningDialog] = useState<boolean>(false);
+  const [warningMessage, setWarningMessage] = useState<string>('');
 
   useEffect(() => {
     formikHelpers.setFieldValue('location_type', values.location_type? values.location_type: 'physical');
@@ -125,16 +126,15 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     }
   }, [healthAuthority]);
 
-  useEffect(() => {
-    if (addressExistsData) {
-      const addressExists = addressExistsData;
-      openDuplicateWarningDialog(addressExists);
-      formikHelpers.setFieldValue('addressExists', addressExists);
-    }
-  }, [addressExistsData]);
-
   const docheckAddressExists = async(fullAddress: string) => {
-    await checkAddressExists({ url: `/location/check-address-exists?address=${fullAddress}` });
+    const addressExist = await checkAddressExists({ url: `/location/check-address-exists?address=${fullAddress}` });
+    if (addressExist.data) {
+      setWarningMessage("Warning: This is a duplicate address.");
+    }else{
+      setWarningMessage("");
+    }
+    openDuplicateWarningDialog(addressExist.data);
+    formikHelpers.setFieldValue('addressExists', addressExist.data);
   }
 
   const doDetermineHealthAuthority = async(long: number, lat: number) => {
@@ -238,7 +238,8 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
                   debouncedGetAutocomplete(e.target.value);
                 }}
                 name="addressLine1"
-                fullWidth 
+                fullWidth
+                warningMessage={warningMessage}
               />
             )}
           />
