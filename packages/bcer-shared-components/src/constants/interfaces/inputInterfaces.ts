@@ -10,6 +10,7 @@ export interface TextInputProps {
   variant?: 'outlined' | 'filled' | undefined;
   placeholder?: string;
   props: TextFieldProps;
+  warningMessage?: string;
 }
 
 export interface StyledTextProps {

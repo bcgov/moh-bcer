@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { styled } from '@mui/material/styles';
 import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog, ProvinceLabels } from 'vaping-regulation-shared-components';
 import { Form, Formik } from 'formik';
@@ -96,7 +96,6 @@ export default function ConfirmAndSubmit() {
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
   const [isEditDetailsOpen, setOpenEditDetails] = useState<boolean>();
-  const [isAddLocationOpen, setOpenAddLocation] = useState<boolean>(false);
   const viewFullscreenTable = useState<boolean>(false);
   const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/submission/${businessInfo.submissionId}`, { manual: true });
   const newLocations = businessInfo.locations.filter((l: any) => !l.id);
@@ -106,24 +105,31 @@ export default function ConfirmAndSubmit() {
     locations: Array<any>,
   } = businessInfo;
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   useEffect(() => {
-    const source = axios.CancelToken.source();
     if (businessInfo?.submissionId) {
+      abortControllerRef.current = new AbortController();
+      const signal = abortControllerRef.current.signal;
+
       (async () => {
         try {
-          await patch({ data: { data: businessInfo }, cancelToken: source.token });
+          await patch({ data: { data: businessInfo }, signal });
         } catch (error) {
           if (axios.isCancel(error)) {
             console.log('Request canceled', error.message);
           } else {
-            setAppGlobalContext({ ...appGlobal, networkErrorMessage: formatError(error) });
+            throw error;
           }
         }
       })();
+
+      return () => {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+      };
     }
-    return () => {
-      source.cancel('Operation canceled by the user.');
-    };
   }, [businessInfo]);
 
   useEffect(() => {
@@ -144,16 +150,6 @@ export default function ConfirmAndSubmit() {
   const confirmEditDetails = async (values: BusinessDetails) => {
     setBusinessInfo({ ...businessInfo, details: values });
     setOpenEditDetails(false);
-  };
-
-  const handleDelete = (rowData: IBusinessLocationValues) => {
-    setTargetRow(rowData);
-    setOpenDelete(true);
-  };
-
-  const handleEdit = (rowData: IBusinessLocationValues) => {
-    setTargetRow(rowData);
-    setOpenEdit(true);
   };
 
   return (
@@ -253,43 +249,43 @@ export default function ConfirmAndSubmit() {
         </div>
       </div>
       <div className={classes.box}>
-        {
-          newLocations.length
-            ?
-            <FullScreen fullScreenProp={viewFullscreenTable}>
-              <TableWrapper
-                tableHeader='New Business Locations'
-                tableSubHeader={`You have ${newLocations?.length} retail entries.`}
-                data={newLocations}
-                csvProps={{
-                  headers: Object.keys(BusinessLocationHeaders),
-                  data: newLocations?.map((l: any) => {
-                    return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.doingBusinessAs, l.health_authority, l.manufacturing];
-                  }),
-                  filename: 'business_locations.csv'
+      {
+        newLocations.length
+          ?
+        <FullScreen fullScreenProp={viewFullscreenTable}>
+          <TableWrapper
+            tableHeader='New Business Locations'
+            tableSubHeader={`You have ${newLocations?.length} retail entries.`}
+            data={newLocations}
+            csvProps={{
+              headers: Object.keys(BusinessLocationHeaders),
+              data: newLocations?.map((l: any) => {
+                return [l.addressLine1, l.addressLine2, l.postal, l.city, l.email, l.phone, l.underage, l.doingBusinessAs, l.health_authority, l.manufacturing];
+              }),
+              filename: 'business_locations.csv'
+            }}
+            fullScreenProp={viewFullscreenTable}
+            isOutlined={false}
+          >
+            <div style={{ overflowX: 'auto' }}>
+              <StyledTable
+                columns={LocationUtil.getTableColumns()}
+                options={{
+                  pageSize: getInitialPagination(newLocations),
+                  pageSizeOptions: [5, 10, 20, 30, 50]
                 }}
-                fullScreenProp={viewFullscreenTable}
-                isOutlined={false}
-              >
-                <div style={{ overflowX: 'auto' }}>
-                  <StyledTable
-                    columns={LocationUtil.getTableColumns()}
-                    options={{
-                      pageSize: getInitialPagination(newLocations),
-                      pageSizeOptions: [5, 10, 20, 30, 50]
-                    }}
-                    data={newLocations}
-                  />
-                </div>
-              </TableWrapper>
-            </FullScreen>
-            : null
-        }
-      </div>
+                data={newLocations}
+              />
+            </div>
+          </TableWrapper>
+        </FullScreen>
+        : null
+      }
+        </div>
       <LocationsEditForm rowData={targetRow} openProps={{ isOpen: isEditOpen, toggleOpen: setOpenEdit }} />
       {
         isDeleteOpen
-        &&
+          &&
         <StyledConfirmDialog
           open={isDeleteOpen}
           maxWidth='xs'
@@ -303,26 +299,27 @@ export default function ConfirmAndSubmit() {
       {
         isEditDetailsOpen
           ?
-          <Formik
-            initialValues={businessInfo.details}
-            validationSchema={Validation}
-            onSubmit={(values: BusinessDetails) => confirmEditDetails(values)}
-          >
-            <Form>
-              <StyledDialog
-                open={isEditDetailsOpen}
-                title="Edit Business Details"
-                maxWidth="xl"
-                cancelButtonText="Cancel"
-                acceptButtonText="Submit"
-                cancelHandler={() => setOpenEditDetails(false)}
-                acceptHandler="submit"
-              >
-                <BusinessDetailsEditInputs />
-              </StyledDialog>
-            </Form>
-          </Formik>
-          : null
+            <Formik
+              initialValues={businessInfo.details}
+              validationSchema={Validation}
+              onSubmit={(values: BusinessDetails) => confirmEditDetails(values)}
+            >
+              <Form>
+                <StyledDialog
+                  open={isEditDetailsOpen}
+                  title="Edit Business Details"
+                  maxWidth="xl"
+                  cancelButtonText="Cancel"
+                  acceptButtonText="Submit"
+                  cancelHandler={() => setOpenEditDetails(false)}
+                  acceptHandler="submit"
+                >
+                <BusinessDetailsEditInputs/>
+                </StyledDialog>
+              </Form>
+            </Formik>
+          :
+            null
       }
     </Root>
   );

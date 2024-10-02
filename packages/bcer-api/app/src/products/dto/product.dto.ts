@@ -47,7 +47,7 @@ export class ProductDTO {
 
   @ApiProperty({
     description: '',
-    example: faker.phone.number('CA')
+    example: faker.phone.number()
   })
   @IsNotEmpty()
   @IsPhoneNumber('CA')

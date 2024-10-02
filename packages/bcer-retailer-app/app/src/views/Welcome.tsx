@@ -33,7 +33,7 @@ export default function Welcome() {
 
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)});
+      setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(error) });
     }
   }, [error, appGlobal, setAppGlobal]);
 
@@ -44,8 +44,12 @@ export default function Welcome() {
     <SplashContainer>
       <SplashWrapper>
         <Typography variant='h5'>Welcome to E-Substances Reporting Application</Typography>
-        <Typography variant='body1'>As a first-time user of this application, you need to finish the initial setup of your organization. Next time you login, you will not have to complete this step.</Typography>
-        <Typography variant='body1'>If you have already submitted a product and manufacturing report by email to <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>, you will have to reupload this into the BCER.</Typography>
+        <Typography variant='body1'>
+          As a first-time user of this application, you need to finish the initial setup of your organization. Next time you login, you will not have to complete this step.
+        </Typography>
+        <Typography variant='body1'>
+          If you have already submitted a product and manufacturing report by email to <a href="mailto:vaping.info@gov.bc.ca">vaping.info@gov.bc.ca</a>, you will have to reupload this into the BCER.
+        </Typography>
         <ButtonWrapper>
           <StyledButton variant='contained' onClick={() => navigate('/business/details')}>
             Start

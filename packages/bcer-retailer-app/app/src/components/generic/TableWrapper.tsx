@@ -1,53 +1,61 @@
-import { Typography } from '@mui/material';
-import Paper from '@mui/material/Paper';
-import React, { Children } from 'react';
+import { Paper, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import React from 'react';
 import { CSVLink } from 'react-csv';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 
-const classes = {
-  subtitleWrapper: {
-    display: 'flex',
-    alignItems: 'bottom',
-    justifyContent: 'space-between',
-    padding: '30px 0px 10px 0px',
-  },
-  subtitle: {
-    color: '#0053A4',
-  },
-  boxTitle: {
-    paddingBottom: '10px',
-  },
-  tableRowCount: {
-    paddingBottom: '10px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    paddingBottom: '10px',
-  },
-  headerWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  csvLink: {
-    textDecoration: 'none',
-    marginRight: '10px',
-  },
-  buttonIcon: {
-    paddingRight: '5px',
-    color: '#285CBC',
-    fontSize: '20px',
-  },
-  buttonWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  sendIcon: {
-    height: '24px',
-    paddingRight: '4px',
-  },
-};
+const SubtitleWrapper = styled('div')({
+  display: 'flex',
+  alignItems: 'bottom',
+  justifyContent: 'space-between',
+  padding: '30px 0px 10px 0px',
+});
+
+const Subtitle = styled(Typography)({
+  color: '#0053A4',
+});
+
+const BoxTitle = styled(Typography)({
+  paddingBottom: '10px',
+});
+
+const TableRowCount = styled(Typography)({
+  paddingBottom: '10px',
+});
+
+const ActionsWrapper = styled('div')({
+  display: 'flex',
+  paddingBottom: '10px',
+});
+
+const HeaderWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+});
+
+const CsvLink = styled(CSVLink)({
+  textDecoration: 'none',
+  marginRight: '10px',
+});
+
+const ButtonIcon = styled(SaveAltIcon)({
+  paddingRight: '5px',
+  color: '#285CBC',
+  fontSize: '20px',
+});
+
+const Box = styled(Paper)({
+  border: 'solid 1px #CDCED2',
+  borderRadius: '4px',
+  padding: '1.4rem',
+});
+
+const ButtonWrapper = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+});
 
 interface TableWrapperProp {
   data: Array<any>;
@@ -79,60 +87,62 @@ function TableWrapper({
   isOutlined = true,
 }: TableWrapperProp) {
 
-  function TableContainer ({children}: {children: React.ReactNode}) {
+  function TableContainer({ children }: { children: React.ReactNode }) {
     if (!isOutlined) {
-      return <Paper sx={{boxShadow: 'none'}}>{children}</Paper>
+      return <Paper style={{ boxShadow: 'none' }}>{children}</Paper>;
     } else {
-      return <Paper sx={{boxShadow: 'none', border: 'solid 1px #CDCED2', borderRadius: '4px', padding: '1.4rem'}} variant="outlined" >{children}</Paper>
+      return (
+        <Box style={{ boxShadow: 'none' }} variant="outlined">
+          {children}
+        </Box>
+      );
     }
   }
 
   return (
-    <>
+    <div>
       {blockHeader && (
-        <div style={classes.subtitleWrapper}>
-          <Typography sx={classes.subtitle} variant="h6">
-            {blockHeader}
-          </Typography>
-        </div>
+        <SubtitleWrapper>
+          <Subtitle variant="h6">{blockHeader}</Subtitle>
+        </SubtitleWrapper>
       )}
       <TableContainer>
-        <div style={classes.headerWrapper}>
+        <HeaderWrapper>
           <div>
             {tableHeader && (
-              <Typography sx={classes.boxTitle} variant="subtitle1">
-                {tableHeader}
-              </Typography>
+              <BoxTitle variant="subtitle1">{tableHeader}</BoxTitle>
             )}
             {tableSubHeader && (
-              <Typography sx={classes.tableRowCount} variant="body2">
-                {tableSubHeader}
-              </Typography>
+              <TableRowCount variant="body2">{tableSubHeader}</TableRowCount>
             )}
           </div>
           {!!data.length && tableButton ? (
-            <div style={classes.buttonWrapper}>{tableButton}</div>
+            <ButtonWrapper>{tableButton}</ButtonWrapper>
           ) : null}
-        </div>
-        <div style={classes.actionsWrapper}>
+        </HeaderWrapper>
+        <ActionsWrapper>
           {!!data.length && csvProps ? (
-            <CSVLink {...csvProps} style={classes.csvLink} target="_blank">
+            <CsvLink {...csvProps} target="_blank">
               <StyledButton variant="table" size="small">
-                <SaveAltIcon sx={classes.buttonIcon} />
+                <ButtonIcon />
                 Download CSV
               </StyledButton>
-            </CSVLink>
+            </CsvLink>
           ) : null}
-          {!!data.length && fullScreenProp && !fullScreenProp[0] &&(
-            <StyledButton variant="table" size="small" onClick={() => fullScreenProp[1](current => !current)}>
-              <ZoomOutMapIcon sx={classes.buttonIcon} />
+          {!!data.length && fullScreenProp && !fullScreenProp[0] && (
+            <StyledButton
+              variant="table"
+              size="small"
+              onClick={() => fullScreenProp[1]((current) => !current)}
+            >
+              <ZoomOutMapIcon sx={{ paddingRight: '5px', color: '#285CBC', fontSize: '20px' }} />
               View Fullscreen
             </StyledButton>
           )}
-        </div>
+        </ActionsWrapper>
         <div>{children}</div>
       </TableContainer>
-    </>
+    </div>
   );
 }
 

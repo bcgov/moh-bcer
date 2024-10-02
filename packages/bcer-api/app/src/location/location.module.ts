@@ -14,6 +14,7 @@ import { UserMiddleware } from 'src/user/middleware/user.middleware';
 import { UserModule } from 'src/user/user.module';
 import { SalesReportEntity } from 'src/sales/entities/sales.entity';
 import { GeoCodeService } from './geoCode.service';
+import { duplicateLocationAlertEmailService } from './duplicateLocationAlertEmailService';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { GeoCodeService } from './geoCode.service';
     forwardRef(() => SalesReportModule),
     forwardRef(() => UserModule),
   ],
-  providers: [LocationService, GeoCodeService],
+  providers: [LocationService, GeoCodeService, duplicateLocationAlertEmailService],
   exports: [LocationService],
   controllers: [LocationController, LocationDataPortalController]
 })

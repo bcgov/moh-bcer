@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { CSVLink } from 'react-csv';
 import { Checkbox, FormControlLabel, makeStyles, Typography } from '@mui/material';
@@ -17,6 +17,7 @@ import { LocationUtil } from '@/utils/location.util';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
+import { useAxiosGet } from '@/hooks/axios';
 
 const PREFIX = 'ConfirmLocations';
 
@@ -111,7 +112,6 @@ const Root = styled('div')(({ theme }) => ({
 
 export default function ConfirmLocations () {
 
-
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
   const [isEditOpen, setOpenEdit] = useState<boolean>();
@@ -120,14 +120,18 @@ export default function ConfirmLocations () {
   const viewFullscreenTable = useState<boolean>(false);
   const [newLocations, setNewLocations] = useState<Array<IBusinessLocationValues>>([]);
   const {errors: uploadErrors, validatedData, validateCSV} = useCsvValidator();
+  const [{ data: addressExistsData }, checkAddressExists] = useAxiosGet('', { manual: true });
+  const [duplicateWarning, setDuplicateWarning] = useState<String>("");
+  const [duplicateCount, setDuplicateCount] = useState<number>(0);
 
   useEffect(() => {
-    setNewLocations(businessInfo.locations.filter((l: any) => !l.id));
+    setNewLocations(businessInfo.locations.filter((l: any) => !l.id)); //reset newLocations
   }, [businessInfo.locations])
 
   useEffect(() => {
     validateCSV(BusinessCsvValidation, newLocations)
-  }, [newLocations])
+    verifyDuplicates();
+  }, [newLocations]);
 
   useEffect(() => {
     if (uploadErrors !== undefined) {
@@ -153,6 +157,42 @@ export default function ConfirmLocations () {
     setTargetRow(rowData);
     setOpenEdit(true);
   }
+
+  const docheckAddressExists = async(fullAddress: string) => {
+    const response = await checkAddressExists({ url: `/location/check-address-exists?address=${fullAddress}` });
+    return response.data;
+  }
+
+  const verifyDuplicates = async () => {
+    if (newLocations.length === 0) return;
+  
+    const updatedLocations = [...newLocations];
+    let duplicateWarnings = "";
+    let duplicateCount = 0;
+    let hasChanges = false;
+  
+    for (let i = 0; i < newLocations.length; i++) {
+      const location = newLocations[i];
+      if (!location.tableData) location.tableData = { id: i };
+      if (location.addressLine1) {
+        const addressExists = await docheckAddressExists(location.addressLine1);
+        if (addressExists) {
+          duplicateWarnings = duplicateWarnings + location.addressLine1 + '; ';
+          duplicateCount++;
+        }
+        if (updatedLocations[i].addressExists !== addressExists) {
+          updatedLocations[i] = { ...location, addressExists: addressExists };
+          hasChanges = true;
+        }
+      }
+    }
+    if (hasChanges) {// Update the businessInfo state with the new locations only if there are changes
+      const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
+      setBusinessInfo({ ...businessInfo, locations: [...existingLocations, ...updatedLocations] });
+    }
+    setDuplicateWarning(duplicateWarnings);
+    setDuplicateCount(duplicateCount);
+  };  
 
   return (
     (<Root>
@@ -191,6 +231,24 @@ export default function ConfirmLocations () {
                   </div>
 
                 }
+                {
+                  duplicateCount > 0
+                    &&
+                  <div className={classes.errorCountBox}>
+                    <WarningIcon className={classes.warningIcon}/>
+                    <Typography className={classes.errorCountBoxText}>
+                      {
+                        duplicateCount > 1 
+                          ?
+                            `There are ${duplicateCount} duplicate addresses found. `
+                          :
+                            `There is 1 duplicate address found. `
+                      }
+                      {duplicateWarning}
+                    </Typography>
+                  </div>
+
+                }
                 <div className={classes.actionsWrapper} >
                 <FormControlLabel
                   className={classes.formControl}
@@ -198,6 +256,7 @@ export default function ConfirmLocations () {
                   labelPlacement="end"
                   control={
                     <Checkbox
+                      checked={filterTable}
                       onChange={(event) => setFilterTable(event.target.checked)}
                       color='primary'
                     />

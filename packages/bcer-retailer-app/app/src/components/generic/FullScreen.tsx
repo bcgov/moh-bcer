@@ -1,49 +1,43 @@
 import { Dialog } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import React, { useState } from 'react';
+import { styled } from '@mui/system';
+import React from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
-
-const PREFIX = 'FullScreen';
-
-const classes = {
-  dialogWrap: `${PREFIX}-dialogWrap`,
-  dialogButton: `${PREFIX}-dialogButton`
-};
-
-const Root = styled('div')({
-  [`& .${classes.dialogWrap}`]: {
-    padding: '1rem 1.5rem',
-  },
-  [`& .${classes.dialogButton}`]: {
-    marginTop: '30px',
-  },
-});
 
 interface FullScreenProp {
   fullScreenProp: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
   children: React.ReactNode;
 }
 
-function FullScreen({ children, fullScreenProp: [initialFullscreen, setFullscreen] }: FullScreenProp) {
-  const [fullscreen, setFullscreenState] = useState<boolean>(initialFullscreen);
+const DialogWrap = styled('div')({
+  padding: '1rem 1.5rem',
+});
 
+const DialogButton = styled('div')({
+  marginTop: '30px',
+});
+
+function FullScreen({
+  children,
+  fullScreenProp: [fullscreen, setFullscreen],
+}: FullScreenProp) {
   return (
-    <Root>
+    <React.Fragment>
       {children}
       <Dialog fullScreen open={fullscreen}>
-        <div className={classes.dialogWrap}>
+        <DialogWrap>
           {children}
-          <div className={classes.dialogButton}>
+          <DialogButton>
             <StyledButton
               variant="outlined"
               onClick={() => setFullscreen((prev) => !prev)}
             >
               Close
             </StyledButton>
-          </div>
-        </div>
+          </DialogButton>
+        </DialogWrap>
       </Dialog>
-    </Root>
+    </React.Fragment>
   );
 }
+
 export default FullScreen;

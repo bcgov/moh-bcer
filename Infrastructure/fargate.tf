@@ -101,6 +101,10 @@ resource "aws_ecs_task_definition" "bcer_td" {
         valueFrom = aws_secretsmanager_secret_version.bcer_text_generic_notification_template_id.arn },
         { name = "VAPING_NOTIFICATION_EMAIL"
         valueFrom = aws_secretsmanager_secret_version.bcer_vaping_notification_email.arn },
+        { name = "EMAIL_NOTIFICATION_TEMPLATE_ID_FOR_DUPLICATE_LOCATION_WARNING_TO_RETAILER"
+        valueFrom = aws_secretsmanager_secret_version.bcer_email_notification_template_id_for_duplicate_location_warning_to_retailer.arn },
+        { name = "EMAIL_NOTIFICATION_TEMPLATE_ID_FOR_DUPLICATE_LOCATION_WARNING_TO_VAPINGINFO"
+        valueFrom = aws_secretsmanager_secret_version.bcer_email_notification_template_id_for_duplicate_location_warning_to_vapinginfo.arn },
       ]
       environment = [
         { name = "TZ"

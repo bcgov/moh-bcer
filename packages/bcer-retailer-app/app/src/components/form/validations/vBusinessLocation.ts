@@ -32,6 +32,7 @@ export interface IBusinessLocationValues {
   }
   error?: boolean;
   webpage: string;
+  addressExists?: boolean;
 }
 
 export const Initial = {

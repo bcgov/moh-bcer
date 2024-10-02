@@ -111,37 +111,37 @@ export class ProductsService {
   }
 
   async getLocationsWithProducts(locationIds: string[]): Promise<Record<string, ProductEntity[]>> {
-    if (locationIds.length === 0) { return {} };
-    const locationProducts = await this.dataSource.query(`SELECT * FROM location_products_product WHERE "locationId" IN ($1)`, [locationIds.join("','")]);
+    if (locationIds.length === 0) return {};
+    const locationProducts = await this.dataSource.query(`
+      SELECT * FROM location_products_product
+      WHERE "locationId" = ANY($1)
+    `, [locationIds]);
 
     // Get all products associated with the passed in locations
-    const allProducts = locationProducts.reduce((all, lp) => {
-      all.push(lp.productId);
-      return all;
-    }, []);
-
+    const allProducts = locationProducts.map((lp: { productId: any; }) => lp.productId);
+  
     // Get full products
     const products = await this.getProductsWithIds(allProducts);
     const productsDictionary = products.reduce((pDict, p) => {
       pDict[p.id] = p;
       return pDict;
     }, {});
-
+  
     // Get all products per location
     const locationProductsDictionary: Record<string, ProductEntity[]> = locationProducts.reduce((lpDict, lp) => {
       if (!productsDictionary[lp.productId]) {
         return lpDict;
       }
-      if (!!lpDict[lp.locationId]) {
+      if (lpDict[lp.locationId]) {
         lpDict[lp.locationId].push(productsDictionary[lp.productId]);
       } else {
         lpDict[lp.locationId] = [productsDictionary[lp.productId]];
       }
       return lpDict;
     }, {});
-
+  
     return locationProductsDictionary;
-  }
+  }  
 
   async clearProducts() {
     await this.productRepository.delete({})

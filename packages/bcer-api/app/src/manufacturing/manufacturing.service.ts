@@ -50,7 +50,10 @@ export class ManufacturingService {
 
   async getLocationsWithManufactures(locationIds: string[]): Promise<Record<string, ManufacturingEntity[]>> {
     if (locationIds.length === 0) { return {} };
-    const locationManufactures = await this.dataSource.query(`SELECT * FROM location_manufactures_manufacturing WHERE "locationId" IN ($1)`,[locationIds.join("','")]);
+    const locationManufactures = await this.dataSource.query(`
+      SELECT * FROM location_manufactures_manufacturing 
+      WHERE "locationId" = ANY($1)
+    `, [locationIds]);
 
     // Get all manufactures associated with the passed in locations
     const allManufactures = locationManufactures.reduce((all, lm) => {
