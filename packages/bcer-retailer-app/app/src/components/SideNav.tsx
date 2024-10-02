@@ -209,7 +209,6 @@ export default function SideNav() {
     }
 
     if (formStep === 'userGuide') {
-      console.log(process.env.NODE_ENV)
       const filePath = process.env.NODE_ENV === 'development' 
         ? '/public/BCER User Guide (2023).pdf'
         : '/retailer/public/BCER User Guide (2023).pdf';

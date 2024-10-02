@@ -40,7 +40,7 @@ const classes = {
   },
 }
 
-function BusinessLocationForm({ entry }: { entry: string }) {
+function BusinessLocationForm({ entry }: { entry: string }) { //table of new locations (manual entry)
 
   const [showManualEntryForm, toggleManualEntryForm] = useState(false);
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);

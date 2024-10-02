@@ -43,8 +43,9 @@ export class GeoCodeService {
    * @returns Name of health authority if location is within boundary, otherwise 'Other'
    */
   async determineHealthAuthority(lat: number, lng: number) {
+    const healthAuthorityData = HealthAuthorityJson as { features: Array<{ geometry: any, properties: { HLTH_AUTHORITY_NAME: string } }> };
 
-    const ha = HealthAuthorityJson.features.find(f => {      
+    const ha = healthAuthorityData.features.find(f => {      
       return geojsonUtils.pointInPolygon({type: "Point", coordinates: [lng, lat]}, f.geometry);
     });
 

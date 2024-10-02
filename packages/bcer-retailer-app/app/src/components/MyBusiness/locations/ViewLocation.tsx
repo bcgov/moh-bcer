@@ -107,8 +107,7 @@ export default function ViewLocation({
         <Grid item container spacing={1} xs={12}>
           <Grid item xs={12}>
             <Typography variant="subtitle1">
-              Please state if persons under 19 years of age are permitted on the
-              sales premises
+              Are persons under 19 years of age permitted on the sales premises?
             </Typography>
           </Grid>
           {currentDate.isBefore(feb1st2024)?

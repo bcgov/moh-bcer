@@ -173,7 +173,7 @@ export class LocationDataPortalController {
     @Query('search') search?: string,
     @Query('authority') authority?: string,
     @Query('getSalesReport') getSalesReport?: string,
-    @Body() payload?: Array<string>
+    @Body() payload?: string[]
   ) {
     let locations: LocationEntity[];
     if (getAll === 'true') {

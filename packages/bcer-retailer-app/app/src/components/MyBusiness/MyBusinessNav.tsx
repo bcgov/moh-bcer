@@ -14,7 +14,7 @@ import { BusinessInfoProvider } from '@/contexts/BusinessInfo';
 import { SubmissionTypeEnum } from '@/constants/localEnums';
 
 import { useAxiosGet, useAxiosPost } from '@/hooks/axios';
-import { Method } from 'axios'
+import { Method } from 'axios';
 
 import BusinessDetails from './MyBusinessComponents/BusinessDetails';
 import ConfirmLocations from './MyBusinessComponents/ConfirmLocations';
@@ -32,20 +32,20 @@ const classes = {
 };
 
 const StyledBusinessInfoProvider = styled('div')({
-    [`& .${classes.stepTitle}`]: {
-      fontSize: '27px',
-      fontWeight: 600,
-      color: '#002C71',
-      paddingBottom: '20px',
-    },
-    [`& .${classes.helpTextWrapper}`]: {
-      display: 'flex',
-      alignItems: 'center',
-      padding: '15px',
-      backgroundColor: '#E0E8F0',
-      marginBottom: '20px',
-      borderRadius: '5px',
-    }
+  [`& .${classes.stepTitle}`]: {
+    fontSize: '27px',
+    fontWeight: 600,
+    color: '#002C71',
+    paddingBottom: '20px',
+  },
+  [`& .${classes.helpTextWrapper}`]: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '15px',
+    backgroundColor: '#E0E8F0',
+    marginBottom: '20px',
+    borderRadius: '5px',
+  }
 });
 
 const StyledChatBubbleOutlineIcon = styled(ChatBubbleOutlineIcon)({
@@ -64,8 +64,8 @@ const steps = [
     path: '/business/details',
     component: <BusinessDetails />,
     helpText: <p>Please confirm the business details that were entered when registering for your BCeID.
-               If you sell e-substances from this location, please add it as a location in the <b>"Add Business Locations"</b> section.
-               You must also add any additional locations from which you sell e-substances.</p>,
+              If you sell e-substances from this location, please add it as a location in the <b>"Add Business Locations"</b> section.
+              You must also add any additional locations from which you sell e-substances.</p>,
     showSubscription: true,
     canAdvanceChecks: [
       {
@@ -126,9 +126,11 @@ export default function MyBusinessNav () {
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const { pathname } = useLocation();
 
+  // Fetch initial business details from local storage
+  const initialBusinessDetails = JSON.parse(localStorage.getItem('BusinessDetailesValues') || '{}');
   const [currentStep, setCurrentStep] = useState(0);
   const [businessInfo, setBusinessInfo] = useState<any>({
-    details: {},
+    details: initialBusinessDetails,
     detailsComplete: false,
     locations: [],
     mapping: {},
@@ -147,45 +149,46 @@ export default function MyBusinessNav () {
   const [{ data: profile, error: profileError }] = useAxiosPost('/users/profile');
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
   const [{ loading: postLoading, error: postError, data: newSubmission }, post] = useAxiosPost('/submission', { manual: true });
-  
+
   useEffect(() => {
     (async () => {
       const submissionId = store.get('submissionId') || businessInfo.submissionId;
       // GET: returns an existing submission
       // POST: creates a new submission
-      (await submissionId) 
-        ? get({ url: `/submission/${submissionId}` }) 
-        : post({ data: Object.assign({}, { type: SubmissionTypeEnum.location }, { data: businessInfo }) })
+      if (submissionId) {
+        await get({ url: `/submission/${submissionId}` });
+      } else {
+        await post({ data: Object.assign({}, { type: SubmissionTypeEnum.location }, { data: businessInfo }) });
+      }
     })();
   }, []);
 
   useEffect(() => {
-    (async() => {
-      if (profile?.business && !profileError) {
-        if (submission) {
-          if (!error) {
-            setBusinessInfo({
-              ...businessInfo,
-              ...submission.data,
-              details: profile.business,
-              locations: submission?.data?.locations?.length ? submission.data.locations : profile?.business?.locations?.length ? profile.business.locations : [],
-              submissionId: submission.id,
-            });
-            setAppGlobal({
-              ...appGlobal,
-              myBusinessComplete: true,
-            })
-          }
-        } else {
+    if (profile?.business && !profileError) {
+      if (submission) {
+        if (!error) {
           setBusinessInfo({
             ...businessInfo,
-            details: profile?.business,
-            locations: profile?.business?.locations,
+            ...submission.data,
+            details: profile.business,
+            locations: submission?.data?.locations?.length ? submission.data.locations : profile?.business?.locations?.length ? profile.business.locations : [],
+            submissionId: submission.id,
+          });
+
+          setAppGlobal({
+            ...appGlobal,
+            myBusinessComplete: true,
           })
         }
+      } else {
+        setBusinessInfo({
+          ...businessInfo,
+          details: profile?.business,
+          locations: profile?.business?.locations,
+        })
       }
-    })()
-  }, [profile, submission]);
+    }
+  }, [profile, submission, profileError, error]);
 
   useEffect(() => {
     if (error) {
@@ -201,16 +204,15 @@ export default function MyBusinessNav () {
 
   useEffect(() => {
     if (newSubmission && !postError) {
-
       store.set('submissionId', newSubmission.id)
       const initialData = profile?.business || newSubmission.data;
-        setBusinessInfo({
-          ...businessInfo,
-          ...initialData,
-          submissionId: newSubmission.id,
-        })
+      setBusinessInfo({
+        ...businessInfo,
+        ...initialData,
+        submissionId: newSubmission.id,
+      })
     }
-  }, [newSubmission])
+  }, [newSubmission, postError])
 
   useEffect(() => {
     if (postError) {
