@@ -151,16 +151,40 @@ export default function MyBusinessNav () {
   const [{ loading: postLoading, error: postError, data: newSubmission }, post] = useAxiosPost('/submission', { manual: true });
 
   useEffect(() => {
-    (async () => {
-      const submissionId = store.get('submissionId') || businessInfo.submissionId;
-      // GET: returns an existing submission
-      // POST: creates a new submission
-      if (submissionId) {
-        await get({ url: `/submission/${submissionId}` });
-      } else {
-        await post({ data: Object.assign({}, { type: SubmissionTypeEnum.location }, { data: businessInfo }) });
+    const fetchSubmissionData = async () => {
+      try {
+        const submissionId = store.get('submissionId') || businessInfo.submissionId;
+        if (submissionId) {
+          // If submissionId exists, perform a GET request
+          await get({ url: `/submission/${submissionId}` });
+        } else {
+          // If submissionId does not exist, perform a POST request
+          const newSubmission = await post({
+            data: {
+              type: SubmissionTypeEnum.location,
+              data: businessInfo,
+            },
+          });
+  
+          if (newSubmission && newSubmission.data) {
+            store.set('submissionId', newSubmission.data.id); // Store the new submissionId
+            const initialData = profile?.business || newSubmission.data;
+            setBusinessInfo({
+              ...businessInfo,
+              ...initialData,
+              submissionId: newSubmission.data.id,
+            })
+          }
+        }
+      } catch (error) {
+        setAppGlobal((prevGlobal: any) => ({
+          ...prevGlobal,
+          networkErrorMessage: formatError(error),
+        }));
       }
-    })();
+    };
+  
+    fetchSubmissionData();
   }, []);
 
   useEffect(() => {
@@ -201,18 +225,6 @@ export default function MyBusinessNav () {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(profileError)})
     }
   }, [profileError]);
-
-  useEffect(() => {
-    if (newSubmission && !postError) {
-      store.set('submissionId', newSubmission.id)
-      const initialData = profile?.business || newSubmission.data;
-      setBusinessInfo({
-        ...businessInfo,
-        ...initialData,
-        submissionId: newSubmission.id,
-      })
-    }
-  }, [newSubmission, postError])
 
   useEffect(() => {
     if (postError) {
