@@ -150,84 +150,129 @@ export default function MyBusinessNav () {
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
   const [{ loading: postLoading, error: postError, data: newSubmission }, post] = useAxiosPost('/submission', { manual: true });
 
+
+  // Fetch initial data
   useEffect(() => {
-    (async () => {
+    const fetchSubmissionData = async () => {
       const submissionId = store.get('submissionId') || businessInfo.submissionId;
-      // GET: returns an existing submission
-      // POST: creates a new submission
+      
       if (submissionId) {
-        await get({ url: `/submission/${submissionId}` });
+        try {
+          await get({ url: `/submission/${submissionId}` });
+        } catch (error) {
+          console.error('Error fetching submission:', error);
+          setAppGlobal((prevGlobal: any) => ({
+            ...prevGlobal,
+            networkErrorMessage: formatError(error),
+          }));
+        }
       } else {
-        await post({ data: Object.assign({}, { type: SubmissionTypeEnum.location }, { data: businessInfo }) });
+        try {
+          const result = await post({
+            data: {
+              type: SubmissionTypeEnum.location,
+              data: businessInfo,
+            },
+          });
+          
+          if (result && result.data) {
+            store.set('submissionId', result.data.id);
+            setBusinessInfo((prevInfo: any) => ({
+              ...prevInfo,
+              submissionId: result.data.id,
+            }));
+          }
+        } catch (error) {
+          console.error('Error creating new submission:', error);
+          setAppGlobal((prevGlobal: any) => ({
+            ...prevGlobal,
+            networkErrorMessage: formatError(error),
+          }));
+        }
       }
-    })();
+    };
+
+    fetchSubmissionData();
   }, []);
 
+  // Update business info when profile or submission changes
   useEffect(() => {
     if (profile?.business && !profileError) {
       if (submission) {
-        if (!error) {
-          setBusinessInfo({
-            ...businessInfo,
-            ...submission.data,
-            details: profile.business,
-            locations: submission?.data?.locations?.length ? submission.data.locations : profile?.business?.locations?.length ? profile.business.locations : [],
-            submissionId: submission.id,
-          });
+        setBusinessInfo((prevInfo: any) => ({
+          ...prevInfo,
+          ...submission.data,
+          details: profile.business,
+          locations: submission?.data?.locations?.length 
+            ? submission.data.locations 
+            : profile?.business?.locations?.length 
+              ? profile.business.locations 
+              : [],
+          submissionId: submission.id,
+        }));
 
-          setAppGlobal({
-            ...appGlobal,
-            myBusinessComplete: true,
-          })
-        }
+        setAppGlobal((prevGlobal: any) => ({
+          ...prevGlobal,
+          myBusinessComplete: true,
+        }));
       } else {
-        setBusinessInfo({
-          ...businessInfo,
-          details: profile?.business,
-          locations: profile?.business?.locations,
-        })
+        setBusinessInfo((prevInfo: any) => ({
+          ...prevInfo,
+          details: profile.business,
+          locations: profile.business?.locations || [],
+        }));
       }
     }
-  }, [profile, submission, profileError, error]);
+  }, [profile, submission, profileError]);
 
+  // Handle errors
   useEffect(() => {
     if (error) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(error)})
+      setAppGlobal((prevGlobal: any) => ({
+        ...prevGlobal,
+        networkErrorMessage: formatError(error)
+      }));
     }
   }, [error]);
 
   useEffect(() => {
     if (profileError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(profileError)})
+      setAppGlobal((prevGlobal: any) => ({
+        ...prevGlobal,
+        networkErrorMessage: formatError(profileError)
+      }));
     }
   }, [profileError]);
 
   useEffect(() => {
-    if (newSubmission && !postError) {
-      store.set('submissionId', newSubmission.id)
-      const initialData = profile?.business || newSubmission.data;
-      setBusinessInfo({
-        ...businessInfo,
-        ...initialData,
-        submissionId: newSubmission.id,
-      })
-    }
-  }, [newSubmission, postError])
-
-  useEffect(() => {
     if (postError) {
-      setAppGlobal({...appGlobal, networkErrorMessage: formatError(postError)})
+      setAppGlobal((prevGlobal: any) => ({
+        ...prevGlobal,
+        networkErrorMessage: formatError(postError)
+      }));
     }
   }, [postError]);
 
+  // Update businessInfo when currentStep changes
   useEffect(() => {
-    setBusinessInfo({ ...businessInfo, currentStep })
-  }, [currentStep])
+    setBusinessInfo((prevInfo: any) => ({ ...prevInfo, currentStep }));
+  }, [currentStep]);
 
+  // Update currentStep based on pathname
   useEffect(() => {
     const activeStep = steps.map(step => step.path).indexOf(pathname);
-    if (activeStep !== currentStep) setCurrentStep(activeStep);
-  }, [pathname])
+    if (activeStep !== -1 && activeStep !== currentStep) {
+      setCurrentStep(activeStep);
+    }
+  }, [pathname]);
+
+  //Debug logging
+  // useEffect(() => {
+  //   console.log('Profile:', profile);
+  //   console.log('Submission:', submission);
+  //   console.log('Business Info:', businessInfo);
+  // }, [profile, submission, businessInfo]);
+
 
   return (
     <StyledBusinessInfoProvider>

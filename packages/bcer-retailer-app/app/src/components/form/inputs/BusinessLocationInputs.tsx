@@ -1,9 +1,10 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { FormikHelpers, useFormikContext } from 'formik';
-import { Grid, InputAdornment, Tooltip, TextField, Typography } from '@mui/material';
+import { Grid, InputAdornment, Tooltip, TextField, Typography, IconButton } from '@mui/material';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SearchIcon from '@mui/icons-material/Search';
-import { StyledTextField, StyledRadioGroup, locationTypeOptions, StyledConfirmDialog } from 'vaping-regulation-shared-components';
+import { StyledTextField, StyledRadioGroup, locationTypeOptions, StyledConfirmDialog, InputFieldLabel } from 'vaping-regulation-shared-components';
 import Autocomplete from '@mui/material/Autocomplete';
 import { AutocompleteChangeDetails, AutocompleteChangeReason } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
@@ -75,6 +76,19 @@ const Root = styled('div')({
   }
 });
 
+const LabelContainer = styled(Typography)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  fontWeight: 'normal',
+}));
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  color: '#0053A4',
+  padding: '0 4px',
+  marginLeft: theme.spacing(1),
+  verticalAlign: 'middle',
+}));
+
 const HealthAuthorities: { [key: string]: string } = {
   fraser: 'Fraser Health',
   interior: 'Interior Health',
@@ -86,7 +100,7 @@ const HealthAuthorities: { [key: string]: string } = {
 
 function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: IBusinessLocationValues, formikHelpers: FormikHelpers<IBusinessLocationValues>}) {
 
-  const { values } = useFormikContext<IBusinessLocationValues>();
+  const { values, handleBlur } = useFormikContext<IBusinessLocationValues>();
   const [ predictions, setPredictions ] = useState<Array<BCGeocoderAutocompleteData>>([]);
   const [ autocompleteOptions, setAutocompleteOptions ] = useState<Array<string>>([]);
   const [{ data, error, loading }, getSuggestions] = useAxiosGet('', { manual: true })
@@ -95,6 +109,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
   const [cancelTokenSource, setCancelTokenSource] = useState<CancelTokenSource | null>(null);
   const [duplicateWarningDialog, openDuplicateWarningDialog] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<string>('');
+  const [editingField, setEditingField] = useState<string | null>(null);
 
   useEffect(() => {
     formikHelpers.setFieldValue('location_type', values.location_type? values.location_type: 'physical');
@@ -190,6 +205,15 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
     
     await doDetermineHealthAuthority(fullLocation.geometry.coordinates[0], fullLocation.geometry.coordinates[1]);
   }
+
+  const handleFocus = (field: string) => {
+    setEditingField(field);
+  };
+
+  const handleBlurOfDoingBusinessAs = (event:any) => {
+    setEditingField(null);
+    handleBlur(event);
+  };
 
   return (
     <Root>
@@ -288,10 +312,21 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
         }
 
         <Grid item xs={12} md={6} className={classes.gridItemRight}>
+          <LabelContainer>
+            <InputFieldLabel label="The name this location is doing business as" />
+            {editingField === 'doingBusinessAs' && (
+              <Tooltip title="This is the business name with the location. Enter only if the same business exists at more than one location (i.e., Shell Ltd Shelbourne)." arrow>
+                <StyledIconButton name='doingBusinessAsTooltip' size="small">
+                  <HelpOutlineIcon fontSize="small" />
+                </StyledIconButton>
+              </Tooltip>
+            )}
+          </LabelContainer>
           <StyledTextField
-            label="The name this location is doing business as"
             name="doingBusinessAs"
             fullWidth
+            onFocus={() => handleFocus('doingBusinessAs')}
+            onBlur={handleBlurOfDoingBusinessAs}
           />
         </Grid>
 

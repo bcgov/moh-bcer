@@ -3,6 +3,7 @@
 import {
   businessFieldNames,
   businessInputErrorMessage,
+  businessToolTipMessage,
 } from "../../utils/business/businessObjects";
 import { Navigate } from "../../utils/navigate";
 import { stringGen } from "../../utils/util";
@@ -16,6 +17,15 @@ describe("Testing business details input form", () => {
     it("Fails Business Legal Name field validation", () => {
       cy.get(businessFieldNames.legalName).type(stringGen(101)).blur();
       cy.contains(businessInputErrorMessage.legalName.length);
+    });
+
+    it("Contains Business Legal Name tooltip", () => {
+      cy.get(businessFieldNames.legalName).click();
+      cy.get(businessFieldNames.toolTip).as('tooltipButton'); // Get the tooltip button
+      cy.get('@tooltipButton').trigger('mouseover'); // Hover over the tooltip button
+      cy.contains(businessToolTipMessage.legalName).should('be.visible'); // Check if the tooltip with the correct message appears
+      cy.get('@tooltipButton').trigger('mouseout'); // Move mouse away and check if tooltip disappears
+      cy.contains(businessToolTipMessage.legalName).should('not.exist');
     });
 
     it("Fails Doing Business As field validation", () => {

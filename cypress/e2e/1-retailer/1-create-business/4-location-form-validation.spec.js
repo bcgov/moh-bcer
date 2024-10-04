@@ -3,6 +3,7 @@
 import {
   locationErrorMessages,
   locationFieldNames,
+  locationToolTipMessage,
 } from "../../utils/location/locationObjects";
 import { Navigate } from "../../utils/navigate";
 import { Selector, stringGen } from "../../utils/util";
@@ -60,6 +61,17 @@ describe("Testing Location input form", () => {
       cy.contains(locationErrorMessages.doingBusinessAs.length);
     })
   })
+
+  it("Contains Doing Business As tooltip", () => {
+    cy.get(dialog).within(() => {
+      cy.get(locationFieldNames.doingBusinessAs).click();
+      cy.get(locationFieldNames.toolTip).as('tooltipButton');
+      cy.get('@tooltipButton').trigger('mouseover');
+    });
+    cy.contains(locationToolTipMessage.doingBusinessAs).should('be.visible');
+    cy.get(dialog).within(() => {cy.get('@tooltipButton').trigger('mouseout');});
+    cy.contains(locationToolTipMessage.doingBusinessAs).should('not.exist');
+  });
 
   it("Fails health authority field validation", () => {
     cy.get(dialog).within(() => {
