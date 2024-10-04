@@ -30,6 +30,14 @@ export function checkInputValue(name, value, type){
   cy.get(selector).should("have.value", value);
 }
 
+export function clearCache(){
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.window().then((win) => {
+    win.sessionStorage.clear();
+  });
+}
+
 export class Selector {
   #selector = "";
 

@@ -316,7 +316,7 @@ function BusinessLocationInputs({formikValues, formikHelpers }: {formikValues: I
             <InputFieldLabel label="The name this location is doing business as" />
             {editingField === 'doingBusinessAs' && (
               <Tooltip title="This is the business name with the location. Enter only if the same business exists at more than one location (i.e., Shell Ltd Shelbourne)." arrow>
-                <StyledIconButton size="small">
+                <StyledIconButton name='doingBusinessAsTooltip' size="small">
                   <HelpOutlineIcon fontSize="small" />
                 </StyledIconButton>
               </Tooltip>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import { useAxiosPost } from '@/hooks/axios';
@@ -28,17 +28,22 @@ const ButtonWrapper = styled('div')({
 export default function Welcome() {
   const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+  const [hasCheckedProfile, setHasCheckedProfile] = useState(false);
+
   const [{ data: profile, loading, error }] = useAxiosPost('/users/profile');
-  const businessInformation = profile?.business && profile?.business.legalName;
 
   useEffect(() => {
     if (error) {
       setAppGlobal({ ...appGlobal, networkErrorMessage: formatError(error) });
+    } else if (profile?.business?.legalName && !hasCheckedProfile) {
+      setHasCheckedProfile(true);
+      setAppGlobal({ ...appGlobal, myBusinessComplete: true });
+      navigate('/myDashboard');
     }
-  }, [error, appGlobal, setAppGlobal]);
+  }, [error, profile, appGlobal, setAppGlobal, navigate, hasCheckedProfile]);
 
   if (loading) return <CircularProgress />;
-  if (businessInformation) return <Navigate to='/myDashboard' replace />;
+  if (hasCheckedProfile) return null;
 
   return (
     <SplashContainer>

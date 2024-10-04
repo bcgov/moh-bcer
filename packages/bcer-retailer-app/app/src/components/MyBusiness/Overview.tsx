@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { styled, Theme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgress, Typography, Box } from '@mui/material';
@@ -32,6 +32,8 @@ const Root = styled('div')<{ theme?: Theme }>(({ theme }) => ({
 export default function MyDashboard() {
   const navigate = useNavigate();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
+  const [hasCheckedBusiness, setHasCheckedBusiness] = useState(false);
+
   const [{ data, error, loading }] = useAxiosGet<{
     locations: BusinessLocation[];
     overview: BusinessReportStatus;
@@ -42,10 +44,11 @@ export default function MyDashboard() {
   const relevantYear = currentDay >= startOfReporting ? currentTime.add(1, 'year').format('yyyy') : currentTime.format('yyyy');
 
   useEffect(() => {
-    if (appGlobal && !appGlobal.myBusinessComplete) {
+    if (!appGlobal.myBusinessComplete && !hasCheckedBusiness) {
+      setHasCheckedBusiness(true);
       navigate('/');
     }
-  }, [appGlobal, navigate]);
+  }, [appGlobal, navigate, hasCheckedBusiness]);
 
   const getReportingText = () => {
     const endOfReporting = 15;
