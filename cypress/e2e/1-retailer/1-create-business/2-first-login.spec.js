@@ -1,9 +1,13 @@
 /// <reference types="cypress" />
 
 import { Navigate } from "../../utils/navigate";
-import { clickButton } from "../../utils/util";
+import { clearCache, clickButton } from "../../utils/util";
 
 describe("Testing dashboard for first time login", () => {
+  before(() => {
+    clearCache();
+  });
+  
   beforeEach(() => {
     Navigate.loginRetailer();
   });

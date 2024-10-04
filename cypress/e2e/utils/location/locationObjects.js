@@ -39,6 +39,10 @@ export const locationErrorMessages = {
   }
 };
 
+export const locationToolTipMessage = {
+  doingBusinessAs: "This is the business name with the location. Enter only if the same business exists at more than one location (i.e., Shell Ltd Shelbourne).",
+}
+
 export const locationFieldNames = {
   locationType: {
     physical: 'input[name="location_type"][type="radio"][value="physical"]',
@@ -51,6 +55,7 @@ export const locationFieldNames = {
   city: 'input[name="city"]',
   postal: 'input[name="postal"]',
   doingBusinessAs: 'input[name="doingBusinessAs"]',
+  toolTip:'button[name="doingBusinessAsTooltip"]',
   underage: {
     yes: 'input[name="underage"][type="radio"][value="Yes"]',
     no: 'input[name="underage"][type="radio"][value="No"]',
