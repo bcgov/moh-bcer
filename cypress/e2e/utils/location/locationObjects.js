@@ -40,7 +40,7 @@ export const locationErrorMessages = {
 };
 
 export const locationToolTipMessage = {
-  doingBusinessAs: "This is the business name with the location. Enter only if the same business exists at more than one location (i.e., Shell Ltd Shelbourne).",
+  doingBusinessAs: "Different than legal name, used as an identifier if business has more than one location.",
 }
 
 export const locationFieldNames = {
