@@ -14,15 +14,11 @@ export class UserAction {
   }
 
   static clickEditExistingLocation(position) {
-    let selector = new Selector("tr")
-      .addIndex(`${position}`)
-      .addSelector("td")
-      .addSelector("button")
-      .addTitle("Edit Location")
-      .build();
-    cy.wait(1000);
-    cy.get(selector).first().click({ force: true });
-  }
+    cy.get('table tbody tr')
+      .eq(position)
+      .find('button[aria-label="Edit Location"]')
+      .click({ force: true });
+  }  
 
   static addNewLocationManually(locations) {
     locations.forEach((l) => {
@@ -82,14 +78,11 @@ export class UserAction {
   }
 
   static clickDeleteOnNewLocationConfirm(position) {
-    const selector = new Selector("tr")
-    .addIndex(`${position}`)
-    .addSelector("td")
-    .addSelector("div")
-    .addSelector("button")
-    .addTitle("Deleting Location")
-    .build();
-    cy.get(selector).first().click();
+    cy.get('table tbody tr')
+      .eq(position)
+      .find('button[aria-label="Editing Location"]')
+      .should('be.visible')
+      .click();
   }
 
   static clickFirstCheckBox(name) {
