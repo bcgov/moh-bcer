@@ -76,7 +76,7 @@ function BusinessDetailsInputs() {
         <LabelContainer>
           <RequiredFieldLabel label="Business legal name" />
           {editingField === 'legalName' && (
-            <Tooltip title="This is the legal business name (i.e., 498390 Shell Ltd)." arrow>
+            <Tooltip title="This is the legal business name (i.e., 123 Vaping LTD)." arrow>
               <StyledIconButton name='businessLegalNameTooltip' size="small">
                 <HelpOutlineIcon fontSize="small" />
               </StyledIconButton>

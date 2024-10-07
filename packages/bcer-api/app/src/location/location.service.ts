@@ -1,4 +1,4 @@
-import { Repository, In, SelectQueryBuilder, UpdateResult, getConnection } from 'typeorm';
+import { Repository, In, SelectQueryBuilder, UpdateResult, getConnection, ILike } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -879,7 +879,7 @@ export class LocationService {
  * @returns 
  */
   async checkAddressExists(fullAddress: string): Promise<boolean> {
-    const existingLocation = await this.locationRepository.findOne({ where: { addressLine1: fullAddress } });
+    const existingLocation = await this.locationRepository.findOne({ where: {addressLine1: ILike(`%${fullAddress}%`)}});
     return !!existingLocation;
   }
 
