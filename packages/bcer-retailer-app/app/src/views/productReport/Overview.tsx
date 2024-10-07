@@ -333,6 +333,9 @@ export default function ProductOverview() {
                     title: 'Status',
                     render: (rd: BusinessLocation) => `${rd?.products?.length ? 'Submitted' : 'Not Submitted'}`
                   },
+                  {
+                    title: 'Doing Business as', render: (rd: BusinessLocation) => rd.doingBusinessAs
+                  },
                 ]}
                 data={withoutProducts}
               />
@@ -370,6 +373,9 @@ export default function ProductOverview() {
                   {
                     title: 'Status',
                     render: (rd: BusinessLocation) => `${rd.products?.length || rd.productsCount > 0 ? 'Submitted' : 'Not Submitted'}`
+                  },
+                  {
+                    title: 'Doing Business as', render: (rd: BusinessLocation) => rd.doingBusinessAs
                   },
                 ]}
                 actions={[
