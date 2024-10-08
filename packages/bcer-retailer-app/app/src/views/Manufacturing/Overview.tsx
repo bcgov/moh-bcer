@@ -308,14 +308,17 @@ export default function ManufacturingOverview() {
                   {
                     title: 'Product name',
                     render: (report: ManufacturingReport) => `${report.productName}`,
+                    sorting: false
                   },
                   {
                     title: 'Submitted Date',
                     render: (report: ManufacturingReport) => `${moment(report.created_at).format('MMM DD, YYYY')}`,
+                    sorting: false
                   },
                   {
                     title: 'Locations',
-                    render: (report: ManufacturingReport) => `${report.locations.length}`
+                    render: (report: ManufacturingReport) => `${report.locations.length}`,
+                    sorting: false
                   },
                   {
                     title: '',
