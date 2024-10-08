@@ -28,6 +28,12 @@ interface StyledEditableTextFieldProps {
   onSuccessfulUpdate?: (data: string) => void;
 }
 
+// This is the editable text field component for the location information on Location Details page, it allows the user to update the location information and it stores the edit history into Notes
+// id: location id
+// value: user's input
+// type: addressLine1 || postal || webpage || phone || email || underage || manufacturing
+// onSuccessfulUpdate: the function to save the change to the note
+
 function StyledEditableTextField({ id, value, type, onSuccessfulUpdate }: StyledEditableTextFieldProps) {
   const [content, setContent] = useState(value);
   const [city, setCity] = useState('');
