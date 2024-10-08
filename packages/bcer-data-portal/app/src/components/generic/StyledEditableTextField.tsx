@@ -7,6 +7,7 @@ import { styled } from '@mui/system';
 import useLocation from '@/hooks/useLocation';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 import StyledEditDialog from './StyledEditDialog';
+import StyledEditableDropdown from './StyledEditableDropdown';
 
 const StyledTextField = styled(TextField)({
   '& .MuiInputBase-input.Mui-disabled': {
@@ -41,7 +42,7 @@ function StyledEditableTextField({ id, value, type, onSuccessfulUpdate }: Styled
   const [latitude, setLatitude] = useState(null);
   const [geo_confidence, setGeo_confidence] = useState('');
   const [mouseOver, setMouseOver] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false); // State to manage dialog open state
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { updateLocationInfo, patchLocationError } = useLocation(id);
   const [noteMessage, updateNoteMessage] = useState('');
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
@@ -106,25 +107,42 @@ function StyledEditableTextField({ id, value, type, onSuccessfulUpdate }: Styled
     setDialogOpen(false);
   };
 
+  const dropdownOptions = [
+    { label: 'Yes', value: "Yes" },
+    { label: 'No', value: "No" },
+  ];
+
+  const dropdownTypes = ['underage', 'manufacturing'];
+  
   return (
     <>
-      <StyledTextField
-        name={type}
-        disabled={true}
-        value={content}
-        onMouseEnter={handleMouseOver}
-        onMouseLeave={handleMouseOut}
-        InputProps={{
-          endAdornment: mouseOver ? (
-            <InputAdornment position="end">
-              <IconButton style={{ color: '#0053A5' }} onClick={handleDialogOpen}>
-                <EditIcon />
-              </IconButton>
-            </InputAdornment>
-          ) : null,
-        }}
-        variant="standard"
-      />
+      { dropdownTypes.includes(type) ? (
+        <StyledEditableDropdown
+          id={id}
+          value={content}
+          type={type}
+          options={dropdownOptions}
+          onSuccessfulUpdate={onSuccessfulUpdate}
+        />
+      ) : (
+        <StyledTextField
+          name={type}
+          disabled={true}
+          value={content}
+          onMouseEnter={handleMouseOver}
+          onMouseLeave={handleMouseOut}
+          InputProps={{
+            endAdornment: mouseOver ? (
+              <InputAdornment position="end">
+                <IconButton style={{ color: '#0053A5' }} onClick={handleDialogOpen}>
+                  <EditIcon />
+                </IconButton>
+              </InputAdornment>
+            ) : null,
+          }}
+          variant="standard"
+        />
+      )}
       <StyledEditDialog
         type={type}
         saveChange={updateContent}
