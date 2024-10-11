@@ -257,17 +257,20 @@ export default function SalesOverview() {
                 ...commonColumns,
                 {
                   title: 'Timeline',
+                  sorting: false, 
                   render: (rd: BusinessLocation) =>
                     `${outstanding?.year}/${+outstanding?.year + 1}`,
                 },
                 {
                   title: 'Status',
+                  sorting: false, 
                   render: (rd: BusinessLocation) => (
                     <SalesSubmittedStatus isSubmitted={false} />
                   ),
                 },
                 {
                   title: '',
+                  sorting: false, 
                   render: (rd: BusinessLocation) => (
                     <StyledButton
                       className={classes.editButton}
@@ -346,17 +349,20 @@ export default function SalesOverview() {
                 ...commonColumns,
                 {
                   title: 'Timeline',
+                  sorting: false, 
                   render: (rd: BusinessLocation) =>
                     `${submitted?.year}/${+submitted?.year + 1}`,
                 },
                 {
                   title: 'Status',
+                  sorting: false, 
                   render: (rd: BusinessLocation) => (
                     <SalesSubmittedStatus isSubmitted />
                   ),
                 },
                 {
                   title: '',
+                  sorting: false, 
                   render: (rd: BusinessLocation) => (
                     <>
                       <Tooltip title="Download CSV" placement="top">
@@ -459,17 +465,20 @@ export default function SalesOverview() {
                   ...commonColumns,
                   {
                     title: 'Timeline',
+                    sorting: false, 
                     render: (rd: BusinessLocation) =>
                       `${outstanding?.year}/${+outstanding?.year + 1}`,
                   },
                   {
                     title: 'Status',
+                    sorting: false, 
                     render: (rd: BusinessLocation) => (
                       <SalesSubmittedStatus isSubmitted={false} />
                     ),
                   },
                   {
                     title: '',
+                    sorting: false, 
                     render: (rd: BusinessLocation) => (
                       <StyledButton
                         className={classes.editButton}

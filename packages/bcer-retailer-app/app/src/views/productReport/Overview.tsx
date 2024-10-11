@@ -321,17 +321,21 @@ export default function ProductOverview() {
                 }}
                 columns={[
                   {
-                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`
+                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`, sorting: false
                   },
                   {
-                    title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
+                    title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`, sorting: false
                   },
                   {
-                    title: 'Added Date', render: (rd: BusinessLocation) => rd.created_at ? `${moment(rd.created_at).format('MMM DD, YYYY')}` : ''
+                    title: 'Added Date', render: (rd: BusinessLocation) => rd.created_at ? `${moment(rd.created_at).format('MMM DD, YYYY')}` : '', sorting: false
                   },
                   {
                     title: 'Status',
-                    render: (rd: BusinessLocation) => `${rd?.products?.length ? 'Submitted' : 'Not Submitted'}`
+                    render: (rd: BusinessLocation) => `${rd?.products?.length ? 'Submitted' : 'Not Submitted'}`, 
+                    sorting: false
+                  },
+                  {
+                    title: 'Doing Business as', render: (rd: BusinessLocation) => rd.doingBusinessAs, sorting: false
                   },
                 ]}
                 data={withoutProducts}
@@ -362,14 +366,17 @@ export default function ProductOverview() {
                 }}
                 columns={[
                   {
-                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`, width: 50
+                    title: 'Type of Location', render: (rd: BusinessLocation) => `${LocationTypeLabels[rd.location_type]}`, width: 50, sorting: false
                   },
                   {
-                    title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`
+                    title: 'Address/URL', render: (rd: BusinessLocation) => rd.location_type === LocationType.online ? rd.webpage: `${rd.addressLine1}, ${rd.postal}, ${rd.city}`, sorting: false
                   },
                   {
                     title: 'Status',
-                    render: (rd: BusinessLocation) => `${rd.products?.length || rd.productsCount > 0 ? 'Submitted' : 'Not Submitted'}`
+                    render: (rd: BusinessLocation) => `${rd.products?.length || rd.productsCount > 0 ? 'Submitted' : 'Not Submitted'}`, sorting: false
+                  },
+                  {
+                    title: 'Doing Business as', render: (rd: BusinessLocation) => rd.doingBusinessAs, sorting: false
                   },
                 ]}
                 actions={[
@@ -411,8 +418,8 @@ export default function ProductOverview() {
             <div>
               <StyledTable
                 columns={[
-                  { title: 'Submission Date', render: (submission: any) => `${moment(submission.dateSubmitted).format('LLL')}` },
-                  { title: 'Products Submitted', render: (submission: any) => `${submission.productCount}` },
+                  { title: 'Submission Date', render: (submission: any) => `${moment(submission.dateSubmitted).format('LLL')}`, sorting: false },
+                  { title: 'Products Submitted', render: (submission: any) => `${submission.productCount}`, sorting: false },
                 ]}
                 actions={[
                   {
