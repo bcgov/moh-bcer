@@ -110,6 +110,13 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     minimum_protocol_version = "TLSv1.2_2021"
     ssl_support_method       = "sni-only"
   }
+
+  lifecycle {
+    ignore_changes = [
+      origin,
+      ordered_cache_behavior,
+    ]
+  }
 }
 
 # to get the Cloud front URL if doamin/alias is not configured
