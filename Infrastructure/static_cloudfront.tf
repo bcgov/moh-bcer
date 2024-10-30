@@ -115,6 +115,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     ignore_changes = [
       origin,
       ordered_cache_behavior,
+      custom_error_response,
     ]
   }
 }
