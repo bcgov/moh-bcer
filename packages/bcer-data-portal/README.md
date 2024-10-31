@@ -12,7 +12,7 @@
 
 All run and build commands are handled by the Makefile at the app's root directory.
 
-- To run the app locally, `make local`, app will be available at *localhost/3000*
+- To run the app locally, `make local`, app will be available at *localhost/3001*
 - Hot module reloading is enabled, all changes to files under ./src/ will automatically update the docker volume and trigger a webpage refresh
 - **NB:** there are updates that require a container and image rebuild (eg: `make close-local-development && make local`)
 - changes to files outside of `app/src`
@@ -23,7 +23,7 @@ All run and build commands are handled by the Makefile at the app's root directo
 If Makefile fails, you can instead:
 - Run `make setup-local-env` from `/packages/bcer-data-portal`
 - Navigate to the `app` directory
-- Run `npm run start` to expose the app at `localhost:3000`
+- Run `npm run start` to expose the app at `localhost:3001`
 
 This goes through the BCER development environment, and you must have an IDIR or Health Authority ID to authenticate. This will need to come from BCGov.
 
@@ -88,4 +88,4 @@ Note: it's encouraged to use the build functionality provided at the root of the
 
 There are a couple of possibilities to check for debugging if there are issues.
 - Check that the extracted directory from the `.tar.gz` file points ot the right API and Authentication Provider (Keycloak) values by doing a search and cross-referencing the `.env.development` or `.env.test` or `.env.prod` values.
-- You might also try running `serve -s -l 3000` on the produced directory to see that it runs. You will likely run into issues from the API or Keycloak if you're pointed to anything but local, but you can ensure it runs.
+- You might also try running `serve -s -l 3001` on the produced directory to see that it runs. You will likely run into issues from the API or Keycloak if you're pointed to anything but local, but you can ensure it runs.

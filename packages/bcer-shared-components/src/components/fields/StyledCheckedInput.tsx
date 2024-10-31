@@ -3,34 +3,29 @@ import {
   CheckboxInputProps,
   StyledCheckboxProps,
 } from '@/constants/interfaces/inputInterfaces';
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  makeStyles,
-} from '@material-ui/core';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { ErrorMessage, Field } from 'formik';
 import React, { Fragment, ReactNode } from 'react';
 
-const useStyles = makeStyles({
+const classes = {
   emptyHelper: {
-    height: '22px',
+    height: '22px'
   },
-  formControl: {
+  formControl:{
     fontSize: '14px',
-    '& .MuiIconButton-colorSecondary': {
+    '& .MuiIconButton-colorSecondary':{
       '&:hover': {
         background: 'rgba(0, 83, 164, .03)',
-      },
+      }
     },
     '& .MuiCheckbox-root': {
       color: 'rgba(0, 0, 0, 0.54)',
     },
     '& .Mui-checked': {
-      color: '#0053A4',
+      color: '#0053A4'
     },
   },
-});
+};
 
 function CheckboxInput({
   field: { value, ...fieldRest },
@@ -39,8 +34,7 @@ function CheckboxInput({
   disabled,
   showError,
   ...props
-}: CheckboxInputProps): ReactNode {
-  const classes = useStyles();
+}: CheckboxInputProps & { form: { touched: Record<string, boolean>, errors: Record<string, string> } }) {
 
   const touched = form.touched[fieldRest.name];
   const error = form.errors[fieldRest.name];
@@ -48,7 +42,7 @@ function CheckboxInput({
   return (
     <Fragment>
       <FormControlLabel
-        className={classes.formControl}
+        sx={classes.formControl}
         label={label}
         disabled={disabled}
         labelPlacement="end"
@@ -60,7 +54,7 @@ function CheckboxInput({
         (touched && !!error ? (
           <InputFieldError error={<ErrorMessage name={fieldRest.name} />} />
         ) : (
-          <div className={classes.emptyHelper}> </div>
+          <div style={classes.emptyHelper}> </div>
         ))}
     </Fragment>
   );

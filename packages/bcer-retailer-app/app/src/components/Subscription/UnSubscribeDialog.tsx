@@ -1,6 +1,5 @@
-import { Form, Formik } from 'formik';
 import React from 'react';
-import { StyledCheckbox, StyledConfirmDialog, StyledDialog } from 'vaping-regulation-shared-components';
+import { StyledConfirmDialog } from 'vaping-regulation-shared-components';
 
 interface UnSubscribeDialogProps {
   open: boolean;

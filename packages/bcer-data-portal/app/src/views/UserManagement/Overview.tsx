@@ -2,7 +2,7 @@ import Page from '@/components/generic/Page';
 import { UserDetails } from '@/constants/localInterfaces';
 import useUserManagement from '@/hooks/useUserManagement';
 import { UserManagementUtil } from '@/util/userManagement.util';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import {
@@ -12,7 +12,7 @@ import {
 } from 'vaping-regulation-shared-components';
 import EditDialog from './EditDialog';
 import UserTable from './UserTable';
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@mui/icons-material/Search';
 
 function UserManagement() {
   const {

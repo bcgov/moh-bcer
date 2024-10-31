@@ -76,15 +76,20 @@ export class AuthService {
     };
     
     const userRoles = req.user?.roles || [];
+    try {
+      console.log('AuthService.getPermissions called with:', { user: req.user });
+      const permissions: {[key: string]: boolean} = Object.entries(rolePermissions).reduce((acc, [permissionName, roles]) => {
+        const hasPermission = roles.some(role => userRoles.includes(role));
+        return { ...acc, [permissionName]: hasPermission };
+      }, {});
 
-    const permissions: {[key: string]: boolean} = Object.entries(rolePermissions).reduce((acc, [permissionName, roles]) => {
-      const hasPermission = roles.some(role => userRoles.includes(role));
-      return { ...acc, [permissionName]: hasPermission };
-    }, {});
-
-    return {
-      permissions,
-      featureFlags
-    };
+      return {
+        permissions,
+        featureFlags
+      };
+    } catch (error) {
+      console.error('Error in AuthService.getPermissions:', error);
+      throw error;
+    }
   }
 }

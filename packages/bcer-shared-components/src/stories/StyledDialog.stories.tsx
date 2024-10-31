@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Select, DialogProps, MenuItem } from '@material-ui/core';
+// import { Select, DialogProps, MenuItem } from '@mui/material';
+import { Select, MenuItem } from '@mui/material';
+import { DialogProps } from '@mui/material/Dialog';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -13,7 +16,7 @@ export const Dialog = () => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const handleMaxWidthChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleMaxWidthChange = (event: SelectChangeEvent<unknown>) => {
     setMaxWidth(event.target.value as DialogProps['maxWidth']);
   };
 
@@ -28,27 +31,28 @@ export const Dialog = () => {
         cancelHandler={() => setOpen(false)}
         acceptHandler={() => window.alert('accepted')}
       >
-        <Select
-          autoFocus
-          value={maxWidth}
-          onChange={handleMaxWidthChange}
-          inputProps={{
-            name: 'max-width',
-            id: 'max-width',
-          }}
-        >
-          <MenuItem value={false as any}>false</MenuItem>
-          <MenuItem value="xs">xs</MenuItem>
-          <MenuItem value="sm">sm</MenuItem>
-          <MenuItem value="md">md</MenuItem>
-          <MenuItem value="lg">lg</MenuItem>
-          <MenuItem value="xl">xl</MenuItem>
-        </Select>
+      <Select
+        variant="standard"
+        autoFocus
+        value={maxWidth}
+        onChange={handleMaxWidthChange}
+        inputProps={{
+          name: 'max-width',
+          id: 'max-width',
+        }}
+      >
+        <MenuItem value={false as any}>false</MenuItem>
+        <MenuItem value="xs">xs</MenuItem>
+        <MenuItem value="sm">sm</MenuItem>
+        <MenuItem value="md">md</MenuItem>
+        <MenuItem value="lg">lg</MenuItem>
+        <MenuItem value="xl">xl</MenuItem>
+      </Select>
       </StyledDialog>
 
       <StyledButton variant="contained" onClick={() => setOpen(true)}>Click to open dialog</StyledButton>
     </div>
-  )
+  );
 }
 export const FormDialog = () => {
   const [isOpen, setOpen] = useState<boolean>(false);

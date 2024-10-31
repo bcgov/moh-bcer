@@ -1,15 +1,29 @@
 import React from 'react';
+import { styled } from '@mui/material/styles';
 import store from 'store';
 import { useKeycloak } from '@react-keycloak/web';
-import { Link, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-
+import { Link, useNavigate } from 'react-router-dom';
 import { StyledButton } from 'vaping-regulation-shared-components';
 import logo from '@/assets/images/logo-banner.svg';
-import { HelpOutlineOutlined } from '@material-ui/icons';
+import { HelpOutlineOutlined } from '@mui/icons-material';
 
-const useStyles = makeStyles({
-  header: {
+const PREFIX = 'Header';
+
+const classes = {
+  header: `${PREFIX}-header`,
+  titleWrapper: `${PREFIX}-titleWrapper`,
+  topTitle: `${PREFIX}-topTitle`,
+  bottomTitle: `${PREFIX}-bottomTitle`,
+  logoWrapper: `${PREFIX}-logoWrapper`,
+  logo: `${PREFIX}-logo`,
+  help: `${PREFIX}-help`,
+  getHelp: `${PREFIX}-getHelp`,
+  accountType: `${PREFIX}-accountType`,
+  authButton: `${PREFIX}-authButton`
+};
+
+const Root = styled('div')({
+  [`&.${classes.header}`]: {
     position: 'fixed',
     zIndex: 12,
     alignItems: 'center',
@@ -23,41 +37,41 @@ const useStyles = makeStyles({
     display: 'flex',
     height: '70px',
   },
-  titleWrapper: {
+  [`& .${classes.titleWrapper}`]: {
     height: '45px',
     width: '100%',
   },
-  topTitle: {
+  [`& .${classes.topTitle}`]: {
     fontSize: '10px',
     lineHeight: '10px',
   },
-  bottomTitle: {
+  [`& .${classes.bottomTitle}`]: {
     fontSize: '27px',
     lineHeight: '32px',
     whiteSpace: 'nowrap',
   },
-  logoWrapper: {
+  [`& .${classes.logoWrapper}`]: {
     height: '45px',
     display: 'flex',
     alignItems: 'center',
     borderRight: '1px solid #F3B229',
     marginRight: '20px',
   },
-  logo: {
+  [`& .${classes.logo}`]: {
     height: '37px',
     width: '200px',
   },
-  help: {
+  [`& .${classes.help}`]: {
     minWidth: '195px',
   },
-  getHelp: {
+  [`& .${classes.getHelp}`]: {
     color: '#F3B229',
     fontWeight: 'bold',
   },
-  accountType: {
+  [`& .${classes.accountType}`]: {
     color: 'white',
   },
-  authButton: {
+  [`& .${classes.authButton}`]: {
     color: '#181818',
     textDecoration: 'none',
     padding: '0.5rem 1rem',
@@ -74,18 +88,18 @@ const useStyles = makeStyles({
 });
 
 export default function Header() {
-  const history = useHistory();
-  const classes = useStyles();
-  const [keycloak] = useKeycloak();
+  const navigate = useNavigate();
+
+  const{keycloak} = useKeycloak();
 
   const logout = () => {
     store.clearAll();
     keycloak.logout();
-    history.push('/');
+    navigate('/');
   };
 
   return (
-    <div className={classes.header}>
+    <Root className={classes.header}>
       <Link to="/" className={classes.logoWrapper} >
         <img className={classes.logo} src={logo} alt="Go to the homepage" />
       </Link>
@@ -110,12 +124,12 @@ export default function Header() {
               backgroundColor: 'white',
               marginLeft: '10px'
             }} 
-            onClick={() => history.push('/FAQ')}
+            onClick={() => navigate('/FAQ')}
           >
             <HelpOutlineOutlined/> FAQ
           </StyledButton>
         </>
       }
-    </div>
+    </Root>
   );
 }

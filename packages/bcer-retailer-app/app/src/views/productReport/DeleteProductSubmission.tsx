@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { makeStyles, Typography, Paper, Box } from '@material-ui/core';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Typography, Paper, Box } from '@mui/material';
 import { CSVLink } from 'react-csv';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import moment from 'moment';
-
 import {
   StyledTable,
   StyledButton,
@@ -19,71 +18,102 @@ import { ProductReportHeaders } from '@/constants/localEnums';
 import { useAxiosDelete, useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/utils/formatting';
 import { Form, Formik } from 'formik';
+import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles({
-  buttonIcon: {
-    paddingRight: '5px',
-    color: '#285CBC',
-  },
-  title: {
-    padding: '20px 0px',
-    color: '#002C71',
-  },
-  helpTextWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '20px',
-    backgroundColor: '#E0E8F0',
-    marginBottom: '30px',
-    borderRadius: '5px',
-  },
-  helperIcon: {
-    fontSize: '45px',
-    color: '#0053A4',
-    paddingRight: '25px',
-  },
-  box: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-    marginBottom: '20px',
-  },
-  boxTitle: {
-    paddingBottom: '10px',
-  },
-  tableRowCount: {
-    paddingBottom: '10px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px',
-  },
-  csvLink: {
-    textDecoration: 'none',
-  },
-  submitWrapper: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    paddingTop: '30px',
-  },
-  checkboxLabel: {
-    marginTop: '20px',
-  },
-  highlightedText: {
-    fontWeight: 600,
-    color: '#0053A4',
-  },
+const PREFIX = 'DeleteProductSubmission';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  title: `${PREFIX}-title`,
+  helpTextWrapper: `${PREFIX}-helpTextWrapper`,
+  helperIcon: `${PREFIX}-helperIcon`,
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  tableRowCount: `${PREFIX}-tableRowCount`,
+  actionsWrapper: `${PREFIX}-actionsWrapper`,
+  csvLink: `${PREFIX}-csvLink`,
+  submitWrapper: `${PREFIX}-submitWrapper`,
+  checkboxLabel: `${PREFIX}-checkboxLabel`,
+  highlightedText: `${PREFIX}-highlightedText`,
+};
+
+const StyledButtonWrapper = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const StyledIcon = styled('span')({
+  paddingRight: '5px',
+  color: '#285CBC',
+});
+
+const StyledTitle = styled(Typography)({
+  padding: '20px 0px',
+  color: '#002C71',
+});
+
+const StyledHelpTextWrapper = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '20px',
+  backgroundColor: '#E0E8F0',
+  marginBottom: '30px',
+  borderRadius: '5px',
+});
+
+const StyledHelperIcon = styled(ChatBubbleOutlineIcon)({
+  fontSize: '45px',
+  color: '#0053A4',
+  paddingRight: '25px',
+});
+
+const StyledBox = styled(Paper)({
+  border: 'solid 1px #CDCED2',
+  borderRadius: '4px',
+  padding: '1.4rem',
+  marginBottom: '20px',
+});
+
+const StyledBoxTitle = styled(Typography)({
+  paddingBottom: '10px',
+});
+
+const StyledTableRowCount = styled(Typography)({
+  paddingBottom: '10px',
+});
+
+const StyledActionsWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  paddingBottom: '10px',
+});
+
+const StyledCSVLink = styled(CSVLink)({
+  textDecoration: 'none',
+});
+
+const StyledSubmitWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  paddingTop: '30px',
+});
+
+const StyledCheckboxLabel = styled('div')({
+  marginTop: '20px',
+});
+
+const StyledHighlightedText = styled('span')({
+  fontWeight: 600,
+  color: '#0053A4',
 });
 
 export default function DeleteProductSubmissions() {
-  const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [submissionDate, setSubmissionDate] = useState<string>();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const [notAffectedLocations, setNotAffectedLocations] = useState<BusinessLocation[]>([]);
-  const { submissionId }: { submissionId: string } = useParams();
+  const { submissionId } = useParams<{ submissionId: string }>() as { submissionId: string };
 
   const [{ data: productsAndLocations }, getSubmission] = useAxiosGet(
     `/products?submissionId=${submissionId}`,
@@ -106,7 +136,7 @@ export default function DeleteProductSubmissions() {
   const confirmDelete = async() => {
     await request();
     if (!error) {
-      history.push('/products');
+      navigate('/products');
     } else {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(error) })
     }
@@ -134,38 +164,36 @@ export default function DeleteProductSubmissions() {
   return (
     <>
       <div>
-        <StyledButton onClick={() => history.push('/products')}>
-          <ArrowBackIcon className={classes.buttonIcon} />
-          Cancel
-        </StyledButton>
-        <Typography variant="h5" className={classes.title}>
-          Delete Products in Submission
-        </Typography>
-        <div className={classes.helpTextWrapper}>
-          <ChatBubbleOutlineIcon className={classes.helperIcon} />
+        <StyledButtonWrapper>
+          <StyledIcon>
+            <ArrowBackIcon />
+          </StyledIcon>
+          <StyledButton onClick={() => navigate('/products')}>Cancel</StyledButton>
+        </StyledButtonWrapper>
+        <StyledTitle variant="h5">Delete Products in Submission</StyledTitle>
+        <StyledHelpTextWrapper>
+          <StyledHelperIcon />
           <Typography variant="body1">
-            On this page, you can review and delete a product report. If you
-            have submitted this product report in error, or you have
-            accidentally resubmitted your entire list of products (instead of
-            just the new ones), you can select “delete” and upload a new product
-            report that contains the correct information.{' '}
-            <span className={classes.highlightedText}>
+            On this page, you can review and delete a product report. If you have
+            submitted this product report in error, or you have accidentally
+            resubmitted your entire list of products (instead of just the new
+            ones), you can select “delete” and upload a new product report that
+            contains the correct information.{' '}
+            <StyledHighlightedText>
               Please note that this will delete the product report from all
               locations that are currently attached to it.
-            </span>
+            </StyledHighlightedText>
           </Typography>
-        </div>
-        <Paper className={classes.box} variant="outlined">
-          <Typography className={classes.boxTitle} variant="subtitle1">
-            Products in this Submission
-          </Typography>
-          <div className={classes.actionsWrapper}>
-            <Typography className={classes.tableRowCount} variant="body2">
+        </StyledHelpTextWrapper>
+        <StyledBox variant="outlined">
+          <StyledBoxTitle variant="subtitle1">Products in this Submission</StyledBoxTitle>
+          <StyledActionsWrapper>
+            <StyledTableRowCount variant="body2">
               {productsAndLocations?.products?.length || 0} products found,
               submitted on {submissionDate}
-            </Typography>
+            </StyledTableRowCount>
             {productsAndLocations?.products?.length ? (
-              <CSVLink
+              <StyledCSVLink
                 headers={Object.keys(ProductReportHeaders)}
                 data={productsAndLocations?.products
                   ?.map((p: Products) => {
@@ -191,12 +219,12 @@ export default function DeleteProductSubmissions() {
                 target="_blank"
               >
                 <StyledButton variant="outlined">
-                  <SaveAltIcon className={classes.buttonIcon} />
+                  <SaveAltIcon />
                   Download CSV
                 </StyledButton>
-              </CSVLink>
+              </StyledCSVLink>
             ) : null}
-          </div>
+          </StyledActionsWrapper>
           <div style={{ overflowX: 'auto' }}>
             <StyledTable
               columns={[
@@ -223,15 +251,13 @@ export default function DeleteProductSubmissions() {
                 { title: 'Ingredients', field: 'ingredients' },
                 { title: 'Flavour', field: 'flavour' },
               ]}
-              data={productsAndLocations?.products}
+              data={productsAndLocations ? productsAndLocations.products : []}
             />
           </div>
-        </Paper>
-
-        <Paper className={classes.box} variant="outlined">
-          <Typography className={classes.boxTitle} variant="subtitle1">
-            All Locations
-          </Typography>
+        </StyledBox>
+  
+        <StyledBox variant="outlined">
+          <StyledBoxTitle variant="subtitle1">All Locations</StyledBoxTitle>
           <Formik
             initialValues={{
               location: 'affected',
@@ -250,7 +276,7 @@ export default function DeleteProductSubmissions() {
                   row={true}
                 />
                 <div style={{ overflowX: 'auto' }}>
-                  <Typography className={classes.tableRowCount} variant="body2">
+                  <StyledTableRowCount variant="body2">
                     {values.location === 'notAffected' ? (
                       <span>
                         <b>
@@ -268,7 +294,7 @@ export default function DeleteProductSubmissions() {
                         locations affected
                       </span>
                     )}
-                  </Typography>
+                  </StyledTableRowCount>
                   <Box mt={1} />
                   <StyledTable
                     columns={[
@@ -281,23 +307,23 @@ export default function DeleteProductSubmissions() {
                     data={
                       values.location === 'notAffected'
                         ? notAffectedLocations
-                        : productsAndLocations?.locations
+                        : productsAndLocations?.locations ?? []
                     }
                   />
                 </div>
               </Form>
             )}
           </Formik>
-        </Paper>
-
-        <div className={classes.submitWrapper}>
+        </StyledBox>
+  
+        <StyledSubmitWrapper>
           <StyledButton
             variant="contained"
             onClick={() => setDeleteConfirmOpen(true)}
           >
             Delete
           </StyledButton>
-        </div>
+        </StyledSubmitWrapper>
       </div>
       <StyledConfirmDialog
         open={deleteConfirmOpen}

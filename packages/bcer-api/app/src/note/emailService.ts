@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import Axios from 'axios';
 import { LocationEntity } from 'src/location/entities/location.entity';
 import { BCERNotifyClient } from 'src/notification/notification.client';
 import { UserEntity } from 'src/user/entities/user.entity';

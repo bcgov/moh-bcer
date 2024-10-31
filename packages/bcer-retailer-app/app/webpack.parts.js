@@ -1,28 +1,27 @@
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
-const { JsonFormatter } = require('tslint/lib/formatters');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 
 const postCSSLoader = {
   loader: 'postcss-loader',
   options: {
-    plugins: () => ([autoprefixer]),
+    postcssOptions: {
+      plugins: [autoprefixer],
+    },
   },
 };
 
 exports.devServer = ({ host, port } = {}) => ({
   devServer: {
     historyApiFallback: true,
-    stats: 'errors-only',
     hot: true,
     open: true,
     host,
@@ -31,9 +30,11 @@ exports.devServer = ({ host, port } = {}) => ({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
     },
-    overlay: {
-      errors: true,
-      warnings: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: true,
+      },
     },
   },
 });
@@ -43,7 +44,7 @@ exports.loadJS = ({ include, exclude } = {}) => ({
     rules: [
       {
         test: /\.(ts|js)x?$/,
-        loaders: ['babel-loader', 'ts-loader'],
+        use: ['babel-loader', 'ts-loader'],
         include,
         exclude,
       },
@@ -62,14 +63,7 @@ exports.loadCSS = ({ include, exclude } = {}) => ({
           'style-loader',
           'css-loader',
           postCSSLoader,
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                includePaths: [path.resolve(__dirname, 'node_modules')],
-              }
-            },
-          },
+          'sass-loader',
         ],
       },
     ],
@@ -90,19 +84,12 @@ exports.loadCSSModules = ({ include, exclude } = {}) => ({
               modules: true
             }
           },
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                includePaths: [path.resolve(__dirname, 'node_modules')],
-              }
-            },
-          },
+          'sass-loader',
         ],
       },
     ]
   }
-})
+});
 
 exports.extractCSS = ({ include, exclude, filename } = {}) => ({
   module: {
@@ -112,7 +99,6 @@ exports.extractCSS = ({ include, exclude, filename } = {}) => ({
         include,
         exclude,
         use: [
-          'style-loader',
           MiniCssExtractPlugin.loader,
           'css-loader',
           postCSSLoader,
@@ -173,9 +159,9 @@ exports.loadFonts = ({ include, exclude, options } = {}) => ({
         test: /\.(woff(2)?|ttf|otf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         include,
         exclude,
-        use: {
-          loader: 'file-loader',
-          options,
+        type: 'asset/resource',
+        generator: {
+          filename: options.name,
         },
       },
     ],
@@ -189,40 +175,21 @@ exports.generateSourceMaps = ({ type } = {}) => ({
 exports.bundleOptimization = ({ options } = {}) => ({
   optimization: {
     splitChunks: options,
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
   },
 });
 
 exports.CSSOptimization = ({ options } = {}) => ({
-  plugins: [
-    new OptimizeCSSAssetsPlugin({
-      cssProcessor: cssnano,
-      cssProcessorOptions: options,
-      canPrint: false,
-    }),
-  ],
+  optimization: {
+    minimizer: [
+      new CssMinimizerPlugin({
+        minimizerOptions: options,
+      }),
+    ],
+  },
 });
 
 exports.setEnvironmentVariable = (nodeEnv, dotEnv, assetPath) => ({
-  /*
-  * Add new environment variables by creating a new constant, and assigning
-  * it to dotEnv.ENV_VAR_FROM_FILE
-  * e.g:
-  *
-  * 'process.env': {
-  *     NODE_ENV: JSON.stringify(nodeEnv),
-  *     BASE_URL: JSON.stringify(dotEnv.BASE_URL),
-  *     NEW_ENV: JSON.stringify(dotEnv.NEW_DOTENV_VARIABLE)
-  *     ASSET_PATH: JSON.stringify(assetPath),
-  *   },
-  *
-  * Additionally, you can make the entire dotenv file accessable by
-  * doing something like
-  *
-  * DOT_ENV: JSON.stringify(dotEnv),
-  *
-  */
-
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
@@ -257,32 +224,29 @@ exports.copy = (from, to) => ({
     new CopyWebpackPlugin({
       patterns: [
         {
-          from,
-          to,
+          from: path.resolve(__dirname, from),
+          to: path.resolve(__dirname, to),
           globOptions: {
-            ignore: ['*.html']
-          }
+            ignore: ['*.html'],
+          },
         },
-      ]
+      ],
     }),
   ],
 });
 
 exports.registerServiceWorker = () => ({
   plugins: [
-    new SWPrecacheWebpackPlugin({
-      dontCacheBustUrlsMatching: /\.\w{8}\./,
-      filename: 'service-worker.js',
-      minify: true,
-      navigateFallback: '/index.html',
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
+    new WorkboxWebpackPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
     }),
   ],
 });
 
 exports.extractManifest = () => ({
   plugins: [
-    new ManifestPlugin({
+    new WebpackManifestPlugin({
       fileName: 'asset-manifest.json',
     }),
   ],

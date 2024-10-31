@@ -1,19 +1,27 @@
 import { HealthAuthorities, LocationTypeLabels, ReportStatus } from "@/constants/enums/genericEnums";
 import { LocationReportStatus, LocationRO } from "@/constants/interfaces/genericInterfaces";
-import { Tooltip } from "@material-ui/core";
-import Icon from '@material-ui/core/Icon';
+import { Tooltip } from "@mui/material";
+import Icon from '@mui/material/Icon';
 import moment from "moment";
 import React from 'react';
 
 export class BusinessDashboardUtil {
   static getColumns (addressLine1: Function){
     return [
-    {title: 'Type of Location', render: (l: LocationRO) => LocationTypeLabels[l.location_type]},
+    {title: 'Type of Location', render: (l: LocationRO) => {
+      if (l.location_type && l.location_type in LocationTypeLabels) {
+        return LocationTypeLabels[l.location_type as keyof typeof LocationTypeLabels];
+      }
+      return '';
+    }},
     {title: 'Location/URL', render: (l: LocationRO) => addressLine1(l)},
     {title: 'Doing Business As', render: (l: LocationRO) => l.doingBusinessAs || ''},
-    {title: 'Health Authority', render: (l: LocationRO) => l.health_authority && HealthAuthorities[l.health_authority] 
-                                                            || l.health_authority_other 
-                                                            || ''},
+    {title: 'Health Authority', render: (l: LocationRO) => {
+      if (l.health_authority && l.health_authority in HealthAuthorities) {
+        return HealthAuthorities[l.health_authority as keyof typeof HealthAuthorities];
+      }
+      return l.health_authority_other || '';
+    }},
     {title: 'NOI', render: (l:LocationRO) => this.render(l, 'noi')},
     {title: 'Product Report', render: (l:LocationRO) => this.render(l, 'productReport')},
     {title: 'Manufacturing Report', render: (l:LocationRO) => this.render(l, 'manufacturingReport')},

@@ -1,4 +1,4 @@
-import { DialogProps } from "@material-ui/core";
+import { DialogProps } from "@mui/material";
 import { ReactEventHandler } from "react";
 
 export interface StyledDialogProps extends DialogProps {
@@ -9,6 +9,7 @@ export interface StyledDialogProps extends DialogProps {
   acceptHandler: ReactEventHandler | "submit",
   acceptDisabled?: boolean,
   cancelDisabled?: boolean,
+  showCancelButton?: boolean,
 }
 
 export interface StyledConfirmDialogProps extends DialogProps {
@@ -20,6 +21,7 @@ export interface StyledConfirmDialogProps extends DialogProps {
   acceptDisabled?: boolean,
   cancelDisabled?: boolean,
   acceptButtonText?: string,
+  showCancelButton?: boolean,
 }
 
 export interface StyledDialogActionProps {
@@ -29,6 +31,7 @@ export interface StyledDialogActionProps {
   acceptButtonText: string,
   cancelHandler: ReactEventHandler,
   acceptHandler: ReactEventHandler | "submit",
+  showCancelButton?: boolean,
 }
 
 export interface StyledConfirmDateDialogProps extends StyledConfirmDialogProps {

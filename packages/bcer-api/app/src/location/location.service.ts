@@ -1,4 +1,4 @@
-import { Repository, In, SelectQueryBuilder, UpdateResult, getConnection } from 'typeorm';
+import { Repository, In, SelectQueryBuilder, UpdateResult, getConnection, ILike } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import JSZip from 'jszip';
@@ -30,6 +30,7 @@ import { LocationContactDTO } from './dto/locationContact.dto';
 import { LocationType } from './enums/location_type.enum';
 import { ConfigDates } from 'src/utils/configDates';
 import { CONFIG } from 'src/common/common.config';
+import { duplicateLocationAlertEmailService } from './duplicateLocationAlertEmailService';
 
 const manufacturingLocationDictionary = {
   'true': true,
@@ -54,10 +55,11 @@ export class LocationService {
     @InjectRepository(SalesReportEntity)
     private readonly salesReportRepository: Repository<SalesReportEntity>,
     private geoCodeService: GeoCodeService,
+    private duplicateLocationAlertEmailService: duplicateLocationAlertEmailService,
   ) { }
 
   async createLocations(dto: LocationDTO[], businessId: string) {
-    const business = await this.businessRepository.findOne(businessId);
+    const business = await this.businessRepository.findOne({where: { id: businessId }});
     // Filtering out any existing location
     dto = dto.filter(d => !(d as any).id);
 
@@ -282,7 +284,7 @@ export class LocationService {
     if (includes) {
       relations = includes.split(',');
     }
-    const location = await this.locationRepository.findOne(locationId, { relations });
+    const location = await this.locationRepository.findOne({ where: { id: locationId }, relations: relations });
     return location;
   }
 
@@ -291,7 +293,7 @@ export class LocationService {
     if (includes) {
       relations = includes.split(',');
     }
-    const location = await this.locationRepository.findOne(locationId, { relations, withDeleted: true });
+    const location = await this.locationRepository.findOne({where: { id: locationId }, relations: relations, withDeleted: true});
     return location;
   }
 
@@ -328,12 +330,16 @@ export class LocationService {
     const locationsQb = this.locationRepository.createQueryBuilder('location');
     locationsQb.leftJoinAndSelect('location.business', 'business');
     locationsQb.leftJoinAndSelect('location.noi', 'noi');
-    if (locationIds?.length > 0) locationsQb.andWhere('location.id IN (:...locationIds)', { locationIds });
+  
+    if (locationIds && locationIds.length > 0) {
+      locationsQb.andWhere('location.id IN (:...ids)', { ids: locationIds });
+    }
+  
     if (search) {
       locationsQb.andWhere('(LOWER(location.addressLine1) LIKE :search OR LOWER(location.doingBusinessAs) LIKE :search OR LOWER(business.legalName) LIKE :search OR LOWER(business.businessName) LIKE :search)', { search: `%${search.toLowerCase()}%` });
     }
     if (authority) {
-      locationsQb.andWhere(`location.health_authority = :authority`, { authority });
+      locationsQb.andWhere('location.health_authority = :authority', { authority });
     }
     //locationsQb.andWhere('location."noiId" IS NOT NULL');
     const locations = await locationsQb.getMany();
@@ -436,10 +442,13 @@ export class LocationService {
     const noiHeaders = 'Business Name,Business Legal Name,Address,Address 2,Postal Code,City,Buiness Email,Phone Number,Underage Permitted,Health Authority,Doing Business As,Manufacturing,Submitted Date,Renewed Date\n';
     let noiRows = '';
 
-    locations.map(location => {
-      noiRows += `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${moment(location.noi.created_at).format('ll')}","${location.noi.renewed_at? moment(location.noi.renewed_at).format('ll'): ''}"\n`
-    });
+    locations.forEach(location => {
+      const submittedDate = location.noi && location.noi.created_at ? moment(location.noi.created_at).format('ll') : '';
+      const renewedDate = location.noi && location.noi.renewed_at ? moment(location.noi.renewed_at).format('ll') : '';
 
+      noiRows += `"${location.business.businessName}","${location.business.legalName}","${location.addressLine1}","${location.addressLine2}","${location.postal}","${location.city}","${location.email}","${location.phone}","${location.underage}","${location.ha}","${location.doingBusinessAs}","${location.manufacturing}","${submittedDate}","${renewedDate}"\n`;
+    });
+  
     zip.file('All NOIs.csv', noiHeaders + noiRows);
 
     return zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
@@ -666,14 +675,17 @@ export class LocationService {
       underage: payload.underage,
       ha: haTranslation(payload.health_authority),
       ha_other: payload.health_authority_other,
-      manufacturing: payload.manufacturing === "yes" ? true : false
+      manufacturing: payload.manufacturing === "yes" ? true : false,
+      location_type:payload.location_type as LocationType,
     }
     payload.underage === "other" ? updateValue.underage = payload.underage_other : null;
     payload.latitude ? updateValue['latitude'] = payload.latitude : null;
     payload.longitude ? updateValue['longitude'] = payload.longitude : null;
     payload.geoAddressConfidence ? updateValue['geoAddressConfidence'] = payload.geoAddressConfidence : null;
-
-    const result = await this.locationRepository.update({id: locationId}, {...updateValue});
+    const result = await this.locationRepository.update(
+      { id: locationId },
+      { ...updateValue}
+    );
   }
 
   /**
@@ -682,7 +694,7 @@ export class LocationService {
    * @reutrns
    */
   async getLocationsWithBusinessId(businessId: string){
-    return await this.locationRepository.find({ businessId });
+    return await this.locationRepository.find({ where: { businessId: businessId } });
 
   }
 
@@ -719,7 +731,7 @@ export class LocationService {
   }
 
   async getLocationsWithoutGeoCode(): Promise<LocationEntity[]> {
-    return await this.locationRepository.find({ geoAddressConfidence: null });
+    return await this.locationRepository.find({ where: { geoAddressConfidence: null }});
   }
 
   async updateGeoCodeForExistingLocations() {
@@ -859,5 +871,24 @@ export class LocationService {
         businessId: businessId,
       },
     );
+  }
+
+  /**
+ * Check if location address exists when a user add a new location
+ * @param fullAddress 
+ * @returns 
+ */
+  async checkAddressExists(fullAddress: string): Promise<boolean> {
+    const existingLocation = await this.locationRepository.findOne({ where: {addressLine1: ILike(`%${fullAddress}%`)}});
+    return !!existingLocation;
+  }
+
+  /**
+ * Send email to the retailer and vapingInfo mailbox when new duplicate location(s) are created
+ * @param dataForContext 
+ * @returns 
+ */
+  async sendEmailNotification(dataForContext: any): Promise<boolean> {
+    return await this.duplicateLocationAlertEmailService.sendEmailNotification(dataForContext)
   }
 }

@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import moment from 'moment';
-import { Grid, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import WarningIcon from '@material-ui/icons/Warning';
+import { Grid, Typography } from '@mui/material';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import { ExistingTable } from './Tables';
 import { BIContext, BusinessInfoContext } from '@/contexts/BusinessInfo';
@@ -17,7 +16,7 @@ import { editLocationFormatting } from '@/utils/formatting';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import MassUpdateLocation from './MassUpdateLocation';
 
-const useStyles = makeStyles({
+const classes = {
   noiSubmittedBox: {
     display: 'flex',
     padding: '20px',
@@ -34,12 +33,10 @@ const useStyles = makeStyles({
     fontSize: '16px', 
     fontWeight: 600
   }
-})
+};
 
 export default function ExistingTableWrap() {
-  const classes = useStyles();
-  const [businessInfo, setBusinessInfo] =
-    useContext<[BIContext, Function]>(BusinessInfoContext);
+  const [businessInfo, setBusinessInfo] = useContext<[BIContext, Function]>(BusinessInfoContext);
   const { locations } = businessInfo;
   const [locationId, setLocationId] = useState<string | null>(null);
   const [targetRow, setTargetRow] = useState<BusinessLocation>(null);
@@ -118,7 +115,6 @@ export default function ExistingTableWrap() {
     });
     const newLocations = [...newExistingLocations, ...addedLocations];
     const newBusinessInfo = {...businessInfo, locations: newLocations }
-    
     if (newBusinessInfo?.submissionId) {
       await patch({ url: `/location/edit/${targetConfirmRow.id}`, data: LocationUtil.sanitizeSubmittedLocation(targetConfirmRow) });
     }
@@ -213,10 +209,9 @@ export default function ExistingTableWrap() {
                 locationContext?.noi?.status === 'submitted'
                   &&
                 <Grid item xs={12}>
-                  
-                  <div className={classes.noiSubmittedBox}>
-                    <WarningIcon className={classes.warningIcon}/>
-                    <Typography className={classes.noiSubmittedBoxText} >You already have an NOI submitted for this location</Typography>
+                  <div style={classes.noiSubmittedBox}>
+                    <WarningIcon sx={classes.warningIcon}/>
+                    <Typography sx={classes.noiSubmittedBoxText} >You already have an NOI submitted for this location</Typography>
                   </div>
                 </Grid>
               }

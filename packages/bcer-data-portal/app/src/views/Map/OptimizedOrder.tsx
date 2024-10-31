@@ -1,28 +1,42 @@
 import StyledToolTip from '@/components/generic/StyledToolTip';
+import { styled } from '@mui/material/styles';
 import {
   BCDirectionData,
   BCGeocoderAutocompleteData,
   BusinessLocation,
 } from '@/constants/localInterfaces';
-import { Box, Tooltip, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core';
+import { Box, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
+const PREFIX = 'OptimizedOrder';
+
+const classes = {
+  container: `${PREFIX}-container`,
+  text: `${PREFIX}-text`,
+  label: `${PREFIX}-label`
+};
+
+const StyledBox = styled(Box)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.container}`]: {
     backgroundColor: '#E0E8F0',
     padding: '5px 15px',
     borderRadius: '4px',
     border: '1px solid #2E2E4E',
   },
-  text: {
+
+  [`& .${classes.text}`]: {
     fontSize: '16px',
     maxWidth: '400px',
   },
-  label: {
+
+  [`& .${classes.label}`]: {
     fontSize: '16px',
     fontWeight: 'bold',
-  },
+  }
 }));
 
 interface OptimizedOrderProps {
@@ -36,7 +50,7 @@ function OptimizedOrder({
   selectedLocations,
   startingLocation,
 }: OptimizedOrderProps) {
-  const classes = useStyles();
+
   const [optimized, setOptimized] = useState<BusinessLocation[]>();
   useEffect(() => {
     if (!routeData?.visitOrder) return;
@@ -55,7 +69,7 @@ function OptimizedOrder({
     setOptimized(optimizedTemp);
   }, [routeData]);
   return (
-    <Box mt={2}>
+    <StyledBox mt={2}>
       <Box my={1}>
         <Typography className={classes.label}>Visit Order</Typography>
       </Box>
@@ -85,7 +99,7 @@ function OptimizedOrder({
             </Box>
           )
       )}
-    </Box>
+    </StyledBox>
   );
 }
 

@@ -1,6 +1,6 @@
 
 import React, { ReactElement } from 'react';
-import { DialogActions, styled } from '@material-ui/core';
+import { DialogActions, DialogActionsProps, styled } from '@mui/material';
 import { useFormikContext } from 'formik';
 
 import { StyledButton } from '@/index';
@@ -10,11 +10,16 @@ import { StyledDialogActionProps } from '@/constants/interfaces/dialogInterfaces
  * Uses react styled() to apply styles to the dialog actions component
  * @returns A Material-UI ReactElement with specified styles
  */
-const StyledActions = styled(DialogActions)({
-  padding: '16px 0px 24px 0px',
-  margin: '0px 24px 0px 24px',
-  borderTop: '1px solid #CCCCCC'
-});
+const StyledActions = (props: DialogActionsProps) => (
+  <DialogActions
+  {...props}
+  sx={{
+    padding: '16px 0px 24px 0px',
+    margin: '0px 24px 0px 24px',
+    borderTop: '1px solid #CCCCCC'
+  }}
+  />
+);
 
 /**
  * Styled dialog actions reusable component
@@ -35,7 +40,8 @@ export function StyledDialogActions ({
   cancelHandler,
   acceptHandler,
   cancelDisabled = false,
-  acceptDisabled = false
+  acceptDisabled = false,
+  showCancelButton = true,
 }: StyledDialogActionProps):ReactElement {
   
   let submitHandler;
@@ -43,36 +49,37 @@ export function StyledDialogActions ({
     let { submitForm } = useFormikContext()
     submitHandler = submitForm;
   }
-  
+
   return (
-      <StyledActions style={{justifyContent: !acceptHandler || !cancelHandler ? 'flex-end' : 'space-between' }}>
-        <StyledButton 
+    <StyledActions style={{ justifyContent: !acceptHandler || !cancelHandler || !showCancelButton ? 'flex-end' : 'space-between' }}>
+      {showCancelButton && cancelHandler && ( // Conditionally render the cancel button
+        <StyledButton
           variant="dialog-cancel"
           onClick={cancelHandler}
           disabled={cancelDisabled}
         >
           {cancelButtonText}
         </StyledButton>
-        {
-          acceptHandler === "submit"
-            ? <StyledButton 
+      )}
+      {
+        acceptHandler === "submit"
+          ? <StyledButton
+              variant="dialog-accept"
+              onClick={submitHandler}
+              disabled={acceptDisabled}
+            >
+              {acceptButtonText}
+            </StyledButton>
+          : acceptHandler
+            ? <StyledButton
                 variant="dialog-accept"
-                onClick={submitHandler}
+                onClick={acceptHandler}
                 disabled={acceptDisabled}
               >
                 {acceptButtonText}
               </StyledButton>
-            : 
-              acceptHandler 
-                ? <StyledButton 
-                    variant="dialog-accept"
-                    onClick={acceptHandler}
-                    disabled={acceptDisabled}
-                  >
-                    {acceptButtonText}
-                  </StyledButton>
-                : null
-        }
-      </StyledActions>
+            : null
+      }
+    </StyledActions>
   );
 }

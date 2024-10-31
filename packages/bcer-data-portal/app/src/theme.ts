@@ -1,9 +1,21 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
+import { ThemeOptions } from '@mui/material/styles';
 
-export const theme = createMuiTheme({
+const themeOptions: ThemeOptions = {
   typography: {
     fontFamily: [
-      'BCSans', 'Raleway', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif'
+      'BCSans',
+      'Raleway',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      'Segoe UI',
+      'Oxygen',
+      'Ubuntu',
+      'Cantarell',
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      'sans-serif'
     ].join(','),
     h5: {
       color: '#002C71',
@@ -32,5 +44,6 @@ export const theme = createMuiTheme({
   },
   palette: {
   }
-});
+};
 
+export const theme = createTheme(themeOptions);

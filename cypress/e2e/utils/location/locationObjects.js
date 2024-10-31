@@ -39,6 +39,10 @@ export const locationErrorMessages = {
   }
 };
 
+export const locationToolTipMessage = {
+  doingBusinessAs: "Different than legal name, used as an identifier if business has more than one location.",
+}
+
 export const locationFieldNames = {
   locationType: {
     physical: 'input[name="location_type"][type="radio"][value="physical"]',
@@ -51,6 +55,7 @@ export const locationFieldNames = {
   city: 'input[name="city"]',
   postal: 'input[name="postal"]',
   doingBusinessAs: 'input[name="doingBusinessAs"]',
+  toolTip:'button[name="doingBusinessAsTooltip"]',
   underage: {
     yes: 'input[name="underage"][type="radio"][value="Yes"]',
     no: 'input[name="underage"][type="radio"][value="No"]',

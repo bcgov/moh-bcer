@@ -1,103 +1,105 @@
 import React from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 import { Link } from 'react-router-dom';
-import { Box, Grid, Hidden, makeStyles } from '@material-ui/core';
+import { Box, Grid, Hidden } from '@mui/material';
+import { styled } from '@mui/system';
 
 import logo from '@/assets/images/logo-banner.svg';
 
-const useStyles = makeStyles(theme => ({
-  headerBox: {    
-    height: 70,
-    width: '100%',
-    display: 'flex',    
-    padding: '20px 65px 20px 10px',
-    color: '#fff',
-    backgroundColor: '#036',
-    borderBottom: '2px solid #fcba19',
-    zIndex: 1500,
-    position: 'fixed',
-    boxSizing: 'border-box',
-    maxWidth: '100vw',
-    [theme.breakpoints.down('xs')]: {
-      boxSizing: 'inherit',
-      height: 20,
-      zIndex: 99999999    
-    }    
-  },
-  logoWrap: {    
-    borderRight: '1px solid #F3B229',
-    maxWidth: 209,
-    height: 45,
-    paddingTop: '4px !important',
-    [theme.breakpoints.down('xs')]: {
-      height: 40,
-      maxWidth: 117,
-      '& img': {
-        width: 100
-      }
-    }
-  },
-  titleWrap: {    
-    paddingLeft: '20px !important',
-    paddingTop: '0px !important',
-    [theme.breakpoints.down('xs')]: {
-      paddingLeft: '10px !important',
-    }
-  },
-  topTitle: {
-    fontSize: '10px',
-    lineHeight: '10px',    
-  },
-  bottomTitle: {
-    fontSize: '27px',
-    lineHeight: '32px',
-    whiteSpace: 'nowrap',
-    [theme.breakpoints.down('xs')]: {
-      fontSize: 14
-    }
-  },  
-  logo: {
-    height: '37px',
-    width: '200px',
-  },
-  help: {
-    minWidth: '195px',
-  },
-  getHelp: {
-    color: '#F3B229',
-    fontWeight: 'bold',
-  },
+const HeaderBox = styled(Box)(({ theme }) => ({
+  height: 70,
+  width: '100%',
+  display: 'flex',    
+  padding: '20px 65px 20px 10px',
+  color: '#fff',
+  backgroundColor: '#036',
+  borderBottom: '2px solid #fcba19',
+  zIndex: 1500,
+  position: 'fixed',
+  boxSizing: 'border-box',
+  maxWidth: '100vw',
+  [theme.breakpoints.down('sm')]: {
+    boxSizing: 'inherit',
+    height: 20,
+    zIndex: 99999999    
+  }    
 }));
 
+const LogoWrap = styled(Grid)(({ theme }) => ({
+  borderRight: '1px solid #F3B229',
+  maxWidth: 209,
+  height: 45,
+  paddingTop: '4px !important',
+  [theme.breakpoints.down('sm')]: {
+    height: 40,
+    maxWidth: 117,
+    '& img': {
+      width: 100
+    }
+  }
+}));
+
+const TitleWrap = styled(Grid)(({ theme }) => ({
+  paddingLeft: '20px !important',
+  paddingTop: '0px !important',
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: '10px !important',
+  }
+}));
+
+const TopTitle = styled('div')({
+  fontSize: '10px',
+  lineHeight: '10px',    
+});
+
+const BottomTitle = styled('div')(({ theme }) => ({
+  fontSize: '27px',
+  lineHeight: '32px',
+  whiteSpace: 'nowrap',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 14
+  }
+}));
+
+const Logo = styled('img')({
+  height: '37px',
+  width: '200px',
+});
+
+const HelpGrid = styled(Grid)({
+  minWidth: '195px',
+});
+
+const GetHelp = styled(Link)({
+  color: '#F3B229',
+  fontWeight: 'bold',
+});
+
 export default function Header() {
-  const classes = useStyles();
-  const [keycloak] = useKeycloak();
+  const { keycloak } = useKeycloak();
 
   return (
-    <>
-    <Box className={classes.headerBox}>
+    <HeaderBox>
       <Grid container spacing={2}>
-        <Grid item xs={4} md={2} className={classes.logoWrap}>
-          <img className={classes.logo} src={logo} alt="BC Government Logo" />
-        </Grid>
-        <Grid item xs={7} md={9} className={classes.titleWrap}>
-          <div className={classes.topTitle} >
+        <LogoWrap item xs={4} md={2}>
+          <Logo src={logo} alt="BC Government Logo" />
+        </LogoWrap>
+        <TitleWrap item xs={7} md={9}>
+          <TopTitle>
             E-Substances Regulation
-          </div>
-          <div className={classes.bottomTitle} >
+          </TopTitle>
+          <BottomTitle>
             BC E-Substances Regulation Data Portal
-          </div>
-        </Grid>
+          </BottomTitle>
+        </TitleWrap>
       </Grid>
-      {
-      keycloak.authenticated &&
-      <Hidden smDown>
-        <Grid className={classes.help}>
-            Having Trouble? <Link className={classes.getHelp} to='/gethelp'>Get Help</Link>      
-        </Grid>
-      </Hidden>
+      {keycloak.authenticated &&
+        <Hidden smDown>
+          <HelpGrid>
+            Having Trouble? <GetHelp to='/gethelp'>Get Help</GetHelp>      
+          </HelpGrid>
+        </Hidden>
       }
-    </Box>    
-    </>
+    </HeaderBox>    
   );
 }

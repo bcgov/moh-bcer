@@ -1,28 +1,34 @@
 import LocationDetails from '@/components/Location/LocationDetails';
-import { Box, makeStyles } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
+import { Box } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { StyledButton } from 'vaping-regulation-shared-components';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { BusinessLocation, Products } from '@/constants/localInterfaces';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Products } from '@/constants/localInterfaces';
 import { useAxiosGet } from '@/hooks/axios';
 import { formatError } from '@/utils/formatting';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import ViewProductsTable from './ViewProductsTable';
 import FullScreen from '@/components/generic/FullScreen';
 
-const useStyles = makeStyles({
-  buttonIcon: {
+const PREFIX = 'LocationProducts';
+
+const classes = {
+  buttonIcon: `${PREFIX}-buttonIcon`
+};
+
+const StyledBox = styled(Box)({
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
   },
 });
 
 function LocationProducts() {
-  const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const fullScreenProps = useState(false);
-  const { locationId }: { locationId: string } = useParams();
+  const { locationId }: { locationId?: string } = useParams();
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
 
   const [{ data: products, error: productError }, getProducts] = useAxiosGet<
@@ -43,8 +49,8 @@ function LocationProducts() {
   }, [productError]);
 
   return (
-    <Box>
-      <StyledButton onClick={() => history.goBack()}>
+    <StyledBox>
+      <StyledButton onClick={() => navigate(-1)}>
         <ArrowBackIcon className={classes.buttonIcon} />
         Back
       </StyledButton>
@@ -58,7 +64,7 @@ function LocationProducts() {
           locationId={locationId}
         />
       </FullScreen>
-    </Box>
+    </StyledBox>
   );
 }
 

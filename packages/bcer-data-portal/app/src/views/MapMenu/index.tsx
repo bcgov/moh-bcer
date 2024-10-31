@@ -2,7 +2,7 @@ import React from 'react';
 import Map from './../Map/Map';
 import { useAxiosGet } from '@/hooks/axios';
 import { LocationConfig } from '@/constants/localInterfaces';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 
 function MapMenu() {
 

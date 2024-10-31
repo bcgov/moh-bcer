@@ -1,5 +1,5 @@
-import { Dialog } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { Dialog } from '@mui/material';
+import { styled } from '@mui/system';
 import React from 'react';
 import { StyledButton } from 'vaping-regulation-shared-components';
 
@@ -8,35 +8,33 @@ interface FullScreenProp {
   children: React.ReactNode;
 }
 
-const useStyles = makeStyles({
-  dialogWrap: {
-    padding: '1rem 1.5rem',
-  },
-  dialogButton: {
-    marginTop: '30px',
-  },
+const DialogWrap = styled('div')({
+  padding: '1rem 1.5rem',
+});
+
+const DialogButton = styled('div')({
+  marginTop: '30px',
 });
 
 function FullScreen({
   children,
   fullScreenProp: [fullscreen, setFullscreen],
 }: FullScreenProp) {
-  const classes = useStyles();
   return (
     <React.Fragment>
       {children}
       <Dialog fullScreen open={fullscreen}>
-        <div className={classes.dialogWrap}>
+        <DialogWrap>
           {children}
-          <div className={classes.dialogButton}>
+          <DialogButton>
             <StyledButton
               variant="outlined"
               onClick={() => setFullscreen((prev) => !prev)}
             >
               Close
             </StyledButton>
-          </div>
-        </div>
+          </DialogButton>
+        </DialogWrap>
       </Dialog>
     </React.Fragment>
   );

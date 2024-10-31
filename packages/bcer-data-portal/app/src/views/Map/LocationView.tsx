@@ -1,60 +1,62 @@
-import { BusinessLocation } from '@/constants/localInterfaces';
-import { Box, Hidden, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
-import MyLocationIcon from '@material-ui/icons/MyLocation';
-import ClearIcon from '@material-ui/icons/Clear';
-import HorizontalSplitIcon from '@material-ui/icons/HorizontalSplit';
+import { BusinessLocation } from '@/constants/localInterfaces';
+import { styled, useTheme } from '@mui/material/styles';
+import { Box, Typography, useMediaQuery } from '@mui/material';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
+import ClearIcon from '@mui/icons-material/Clear';
+import HorizontalSplitIcon from '@mui/icons-material/HorizontalSplit';
 import StyledToolTip from '@/components/generic/StyledToolTip';
-import { CSSProperties } from '@material-ui/styles';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
+const PREFIX = 'LocationView';
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  [`&.${PREFIX}-container`]: {
     display: 'flex',
     border: '1px solid #CDCED2',
     borderRadius: '4px',
     marginBottom: '10px',
     alignItems: 'center',
   },
-  textContainer: {
+  [`& .${PREFIX}-textContainer`]: {
     backgroundColor: '#E1E1E6',
     alignItems: 'center',
   },
-  warnTextContainer: {
+  [`& .${PREFIX}-warnTextContainer`]: {
     backgroundColor: 'rgba(255, 200, 0, 0.2)',
     alignItems: 'center',
   },
-  errorTextContainer: {
+  [`& .${PREFIX}-errorTextContainer`]: {
     backgroundColor: 'rgba(255, 0, 0, 0.2)',
     alignItems: 'center',
   },
-  businessContainer: {
-    borderRight:"1px solid #333",
+  [`& .${PREFIX}-businessContainer`]: {
+    borderRight: "1px solid #333",
   },
-  locationText: {
+  [`& .${PREFIX}-locationText`]: {
     color: '#333',
     fontSize: '1rem',
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       fontSize: '0.9rem',
       lineHeight: 1.2
     }
   },
-  businessText: {
+  [`& .${PREFIX}-businessText`]: {
     color: '#333',
     fontWeight: 'bold',
     fontSize: '1rem',
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       fontSize: '0.9rem',
       lineHeight: 1.2
     }
   },
-  toolTip: {
+  [`& .${PREFIX}-toolTip`]: {
     fontSize: '14px',
   },
-  iconHover: {
+  [`& .${PREFIX}-iconHover`]: {
     '&:hover': {
       cursor: 'pointer',
     },
-  },
+  }
 }));
 
 export interface LocationViewProps {
@@ -68,52 +70,47 @@ function LocationView({
   showOnMapHandler,
   removeLocationHandler,
 }: LocationViewProps) {
-  const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const address = content?.geoAddress || `${content.addressLine1}, ${
     content.addressLine2 ? `${content.addressLine2},` : ''
   } ${content.city}, ${content.postal}`;
 
-  const formattedAddress =
-    address.length > 28 ? `${address.slice(0, 24)} ...` : address;
-
-  const mobileFormattedAddress =
-    address.length > 19 ? `${address.slice(0, 15)} ...` : address;
+  const formattedAddress = isMobile
+    ? (address.length > 19 ? `${address.slice(0, 15)} ...` : address)
+    : (address.length > 28 ? `${address.slice(0, 24)} ...` : address);
 
   const businessName = `${
     content.business?.businessName ?? content.business?.legalName
   }`;
-  const formattedBusinessName =
-    businessName.length > 10 ? `${businessName.slice(0, 7)} ...` : businessName;
-
-  const mobileFormattedBusinessName =
-    businessName.length > 7 ? `${businessName.slice(0, 5)} ...` : businessName;
+  const formattedBusinessName = isMobile
+    ? (businessName.length > 7 ? `${businessName.slice(0, 5)} ...` : businessName)
+    : (businessName.length > 10 ? `${businessName.slice(0, 7)} ...` : businessName);
 
   const { latitude, longitude, geoAddressConfidence } = content;
-  let showStyle = classes.textContainer;
-  if(geoAddressConfidence === 'RANGE_INTERPOLATED' || geoAddressConfidence === 'APPROXIMATE'){
-    showStyle = classes.warnTextContainer;
+  let showStyle = `${PREFIX}-textContainer`;
+  if (geoAddressConfidence === 'RANGE_INTERPOLATED' || geoAddressConfidence === 'APPROXIMATE') {
+    showStyle = `${PREFIX}-warnTextContainer`;
   }
-
-  if(!latitude || !longitude) {
-    showStyle = classes.errorTextContainer;
+  if (!latitude || !longitude) {
+    showStyle = `${PREFIX}-errorTextContainer`;
   }
 
   return (
-    <Box className={classes.container}>
+    <StyledBox className={`${PREFIX}-container`}>
       <Box display="flex" flex={80} p={1} className={showStyle}>
-        <Box flex={0.3}  className={classes.businessContainer} pl={1}>
+        <Box flex={0.3} className={`${PREFIX}-businessContainer`} pl={1}>
           <StyledToolTip title={businessName}>
-            <Typography className={classes.businessText}>
-              <Hidden smDown>{formattedBusinessName}</Hidden>
-              <Hidden smUp>{mobileFormattedBusinessName}</Hidden>
+            <Typography className={`${PREFIX}-businessText`}>
+              {formattedBusinessName}
             </Typography>
           </StyledToolTip>
         </Box>
         <Box flex={0.7} pl={1}>
           <StyledToolTip title={address}>
-            <Typography className={classes.locationText}>
-              <Hidden smDown>{formattedAddress}</Hidden>
-              <Hidden smUp>{mobileFormattedAddress}</Hidden>
+            <Typography className={`${PREFIX}-locationText`}>
+              {formattedAddress}
             </Typography>
           </StyledToolTip>
         </Box>
@@ -122,7 +119,7 @@ function LocationView({
         <Box display="flex" justifyContent="space-between">
           <StyledToolTip title="Show in map">
             <MyLocationIcon
-              className={classes.iconHover}
+              className={`${PREFIX}-iconHover`}
               onClick={() => showOnMapHandler(content)}
             />
           </StyledToolTip>
@@ -130,14 +127,14 @@ function LocationView({
             title="Remove location"
             onClick={() => removeLocationHandler(content)}
           >
-            <ClearIcon className={classes.iconHover} htmlColor="red" />
+            <ClearIcon className={`${PREFIX}-iconHover`} htmlColor="red" />
           </StyledToolTip>
           <StyledToolTip title="Drag to rearrange">
-            <HorizontalSplitIcon className={classes.iconHover} />
+            <HorizontalSplitIcon className={`${PREFIX}-iconHover`} />
           </StyledToolTip>
         </Box>
       </Box>
-    </Box>
+    </StyledBox>
   );
 }
 

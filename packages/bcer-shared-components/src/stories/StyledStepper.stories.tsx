@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import WorkOutlineIcon from '@material-ui/icons/WorkOutline';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 
 import { StyledStepper } from '@/index';
 import { StyledDialogActions } from '@/index';

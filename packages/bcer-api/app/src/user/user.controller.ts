@@ -81,12 +81,16 @@ export class UserController {
     }
     const business = await this.businessService.getBusinessById(businessId);
     const locations = await this.locationService.getBusinessLocations(businessId, 'noi', 'products,manufactures');
-
     let statusObject = {
       myBusinessComplete: Boolean(business.legalName && business.email),
-      noiComplete: locations.length > 0 ? locations.every(l => l.noi) : false,
-      productReportComplete: locations.length > 0 ? locations.every(l => l.products?.length || l.productsCount > 0) : false,
-      manufacturingReportComplete: locations.length > 0 ? locations.every(l => l.manufactures?.length || l.manufacturesCount > 0) || locations.every(l => !l.manufacturing || l.status === LocationStatus.Closed) : false,
+      noiComplete: locations.filter(l => l.status !== 'closed').every(l => l.noi !== null && l.noi !== undefined),
+      productReportComplete: locations.filter(l => l.status !== 'closed').every(l => l.products?.length > 0 || l.productsCount > 0),
+      manufacturingReportComplete: locations.filter(l => l.status !== 'closed').every(l => {
+        if (l.manufacturing) {
+          return l.manufactures?.length > 0 || l.manufacturesCount > 0;
+        }
+        return true;
+      }),
     };
 
     Logger.log(`Time to process status request after middleware ${getDurationInMilliseconds(start)} ms`);

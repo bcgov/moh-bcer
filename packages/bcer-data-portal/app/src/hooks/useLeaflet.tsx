@@ -18,7 +18,7 @@ import markerShadow from '@/assets/images/marker-shadow.png'
 import { useAxiosPost } from './axios';
 import sanitizeHtml from 'sanitize-html';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import ItineraryPdf from './../views/Map/ItineraryPdf';
 import jsPDF from 'jspdf';
@@ -31,7 +31,8 @@ const haLayer = createHealthAuthorityLayer();
 const haLegend = createHealthAuthorityLegend();
 
 function useLeaflet(locationIds: string, config: LocationConfig) {
-  const history = useHistory();
+  const navigate = useNavigate();
+  const history = {push: (path: string) => navigate(path)};
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
 
   const [routeData, setRouteData] = useState<BCDirectionData>();

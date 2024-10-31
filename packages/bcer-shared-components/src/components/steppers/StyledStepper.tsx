@@ -1,67 +1,41 @@
 
 import React, { ReactElement } from 'react';
-import {  } from '@material-ui/styles';
-import { 
-  styled,
-  makeStyles, 
-  Stepper,
-  Step, 
-  StepLabel, 
-  StepIconProps, 
-  StepConnector 
-} from '@material-ui/core';
-
+import { styled, Stepper, Step, StepLabel, StepIconProps, StepConnector } from '@mui/material';
 import { StyledStepperProps, StepperStepProps } from '@/constants/interfaces/stepperInterfaces';
 
-const useStyles = makeStyles({
-  stepperGroup: {
-    backgroundColor: 'transparent',
-    padding: '0px 0px 30px 0px',
+const StyledStepLabel = styled(StepLabel)({
+  alignItems: 'flex-start',
+  color: '#424242',
+  fontSize: '12px',
+  textAlign: 'left',
+  maxWidth: '115px',
+  '&.MuiStepLabel-active': {
+    color: '#3A3A3A',
+    fontWeight: 600,
   },
-  stepLabel: {
-    alignItems: 'flex-start',
-    '& .MuiStepLabel-label': {
-      color: '#424242',
-      fontSize: '12px',
-      textAlign: 'left',
-      maxWidth: '115px',
-      '&.MuiStepLabel-active': {
-        color: '#3A3A3A',
-        fontWeight: 600,
-      },
-    }
-  },
-  activeIconWrapper: {
-    display: 'flex',
-    width: '50px',
-    height: "50px",
-    borderRadius: '30px',
-    backgroundColor: '#0053A4',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  activeIcon: {
-    color: '#fff'
-  },
-  inactiveIconWrapper: {
-    display: 'flex',
-    width: '46px',
-    height: "46px",
-    border: '2px solid #0053A4',
-    borderRadius: '30px',
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  inactiveIcon: {
-    color: '#0053A4'
-  }
 });
 
-/**
- * Uses react styled() to apply styles to the step connector component
- * @returns A Material-UI ReactElement with specified styles
- */
+const ActiveIconWrapper = styled('div')({
+  display: 'flex',
+  width: '50px',
+  height: '50px',
+  borderRadius: '30px',
+  backgroundColor: '#0053A4',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const InactiveIconWrapper = styled('div')({
+  display: 'flex',
+  width: '46px',
+  height: '46px',
+  border: '2px solid #0053A4',
+  borderRadius: '30px',
+  backgroundColor: 'transparent',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
 const StyledStepConnector = styled(StepConnector)({
   top: '23px',
   left: 'calc(-100% + 80px)',
@@ -69,7 +43,7 @@ const StyledStepConnector = styled(StepConnector)({
   '& .MuiStepConnector-lineHorizontal': {
     borderBottom: '5px dotted #0053A4',
     borderTop: 'none',
-  }
+  },
 });
 
 /**
@@ -79,19 +53,17 @@ const StyledStepConnector = styled(StepConnector)({
  * @returns object of type ReactElement - the step icon based on props.active state
  */
 function getStepIcon(props: StepIconProps, step: StepperStepProps) {
-  const classes = useStyles();
-
   const { active } = props;
   const StepIcon = step.icon;
 
-  return(
-    active 
-      ? <div className={classes.activeIconWrapper}>
-          <StepIcon className={classes.activeIcon} />
-        </div>
-      : <div className={classes.inactiveIconWrapper}>
-          <StepIcon className={classes.inactiveIcon} />
-        </div>
+  return (
+    active
+      ? <ActiveIconWrapper>
+          <StepIcon sx={{ color: '#fff' }} />
+        </ActiveIconWrapper>
+      : <InactiveIconWrapper>
+          <StepIcon sx={{ color: '#0053A4' }} />
+        </InactiveIconWrapper>
   );
 }
 
@@ -105,33 +77,28 @@ function getStepIcon(props: StepIconProps, step: StepperStepProps) {
  * @returns object of type ReactElement
  *
  */
-export function StyledStepper ({
-activeStep,
-steps,
-...props
-}: StyledStepperProps):ReactElement {
-  const classes = useStyles({});
-
+export function StyledStepper({
+  activeStep,
+  steps,
+  ...props
+}: StyledStepperProps): ReactElement {
   return (
-    <Stepper 
+    <Stepper
       alternativeLabel
-      className={classes.stepperGroup}
-      activeStep={activeStep} 
-      connector={<StyledStepConnector/>} 
+      sx={{ backgroundColor: 'transparent', padding: '0px 0px 30px 0px' }}
+      activeStep={activeStep}
+      connector={<StyledStepConnector />}
       {...props}
     >
-      {
-        steps.map((element: StepperStepProps) => (
-          <Step key={element.label}>
-            <StepLabel
-              className={classes.stepLabel}
-              StepIconComponent={(props) => getStepIcon(props, element)}
-            >
-              {element.label}
-            </StepLabel>
-          </Step>
-        ))
-      }
+      {steps.map((element: StepperStepProps) => (
+        <Step key={element.label}>
+          <StyledStepLabel
+            StepIconComponent={(props) => getStepIcon(props, element)}
+          >
+            {element.label}
+          </StyledStepLabel>
+        </Step>
+      ))}
     </Stepper>
   );
 }

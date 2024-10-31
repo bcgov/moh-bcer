@@ -6,7 +6,7 @@ import {
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
-import * as faker from 'faker/locale/en_CA';
+import { faker } from '@faker-js/faker/locale/en_CA';
 
 export class ProductDTO {
 
@@ -40,14 +40,14 @@ export class ProductDTO {
 
   @ApiProperty({
     description: 'Manufacturer street address',
-    example: faker.address.streetAddress()
+    example: faker.location.streetAddress()
   })
   @IsNotEmpty()
   manufacturerAddress: string;
 
   @ApiProperty({
     description: '',
-    example: faker.phone.phoneNumber('CA')
+    example: faker.phone.number()
   })
   @IsNotEmpty()
   @IsPhoneNumber('CA')
@@ -63,7 +63,7 @@ export class ProductDTO {
 
   @ApiProperty({
     description: 'Manufacturer contact',
-    example: faker.name.firstName() + faker.name.lastName()
+    example: faker.person.firstName() + faker.person.lastName()
   })
   @IsNotEmpty()
   @IsString()

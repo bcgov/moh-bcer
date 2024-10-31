@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog, ProvinceLabels} from 'vaping-regulation-shared-components';
+import React, { useContext, useState, useEffect, useRef } from 'react';
+import { styled } from '@mui/material/styles';
+import { StyledTable, StyledButton, StyledDialog, StyledConfirmDialog, ProvinceLabels } from 'vaping-regulation-shared-components';
 import { Form, Formik } from 'formik';
-import { makeStyles } from '@material-ui/core';
-
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { IBusinessLocationValues } from '@/components/form/validations/vBusinessLocation';
@@ -17,22 +16,37 @@ import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { LocationUtil } from '@/utils/location.util';
 import { getInitialPagination } from '@/utils/util';
+import axios from 'axios';
 
+const PREFIX = 'ConfirmAndSubmit';
 
-const useStyles = makeStyles({
-  box: {
+const classes = {
+  box: `${PREFIX}-box`,
+  boxTitle: `${PREFIX}-boxTitle`,
+  boxHeader: `${PREFIX}-boxHeader`,
+  boxDescription: `${PREFIX}-boxDescription`,
+  boxRow: `${PREFIX}-boxRow`,
+  buttonIcon: `${PREFIX}-buttonIcon`,
+  csvLink: `${PREFIX}-csvLink`,
+  rowTitle: `${PREFIX}-rowTitle`,
+  rowContent: `${PREFIX}-rowContent`,
+  editButton: `${PREFIX}-editButton`
+};
+
+const Root = styled('div')({
+  [`& .${classes.box}`]: {
     padding: '20px',
     borderRadius: '10px',
     border: '1px solid #CDCED2',
     backgroundColor: '#fff',
     marginBottom: '20px',
   },
-  boxTitle: {
+  [`& .${classes.boxTitle}`]: {
     fontSize: '17px',
     fontWeight: 600,
     lineHeight: '22px',
   },
-  boxHeader: {
+  [`& .${classes.boxHeader}`]: {
     fontSize: '17px',
     fontWeight: 600,
     display: 'flex',
@@ -40,51 +54,48 @@ const useStyles = makeStyles({
     alignItems: 'center',
     paddingBottom: '15px',
   },
-  boxDescription: {
+  [`& .${classes.boxDescription}`]: {
     fontSize: '14px',
     color: '#3A3A3A',
     lineHeight: '20px',
     paddingBottom: '15px',
   },
-  boxRow: {
+  [`& .${classes.boxRow}`]: {
     display: 'flex',
     paddingBottom: '20px',
   },
-  buttonIcon: {
+  [`& .${classes.buttonIcon}`]: {
     paddingRight: '5px',
     color: '#285CBC',
     fontSize: '20px',
   },
-  csvLink: {
+  [`& .${classes.csvLink}`]: {
     textDecoration: 'none',
   },
-  rowTitle: {
+  [`& .${classes.rowTitle}`]: {
     fontSize: '14px',
     color: '#424242',
     width: '300px'
   },
-  rowContent: {
+  [`& .${classes.rowContent}`]: {
     fontSize: '14px',
     fontWeight: 600,
     color: '#3A3A3A',
   },
-  editButton: {
+  [`& .${classes.editButton}`]: {
     fontSize: '14px',
     width: '150px',
     minWidth: '150px'
   }
-})
+});
 
-export default function ConfirmAndSubmit () {
-  const classes = useStyles();
-
-  const [businessInfo, setBusinessInfo ] = useContext(BusinessInfoContext);
-  const [appGlobal, setAppGlobalContext ] = useContext(AppGlobalContext);
+export default function ConfirmAndSubmit() {
+  const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
+  const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
   const [isEditOpen, setOpenEdit] = useState<boolean>();
   const [isDeleteOpen, setOpenDelete] = useState<boolean>();
   const [isEditDetailsOpen, setOpenEditDetails] = useState<boolean>();
-  const [isAddLocationOpen, setOpenAddLocation] = useState<boolean>(false);
   const viewFullscreenTable = useState<boolean>(false);
   const [{ loading: postLoading, error: postError, data: newSubmission }, patch] = useAxiosPatch(`/submission/${businessInfo.submissionId}`, { manual: true });
   const newLocations = businessInfo.locations.filter((l: any) => !l.id);
@@ -92,48 +103,57 @@ export default function ConfirmAndSubmit () {
   const { locations, details }: {
     details: any,
     locations: Array<any>,
-  }  = businessInfo;
+  } = businessInfo;
+
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (businessInfo?.submissionId) {
-      (async() => {
-        await patch({ data: { data: businessInfo } });
-      })()
+      abortControllerRef.current = new AbortController();
+      const signal = abortControllerRef.current.signal;
+
+      (async () => {
+        try {
+          await patch({ data: { data: businessInfo }, signal });
+        } catch (error) {
+          if (axios.isCancel(error)) {
+            console.log('Request canceled', error.message);
+          } else {
+            throw error;
+          }
+        }
+      })();
+
+      return () => {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+      };
     }
-  }, [businessInfo])
+  }, [businessInfo]);
 
   useEffect(() => {
     if (postError) {
-      setAppGlobalContext({...appGlobal, networkErrorMessage: formatError(postError)});
+      setAppGlobalContext({ ...appGlobal, networkErrorMessage: formatError(postError) });
     }
   }, [postError]);
-  
+
   const confirmDelete = () => {
-    const remainder = newLocations.filter((element: IBusinessLocationValues) =>{
-      return element.tableData.id !== targetRow.tableData.id
-    })
+    const remainder = newLocations.filter((element: IBusinessLocationValues) => {
+      return element.tableData.id !== targetRow.tableData.id;
+    });
     const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
-    setBusinessInfo({...businessInfo, locations: [...existingLocations, ...remainder]});
+    setBusinessInfo({ ...businessInfo, locations: [...existingLocations, ...remainder] });
     setOpenDelete(false);
-  }
+  };
 
-  const confirmEditDetails = async(values: BusinessDetails) => {
-    setBusinessInfo({...businessInfo, details: values});
+  const confirmEditDetails = async (values: BusinessDetails) => {
+    setBusinessInfo({ ...businessInfo, details: values });
     setOpenEditDetails(false);
-  }
-
-  const handleDelete = (rowData: IBusinessLocationValues) => {
-    setTargetRow(rowData);
-    setOpenDelete(true);
-  }
-
-  const handleEdit = (rowData: IBusinessLocationValues) => {
-    setTargetRow(rowData);
-    setOpenEdit(true);
-  }
+  };
 
   return (
-    <>
+    <Root>
       <div className={classes.box}>
         <div className={classes.boxHeader}>
           Business Detail
@@ -193,7 +213,7 @@ export default function ConfirmAndSubmit () {
             <div className={classes.rowContent}>
               {details.postal}
             </div>
-          </div>          
+          </div>
           <div className={classes.boxRow}>
             <div className={classes.rowTitle}>
               Province
@@ -230,7 +250,7 @@ export default function ConfirmAndSubmit () {
       </div>
       <div className={classes.box}>
       {
-        newLocations.length 
+        newLocations.length
           ?
         <FullScreen fullScreenProp={viewFullscreenTable}>
           <TableWrapper
@@ -244,7 +264,7 @@ export default function ConfirmAndSubmit () {
               }),
               filename: 'business_locations.csv'
             }}
-            fullScreenProp={viewFullscreenTable} 
+            fullScreenProp={viewFullscreenTable}
             isOutlined={false}
           >
             <div style={{ overflowX: 'auto' }}>
@@ -301,6 +321,6 @@ export default function ConfirmAndSubmit () {
           :
             null
       }
-    </>
-  )
+    </Root>
+  );
 }

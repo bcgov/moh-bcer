@@ -1,7 +1,7 @@
 import { UserDetails } from '@/constants/localInterfaces';
 import { getInitialPagination } from '@/util/general.util';
 import { UserManagementUtil } from '@/util/userManagement.util';
-import { Box, LinearProgress } from '@material-ui/core';
+import { Box, LinearProgress } from '@mui/material';
 import React from 'react';
 import { StyledTable } from 'vaping-regulation-shared-components';
 

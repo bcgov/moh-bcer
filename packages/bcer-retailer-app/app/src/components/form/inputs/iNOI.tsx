@@ -3,8 +3,13 @@ import { Field, ErrorMessage, FormikProps, useFormikContext } from 'formik';
 import ErrorComponent from '@/components/form/ErrorComponent';
 import S from '@/css/forms.module.scss';
 
+interface FormValues {
+  underage: string;
+  underage_other: string;
+}
+
 function NoiInputs(props: FormikProps<{}>) {
-  const { values, errors } = useFormikContext();
+  const { values, errors } = useFormikContext<FormValues>();
   return (
     <form onSubmit={props.handleSubmit}>
       <section>
@@ -46,7 +51,7 @@ function NoiInputs(props: FormikProps<{}>) {
 
       <section>
         <p>
-          5. Please state if persons under 19 years of age are permitted on the sales premises*
+          5. Are persons under 19 years of age permitted on the sales premises?*
           <br />
           <small>
             If your retail location has unique circumstances surrounding age-restriction, please select "other" and describe in the comment box below.
@@ -61,7 +66,7 @@ function NoiInputs(props: FormikProps<{}>) {
       </section>
 
       <section>
-        <p>6. Which regional health authority is the sales premises located in? <a href="https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/administrative-boundaries/health-boundaries" target="_blank" rel="noopener noreferrer">A map of the regional health authorities</a></p>
+        <p>6. Which regional health authority is the sales premises located in? <a href="https://www2.gov.bc.ca/gov/content/health/about-bc-s-health-care-system/partners/health-authorities/regional-health-authorities" target="_blank" rel="noopener noreferrer">A map of the regional health authorities</a></p>
         <label><Field name="ha" type="radio" value="fraser" />Fraser Health</label>
         <label><Field name="ha" type="radio" value="interior" />Interior Health</label>
         <label><Field name="ha" type="radio" value="island" />Island Health</label>

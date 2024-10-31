@@ -4,8 +4,11 @@ export function stringGen(length) {
   return lorem.repeat(multiply).slice(0, length || 100);
 }
 
-export function clickButton(contains){
-  cy.get("button").contains(contains).parent().should("exist").should("not.be.disabled").click();
+export function clickButton(contains) {
+  cy.contains('button', contains)
+    .should('exist')
+    .and('not.be.disabled')
+    .click();
 }
 
 export function insideDialog(func){
@@ -25,6 +28,14 @@ export function checkButtonIsDisabled(contains){
 export function checkInputValue(name, value, type){
   const selector = new Selector(type || "input").addName(name).build();
   cy.get(selector).should("have.value", value);
+}
+
+export function clearCache(){
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.window().then((win) => {
+    win.sessionStorage.clear();
+  });
 }
 
 export class Selector {

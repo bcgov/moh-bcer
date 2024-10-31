@@ -1,8 +1,8 @@
-FROM node:17.3.0-slim
+FROM node:22.0.0
 
-MAINTAINER FreshWorks <web@freshworks.io>
+LABEL maintainer="CGI"
 
-ENV PATH $PATH:/usr/src/app/node_modules/.bin
+ENV PATH=$PATH:/usr/src/app/node_modules/.bin
 
 WORKDIR '/app'
 
@@ -16,7 +16,7 @@ RUN npm run build:prem
 
 RUN npm install -g typeorm
 
-COPY ./.test-files/ormconfig.js ./ormconfig.js
+COPY ./.test-files/datasource.js ./datasource.js
 COPY ./.test-files/.env.test ./env
 
 CMD [ "npm", "run", "start:prod" ]

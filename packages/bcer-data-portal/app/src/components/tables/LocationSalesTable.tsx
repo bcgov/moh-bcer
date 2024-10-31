@@ -1,42 +1,44 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, Dialog, Paper, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import moment from 'moment';
+import { CSVLink } from 'react-csv';
+import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
 import { GroupedSalesRO, SalesRO } from '@/constants/localInterfaces';
 import { useAxiosGet } from '@/hooks/axios';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
-import { Box, Dialog, makeStyles, Paper, Typography } from '@material-ui/core';
-import moment from 'moment';
-import React, { useEffect, useRef, useState } from 'react';
-import { CSVLink } from 'react-csv';
-import { StyledButton, StyledTable } from 'vaping-regulation-shared-components';
 
-const useStyles = makeStyles(() => ({
-  csvLink: {
-    textDecoration: 'none',
-  },
-  boxTitle: {
-    paddingBottom: '10px',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBottom: '10px',
-  },
-  tableBox: {
-    border: 'solid 1px #CDCED2',
-    borderRadius: '4px',
-    padding: '1.4rem',
-    boxShadow: 'none',
-  },
-  dialogWrap: {
-    marginTop: '100px',
-    padding: '1rem 1.5rem',
-  },
-}));
+const CsvLink = styled(CSVLink)({
+  textDecoration: 'none',
+});
 
-function LocationSalesTable({ locationId, viewSales }: { locationId: string, viewSales : boolean}) {
+const BoxTitle = styled(Typography)({
+  paddingBottom: '10px',
+});
+
+const ActionsWrapper = styled(Box)({
+  display: 'flex',
+  justifyContent: 'space-between',
+  paddingBottom: '10px',
+});
+
+const TableBox = styled(Paper)({
+  border: 'solid 1px #CDCED2',
+  borderRadius: '4px',
+  padding: '1.4rem',
+  boxShadow: 'none',
+});
+
+const DialogWrap = styled('div')({
+  marginTop: '100px',
+  padding: '1rem 1.5rem',
+});
+
+function LocationSalesTable({ locationId, viewSales }: { locationId: string; viewSales: boolean }) {
   const [selectedSalesReport, setSelectedSalesReport] = useState<GroupedSalesRO>();
-  const [viewOpen, setViewOpen] = useState<boolean>();
+  const [viewOpen, setViewOpen] = useState<boolean>(false);
   const csvRef = useRef(null);
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
-  const classes = useStyles();
 
   const [{ data, loading, error }, get] = useAxiosGet(
     `/data/location/get-location/${locationId}?includes=sales,sales.product,sales.productSold`,
@@ -51,13 +53,12 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
   ] = useAxiosGet(`/data/location/download/`, { manual: true });
 
   useEffect(() => {
-    showNetworkErrorMessage(downloadError)
-  }, [downloadError])
+    showNetworkErrorMessage(downloadError);
+  }, [downloadError, showNetworkErrorMessage]);
 
   useEffect(() => {
-    showNetworkErrorMessage(error)
-  }, [error]);
-  
+    showNetworkErrorMessage(error);
+  }, [error, showNetworkErrorMessage]);
 
   const handleSalesSelect = (salesReport: GroupedSalesRO) => {
     setSelectedSalesReport(salesReport);
@@ -85,7 +86,7 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
 
   return (
     <Box>
-      <Typography variant="body2" style={{ paddingBottom: '8px' }}>
+      <Typography variant="body2" sx={{ paddingBottom: '8px' }}>
         {data?.sales?.length || 0} sales reports submitted
       </Typography>
       <StyledTable
@@ -102,7 +103,7 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
           {
             title: '',
             render: (salesReport: SalesRO) => (
-              viewSales? (
+              viewSales ? (
                 <StyledButton
                   variant="small-outlined"
                   onClick={async () => {
@@ -120,7 +121,7 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
           {
             title: '',
             render: (salesReport: GroupedSalesRO) => (
-              viewSales? (
+              viewSales ? (
                 <StyledButton
                   variant="table"
                   onClick={() => handleSalesSelect(salesReport)}
@@ -132,7 +133,7 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
           },
         ]}
       />
-      <CSVLink
+      <CsvLink
         ref={csvRef}
         headers={[
           'Brand Name',
@@ -147,7 +148,6 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
         ]}
         data={download}
         filename={`sales_report_${data?.doingBusinessAs}.csv`}
-        className={classes.csvLink}
         target="_blank"
       />
       {selectedSalesReport && (
@@ -156,20 +156,20 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
           open={viewOpen}
           onClose={() => {
             setSelectedSalesReport(null);
-            setViewOpen((open) => !open);
+            setViewOpen(false);
           }}
         >
-          <div className={classes.dialogWrap}>
-            <Paper variant="outlined" className={classes.tableBox}>
-              <Typography className={classes.boxTitle} variant="subtitle1">
+          <DialogWrap>
+            <TableBox variant="outlined">
+              <BoxTitle variant="subtitle1">
                 Reports
-              </Typography>
-              <div className={classes.actionsWrapper}>
-                <Typography style={{ paddingBottom: '8px' }} variant="body2">
+              </BoxTitle>
+              <ActionsWrapper>
+                <Typography variant="body2" sx={{ paddingBottom: '8px' }}>
                   There are {selectedSalesReport.reports.length} submitted
                   reports
                 </Typography>
-              </div>
+              </ActionsWrapper>
               <div>
                 <StyledTable
                   data={selectedSalesReport.reports}
@@ -187,27 +187,23 @@ function LocationSalesTable({ locationId, viewSales }: { locationId: string, vie
                       field: 'containers',
                     },
                     {
-                      title: 'Containers',
-                      field: 'containers',
-                    },
-                    {
                       title: 'UPC',
                       field: 'productSold.upc',
                     },
                   ]}
                 />
               </div>
-            </Paper>
-            <div>
+            </TableBox>
+            <Box>
               <StyledButton
                 variant="outlined"
                 onClick={() => setViewOpen(false)}
-                style={{ margin: '1rem 0' }}
+                sx={{ margin: '1rem 0' }}
               >
                 Close
               </StyledButton>
-            </div>
-          </div>
+            </Box>
+          </DialogWrap>
         </Dialog>
       )}
     </Box>

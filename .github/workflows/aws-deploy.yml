@@ -46,7 +46,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: FEATURE/aws
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -144,10 +144,10 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
-      - name: Use Node.js 14
+      - name: Use Node.js 22
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 22
 
       - name: Build project shared components
         run: |
@@ -186,9 +186,9 @@ jobs:
 
       - name: Build project data portal frontend
         run: |
-         cd packages/bcer-data-portal/app
-         npm install
-         npm run build
+          cd packages/bcer-data-portal/app
+          npm install
+          npm run build
 
       - name: Upload to S3 bucket data portal
         run: |

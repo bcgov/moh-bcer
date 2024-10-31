@@ -1,35 +1,13 @@
-import { Box, InputAdornment, makeStyles } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
 import React from 'react';
+import { Box, InputAdornment } from '@mui/material';
+import { Autocomplete } from '@mui/material';
+import { styled } from '@mui/system';
 import { StyledTextInput } from 'vaping-regulation-shared-components';
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@mui/icons-material/Search';
 
-const useStyles = makeStyles({
-  groupHeader: {
-    display: 'flex',
-    fontSize: '17px',
-    fontWeight: 600,
-    padding: '10px 0px',
-  },
-  radioWrapper: {
-    padding: '0px 20px 15px 0px',
-  },
-  optionalField: {},
-  autocompleteField: {
-    '& .MuiAutocomplete-inputRoot': {
-      padding: '0px 12px 0px 0px !important',
-    },
-  },
-  helpIcon: {
-    fontSize: '22px',
-    color: '#0053A4',
-  },
-  tooltip: {
-    backgroundColor: '#0053A4',
-    fontSize: '14px',
-  },
-  arrow: {
-    color: '#0053A4',
+const AutocompleteField = styled(Autocomplete)({
+  '& .MuiAutocomplete-inputRoot': {
+    padding: '0px 12px 0px 0px !important',
   },
 });
 
@@ -48,11 +26,9 @@ function AutocompleteSearch({
   onTextChange,
   placeholder,
 }: AutoCompleteSearchProps) {
-  const classes = useStyles();
   return (
     <Box>
-      <Autocomplete
-        classes={{ root: classes.autocompleteField }}
+      <AutocompleteField
         options={options || []}
         getOptionLabel={getOptionLabel}
         freeSolo

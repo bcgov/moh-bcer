@@ -24,10 +24,10 @@ export class ProductSoldService {
   ): Promise<ProductSoldEntity[]> {
     let productSolds = this.productSoldRepository.create(dtos);
     const business = await this.businessRepository.findOneOrFail({
-      id: businessId,
+      where: {id: businessId}
     });
     const location = await this.locationRepository.findOneOrFail({
-      id: locationId,
+      where: {id: locationId}
     });
 
     productSolds = productSolds.map(productSold => {

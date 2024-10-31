@@ -1,40 +1,46 @@
-import React, { ReactElement, CSSProperties, forwardRef } from 'react';
-import { makeStyles, Paper, IconButton } from '@material-ui/core';
+import React from 'react';
+import { styled } from '@mui/material/styles';
+import { ReactElement, CSSProperties } from 'react';
+import { makeStyles, Paper } from '@mui/material';
 import MaterialTable, { MTableToolbar } from '@material-table/core';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import { MaterialTableProps } from '@material-table/core';
 
-import { MaterialTableProps } from 'material-table';
+const PREFIX = 'SalesTable';
 
-export interface StyledTableProps extends MaterialTableProps<any> {
-  isEditable?: boolean;
-  editHandler?: Function;
-  deleteHandler?: Function;
-  fullscreenButton?: React.ReactElement;
-}
-const useStyles = makeStyles({
-  root: {
+const classes = {
+  root: `${PREFIX}-root`,
+  editButtonWrapper: `${PREFIX}-editButtonWrapper`,
+  editButton: `${PREFIX}-editButton`,
+  deleteIcon: `${PREFIX}-deleteIcon`,
+  tableHeader: `${PREFIX}-tableHeader`,
+  checkbox: `${PREFIX}-checkbox`,
+  toolbarWrap: `${PREFIX}-toolbarWrap`
+};
+
+const Root = styled('div')({
+  [`& .${classes.root}`]: {
     border: '1px solid #CDCED2',
     borderRadius: '5px',
     boxShadow: 'none',
     padding: '0px 1px 0px 1px',
   },
-  editButtonWrapper: {
+  [`& .${classes.editButtonWrapper}`]: {
     display: 'flex',
     alignItems: 'center',
   },
-  editButton: {
+  [`& .${classes.editButton}`]: {
     width: '90px',
     fontSize: '14px',
     minWidth: '90px',
     lineHeight: '18px',
   },
-  deleteIcon: {
+  [`& .${classes.deleteIcon}`]: {
     color: '#ff534a',
   },
-  tableHeader: {
+  [`& .${classes.tableHeader}`]: {
     display: 'contents',
   },
-  checkbox: {
+  [`& .${classes.checkbox}`]: {
     '& .MuiIconButton-colorSecondary': {
       '&:hover': {
         background: 'rgba(0, 83, 164, .03)',
@@ -47,13 +53,20 @@ const useStyles = makeStyles({
       color: '#0053A4',
     },
   },
-  toolbarWrap: {
+  [`& .${classes.toolbarWrap}`]: {
     display: 'flex',
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
 });
+
+export interface StyledTableProps extends MaterialTableProps<any> {
+  isEditable?: boolean;
+  editHandler?: Function;
+  deleteHandler?: Function;
+  fullscreenButton?: React.ReactElement;
+}
 
 /**
  * Applies styling to a table's header component
@@ -94,8 +107,11 @@ const rowStyle = (rowData: any): CSSProperties => {
  * Override for MTable Container component
  */
 const CustomContainer = (props: any) => {
-  const classes = useStyles();
-  return <Paper className={`${classes.root} ${classes.checkbox}`} {...props} />;
+  return(
+    <Root>
+      <Paper className={`${classes.root} ${classes.checkbox}`} {...props} />
+    </Root> 
+  )
 };
 
 /**
@@ -117,16 +133,18 @@ export function SalesTable({
   fullscreenButton,
   ...props
 }: StyledTableProps): ReactElement {
-  const classes = useStyles();
+
   /**
    * Override for MTable Toolbar component
    */
   const CustomToolbar = React.memo((props: any) => {
     return (
-      <div className={!!fullscreenButton ? classes.toolbarWrap : ''}>
-        {fullscreenButton}
-        <MTableToolbar {...props} />
-      </div>
+      <Root>
+        <div className={!!fullscreenButton ? classes.toolbarWrap : ''}>
+          {fullscreenButton}
+          <MTableToolbar {...props} />
+        </div>
+      </Root>
     );
   });
 

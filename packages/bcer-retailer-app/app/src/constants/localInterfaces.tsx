@@ -81,6 +81,10 @@ export interface BusinessLocation {
   status: LocationStatus;
   reportStatus?: LocationReportStatus;
   webpage: string;
+  tableData?: {
+    checked: boolean;
+    id: number;
+  };
 }
 
 export interface LocationFileUploadRO {

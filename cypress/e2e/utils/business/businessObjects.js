@@ -31,8 +31,13 @@ export const businessInputErrorMessage = {
   },
 };
 
+export const businessToolTipMessage = {
+  legalName: "This is the legal business name (i.e., 498390 Shell Ltd).",
+}
+
 export const businessFieldNames = {
   legalName: 'input[name="legalName"]',
+  toolTip:'button[name="businessLegalNameTooltip"]',
   businessName: 'input[name="businessName"]',
   addressLine1: 'input[name="addressLine1"]',
   addressLine2: 'input[name="addressLine2"]',

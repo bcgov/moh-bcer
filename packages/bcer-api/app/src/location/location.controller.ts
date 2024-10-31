@@ -10,6 +10,7 @@ import {
   Query,
   Request,
   UseGuards,
+  Post,
 } from '@nestjs/common';
 import {
   ApiParam,
@@ -41,6 +42,10 @@ export class LocationController {
     private geoCodeService: GeoCodeService,
   ){}
 
+  /**
+   * 
+   * Get locations
+   */
   @ApiOperation({ summary: 'Get Locations' })
   @ApiResponse({ status: HttpStatus.OK, type: [LocationRO] })
   @ApiQuery({
@@ -79,7 +84,27 @@ export class LocationController {
   ){
     return this.geoCodeService.determineHealthAuthority(lat, lng);
   }
-   
+  
+  /**
+ * 
+ * Check if location address exists when a user add a new location
+ */
+  @ApiOperation({ summary: 'Check if location address exists' })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @HttpCode(HttpStatus.OK)
+  @Roles('user')
+  @UseGuards(BusinessGuard)
+  @Get('check-address-exists')
+  async checkLocationAddressExists(
+    @Query('address') fullAddress: string
+  ): Promise<boolean> {
+    return await this.service.checkAddressExists(fullAddress);
+  }
+  
+  /**
+ * 
+ * Get a single Location by id
+ */
   @ApiOperation({ summary: 'Get Single Location' })
   @ApiParam({
     name: 'includes',
@@ -187,4 +212,21 @@ export class LocationController {
        fail: payload.ids.length - (result.affected || 0)
      });
    }
+
+  /**
+   * 
+   * Email retailer and VapingInfo when duplicate location(s) created
+   */
+   @ApiOperation({ summary: 'Email retailer and VapingInfo when duplicate location(s) created' })
+   @ApiResponse({ status: HttpStatus.OK })
+   @HttpCode(HttpStatus.OK)
+   @UseGuards(AuthGuard)
+   @Roles('user')
+   @Post("/notify-duplicate-locations")
+   async sendEmailNotification(@Body() dataForContext: any) {
+    const result = await this.service.sendEmailNotification(dataForContext);
+    return {
+      success: result,
+    };
+  }
 }

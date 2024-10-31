@@ -69,7 +69,15 @@ export class UserDataPortalController {
   @Roles(ROLES.HA_ADMIN, ROLES.MOH_ADMIN)
   @Get('permissions')
   async getPermissions(@Request() req: RequestWithUser): Promise<PermissionRO> {
-    return this.authService.getPermissions(req);
+    try {
+      console.log('Request received:', { headers: req.headers, user: req.user });
+      const result = await this.authService.getPermissions(req);
+      console.log('Permissions calculated:', result);
+      return result;
+    } catch (error) {
+      console.error('Error in getPermissions:', error);
+      throw error;
+    }
   }
 
 

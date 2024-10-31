@@ -43,7 +43,7 @@ export class AuthGuard implements CanActivate {
       const jwksClient = jwksRsa({ jwksUri: `${process.env.KEYCLOAK_AUTH_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/certs` });
       const decoded = jwt.decode(token, { complete: true });
       const kid = decoded['header']?.kid;
-      const jwks = await jwksClient.getSigningKeyAsync(kid);
+      const jwks = await jwksClient.getSigningKey(kid);
       const signingKey = jwks.getPublicKey();
       const verified = jwt.verify(token, signingKey);
       if (verified['azp'] !== process.env.KEYCLOAK_CLIENT) {

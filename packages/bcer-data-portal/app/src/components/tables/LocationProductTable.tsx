@@ -4,7 +4,7 @@ import { StyledTable } from 'vaping-regulation-shared-components';
 import { useAxiosGet } from '@/hooks/axios';
 import { AppGlobalContext } from '@/contexts/AppGlobal';
 import { formatError } from '@/util/formatting';
-import { Box, LinearProgress, Typography } from '@material-ui/core';
+import { Box, LinearProgress, Typography } from '@mui/material';
 import useNetworkErrorMessage from '@/hooks/useNetworkErrorMessage';
 
 function LocationProductTable({ locationId }: { locationId: string }) {
