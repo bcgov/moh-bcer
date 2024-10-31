@@ -179,20 +179,6 @@ export default function AddProductReports() {
   }, [mapping])
 
   useEffect(() => {
-    (async () => {
-      if (productsData && !productsError) {
-        setProductInfo({...productInfo, products: productsData.products})
-        await patch({
-          url: `/submission/${productInfo.submissionId}`,
-          data: Object.assign({}, {
-            type: SubmissionTypeEnum.product,
-          }, { data: productInfo })
-        });
-      }
-    })()
-  }, [productsData]);
-
-  useEffect(() => {
     if (productsError) {
       setAppGlobal({...appGlobal, networkErrorMessage: formatError(productsError)})
     }
@@ -232,12 +218,33 @@ export default function AddProductReports() {
   const handleModeSwitch = (value: {'mode select': any}) => {
     setEntry(value['mode select']);
   }
-  const selectFromLocation = async() => { 
+  const selectFromLocation = async () => {
     if (value) {
-      await get({ url:`/location/${value.id}?includes=products` })
-      navigate('/products/confirm-products')
+      try {
+        const response = await get({ url: `/location/${value.id}?includes=products` });
+        if (response) {
+          setProductInfo((prevInfo: any) => ({
+            ...prevInfo,
+            products: response.data.products,
+          }));
+  
+          await patch({
+            url: `/submission/${productInfo.submissionId}`,
+            data: {
+              type: SubmissionTypeEnum.product,
+              data: {
+                ...productInfo,
+                products: response.data.products,
+              },
+            },
+          });
+          navigate('/products/confirm-products');
+        }
+      } catch (error) {
+        console.error('Error fetching products or updating submission:', error);
+      }
     }
-  }
+  };
 
   const handleUpload = (data: ProductsFileUploadRO | null) => {
     if (data) {
