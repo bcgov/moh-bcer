@@ -469,7 +469,15 @@ function LocationsContent() {
                 authConfig
                   &&
                 <>
-                  <Typography variant="h5" className={classes.businessName}>{data.business.businessName} {data.doingBusinessAs ? "("+data.doingBusinessAs+")": ""}</Typography>
+                  <Typography variant="h5" className={classes.businessName}>
+                    Business Name: {data.business.businessName}
+                    {data.doingBusinessAs && (
+                      <>
+                        <br />
+                        Doing Business As: {data.doingBusinessAs}
+                      </>
+                    )}
+                  </Typography>
                   <Grid container spacing={2}>
                     <Grid item lg={3} xs= {12} className={classes.rightDivWrap}>
                       <Box className={`${classes.tableBox} ${classes.toc}`}>
