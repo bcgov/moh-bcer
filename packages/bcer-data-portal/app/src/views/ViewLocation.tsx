@@ -470,7 +470,7 @@ function LocationsContent() {
                   &&
                 <>
                   <Typography variant="h5" className={classes.businessName}>
-                    Business Name: {data.business.businessName}
+                    Legal Business Name: {data.business.legalName}
                     {data.doingBusinessAs && (
                       <>
                         <br />
