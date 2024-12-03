@@ -44,6 +44,7 @@ type BottomStepperProps = {
   steps: Array<{ path: string }>;
   currentStep: number;
   onAdvance?: OnAdvance[];
+  isLoading?: boolean;
 }
 
 export default function Bottom ({
@@ -55,6 +56,7 @@ export default function Bottom ({
   onAdvance,
   steps,
   currentStep,
+  isLoading,
 }: BottomStepperProps) {
 
 
@@ -155,7 +157,7 @@ export default function Bottom ({
         ) : (
           <StyledButton
             variant='contained'
-            disabled={!canAdvance || loading}
+            disabled={!canAdvance || loading || isLoading}
             onClick={stepAction}
           >
             {'Next'}

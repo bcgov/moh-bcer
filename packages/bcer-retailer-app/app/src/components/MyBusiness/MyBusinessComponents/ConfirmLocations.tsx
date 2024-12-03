@@ -5,6 +5,7 @@ import { Checkbox, FormControlLabel, makeStyles, Typography } from '@mui/materia
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { StyledButton, StyledTable, StyledConfirmDialog } from 'vaping-regulation-shared-components';
 import WarningIcon from '@mui/icons-material/Warning';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { BusinessLocationHeaders } from '@/constants/localEnums';
 import { BusinessInfoContext } from '@/contexts/BusinessInfo';
@@ -17,7 +18,6 @@ import { LocationUtil } from '@/utils/location.util';
 import FullScreen from '@/components/generic/FullScreen';
 import TableWrapper from '@/components/generic/TableWrapper';
 import { getInitialPagination } from '@/utils/util';
-import { useAxiosGet } from '@/hooks/axios';
 
 const PREFIX = 'ConfirmLocations';
 
@@ -110,7 +110,12 @@ const Root = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function ConfirmLocations () {
+interface ConfirmLocationsProps {
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+}
+
+export default function ConfirmLocations({ isLoading, setIsLoading }: ConfirmLocationsProps) {
 
   const [businessInfo, setBusinessInfo] = useContext(BusinessInfoContext);
   const [targetRow, setTargetRow] = useState<IBusinessLocationValues>();
@@ -119,18 +124,19 @@ export default function ConfirmLocations () {
   const [filterTable, setFilterTable] = useState<boolean>(false);
   const viewFullscreenTable = useState<boolean>(false);
   const [newLocations, setNewLocations] = useState<Array<IBusinessLocationValues>>([]);
-  const {errors: uploadErrors, validatedData, validateCSV} = useCsvValidator();
-  const [{ data: addressExistsData }, checkAddressExists] = useAxiosGet('', { manual: true });
-  const [duplicateWarning, setDuplicateWarning] = useState<String>("");
-  const [duplicateCount, setDuplicateCount] = useState<number>(0);
+  const { errors: uploadErrors, validatedData, validateCSV, duplicateWarning, duplicateCount } = useCsvValidator();
 
   useEffect(() => {
-    setNewLocations(businessInfo.locations.filter((l: any) => !l.id)); //reset newLocations
+    setNewLocations(businessInfo.locations.filter((l: any) => !l.id)); //locations without id are new
   }, [businessInfo.locations])
 
   useEffect(() => {
-    validateCSV(BusinessCsvValidation, newLocations)
-    verifyDuplicates();
+    const validateAndCheckDuplicates = async () => {
+      setIsLoading(true);
+      await validateCSV(BusinessCsvValidation, newLocations);
+      setIsLoading(false);
+    };
+    validateAndCheckDuplicates();
   }, [newLocations]);
 
   useEffect(() => {
@@ -158,41 +164,13 @@ export default function ConfirmLocations () {
     setOpenEdit(true);
   }
 
-  const docheckAddressExists = async(fullAddress: string) => {
-    const response = await checkAddressExists({ url: `/location/check-address-exists?address=${fullAddress}` });
-    return response.data;
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </div>
+    );
   }
-
-  const verifyDuplicates = async () => {
-    if (newLocations.length === 0) return;
-  
-    const updatedLocations = [...newLocations];
-    let duplicateWarnings = "";
-    let duplicateCount = 0;
-    let hasChanges = false;
-  
-    for (let i = 0; i < newLocations.length; i++) {
-      const location = newLocations[i];
-      if (!location.tableData) location.tableData = { id: i };
-      if (location.addressLine1) {
-        const addressExists = await docheckAddressExists(location.addressLine1);
-        if (addressExists) {
-          duplicateWarnings = duplicateWarnings + location.addressLine1 + '; ';
-          duplicateCount++;
-        }
-        if (updatedLocations[i].addressExists !== addressExists) {
-          updatedLocations[i] = { ...location, addressExists: addressExists };
-          hasChanges = true;
-        }
-      }
-    }
-    if (hasChanges) {// Update the businessInfo state with the new locations only if there are changes
-      const existingLocations = businessInfo.locations.filter((l: any) => !!l.id);
-      setBusinessInfo({ ...businessInfo, locations: [...existingLocations, ...updatedLocations] });
-    }
-    setDuplicateWarning(duplicateWarnings);
-    setDuplicateCount(duplicateCount);
-  };  
 
   return (
     (<Root>

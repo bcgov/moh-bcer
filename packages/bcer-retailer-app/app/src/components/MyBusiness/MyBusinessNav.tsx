@@ -54,77 +54,78 @@ const StyledChatBubbleOutlineIcon = styled(ChatBubbleOutlineIcon)({
   paddingRight: '25px',
 });
 
-// NB: move steps to their own file
-// the presence/logic of execIf should be revisited
-const steps = [
-  {
-    icon: WorkOutlineIcon,
-    label: 'Business Details',
-    title: 'Confirm Your Business Details',
-    path: '/business/details',
-    component: <BusinessDetails />,
-    helpText: <p>Please confirm the business details that were entered when registering for your BCeID.
-              If you sell e-substances from this location, please add it as a location in the <b>"Add Business Locations"</b> section.
-              You must also add any additional locations from which you sell e-substances.</p>,
-    showSubscription: true,
-    canAdvanceChecks: [
-      {
-        property: 'locations',
-        validate: (val: Array<any>) => val.length,
-      },
-      {
-        property: 'detailsComplete',
-        validate: (val: boolean) => val,
-      }
-    ],
-    onAdvance: [{
-      endpoint: process.env.BASE_URL + '/submission',
-      method: 'PATCH' as Method,
-      execIf: { validate: () => true }
-    }]
-  },
-  {
-    icon: MapOutlinedIcon,
-    label: 'Confirm Locations',
-    title: 'Confirm New Business Locations',
-    path: '/business/map',
-    component: <ConfirmLocations/>,
-    helpText: 'Confirm the details of the business locations that you have added on the previous page. You will be able to update this information at any time. Upon completion of this section you will be able to complete a Notice of Intent to sell E-substances and submit Product and Manufacturing Reports for each location you have listed.',
-    canAdvanceChecks: [
-      {
-        property: 'uploadErrors',
-        validate: (val: Array<any>) => val?.length === 0,
-      }
-    ],
-    onAdvance: [{
-      endpoint: process.env.BASE_URL + '/submission',
-      method: 'PATCH' as Method,
-      execIf: {
-        property: 'entry',
-        validate: (val?: string) => val === 'upload',
-      },
-    }]
-  },
-  {
-    icon: AssignmentTurnedInOutlinedIcon,
-    label: 'Confirm Business Details and Submit',
-    title: 'Confirm Business Details and Submit',
-    path: '/business/confirm',
-    component: <ConfirmAndSubmit/>,
-    helpText: '',
-    onAdvance: [{
-      datakey: 'submissionId',
-      endpoint: process.env.BASE_URL + '/submission/save',
-      method: 'POST' as Method,
-      execIf: { validate: () => true }
-    }]
-  },
-]
-
 export default function MyBusinessNav () {
 
   const [appGlobal, setAppGlobal] = useContext(AppGlobalContext);
   const { pathname } = useLocation();
+  const [isLoading, setIsLoading] = useState<boolean>(false); //A loading state for the stepper Next button
+
+  // NB: move steps to their own file
+  // the presence/logic of execIf should be revisited
+  const steps = [
+    {
+      icon: WorkOutlineIcon,
+      label: 'Business Details',
+      title: 'Confirm Your Business Details',
+      path: '/business/details',
+      component: <BusinessDetails />,
+      helpText: <p>Please confirm the business details that were entered when registering for your BCeID.
+                If you sell e-substances from this location, please add it as a location in the <b>"Add Business Locations"</b> section.
+                You must also add any additional locations from which you sell e-substances.</p>,
+      showSubscription: true,
+      canAdvanceChecks: [
+        {
+          property: 'locations',
+          validate: (val: Array<any>) => val.length,
+        },
+        {
+          property: 'detailsComplete',
+          validate: (val: boolean) => val,
+        }
+      ],
+      onAdvance: [{
+        endpoint: process.env.BASE_URL + '/submission',
+        method: 'PATCH' as Method,
+        execIf: { validate: () => true }
+      }]
+    },
+    {
+      icon: MapOutlinedIcon,
+      label: 'Confirm Locations',
+      title: 'Confirm New Business Locations',
+      path: '/business/map',
+      component: <ConfirmLocations isLoading={isLoading} setIsLoading={setIsLoading}/>,
+      helpText: 'Confirm the details of the business locations that you have added on the previous page. You will be able to update this information at any time. Upon completion of this section you will be able to complete a Notice of Intent to sell E-substances and submit Product and Manufacturing Reports for each location you have listed.',
+      canAdvanceChecks: [
+        {
+          property: 'uploadErrors',
+          validate: (val: Array<any>) => val?.length === 0,
+        }
+      ],
+      onAdvance: [{
+        endpoint: process.env.BASE_URL + '/submission',
+        method: 'PATCH' as Method,
+        execIf: {
+          property: 'entry',
+          validate: (val?: string) => val === 'upload',
+        },
+      }]
+    },
+    {
+      icon: AssignmentTurnedInOutlinedIcon,
+      label: 'Confirm Business Details and Submit',
+      title: 'Confirm Business Details and Submit',
+      path: '/business/confirm',
+      component: <ConfirmAndSubmit/>,
+      helpText: '',
+      onAdvance: [{
+        datakey: 'submissionId',
+        endpoint: process.env.BASE_URL + '/submission/save',
+        method: 'POST' as Method,
+        execIf: { validate: () => true }
+      }]
+    },
+  ]
 
   // Fetch initial business details from local storage
   const initialBusinessDetails = JSON.parse(localStorage.getItem('BusinessDetailesValues') || '{}');
@@ -144,12 +145,11 @@ export default function MyBusinessNav () {
     uploadErrors: []
   })
 
-  const stepperOptions = steps.map(element => ({ path: element.path, icon: element.icon, label: element.label }))
-
   const [{ data: profile, error: profileError }] = useAxiosPost('/users/profile');
   const [{ loading, error, response, data: submission }, get] = useAxiosGet('/submission', { manual: true });
   const [{ loading: postLoading, error: postError, data: newSubmission }, post] = useAxiosPost('/submission', { manual: true });
 
+  const stepperOptions = steps.map(element => ({ path: element.path, icon: element.icon, label: element.label }))
 
   // Fetch initial data
   useEffect(() => {
@@ -297,6 +297,7 @@ export default function MyBusinessNav () {
             dataForContext={businessInfo}
             steps={steps.map(step => ({ path: step.path }))}
             currentStep={currentStep}
+            isLoading={isLoading}
             {...steps[currentStep]}
           />
         )}
