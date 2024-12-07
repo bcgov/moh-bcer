@@ -210,8 +210,8 @@ export default function SideNav() {
 
     if (formStep === 'userGuide') {
       const filePath = process.env.NODE_ENV === 'development' 
-        ? '/public/BCER User Guide (2023).pdf'
-        : '/retailer/public/BCER User Guide (2023).pdf';
+        ? '/public/BCER User Guide (2024) v1.0.pdf'
+        : '/retailer/public/BCER User Guide (2024) v1.0.pdf';
 
       return (
         <ListItem disablePadding className={classes.listItem}>
