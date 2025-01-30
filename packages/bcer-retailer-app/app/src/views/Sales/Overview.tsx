@@ -180,11 +180,7 @@ export default function SalesOverview() {
     }
   }, [location.pathname, setAppGlobal, appGlobal]);
 
-  const getPeriodYear = (): number => {
-    const now = moment();
-    return now.isSameOrBefore(`${now.year()}-01-15`) ? now.year() - 1 : now.year();
-  };
-  const periodYear = getPeriodYear();
+  const periodYear = getSalesReportYear();
 
   const commonColumns = LocationUtil.getTableColumns(['doingBusinessAs', 'address1', 'locationType']) as any;
 
