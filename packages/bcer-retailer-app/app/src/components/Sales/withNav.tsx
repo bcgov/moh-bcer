@@ -122,12 +122,7 @@ export default function withNav<P>({
         );
       };
 
-      const getPeriodYear = (): number => {
-        const now = moment();
-        return now.isSameOrBefore(`${now.year()}-01-15`) ? now.year() - 1 : now.year();
-      };
-
-      const periodYear = getPeriodYear();
+      const periodYear = getSalesReportYear();
 
       return (
         (<Root>
