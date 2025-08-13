@@ -8,6 +8,7 @@ import { QueryResult } from '@material-table/core';
 
 function LocationProductTable({ locationId }: { locationId: string }) {
   const { showNetworkErrorMessage } = useNetworkErrorMessage();
+  // Since StyledTable uses a Ref, it will not rerender without direct interference
   const tableRef = useRef<any>(); //rerender the table when data is updated
   const [query, setQuery] = useState({
     page: 0,
