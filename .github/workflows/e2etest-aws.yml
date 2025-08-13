@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '22'
+          node-version: '24.4.1'
 
       - name: Install deps
         run: npm install
