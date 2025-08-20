@@ -2,6 +2,10 @@
   "name": "vaping-regulation-common-portal",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=24.4.1",
+    "npm": ">=10.0.0"
+  },
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
     "@material-table/core": "6.4.4",

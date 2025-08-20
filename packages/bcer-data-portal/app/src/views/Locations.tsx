@@ -231,7 +231,7 @@ export default function Locations() {
       title: 'Business Name',
       render: (rd: BusinessLocation) => <ActionLink onClick={() => handleRouteWithHistory(rd.id)}>{rd.business.businessName}</ActionLink>,
       sortTitle: "Business Name",
-      sorting: true,
+      maxColumnSort: 1,
       width: 400
     },
     {
@@ -239,14 +239,14 @@ export default function Locations() {
       render: (rd: BusinessLocation) =>
         rd.location_type === LocationType.online ? rd.webpage: <StyledTableColumn value={`${rd.addressLine1}, ${rd.postal}, ${rd.city}`} />,
       sortTitle: "Address",
-      sorting: true,
+      maxColumnSort: 1,
       width: 350
     },
     {
       title: 'Type of Location',
       render: (rd: BusinessLocation) => LocationTypeLabels[rd.location_type],
       sortTitle: "Location Type",
-      sorting: true,
+      maxColumnSort: 1,
     },
     {
       title: 'Latest NOI Date',
@@ -255,27 +255,27 @@ export default function Locations() {
         ? `${moment(rd.noi?.renewed_at ?? rd.noi?.created_at).format('MMM DD, YYYY')}`
         : '',
       sortTitle: "Submitted Date",
-      sorting: true,
+      maxColumnSort: 1,
     },
     {
       title: 'NOI',
       render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.noi),
-      sorting: false
+      enableSorting: false
     },
     {
       title: 'Product Report', 
       render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.productReport),
-      sorting: false
+      enableSorting: false
     },
     {
       title: 'Manufacturing Report', 
       render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.manufacturingReport),
-      sorting: false
+      enableSorting: false
     },
     {
       title: 'Sales Report', 
       render: (l: BusinessLocation) => BusinessDashboardUtil.renderStatus(l.reportStatus?.salesReport),
-      sorting: false
+      enableSorting: false
     }
   ];
 
@@ -798,7 +798,7 @@ export default function Locations() {
                     selection: true,
                     pageSize: searchTerms.pageSize, //getInitialPagination(locations),
                     pageSizeOptions: [5, 10, 20, 30, 50],
-                    sorting: true,
+                    maxColumnSort: 1,
                   }}
                   onSelectionChange={(rows: BusinessLocation[]) => {
                     const currentLocationIds = locations.map(

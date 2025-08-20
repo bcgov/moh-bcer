@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)",
   "main": "index.js",
+  "engines": {
+    "node": ">=24.4.1",
+    "npm": ">=10.0.0"
+  },
   "dependencies": {
     "cypress-file-upload": "5.0.8",
     "moment": "^2.30.1",

@@ -223,7 +223,7 @@ export function LocationOutstandingReportTable({
 }: LocationReportTableProps) {
   const columns = BusinessDashboardUtil.getColumns(renderAddress).map(column => ({
     ...column,
-    sorting: false
+    enableSorting: false
   }));
 
   const getInitialPagination = () => {
@@ -254,12 +254,12 @@ export function LocationCompletedReportTable({
     {
       title: 'Location',
       render: renderAddress,
-      sorting: false
+      enableSorting: false
     },
     {
       title: 'Creation Date',
       render: BusinessDashboardUtil.renderCreationDate,
-      sorting: false
+      enableSorting: false
     }
   ];
   
