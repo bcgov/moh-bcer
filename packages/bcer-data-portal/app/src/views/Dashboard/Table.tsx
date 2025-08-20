@@ -69,7 +69,7 @@ function Table({
         options={{
           pageSize: getInitialPagination(data),
           pageSizeOptions: [5, 10, 20, 30, 50],
-          sorting: true
+          maxColumnSort: 1
         }}
         onPageChange={handlePageChange} //page change and page size change
         onOrderChange={handleColumnChange} //column drag and sorting

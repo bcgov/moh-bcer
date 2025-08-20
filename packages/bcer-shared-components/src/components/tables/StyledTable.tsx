@@ -149,7 +149,7 @@ export function StyledTable({
           checked: rowData.tableData.checked,
         }),
         rowStyle: rowData => rowStyle(rowData),
-        sorting: false,
+        maxColumnSort: 0,
         pageSize: 5,
         paginationType: 'stepped',
         pageSizeOptions: [5, 6, 7, 8, 9, 10, 20],
