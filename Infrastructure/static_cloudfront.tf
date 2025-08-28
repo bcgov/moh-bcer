@@ -26,6 +26,19 @@ data "aws_cloudfront_cache_policy" "Managed-CachingOptimized" {
   name = "Managed-CachingOptimized"
 }
 
+resource "aws_cloudfront_response_headers_policy" "hsts" {
+  name = "HSTS-Policy-${var.target_env}"
+  
+  security_headers_config {
+    strict_transport_security {
+      access_control_max_age_sec = 31536000
+      include_subdomains         = true
+      preload                   = false
+      override                  = true
+    }
+  }
+}
+
 resource "aws_cloudfront_origin_access_control" "bcer" {
   name                              = "bcer-${var.target_env}"
   origin_access_control_origin_type = "s3"
@@ -49,12 +62,13 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   aliases             = [var.application_url]
 
   default_cache_behavior {
-    target_origin_id       = local.s3_origin_id
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    cache_policy_id        = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
-    compress               = true
+    target_origin_id           = local.s3_origin_id
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
+    viewer_protocol_policy     = "redirect-to-https"
+    cache_policy_id            = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.hsts.id
+    compress                   = true
     function_association {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.redirect.arn
@@ -65,13 +79,14 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   ordered_cache_behavior {
-    path_pattern           = "/retailer*"
-    target_origin_id       = aws_s3_bucket.static.id
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    cache_policy_id        = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
-    compress               = true
+    path_pattern               = "/retailer*"
+    target_origin_id           = aws_s3_bucket.static.id
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
+    viewer_protocol_policy     = "redirect-to-https"
+    cache_policy_id            = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.hsts.id
+    compress                   = true
     function_association {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.redirect.arn
@@ -79,13 +94,14 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   ordered_cache_behavior {
-    path_pattern           = "/portal*"
-    target_origin_id       = aws_s3_bucket.static.id
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    cache_policy_id        = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
-    compress               = true
+    path_pattern               = "/portal*"
+    target_origin_id           = aws_s3_bucket.static.id
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
+    viewer_protocol_policy     = "redirect-to-https"
+    cache_policy_id            = data.aws_cloudfront_cache_policy.Managed-CachingOptimized.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.hsts.id
+    compress                   = true
     function_association {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.redirect.arn
