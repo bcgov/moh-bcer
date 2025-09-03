@@ -26,14 +26,14 @@ function LocationTable({
         fixedColumns: {
           right: 1,
         },
-        sorting: true,
+        maxColumnSort: 1,
       }}
       columns={[
         {
           title: 'Type of Location',
           field: 'location_type',
           render: LocationUtil.renderLocationType,
-          sorting: true,
+          maxColumnSort: 1,
         },
         {
           title: 'Address/URL',
@@ -45,19 +45,19 @@ function LocationTable({
           title: 'Creation Date',
           field: 'createdAt',
           render: LocationUtil.renderCreationDate,
-          sorting: true,
+          maxColumnSort: 1,
         },
         {
           title: 'Doing Business As',
           field: 'doingBusinessAs',
           render: LocationUtil.renderDoingBusinessAs,
-          sorting: true,
+          maxColumnSort: 1,
         },
         {
           title: 'Status',
           field: 'status',
           render: LocationUtil.renderStatus,
-          sorting: true,
+          maxColumnSort: 1,
         },
         {
           title: 'Actions',
