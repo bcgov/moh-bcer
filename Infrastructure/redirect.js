@@ -10,9 +10,11 @@ function handler(event) {
         var response = {
             statusCode: 302,
             statusDescription: 'Found',
-            headers:
-                { "location": { "value": retailer_url } }
+            headers: {
+                "location": { "value": retailer_url },
+                "strict-transport-security": { "value": "max-age=31536000; includeSubDomains" }
             }
+        }
 
         return response;
     }
@@ -21,9 +23,11 @@ function handler(event) {
         var response = {
             statusCode: 302,
             statusDescription: 'Found',
-            headers:
-                { "location": { "value": portal_url } }
+            headers: {
+                "location": { "value": portal_url },
+                "strict-transport-security": { "value": "max-age=31536000; includeSubDomains" }
             }
+        }
 
         return response;
     }

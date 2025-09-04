@@ -20,6 +20,15 @@ const serveGzipped = (contentType) => (req, res, next) => {
   res.set('Content-Encoding', 'gzip');
   res.set('Content-Type', contentType);
 
+
+//bcmoham-17766 vulnerability
+res.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+
+
+
+
+
+
   // let express.static take care of the updated request
   next();
 };

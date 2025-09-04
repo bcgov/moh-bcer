@@ -51,6 +51,13 @@ dotenv.config(envPath);
     })
   });
   app.enableCors();
+  
+  // BCMOHAM-17766 vulnerability fix - Add HSTS header
+  app.use((req, res, next) => {
+    res.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    next();
+  });
+  
   if (process.env.NODE_ENV !== 'production') {
     documentation(app);
     global['nestAppServer'] = app.getHttpServer();
