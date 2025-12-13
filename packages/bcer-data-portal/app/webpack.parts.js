@@ -138,16 +138,17 @@ exports.loadImages = ({ include, exclude, urlLoaderOptions, fileLoaderOptions, i
             }
         ],
       },
-      {
-        test: /\.(gif|png|jpe?g|svg)$/,
-        include,
-        exclude,
-        loader: 'image-webpack-loader',
-        options: {
-          bypassOnDebug: true,
-          ...imageLoaderOptions,
-        },
-      },
+      // Temporarily disabled image-webpack-loader to avoid missing imagemin dependencies
+      // {
+      //   test: /\.(gif|png|jpe?g|svg)$/,
+      //   include,
+      //   exclude,
+      //   loader: 'image-webpack-loader',
+      //   options: {
+      //     bypassOnDebug: true,
+      //     ...imageLoaderOptions,
+      //   },
+      // },
     ],
   },
 });
