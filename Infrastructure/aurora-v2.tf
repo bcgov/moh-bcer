@@ -41,7 +41,7 @@ module "aurora_postgresql_v2" {
   name              = "${var.bcer_cluster_name}-${var.target_env}"
   engine            = "aurora-postgresql"
   engine_mode       = "provisioned"
-  engine_version    = "13.18"
+  engine_version    = "13.20"
   storage_encrypted = true
   database_name     = var.bcer_database_name
 
