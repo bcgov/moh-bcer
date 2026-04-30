@@ -4,7 +4,7 @@
   "description": "![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)",
   "main": "index.js",
   "engines": {
-    "node": ">=24.11.1",
+    "node": ">=24.14.1",
     "npm": ">=10.0.0"
   },
   "dependencies": {

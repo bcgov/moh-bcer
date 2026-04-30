@@ -62,3 +62,6 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 /nbproject/private/
+
+# Ignore enterprise certificate files
+*.pem
