@@ -1,4 +1,4 @@
-FROM node:24.12.0-trixie-slim as builder
+FROM node:24.14.1-trixie-slim as builder
 
 LABEL maintainer="CGI"
 
