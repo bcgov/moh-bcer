@@ -44,23 +44,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.ref_name }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
       - name: Amazon ECR Login
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
         with:
           mask-password: 'true'
 
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -68,11 +68,12 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Docker Setup Buildx
-        uses: docker/setup-buildx-action@v2
+        id: buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and push Docker images (run migrations)
         if: inputs.migrations == true
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -84,7 +85,7 @@ jobs:
 
       - name: Build and push Docker images
         if: inputs.migrations == false
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -104,18 +105,18 @@ jobs:
         run: echo "TF_VAR_TIMESTAMP=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.ref_name }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
       - name: HashiCorp - Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -140,14 +141,14 @@ jobs:
     needs: terraform_apply
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.ref_name }}
 
       - name: Use Node.js 24
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 24.4.1
+          node-version: 24.14.1
 
       - name: Build project shared components
         run: |
@@ -161,7 +162,7 @@ jobs:
           cp .config/.env.aws.${{ github.event.inputs.environment }} app/.env
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1

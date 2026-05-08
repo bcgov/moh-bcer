@@ -15,14 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '24.4.1'
+        node-version: '24.14.1'
     - name: Package App
       run: VERSION=${{ github.event.inputs.version }} ENVIRONMENT=${{ github.event.inputs.environment }} make package-build
     - name: Create Github Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         draft: false
         prerelease: ${{ github.event.inputs.environment != 'production'}}
