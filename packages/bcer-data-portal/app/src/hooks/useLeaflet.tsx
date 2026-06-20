@@ -22,7 +22,8 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import ItineraryPdf from './../views/Map/ItineraryPdf';
 import jsPDF from 'jspdf';
-import ReactDOMServer from "react-dom/server";
+import ReactDOMServer from 'react-dom/server';
+import { routes } from '@/constants/routes';
 
 // Map layer for Health Authority Boundaries
 const haLayer = createHealthAuthorityLayer();
@@ -32,7 +33,6 @@ const haLegend = createHealthAuthorityLegend();
 
 function useLeaflet(locationIds: string, config: LocationConfig) {
   const navigate = useNavigate();
-  const history = {push: (path: string) => navigate(path)};
   const [appGlobal, setAppGlobalContext] = useContext(AppGlobalContext);
 
   const [routeData, setRouteData] = useState<BCDirectionData>();
@@ -345,9 +345,9 @@ function useLeaflet(locationIds: string, config: LocationConfig) {
     }
   }
 
-  const goToClickedLocation = (l: BusinessLocation) => {    
-    history.push(`location/${l.id}`);
-  }
+  const goToClickedLocation = (l: BusinessLocation) => {
+    navigate(`${routes.viewLocation}/${l.id}`);
+  };
 
   const drawHealthAuthorityLocationMarkers = () => {
     const mkrs: L.Marker[] = [];
