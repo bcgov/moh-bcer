@@ -1,3 +1,4 @@
+import { Box, Typography } from '@mui/material';
 import { subscriptionValidationSchema } from '@/components/form/validations/vSubscription';
 import {
   Subscription,
@@ -12,6 +13,7 @@ import {
   StyledTextField,
   StyledTextInput,
 } from 'vaping-regulation-shared-components';
+
 
 interface SubscriptionDialogProps {
   open: boolean;
@@ -50,6 +52,7 @@ function SubscriptionDialog({
             cancelHandler={() => setOpen(false)}
             title="Subscribe To SMS Notification"
           >
+
             <StyledTextField
               onChange={(event: any) => {
                 formatPhoneNumber(event, helpers.setFieldValue);
@@ -70,7 +73,7 @@ function SubscriptionDialog({
             />
             <StyledCheckbox
               name="confirmed"
-              label="I give permission to the Ministry of Health to send me notifications and reminders on the provided phone numbers"
+              label="I give permission to the Ministry of Health to send me notifications and reminders on the provided phone numbers. I agree to receive SMS text messages from BC E-Substances Reporting. Message and data rates may apply. A confirmation text will be sent to complete my subscription."
             />
           </StyledDialog>
         </Form>
