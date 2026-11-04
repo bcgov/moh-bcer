@@ -73,7 +73,7 @@ function SubscriptionDialog({
             />
             <StyledCheckbox
               name="confirmed"
-              label="I give permission to the Ministry of Health to send me notifications and reminders on the provided phone numbers. I agree to receive SMS text messages from BC E-Substances Reporting. Message and data rates may apply. A confirmation text will be sent to complete my subscription."
+              label="I give permission to the Ministry of Health to send me notifications and reminders on the provided phone numbers.  I agree to receive SMS text messages from BC E-Substances Reporting. Message and data rates may apply. A confirmation text will be sent to complete my subscription."
             />
           </StyledDialog>
         </Form>
