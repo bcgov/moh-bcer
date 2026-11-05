@@ -22,6 +22,18 @@ variable "bcer_database_name" {
   default     = "bcer"
 }
 
+variable "aurora_db_parameter_group_name" {
+  description = "Existing instance parameter group to use instead of the managed PostgreSQL 13 group"
+  type        = string
+  default     = null
+}
+
+variable "aurora_cluster_parameter_group_name" {
+  description = "Existing cluster parameter group to use instead of the managed PostgreSQL 13 group"
+  type        = string
+  default     = null
+}
+
 resource "aws_db_subnet_group" "bcer_subnet_group" {
   description = "For Aurora cluster ${var.bcer_cluster_name}"
   name        = "${var.bcer_cluster_name}-subnet-group"
@@ -41,7 +53,7 @@ module "aurora_postgresql_v2" {
   name              = "${var.bcer_cluster_name}-${var.target_env}"
   engine            = "aurora-postgresql"
   engine_mode       = "provisioned"
-  engine_version    = "13.23"
+  engine_version    = "14.24"
   storage_encrypted = true
   database_name     = var.bcer_database_name
 
@@ -61,8 +73,8 @@ module "aurora_postgresql_v2" {
   apply_immediately   = true
   skip_final_snapshot = true
 
-  db_parameter_group_name         = aws_db_parameter_group.bcer_postgresql13.id
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.bcer_postgresql13.id
+  db_parameter_group_name         = coalesce(var.aurora_db_parameter_group_name, aws_db_parameter_group.bcer_postgresql13.id)
+  db_cluster_parameter_group_name = coalesce(var.aurora_cluster_parameter_group_name, aws_rds_cluster_parameter_group.bcer_postgresql13.id)
 
   serverlessv2_scaling_configuration = {
     min_capacity = var.aurora_acu_min

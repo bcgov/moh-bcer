@@ -1,4 +1,4 @@
-image: node:24.14.1
+image: node:24.22.2
 
 pipelines:
   pull-requests:
