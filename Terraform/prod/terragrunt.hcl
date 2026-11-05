@@ -16,5 +16,7 @@ generate "prod_tfvars" {
   api_url              = "bcer.api.hlth.gov.bc.ca"
   aurora_acu_min       = 0.5
   aurora_acu_max       = 3
+  aurora_db_parameter_group_name      = "default.aurora-postgresql14"
+  aurora_cluster_parameter_group_name = "bcer-cluster-cluster-parameter-group14"
   EOF
 }
