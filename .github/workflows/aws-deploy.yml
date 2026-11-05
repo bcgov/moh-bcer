@@ -148,7 +148,7 @@ jobs:
       - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 24.22.1
+          node-version: 24.22.2
 
       - name: Build project shared components
         run: |
